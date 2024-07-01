@@ -1,5 +1,13 @@
 "use strict";
 
+import {
+    createData,
+    updateData,
+    updatePutData,
+    deleteData,
+    showData,
+} from "../api";
+
 var data_jenis_kegiatan = (function () {
     var initTable1 = function () {
         var table = $("#dt_jenis_kegiatan");
@@ -31,10 +39,20 @@ var data_jenis_kegiatan = (function () {
                     render: function (data, type, full, meta) {
                         return (
                             `
-                        <a href="/approval/` +
+                       <a href="/career/` +
                             full.id +
-                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="detail">
-                              <i class="fa fa-eye"></i>
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Detail">
+                          <i class="fa fa-eye"></i>
+                        </a>
+                        <a href="/akseslh/jenis-kegiatan/` +
+                            full.id +
+                            `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                          <i class="fa fa-pencil"></i>
+                        </a>
+                        <a data-id=` +
+                            full.id +
+                            ` href="#" onclick="deleteJenisKegiatan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                          <i class="fa fa-trash"></i>
                         </a>`
                         );
                     },
@@ -54,3 +72,26 @@ var data_jenis_kegiatan = (function () {
 jQuery(document).ready(function () {
     data_jenis_kegiatan.init();
 });
+
+window.deleteJenisKegiatan = (input) => {
+    Swal.fire({
+        title: "Konfirmasi Hapus",
+        text: "Anda yakin akan menghapus data ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus",
+        cancelButtonText: "Tidak",
+        reverseButtons: false,
+    }).then((result) => {
+        if (result.value) {
+            deleteData(
+                "/akseslh/jenis-kegiatan/" + $(input).attr("data-id")
+            ).then((res) => {
+                Swal.fire("Sukses", "Data berhasil dihapus", "success");
+                window.location.reload();
+            });
+        }
+    });
+};

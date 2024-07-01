@@ -16,5 +16,8 @@
         "laravel-mix": "^6.0.49",
         "lodash": "^4.17.19",
         "resolve-url-loader": "^5.0.0"
+    },
+    "dependencies": {
+        "sweetalert2": "^11.12.1"
     }
 }

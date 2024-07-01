@@ -33,9 +33,6 @@
     <!-- DataTables -->
     <link href="{{ asset('assets/datatables/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css" />
 
-    <!-- sweet alerts -->
-    <link href="{{ asset('assets/sweet-alert/sweet-alert.min.css') }}" rel="stylesheet">
-
     <!-- Custom Files -->
     <link href="{{asset('css/helper.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{asset('css/style.css')}}" rel="stylesheet" type="text/css" />
@@ -102,15 +99,15 @@
     <script src="{{asset('assets/jquery-slimscroll/jquery.slimscroll.js')}}"></script>
     <script src="{{asset('assets/jquery-blockui/jquery.blockUI.js')}}"></script>
 
-    {{-- Sweetalert --}}
-    <script src="{{ asset('assets/sweet-alert/sweet-alert.min.js') }}"></script>
-
     <!-- CUSTOM JS -->
     <script src="{{asset('js/jquery.app.js')}}"></script>
 
     {{-- Datatable --}}
     <script src="{{asset('assets/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/datatables/dataTables.bootstrap.js')}}"></script>
+
+    {{-- Mix --}}
+    <script src="{{ mix('/js/app.js') }}"></script>
 
     @include('layouts._partials._message')
 

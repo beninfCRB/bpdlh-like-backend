@@ -33,6 +33,7 @@ class JenisKegiatanController extends ApiController
 
     public function edit($id)
     {
+        dd("ini edit");
         $data   =   $this->jenisKegiatanService->getById($id);
         return view("pages.akseslh.jenis-kegiatan.edit", compact('data'));
     }
