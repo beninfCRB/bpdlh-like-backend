@@ -13,8 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::view('/login', 'auth.login')->name('login');
+
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::view('/blank', 'pages.blank.index')->name('blank');
+
+Route::view('/home', 'pages.home.index')->name('home');

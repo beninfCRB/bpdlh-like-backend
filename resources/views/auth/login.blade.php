@@ -8,8 +8,8 @@
 
 
 <div class="panel-body">
-    <form class="form-horizontal m-t-20" action="index.html">
-
+    <form class="form-horizontal m-t-20" action="/login" method="POST">
+        @csrf
         <div class="form-group ">
             <div class="col-xs-12">
                 <input class="form-control input-lg " type="text" required="" placeholder="Username">
