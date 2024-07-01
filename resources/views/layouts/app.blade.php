@@ -12,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="url" content="{{ env('APP_URL') }}">
 
-    <link rel="shortcut icon" href="images/favicon_1.ico" />
+    <link rel="shortcut icon" href="{{ asset('images/favicon_1.ico') }}" />
 
     <title>{{ config('app.name') }} - @yield('title')</title>
 
@@ -29,6 +29,12 @@
 
     <!-- Waves-effect -->
     <link href="{{asset('css/waves-effect.css')}}" rel="stylesheet" />
+
+    <!-- DataTables -->
+    <link href="{{ asset('assets/datatables/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css" />
+
+    <!-- sweet alerts -->
+    <link href="{{ asset('assets/sweet-alert/sweet-alert.min.css') }}" rel="stylesheet">
 
     <!-- Custom Files -->
     <link href="{{asset('css/helper.css')}}" rel="stylesheet" type="text/css" />
@@ -96,8 +102,17 @@
     <script src="{{asset('assets/jquery-slimscroll/jquery.slimscroll.js')}}"></script>
     <script src="{{asset('assets/jquery-blockui/jquery.blockUI.js')}}"></script>
 
+    {{-- Sweetalert --}}
+    <script src="{{ asset('assets/sweet-alert/sweet-alert.min.js') }}"></script>
+
     <!-- CUSTOM JS -->
     <script src="{{asset('js/jquery.app.js')}}"></script>
+
+    {{-- Datatable --}}
+    <script src="{{asset('assets/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('assets/datatables/dataTables.bootstrap.js')}}"></script>
+
+    @include('layouts._partials._message')
 
     @yield('script')
 </body>

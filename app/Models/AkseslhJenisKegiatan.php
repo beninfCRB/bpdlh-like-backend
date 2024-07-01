@@ -9,4 +9,9 @@ use App\Models\AppModel;
 class AkseslhJenisKegiatan extends AppModel
 {
     use HasFactory;
+
+    protected $table = 'akseslh_jenis_kegiatans', $fillable = [
+        'jenis_kegiatan',
+        'username',
+    ];
 }

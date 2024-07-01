@@ -46,10 +46,7 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
         try {
 
             $banner = $this->model->newQuery()->create([
-                'title_id'       =>  $data['title_id'],
-                'title_en'       =>  $data['title_en'],
-                'desc_id'       =>  $data['desc_id'],
-                'desc_en'       =>  $data['desc_en'],
+                'jenis_kegiatan'       =>  $data['jenis_kegiatan'],
             ]);
 
             \DB::commit(); // commit the changes

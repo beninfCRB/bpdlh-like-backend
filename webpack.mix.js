@@ -14,6 +14,8 @@ let build = "public/app/build/";
  |
  */
 
-mix.js(source + "home.js", build).version();
+mix.js(source + "home.js", build)
+    .js(source + "akseslh_jenis_kegiatan.js", build)
+    .version();
 
 mix.disableNotifications();

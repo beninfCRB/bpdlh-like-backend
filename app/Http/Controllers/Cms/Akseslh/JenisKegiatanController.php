@@ -4,66 +4,71 @@ namespace App\Http\Controllers\Cms\Akseslh;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Cms\Announcement\CreateCareerRequest;
 use App\Http\Requests\Cms\Announcement\UpdateCareerRequest;
-use App\Service\Announcement\Career\CareerService;
+use App\Services\Akseslh\JenisKegiatanService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class JenisKegiatanController extends ApiController
 {
-    protected $careerService;
+    protected $jenisKegiatanService;
 
     public function __construct(
-        CareerService $careerService,
+        JenisKegiatanService $jenisKegiatanService,
         Request $request
     ) {
-        $this->careerService   =   $careerService;
+        $this->jenisKegiatanService   =   $jenisKegiatanService;
         parent::__construct($request);
     }
 
     public function index()
     {
-        return view("announcement.career.index");
+        return view("pages.akseslh.jenis-kegiatan.index");
     }
 
     public function create()
     {
-        return view("announcement.career.create");
+        return view("pages.akseslh.jenis-kegiatan.create");
     }
 
     public function edit($id)
     {
-        $data   =   $this->careerService->getById($id);
-        return view("announcement.career.edit", compact('data'));
+        $data   =   $this->jenisKegiatanService->getById($id);
+        return view("pages.akseslh.jenis-kegiatan.edit", compact('data'));
     }
 
     public function show($id)
     {
-        $data   =   $this->careerService->getById($id);
-        return view("announcement.career.show", compact('data'));
+        $data   =   $this->jenisKegiatanService->getById($id);
+        return view("pages.akseslh.jenis-kegiatan.show", compact('data'));
     }
 
-    public function store(CreateCareerRequest $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request)
     {
-        $input  =   $request->all();
-        $result =   $this->careerService->create($input);
+        session()->flash('success', "Success");
+        return redirect()->route('jenis-kegiatan.index');
+        $input  =   $request->validate([
+            'jenis_kegiatan'    => 'required'
+        ]);
+        $result =   $this->jenisKegiatanService->create($input);
 
         try {
             if ($result->success) {
-                $response = $result->data;
-                return $this->sendSuccess($response, $result->message, $result->code);
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('jenis-kegiatan.index');
             }
 
-            return $this->sendError($result->data, $result->message, $result->code);
+            return back()->with('error', $result->message);
         } catch (\Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return back()->with('error', $exception->getMessage());
         }
     }
 
     public function update(UpdateCareerRequest $request): \Illuminate\Http\JsonResponse
     {
         $input  =   $request->all();
-        $result =   $this->careerService->update($input['id'], $input);
+        $result =   $this->jenisKegiatanService->update($input['id'], $input);
 
         try {
             if ($result->success) {
@@ -79,25 +84,7 @@ class JenisKegiatanController extends ApiController
 
     public function destroy($id): \Illuminate\Http\JsonResponse
     {
-        $result =   $this->careerService->delete($id);
-        try {
-            if ($result->success) {
-                $response = $result->data;
-                return $this->sendSuccess($response, $result->message, $result->code);
-            }
-
-            return $this->sendError($result->data, $result->message, $result->code);
-        } catch (\Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
-        }
-    }
-
-    public function updatePublish(Request $request)
-    {
-        $input  =   $request->all();
-
-        $result =   $this->careerService->updatePublish($input['id'], $input['isPublish']);
-
+        $result =   $this->jenisKegiatanService->delete($id);
         try {
             if ($result->success) {
                 $response = $result->data;
