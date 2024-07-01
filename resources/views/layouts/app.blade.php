@@ -14,7 +14,7 @@
 
     <link rel="shortcut icon" href="images/favicon_1.ico" />
 
-    <title>{{ config('app.name') }}</title>
+    <title>{{ config('app.name') }} - @yield('title')</title>
 
     <!-- Base Css Files -->
     <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet" />
@@ -98,6 +98,8 @@
 
     <!-- CUSTOM JS -->
     <script src="{{asset('js/jquery.app.js')}}"></script>
+
+    @yield('script')
 </body>
 
 </html>

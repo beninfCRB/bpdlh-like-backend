@@ -54,7 +54,6 @@ class AppModel extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
-        'email_verified_at' => 'datetime',
     ];
 
     protected static function boot(): void
