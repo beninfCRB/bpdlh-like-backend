@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

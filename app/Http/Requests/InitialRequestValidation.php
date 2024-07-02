@@ -17,8 +17,8 @@ trait InitialRequestValidation
         throw new HttpResponseException(response()->json([
             "code" => Response::HTTP_UNPROCESSABLE_ENTITY,
             "success" => false,
-            'message' => $errors->first(),
-            'data' => ""
+            'message' => $errors->getMessages(),
+            'data' => null
         ], Response::HTTP_UNPROCESSABLE_ENTITY));
     }
 }
