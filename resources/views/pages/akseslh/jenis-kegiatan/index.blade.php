@@ -10,11 +10,10 @@
 <!-- Page-Title -->
 <div class="row">
     <div class="col-sm-12">
-        <h4 class="pull-left page-title">Datatable</h4>
+        <h4 class="pull-left page-title">Daftar Jenis Kegiatan</h4>
         <ol class="breadcrumb pull-right">
-            <li><a href="#">Moltran</a></li>
-            <li><a href="#">Tables</a></li>
-            <li class="active">Datatable</li>
+            <li><a href="#">Data Master</a></li>
+            <li class="active">Daftar Jenis Kegiatan</li>
         </ol>
     </div>
 </div>
@@ -23,7 +22,7 @@
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Datatable</h3>
+                <h3 class="panel-title">Daftar Jenis Kegiatan</h3>
             </div>
             <div class="panel-body">
                 <div class="row">
@@ -33,7 +32,8 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Jenis Kegiatan</th>
-                                    <th>Username</th>
+                                    <th>Created at</th>
+                                    <th>Updated at</th>
                                     <th></th>
                                 </tr>
                             </thead>
