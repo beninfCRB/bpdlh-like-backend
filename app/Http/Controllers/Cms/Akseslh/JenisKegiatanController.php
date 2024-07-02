@@ -33,7 +33,6 @@ class JenisKegiatanController extends ApiController
 
     public function edit($id)
     {
-        dd("ini edit");
         $data   =   $this->jenisKegiatanService->getById($id);
         return view("pages.akseslh.jenis-kegiatan.edit", compact('data'));
     }
@@ -46,11 +45,10 @@ class JenisKegiatanController extends ApiController
 
     public function store(Request $request)
     {
-        session()->flash('success', "Success");
-        return redirect()->route('jenis-kegiatan.index');
         $input  =   $request->validate([
             'jenis_kegiatan'    => 'required'
         ]);
+
         $result =   $this->jenisKegiatanService->create($input);
 
         try {
@@ -66,20 +64,24 @@ class JenisKegiatanController extends ApiController
         }
     }
 
-    public function update(UpdateCareerRequest $request): \Illuminate\Http\JsonResponse
+    public function update($id, Request $request)
     {
-        $input  =   $request->all();
-        $result =   $this->jenisKegiatanService->update($input['id'], $input);
+        $input  =   $request->validate([
+            'jenis_kegiatan'    => 'required'
+        ]);
+
+        $result =   $this->jenisKegiatanService->update($id, $input);
 
         try {
             if ($result->success) {
-                $response = $result->data;
-                return $this->sendSuccess($response, $result->message, $result->code);
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('jenis-kegiatan.index');
             }
 
-            return $this->sendError($result->data, $result->message, $result->code);
+            return back()->with('error', $result->message);
         } catch (\Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return back()->with('error', $exception->getMessage());
         }
     }
 

@@ -45,12 +45,12 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $banner = $this->model->newQuery()->create([
+            $data = $this->model->newQuery()->create([
                 'jenis_kegiatan'       =>  $data['jenis_kegiatan'],
             ]);
 
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($banner);
+            return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
@@ -65,10 +65,7 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $read->title_id    =   $data['title_id'];
-            $read->title_en     =   $data['title_en'];
-            $read->desc_id     =   $data['desc_id'];
-            $read->desc_en     =   $data['desc_en'];
+            $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
             $read->save();
 
             \DB::commit(); // commit the changes
