@@ -21,7 +21,7 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Basic example</h3>
+                <h3 class="panel-title">Pengelolaan Data Jenis Kelompok Masyarakat</h3>
             </div>
             <div class="panel-body">
                 <form role="form" action="{{ route('jenis-kelompok-masyarakat.store') }}" method="POST">
