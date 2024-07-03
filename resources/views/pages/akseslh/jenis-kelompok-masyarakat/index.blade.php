@@ -4,13 +4,18 @@
 
 @section('script')
 <script src="{{asset('app/build/akseslh_jenis_kelompok_masyarakat.js')}}" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#dt_jenis_kelompok_masyarakat').dataTable();
+} );
+</script>
 @endsection
 
 @section('content')
 <!-- Page-Title -->
 <div class="row">
     <div class="col-sm-12">
-        <h4 class="pull-left page-title">Daftar Jenis Kelompok Masyarakat</h4>
+        <h4 class="pull-left page-title">JENIS KELOMPOK MASYARAKAT</h4>
         <ol class="breadcrumb pull-right">
             <li><a href="#">Data Master</a></li>
             <li class="active">Daftar Jenis Kelompok Masyarakat</li>
@@ -20,7 +25,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Daftar Jenis Kelompok Masyarakat</h3>
             </div>

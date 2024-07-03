@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Jenis Kegiatan')
+@section('title', 'Daftar Jenis Kegiatan')
 
 @section('script')
 <script src="{{asset('app/build/akseslh_jenis_kegiatan.js')}}" type="text/javascript"></script>
@@ -10,7 +10,7 @@
 <!-- Page-Title -->
 <div class="row">
     <div class="col-sm-12">
-        <h4 class="pull-left page-title">Daftar Jenis Kegiatan</h4>
+        <h4 class="pull-left page-title">JENIS KEGIATAN</h4>
         <ol class="breadcrumb pull-right">
             <li><a href="#">Data Master</a></li>
             <li class="active">Daftar Jenis Kegiatan</li>
@@ -20,7 +20,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Daftar Jenis Kegiatan</h3>
             </div>

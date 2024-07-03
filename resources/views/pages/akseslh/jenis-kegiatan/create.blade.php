@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Jenis Kegiatan')
+@section('title', 'Buat Jenis Kegiatan')
 
 @section('content')
 <!-- Page-Title -->
 <div class="row">
     <div class="col-sm-12">
-        <h4 class="pull-left page-title">General elements</h4>
+        <h4 class="pull-left page-title">KELOLA DATA JENIS KEGIATAN</h4>
         <ol class="breadcrumb pull-right">
-            <li><a href="#">Moltran</a></li>
+            <li><a href="#">Data Master</a></li>
             <li><a href="#">Forms</a></li>
-            <li class="active">General elements</li>
+            <li class="active">Pengelolaan Data Jenis Kegiatan</li>
         </ol>
     </div>
 </div>
@@ -19,12 +19,12 @@
 <div class="row">
     <!-- Basic example -->
     <div class="col-md-6">
-        <div class="panel panel-default">
+        <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">Basic example</h3>
+                <h3 class="panel-title">Pengelolaan Data Jenis Kelompok Masyarakat</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="{{ route('jenis-kegiatan.store') }}" method="POST">
+                <form role="form" action="#" method="POST">
                     @csrf
                     <div class="form-group @error('jenis_kegiatan') has-error @enderror">
                         <label for="jenis_kegiatan">Jenis Kegiatan <span class="text-danger">*</span></label>
@@ -34,7 +34,7 @@
                         {{ $message }}
                         @enderror
                     </div>
-                    <button type="submit" class="btn btn-purple waves-effect waves-light">Submit</button>
+                    <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
                 </form>
             </div><!-- panel-body -->
         </div> <!-- panel -->

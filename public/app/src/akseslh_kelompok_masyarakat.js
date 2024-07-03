@@ -10,7 +10,7 @@ import {
 
 var data_jenis_kegiatan = (function () {
     var initTable1 = function () {
-        var table = $("#dt_jenis_kelompok_masyarakat");
+        var table = $("#dt_kelompok_masyarakat");
 
         // begin first table
         table.DataTable({
@@ -20,13 +20,14 @@ var data_jenis_kegiatan = (function () {
             responsive: true,
             searchDelay: 500,
             processing: true,
-            ajax: "/akseslh/data-jenis-kelompok-masyarakat",
+            ajax: "/akseslh/data-kelompok-masyarakat",
             columns: [
                 { data: "DT_RowIndex" },
                 { data: "jenis_kelompok_masyarakat" },
-                { data: "short_id" },
+                { data: "kelompok_masyarakat" },
                 { data: "created_at" },
                 { data: "updated_at" },
+                { data: "username" },
                 {},
             ],
             columnDefs: [
@@ -46,14 +47,14 @@ var data_jenis_kegiatan = (function () {
                             `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Detail">
                           <i class="fa fa-eye"></i>
                         </a>
-                        <a href="/akseslh/jenis-kelompok-masyarakat/` +
+                        <a href="/akseslh/kelompok-masyarakat/` +
                             full.id +
                             `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
                             full.id +
-                            ` href="#" onclick="deleteJenisKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                            ` href="#" onclick="deleteKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
                           <i class="fa fa-trash"></i>
                         </a>`
                         );
@@ -72,10 +73,10 @@ var data_jenis_kegiatan = (function () {
 })();
 
 jQuery(document).ready(function () {
-    data_jenis_kelompok_masyarakat.init();
+    data_kelompok_masyarakat.init();
 });
 
-window.deleteJenisKelompokMasyarakat = (input) => {
+window.deleteKelompokMasyarakat = (input) => {
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -89,7 +90,7 @@ window.deleteJenisKelompokMasyarakat = (input) => {
     }).then((result) => {
         if (result.value) {
             deleteData(
-                "/akseslh/jenis-kelompok-masyarakat/" + $(input).attr("data-id")
+                "/akseslh/kelompok-masyarakat/" + $(input).attr("data-id")
             ).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();

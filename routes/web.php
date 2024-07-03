@@ -41,4 +41,22 @@ Route::prefix('akseslh')->group(function () {
     // Datatable
     Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll']);
     Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKelompokMasyarakatController::class, 'getAll']);
+    // Route::resource('jenis-kegiatan', App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class);
+
+    // Datatable
+    Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll']);
+    Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll']);
+
+    // View Manual
+    Route::view('jenis-kegiatan', 'pages.akseslh.jenis-kegiatan.index');
+    Route::view('jenis-kegiatan/create', 'pages.akseslh.jenis-kegiatan.create');
+    Route::view('jenis-kegiatan/edit', 'pages.akseslh.jenis-kegiatan.edit');
+
+    Route::view('jenis-kelompok-masyarakat', 'pages.akseslh.jenis-kelompok-masyarakat.index');
+    Route::view('jenis-kelompok-masyarakat/create', 'pages.akseslh.jenis-kelompok-masyarakat.create');
+    Route::view('jenis-kelompok-masyarakat/edit', 'pages.akseslh.jenis-kelompok-masyarakat.edit');
+
+    Route::view('kelompok-masyarakat', 'pages.akseslh.kelompok-masyarakat.index');
+    Route::view('kelompok-masyarakat/create', 'pages.akseslh.kelompok-masyarakat.create');
+    Route::view('kelompok-masyarakat/edit', 'pages.akseslh.kelompok-masyarakat.edit');
 });

@@ -20,6 +20,7 @@ mix.js("resources/js/app.js", "public/js")
     .js(source + "home.js", build)
     .js(source + "akseslh_jenis_kegiatan.js", build)
     .js(source + "akseslh_jenis_kelompok_masyarakat.js", build)
+    .js(source + "akseslh_kelompok_masyarakat.js", build)
     .version();
 
 mix.disableNotifications();
