@@ -18,9 +18,6 @@
                             <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)"><i class="md md-lock"></i> Lock screen</a>
-                        </li>
-                        <li>
                             <a href="javascript:void(0)"><i class="md md-settings-power"></i> Logout</a>
                         </li>
                     </ul>
@@ -33,11 +30,27 @@
         <div id="sidebar-menu">
             <ul>
                 <li>
-                    <a href="index.html" class="waves-effect"><i class="md md-home"></i><span> Dashboard
-                        </span></a>
+                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-home" style="margin-right: 5px;"></i><span> Dashboard</span></a>
+                </li>
+                <li class="has_sub">
+                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-apps" style="margin-right: 5px;"></i><span> Data Master<i class="md md-add pull-right"></i></span></a>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="jenis-kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
+                        </li>
+                        <li>
+                            <a href="kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Kelompok Masyarakat</span></a>
+                        </li>
+                        <li>
+                            <a href="jenis-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Jenis Kegiatan</span></a>
+                        </li>
+                        <li>
+                            <a href="paket-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Paket Kegiatan</span></a>
+                        </li>
+                    </ul>
                 </li>
 
-                <li class="has_sub">
+                <!-- <li class="has_sub">
                     <a href="#" class="waves-effect"><i class="md md-mail"></i><span> Mail </span><span
                             class="pull-right"><i class="md md-add"></i></span></a>
                     <ul class="list-unstyled">
@@ -189,7 +202,7 @@
                             <a href="javascript:void(0);"><span>Menu Level 1.2</span></a>
                         </li>
                     </ul>
-                </li>
+                </li> -->
             </ul>
             <div class="clearfix"></div>
         </div>
