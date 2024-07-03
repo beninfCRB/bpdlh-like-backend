@@ -15,7 +15,7 @@ let build = "public/app/build/";
  */
 
 mix.js("resources/js/app.js", "public/js")
-    .js("public/app/app.js", build)
+    // .js("public/app/app.js", build)
     .js("public/app/api.js", build)
     .js(source + "home.js", build)
     .js(source + "akseslh_jenis_kegiatan.js", build)

@@ -1,5 +1,7 @@
 {
     "/js/app.js": "/js/app.js?id=836b03206f80491729e222523abd4845",
+    "/app/build/api.js": "/app/build/api.js?id=47e52af80c9adde9949da7a11a8c6df8",
     "/app/build/home.js": "/app/build/home.js?id=ac061723d36f2c1f706416cd7e9bd66a",
-    "/app/build/akseslh_jenis_kegiatan.js": "/app/build/akseslh_jenis_kegiatan.js?id=dbe4f45f5df5c1fd27f1f995aafd2b16"
+    "/app/build/akseslh_jenis_kegiatan.js": "/app/build/akseslh_jenis_kegiatan.js?id=dbe4f45f5df5c1fd27f1f995aafd2b16",
+    "/app/build/akseslh_jenis_kelompok_masyarakat.js": "/app/build/akseslh_jenis_kelompok_masyarakat.js?id=36d6e0c3134f66247e5ac3a98f2bdbc7"
 }

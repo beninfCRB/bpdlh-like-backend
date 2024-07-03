@@ -27,7 +27,6 @@ var data_jenis_kegiatan = (function () {
                 { data: "short_id" },
                 { data: "created_at" },
                 { data: "updated_at" },
-                { data: "username" },
                 {},
             ],
             columnDefs: [

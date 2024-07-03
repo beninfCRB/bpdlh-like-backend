@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class AkseslhUserEksternal extends AppModel
 {
-    use HasFactory;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $table = "akseslh_user_eksternals";
 
