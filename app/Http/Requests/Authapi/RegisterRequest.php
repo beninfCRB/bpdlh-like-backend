@@ -27,7 +27,8 @@ class RegisterRequest extends FormRequest
     {
         return [
             //
-            'id_kelompok_masyarakat'            => 'required|exists:akseslh_kelompok_masyarakats',
+            // 'id_kelompok_masyarakat'            => 'required|exists:akseslh_kelompok_masyarakats',
+            'akseslh_kelompok_masyarakat_id'    => 'required',
             'email_user_eksternal'              => 'required|email|unique:akseslh_user_eksternals,email_user_eksternal,' . ($this->user ? $this->user->id : 'NULL'),
             'nama_user_eksternal'               => 'required|max:255|string',
             'jenis_identitas_user_eksternal'    => 'required',
@@ -39,10 +40,10 @@ class RegisterRequest extends FormRequest
     // public function messages()
     // {
     //     return [
-    //         'id_kelompok_masyarakat.required'           => '1',
-    //         'email_user_eksternal.required'             => '1',
-    //         'akseslh_user_eksternals.required'          => '1',
-    //         'nomor_identitas_user_eksternal.required'   => '1',
+    //         'akseslh_kelompok_masyarakat_id.required'   => 1,
+    //         'email_user_eksternal.required'             => 1,
+    //         'nama_user_eksternal.required'              => 1,
+    //         'nomor_identitas_user_eksternal.required'   => 1,
     //     ];
     // }
 }
