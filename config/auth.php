@@ -46,6 +46,11 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        'akseslh' => [
+            'driver'    => 'token',
+            'provider'  => 'akseslh'
+        ],
     ],
 
     /*
@@ -69,6 +74,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'akseslh' => [
+            'driver'    => 'eloquent',
+            'model'     => App\Model\AkseslhUserEksternal::class,
         ],
 
         // 'users' => [

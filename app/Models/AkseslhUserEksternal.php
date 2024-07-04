@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use App\Models\AppModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\AppAuthenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AkseslhUserEksternal extends AppModel
+class AkseslhUserEksternal extends AppAuthenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable;
+
+    protected $guard = 'akseslh';
 
     protected $table = "akseslh_user_eksternals";
 
