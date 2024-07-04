@@ -217,7 +217,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var data_jenis_kegiatan = function () {
+var data_paket_kegiatan = function () {
   var initTable1 = function initTable1() {
     var table = $("#dt_paket_kegiatan");
 
@@ -232,9 +232,7 @@ var data_jenis_kegiatan = function () {
       ajax: "/akseslh/data-paket-kegiatan",
       columns: [{
         data: "DT_RowIndex"
-      }, {
-        data: "jenis_paket_kegiatan"
-      }, {
+      }, {}, {
         data: "nama_paket_kegiatan"
       }, {
         data: "deskripsi_paket_kegiatan"

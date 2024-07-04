@@ -36,26 +36,36 @@
                             </select>
                         </div>
                         <div class="col-md-8">
-                            <label for="nama_paket_kegiatan">Nama Paket Kegiatan <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nama_paket_kegiatan" name="nama_paket_kegiatan" placeholder="Nama Paket Kegiatan">
+                            <label for="nama_paket_kegiatan">Nama Paket Kegiatan <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nama_paket_kegiatan" name="nama_paket_kegiatan"
+                                placeholder="Nama Paket Kegiatan">
                         </div>
-                        <div class="col-md-12">
-                            <label for="deskripsi_paket_kegiatan">Deskripsi Paket Kegiatan <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="deskripsi_paket_kegiatan" name="deskripsi_paket_kegiatan" rows="3" placeholder="Deskripsi Paket Kegiatan"></textarea>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="quota_paket_kegiatan">Quota Paket Kegiatan <span class="text-danger">*</span></label>
-                            <input type="number" min=0 class="form-control" id="quota_paket_kegiatan" name="quota_paket_kegiatan">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="pagu_paket_kegiatan">Pagu Paket Kegiatan (Rp) <span class="text-danger">*</span></label>
-                            <input type="number" min=0 step="0.00" class="form-control" id="pagu_paket_kegiatan" name="pagu_paket_kegiatan">
+                        <div class="col-md-12 mt-5">
+                            <label for="deskripsi_paket_kegiatan">Deskripsi Paket Kegiatan <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control" id="deskripsi_paket_kegiatan" name="deskripsi_paket_kegiatan"
+                                rows="3" placeholder="Deskripsi Paket Kegiatan"></textarea>
                         </div>
                         <div class="col-md-4">
-                            <label for="tahap_pencairan_paket_kegiatan">Jml Tahap Pencairan <span class="text-danger">*</span></label>
-                            <input type="number" min=0 class="form-control" id="tahap_pencairan_paket_kegiatan" name="tahap_pencairan_paket_kegiatan">
+                            <label for="quota_paket_kegiatan">Quota Paket Kegiatan <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" min=0 class="form-control" id="quota_paket_kegiatan"
+                                name="quota_paket_kegiatan">
                         </div>
-                        
+                        <div class="col-md-4">
+                            <label for="pagu_paket_kegiatan">Pagu Paket Kegiatan (Rp) <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" min=0 step="0.00" class="form-control" id="pagu_paket_kegiatan"
+                                name="pagu_paket_kegiatan">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="tahap_pencairan_paket_kegiatan">Jml Tahap Pencairan <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" min=0 class="form-control" id="tahap_pencairan_paket_kegiatan"
+                                name="tahap_pencairan_paket_kegiatan">
+                        </div>
+
                         @error('paket_kegiatan')
                         {{ $message }}
                         @enderror

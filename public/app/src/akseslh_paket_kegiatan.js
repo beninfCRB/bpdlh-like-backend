@@ -8,7 +8,7 @@ import {
     showData,
 } from "../api";
 
-var data_jenis_kegiatan = (function () {
+var data_paket_kegiatan = (function () {
     var initTable1 = function () {
         var table = $("#dt_paket_kegiatan");
 
@@ -23,7 +23,7 @@ var data_jenis_kegiatan = (function () {
             ajax: "/akseslh/data-paket-kegiatan",
             columns: [
                 { data: "DT_RowIndex" },
-                { data: "jenis_paket_kegiatan" },
+                {},
                 { data: "nama_paket_kegiatan" },
                 { data: "deskripsi_paket_kegiatan" },
                 { data: "quota_paket_kegiatan" },

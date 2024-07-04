@@ -4,11 +4,6 @@
 
 @section('script')
 <script src="{{asset('app/build/akseslh_paket_kegiatan.js')}}" type="text/javascript"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#dt_paket_kegiatan').dataTable();
-} );
-</script>
 @endsection
 
 @section('content')
