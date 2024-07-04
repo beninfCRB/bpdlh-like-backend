@@ -30,22 +30,29 @@
         <div id="sidebar-menu">
             <ul>
                 <li>
-                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-home" style="margin-right: 5px;"></i><span> Dashboard</span></a>
+                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-home"
+                            style="margin-right: 5px;"></i><span> Dashboard</span></a>
                 </li>
                 <li class="has_sub">
-                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-apps" style="margin-right: 5px;"></i><span> Data Master<i class="md md-add pull-right"></i></span></a>
+                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-apps"
+                            style="margin-right: 5px;"></i><span> Data Master<i
+                                class="md md-add pull-right"></i></span></a>
                     <ul class="list-unstyled">
                         <li>
-                            <a href="jenis-kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
+                            <a href="/akseslh/jenis-kelompok-masyarakat" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
                         </li>
                         <li>
-                            <a href="kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Kelompok Masyarakat</span></a>
+                            <a href="kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
+                                <span>Kelompok Masyarakat</span></a>
                         </li>
                         <li>
-                            <a href="jenis-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Jenis Kegiatan</span></a>
+                            <a href="jenis-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
+                                <span>Jenis Kegiatan</span></a>
                         </li>
                         <li>
-                            <a href="paket-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Paket Kegiatan</span></a>
+                            <a href="paket-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
+                                <span>Paket Kegiatan</span></a>
                         </li>
                     </ul>
                 </li>

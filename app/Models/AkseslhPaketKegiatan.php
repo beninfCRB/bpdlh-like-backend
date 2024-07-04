@@ -6,11 +6,11 @@ use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AkseslhPaketKegitan extends AppModel
+class AkseslhPaketKegiatan extends AppModel
 {
     use HasFactory;
 
-    protected $table = "akseslh_paket_kegitans";
+    protected $table = "akseslh_paket_kegiatans";
 
     protected $fillable = [
         'akseslh_jenis_kegiatan_id',

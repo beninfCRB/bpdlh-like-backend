@@ -107,7 +107,7 @@
     <script src="{{asset('assets/datatables/dataTables.bootstrap.js')}}"></script>
 
     {{-- Mix --}}
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="{{ mix('app/build/app.js') }}"></script>
 
     @include('layouts._partials._message')
 

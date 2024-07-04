@@ -24,7 +24,7 @@
                 <h3 class="panel-title">Pengelolaan Data Jenis Kelompok Masyarakat</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="#" method="POST">
+                <form role="form" action="{{ route('jenis-kegiatan.store') }}" method="POST">
                     @csrf
                     <div class="form-group @error('jenis_kegiatan') has-error @enderror">
                         <label for="jenis_kegiatan">Jenis Kegiatan <span class="text-danger">*</span></label>

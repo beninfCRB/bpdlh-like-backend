@@ -24,12 +24,14 @@
                 <h3 class="panel-title">Pengelolaan Data Jenis Kegiatan</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="#" method="POST">
+                <form role="form" action="{{ route('jenis-kegiatan.update', $data->data->id) }}" method="POST">
                     @method('PUT')
                     @csrf
                     <div class="form-group @error('jenis_kegiatan') has-error @enderror">
                         <label for="jenis_kegiatan">Jenis Kegiatan <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="jenis_kegiatan" name="jenis_kegiatan" placeholder="Jenis Kegiatan" value="#">
+                        <input type="text" class="form-control" id="jenis_kegiatan" name="jenis_kegiatan"
+                            placeholder="Jenis Kegiatan"
+                            value="{{ old('jenis_kegiatan', $data->data->jenis_kegiatan) }}">
                         @error('jenis_kegiatan')
                         {{ $message }}
                         @enderror
