@@ -209,9 +209,9 @@ function _getResult() {
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-/*!*************************************************************!*\
-  !*** ./public/app/src/akseslh_jenis_kelompok_masyarakat.js ***!
-  \*************************************************************/
+/*!*******************************************************!*\
+  !*** ./public/app/src/akseslh_kelompok_masyarakat.js ***!
+  \*******************************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../api */ "./public/app/api.js");
 
@@ -219,7 +219,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var data_jenis_kegiatan = function () {
   var initTable1 = function initTable1() {
-    var table = $("#dt_jenis_kelompok_masyarakat");
+    var table = $("#dt_kelompok_masyarakat");
 
     // begin first table
     table.DataTable({
@@ -229,17 +229,19 @@ var data_jenis_kegiatan = function () {
       responsive: true,
       searchDelay: 500,
       processing: true,
-      ajax: "/akseslh/data-jenis-kelompok-masyarakat",
+      ajax: "/akseslh/data-kelompok-masyarakat",
       columns: [{
         data: "DT_RowIndex"
       }, {
         data: "jenis_kelompok_masyarakat"
       }, {
-        data: "short_id"
+        data: "kelompok_masyarakat"
       }, {
         data: "created_at"
       }, {
         data: "updated_at"
+      }, {
+        data: "username"
       }, {}],
       columnDefs: [{
         targets: 0,
@@ -249,7 +251,7 @@ var data_jenis_kegiatan = function () {
         targets: -1,
         orderable: false,
         render: function render(data, type, full, meta) {
-          return "\n                       <a href=\"/career/" + full.id + "\" class=\"btn btn-sm btn-clean btn-icon btn-icon-md\" title=\"Detail\">\n                          <i class=\"fa fa-eye\"></i>\n                        </a>\n                        <a href=\"/akseslh/jenis-kelompok-masyarakat/" + full.id + "/edit\" class=\"btn btn-sm btn-clean btn-icon btn-icon-md\" title=\"Ubah\">\n                          <i class=\"fa fa-pencil\"></i>\n                        </a>\n                        <a data-id=" + full.id + " href=\"#\" onclick=\"deleteJenisKelompokMasyarakat(this,event)\" class=\"btn btn-sm btn-clean btn-icon btn-icon-md\" title=\"Hapus\">\n                          <i class=\"fa fa-trash\"></i>\n                        </a>";
+          return "\n                       <a href=\"/career/" + full.id + "\" class=\"btn btn-sm btn-clean btn-icon btn-icon-md\" title=\"Detail\">\n                          <i class=\"fa fa-eye\"></i>\n                        </a>\n                        <a href=\"/akseslh/kelompok-masyarakat/" + full.id + "/edit\" class=\"btn btn-sm btn-clean btn-icon btn-icon-md\" title=\"Ubah\">\n                          <i class=\"fa fa-pencil\"></i>\n                        </a>\n                        <a data-id=" + full.id + " href=\"#\" onclick=\"deleteKelompokMasyarakat(this,event)\" class=\"btn btn-sm btn-clean btn-icon btn-icon-md\" title=\"Hapus\">\n                          <i class=\"fa fa-trash\"></i>\n                        </a>";
         }
       }]
     });
@@ -262,9 +264,9 @@ var data_jenis_kegiatan = function () {
   };
 }();
 jQuery(document).ready(function () {
-  data_jenis_kelompok_masyarakat.init();
+  data_kelompok_masyarakat.init();
 });
-window.deleteJenisKelompokMasyarakat = function (input) {
+window.deleteKelompokMasyarakat = function (input) {
   Swal.fire({
     title: "Konfirmasi Hapus",
     text: "Anda yakin akan menghapus data ?",
@@ -277,7 +279,7 @@ window.deleteJenisKelompokMasyarakat = function (input) {
     reverseButtons: false
   }).then(function (result) {
     if (result.value) {
-      (0,_api__WEBPACK_IMPORTED_MODULE_0__.deleteData)("/akseslh/jenis-kelompok-masyarakat/" + $(input).attr("data-id")).then(function (res) {
+      (0,_api__WEBPACK_IMPORTED_MODULE_0__.deleteData)("/akseslh/kelompok-masyarakat/" + $(input).attr("data-id")).then(function (res) {
         Swal.fire("Sukses", "Data berhasil dihapus", "success");
         window.location.reload();
       });

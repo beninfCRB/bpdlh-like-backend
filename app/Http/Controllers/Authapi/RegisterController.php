@@ -26,26 +26,34 @@ class RegisterController extends ApiController
 
     public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
     {
-        return $this->sendSuccess(
-            Hash::make('rifqiarnoldy@gmail.com'),
-            "Uye tone"
-        );
         $input = $request->all();
 
+        $user = AkseslhUserEksternal::create([
+            'akseslh_kelompok_masyarakat_id'    => $input['akseslh_kelompok_masyarakat_id'],
+            'email_user_eksternal'              => $input['email_user_eksternal'],
+            // 'password_user_eksternal'           => $input['password_user_eksternal'],
+            'password_user_eksternal'           => Hash::make('1234567890'),
+            'nama_user_eksternal'               => $input['nama_user_eksternal'],
+            'jenis_identitas_user_eksternal'    => $input['jenis_identitas_user_eksternal'],
+            'nomor_identitas_user_eksternal'    => $input['nomor_identitas_user_eksternal'],
+            'nomor_hp_user_eksternal'           => $input['nomor_hp_user_eksternal'],
+        ]);
+        $token = $user->createToken("auth")->plainTextToken;
+        dd($token);
         \DB::beginTransaction();
         try {
             //code...
-            $user = AkseslhUserEksternal::find('5a0137ef-0c6f-483c-b8be-590d921ec87e');
-            // $user = AkseslhUserEksternal::create([
-            //     'akseslh_kelompok_masyarakat_id'    => $input['akseslh_kelompok_masyarakat_id'],
-            //     'email_user_eksternal'              => $input['email_user_eksternal'],
-            //     // 'password_user_eksternal'           => $input['password_user_eksternal'],
-            //     'password_user_eksternal'           => Hash::make('1234567890'),
-            //     'nama_user_eksternal'               => $input['nama_user_eksternal'],
-            //     'jenis_identitas_user_eksternal'    => $input['jenis_identitas_user_eksternal'],
-            //     'nomor_identitas_user_eksternal'    => $input['nomor_identitas_user_eksternal'],
-            //     'nomor_hp_user_eksternal'           => $input['nomor_hp_user_eksternal'],
-            // ]);
+            // $user = AkseslhUserEksternal::find('5a0137ef-0c6f-483c-b8be-590d921ec87e');
+            $user = AkseslhUserEksternal::create([
+                'akseslh_kelompok_masyarakat_id'    => $input['akseslh_kelompok_masyarakat_id'],
+                'email_user_eksternal'              => $input['email_user_eksternal'],
+                // 'password_user_eksternal'           => $input['password_user_eksternal'],
+                'password_user_eksternal'           => Hash::make('1234567890'),
+                'nama_user_eksternal'               => $input['nama_user_eksternal'],
+                'jenis_identitas_user_eksternal'    => $input['jenis_identitas_user_eksternal'],
+                'nomor_identitas_user_eksternal'    => $input['nomor_identitas_user_eksternal'],
+                'nomor_hp_user_eksternal'           => $input['nomor_hp_user_eksternal'],
+            ]);
             // $data = \DB::table('akseslh_user_eksternals')->insert([
             //     'id_kelompok_masyarakat'            => $input['id_kelompok_masyarakat'],
             //     'email_user_eksternal'              => $input['email_user_eksternal'],
@@ -57,12 +65,13 @@ class RegisterController extends ApiController
             //     'created_at'    => Carbon::now(),
             //     'updated_at'    => Carbon::now(),
             // ]);
+            $token = $user->createToken("auth");
 
-            Notification::route('mail', 'email@example.com')->notify(new RegisterNotification());
+            // Notification::route('mail', 'email@example.com')->notify(new RegisterNotification());
             // Notification::send($user, new RegisterNotification());
 
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($user);
+            return $this->sendSuccess(['token' => $token]);
         } catch (\Throwable $th) {
             //throw $th;
             \DB::rollBack(); // rollback the changes

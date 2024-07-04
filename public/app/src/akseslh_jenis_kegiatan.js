@@ -24,7 +24,8 @@ var data_jenis_kegiatan = (function () {
             columns: [
                 { data: "DT_RowIndex" },
                 { data: "jenis_kegiatan" },
-                { data: "username" },
+                { data: "created_at" },
+                { data: "updated_at" },
                 {},
             ],
             columnDefs: [
@@ -32,6 +33,30 @@ var data_jenis_kegiatan = (function () {
                     targets: 0,
                     searchable: false,
                     orderable: false,
+                },
+                {
+                    targets: 2,
+                    searchable: false,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        if (full.end_date === null) {
+                            return null;
+                        } else {
+                            return dayJs(full.end_date).format("DD MMM YYYY");
+                        }
+                    },
+                },
+                {
+                    targets: 3,
+                    searchable: false,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        if (full.end_date === null) {
+                            return null;
+                        } else {
+                            return dayJs(full.end_date).format("DD MMM YYYY");
+                        }
+                    },
                 },
                 {
                     targets: -1,

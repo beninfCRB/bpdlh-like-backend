@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAkseslhPaketKegitansTable extends Migration
+class CreateAkseslhPaketKegiatansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,7 @@ class CreateAkseslhPaketKegitansTable extends Migration
      */
     public function up()
     {
-        Schema::create('akseslh_paket_kegitans', function (Blueprint $table) {
-            // $table->id();
+        Schema::create('akseslh_paket_kegiatans', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('akseslh_jenis_kegiatan_id');
             $table->string('nama_paket_kegiatan', 150);
@@ -35,6 +34,6 @@ class CreateAkseslhPaketKegitansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('akseslh_paket_kegitans');
+        Schema::dropIfExists('akseslh_paket_kegiatans');
     }
 }

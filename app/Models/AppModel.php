@@ -7,9 +7,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
 use Exception;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AppModel extends Model
 {
+    use SoftDeletes;
     /**
      * The "type" of the auto-incrementing ID.
      *
