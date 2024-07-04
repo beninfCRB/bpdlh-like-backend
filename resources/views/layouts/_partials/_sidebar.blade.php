@@ -39,20 +39,16 @@
                                 class="md md-add pull-right"></i></span></a>
                     <ul class="list-unstyled">
                         <li>
-                            <a href="/akseslh/jenis-kelompok-masyarakat" class="waves-effect"
-                                style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
+                            <a href="/akseslh/jenis-kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
                         </li>
                         <li>
-                            <a href="kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
-                                <span>Kelompok Masyarakat</span></a>
+                            <a href="/akseslh/kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Kelompok Masyarakat</span></a>
                         </li>
                         <li>
-                            <a href="jenis-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
-                                <span>Jenis Kegiatan</span></a>
+                            <a href="/akseslh/jenis-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Jenis Kegiatan</span></a>
                         </li>
                         <li>
-                            <a href="paket-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
-                                <span>Paket Kegiatan</span></a>
+                            <a href="/akseslh/paket-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Paket Kegiatan</span></a>
                         </li>
                     </ul>
                 </li>
