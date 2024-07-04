@@ -50,6 +50,9 @@
                         <li>
                             <a href="/akseslh/paket-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Paket Kegiatan</span></a>
                         </li>
+                        <li>
+                            <a href="/akseslh/pic-kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
+                        </li>
                     </ul>
                 </li>
 

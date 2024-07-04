@@ -47,4 +47,8 @@ Route::prefix('akseslh')->group(function () {
     Route::view('paket-kegiatan', 'pages.akseslh.paket-kegiatan.index');
     Route::view('paket-kegiatan/create', 'pages.akseslh.paket-kegiatan.create');
     Route::view('paket-kegiatan/edit', 'pages.akseslh.paket-kegiatan.edit');
+
+    Route::view('pic-kelompok-masyarakat', 'pages.akseslh.pic-kelompok-masyarakat.index');
+    Route::view('pic-kelompok-masyarakat/create', 'pages.akseslh.pic-kelompok-masyarakat.create');
+    Route::view('pic-kelompok-masyarakat/edit', 'pages.akseslh.pic-kelompok-masyarakat.edit');
 });
