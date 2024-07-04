@@ -24,34 +24,28 @@
                 <h3 class="panel-title">Pengelolaan Data Jenis Kelompok Masyarakat</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="#" method="POST">
+                <form role="form" action="{{ route('jenis-kelompok-masyarakat.store') }}" method="POST">
                     @csrf
-                    <div class="form-group @error('jenis_kelompok_masyarakat') has-error @enderror row">
-                        <div class="col-sm-12">
-                            <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="jenis_kelompok_masyarakat"
-                                name="jenis_kelompok_masyarakat" placeholder="Jenis Kelompok Masyarakat">
-                        </div>
-                        <div class="col-sm-12">
-                            <label for="short_id">Nomor Urut<span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" min=0 id="short_id" name="short_id" default=0>
-                        </div>
+                    <div class="form-group @error('jenis_kelompok_masyarakat') has-error @enderror">
+                        <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="jenis_kelompok_masyarakat"
+                            name="jenis_kelompok_masyarakat" placeholder="Jenis Kelompok Masyarakat">
                         @error('jenis_kelompok_masyarakat')
-                        <label for="jenis_kelompok_masyarakat" class="error">
+                        <span class="error">
                             {{ $message }}
-                        </label>
+                        </span>
                         @enderror
                     </div>
 
-                    <div class="form-group @error('sort_id') has-error @enderror">
-                        <label for="sort_id">Sort Id <span class="text-danger">*</span></label>
+                    <div class="form-group @error('short_id') has-error @enderror">
+                        <label for="short_id">Nomor Urut <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" min=0 id="short_id" name="short_id"
-                            value="{{ old('sort_id') }}">
-                        @error('sort_id')
-                        <label for="sort_id" class="error">
+                            value="{{ old('short_id') }}">
+                        @error('short_id')
+                        <span class="error">
                             {{ $message }}
-                        </label>
+                        </span>
                         @enderror
                     </div>
                     <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
