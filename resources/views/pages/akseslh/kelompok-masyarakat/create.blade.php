@@ -24,24 +24,38 @@
                 <h3 class="panel-title">Pengelolaan Data Kelompok Masyarakat</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="#" method="POST">
+                <form role="form" action="{{ route('kelompok-masyarakat.store') }}" method="POST">
                     @csrf
                     <div class="form-group @error('kelompok_masyarakat') has-error @enderror">
-                        <div class="cols-md-6">
-                            <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span class="text-danger">*</span></label>
-                            <select class="form-control" required id="jenis_kelamin" name="jenis_kelamin" required>
-                                <option class='form-control' value=''>- Pilih Data -</option>
-                                <option class='form-control' value='jns_klp1'>Jenis Kelompok 1</option>
-                                <option class='form-control' value='jns_klp1'>Jenis Kelompok 2</option>
-                            </select>
-                        </div>
-                        <div class="cols-md-6">
-                            <label for="kelompok_masyarakat">Kelompok Masyarakat <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="kelompok_masyarakat" name="kelompok_masyarakat" placeholder="Nama Kelompok Masyarakat">
-                        </div>
-                        
-                        @error('jenis_kelompok_masyarakat')
-                        {{ $message }}
+                        <label for="akseslh_jenis_kelompok_masyarakat_id">Jenis Kelompok Masyarakat <span
+                                class="text-danger">*</span></label>
+                        <select class="form-control" required id="akseslh_jenis_kelompok_masyarakat_id"
+                            name="akseslh_jenis_kelompok_masyarakat_id">
+                            <option class='form-control' value=''>- Pilih Data -</option>
+                            @isset($jenisKelompokMasyarakat)
+                            @foreach ($jenisKelompokMasyarakat as $item)
+
+                            <option class='form-control' value="{{ $item['id'] }}">{{
+                                $item['jenis_kelompok_masyarakat']
+                                }}
+                            </option>
+                            @endforeach
+                            @endisset
+                        </select>
+                        @error('akseslh_jenis_kelompok_masyarakat_id')
+                        <span class="error">
+                            {{ $message }}
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="form-group @error('kelompok_masyarakat') has-error @enderror">
+                        <label for="kelompok_masyarakat">Kelompok Masyarakat <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="kelompok_masyarakat" name="kelompok_masyarakat"
+                            placeholder="Nama Kelompok Masyarakat">
+                        @error('kelompok_masyarakat')
+                        <span class="error">
+                            {{ $message }}
+                        </span>
                         @enderror
                     </div>
                     <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>

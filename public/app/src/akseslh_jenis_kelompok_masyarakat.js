@@ -8,7 +8,7 @@ import {
     showData,
 } from "../api";
 
-var data_jenis_kegiatan = (function () {
+var data_jenis_kelompok_masyarakat = (function () {
     var initTable1 = function () {
         var table = $("#dt_jenis_kelompok_masyarakat");
 
@@ -34,6 +34,30 @@ var data_jenis_kegiatan = (function () {
                     targets: 0,
                     searchable: false,
                     orderable: false,
+                },
+                {
+                    targets: 3,
+                    searchable: false,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        if (full.end_date === null) {
+                            return null;
+                        } else {
+                            return dayJs(full.end_date).format("DD MMM YYYY");
+                        }
+                    },
+                },
+                {
+                    targets: 4,
+                    searchable: false,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        if (full.end_date === null) {
+                            return null;
+                        } else {
+                            return dayJs(full.end_date).format("DD MMM YYYY");
+                        }
+                    },
                 },
                 {
                     targets: -1,

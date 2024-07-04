@@ -3,24 +3,23 @@
 
 namespace App\Services\Akseslh;
 
-
-use App\Models\AkseslhJenisKelompokMasyarakat;
+use App\Models\AkseslhKelompokMasyarakat;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
-class JenisKelompokMasyarakatService extends AppService implements AppServiceInterface
+class KelompokMasyarakatService extends AppService implements AppServiceInterface
 {
 
-    public function __construct(AkseslhJenisKelompokMasyarakat $model)
+    public function __construct(AkseslhKelompokMasyarakat $model)
     {
         parent::__construct($model);
     }
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with('jenis')->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -46,9 +45,9 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
         try {
 
             $data = $this->model->newQuery()->create([
-                'jenis_kelompok_masyarakat'     =>  $data['jenis_kelompok_masyarakat'],
-                'short_id'                      =>  $data['short_id'],
-                'flag'                          =>  1,
+                'akseslh_jenis_kelompok_masyarakat_id'  =>  $data['akseslh_jenis_kelompok_masyarakat_id'],
+                'kelompok_masyarakat'                   =>  $data['kelompok_masyarakat'],
+                'flag'                                  => 1,
             ]);
 
             \DB::commit(); // commit the changes
@@ -67,8 +66,7 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
 
         try {
 
-            $read->jenis_kelompok_masyarakat    =   $data['jenis_kelompok_masyarakat'];
-            $read->short_id                     =   $data['short_id'];
+            $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
             $read->save();
 
             \DB::commit(); // commit the changes
@@ -213,19 +211,19 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
         return $result;
     }
 
-    public function apiGetAll()
+    public function apiGetByIdJenisKelompokMasyarakat($id)
     {
         $result  = $this->model->newQuery()
-            ->where('flag', true)
-            ->orderBy('short_id', 'ASC')
+            ->where('akseslh_jenis_kelompok_masyarakat_id', $id)
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         $result->transform(function ($items, $key) {
             return [
-                'id'                            => $items->id,
-                'jenis_kelompok_masyarakat'     => $items->jenis_kelompok_masyarakat,
-                'short_id'                      => $items->short_id,
-                'flag'                          => $items->flag,
+                'id'                                    => $items->id,
+                'akseslh_jenis_kelompok_masyarakat_id'  => $items->akseslh_jenis_kelompok_masyarakat_id,
+                'kelompok_masyarakat'                   => $items->kelompok_masyarakat,
+                'flag'                                  => $items->flag,
             ];
         });
 

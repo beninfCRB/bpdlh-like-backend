@@ -4,11 +4,6 @@
 
 @section('script')
 <script src="{{asset('app/build/akseslh_kelompok_masyarakat.js')}}" type="text/javascript"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#dt_kelompok_masyarakat').dataTable();
-} );
-</script>
 @endsection
 
 @section('content')
