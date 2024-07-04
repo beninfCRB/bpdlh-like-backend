@@ -58,7 +58,10 @@
                         </span>
                         @enderror
                     </div>
-                    <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                    <div class="row">
+                        <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
+                        <button type="button" class="btn btn-inverse waves-effect waves-light" onclick="window.location='/akseslh/kelompok-masyarakat';">Kembali</button>
+                    </div>
                 </form>
             </div><!-- panel-body -->
         </div> <!-- panel -->
