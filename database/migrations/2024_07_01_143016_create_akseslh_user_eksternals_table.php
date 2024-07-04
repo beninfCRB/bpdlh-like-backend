@@ -18,7 +18,7 @@ class CreateAkseslhUserEksternalsTable extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('akseslh_kelompok_masyarakat_id');
             $table->string('email_user_eksternal', 100)->unique();
-            $table->string('password_user_eksternal', 100);
+            $table->string('password_user_eksternal', 100)->nullable();
             $table->string('nama_user_eksternal', 255);
             $table->enum('jenis_identitas_user_eksternal', ['KTP', 'SIM', 'Kartu Mahasiswa'])->default('KTP');
             $table->string('nomor_identitas_user_eksternal', 20);

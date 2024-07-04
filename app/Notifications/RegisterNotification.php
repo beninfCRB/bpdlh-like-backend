@@ -45,9 +45,10 @@ class RegisterNotification extends Notification
     {
 
         return (new MailMessage)
-            ->line('The introduction to the notification.')
+            ->line('Selamat akun anda sudah aktif.')
+            ->line('Silahkan masuk ke aplikasi menggunakan email yang anda daftarkan dan password di bawah ini.')
             ->line($this->password)
-            ->line('Thank you for using our application!');
+            ->line('Terimakasih sudah mendaftar!');
     }
 
     /**

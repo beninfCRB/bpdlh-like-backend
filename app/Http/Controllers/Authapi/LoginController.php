@@ -27,12 +27,39 @@ class LoginController extends ApiController
 
     public function authenticate(LoginRequest $request): \Illuminate\Http\JsonResponse
     {
-        $credentials = $request->only('email_user_eksternal', 'password_user_eksternal');
-        dd(Auth::guard('akseslh')->attempt($credentials));
-        if (Auth::guard('akseslh')->attempt($credentials)) {
-            # code...
-        }
+        // Get all input
+        $input = $request->all();
 
-        return $this->sendSuccess();
+        try {
+
+            $user = AkseslhUserEksternal::where([
+                'email_user_eksternal'              => $input['email_user_eksternal'],
+            ])->first();
+
+            if ($user) {
+
+                if (!$user->password_user_eksternal) {
+
+                    return $this->sendError(null, "account is not active yet");
+                }
+
+                if (Hash::check($input['password_user_eksternal'], $user->password_user_eksternal)) {
+
+                    // Create token for user to access dashboard
+                    $token = $user->createToken("auth")->plainTextToken;
+
+                    // Return token to frontend
+                    return $this->sendSuccess(['token' => $token]);
+                }
+
+                return $this->sendError(null, "Credential not match");
+            }
+
+            return $this->sendError(null, "User not found");
+        } catch (\Throwable $th) {
+
+            // return error
+            return $this->sendError(null, env('APP_ENV') == 'local' ? $th->getMessage() : 'Internal server error', 500);
+        }
     }
 }

@@ -25,6 +25,8 @@ class LoginRequest extends FormRequest
     {
         return [
             //
+            'email_user_eksternal'    => 'required|email',
+            'password_user_eksternal' => 'required'
         ];
     }
 }

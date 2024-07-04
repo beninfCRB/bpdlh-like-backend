@@ -37,27 +37,50 @@ class RegisterController extends ApiController
         // Begin db transaction
         \DB::beginTransaction();
         try {
-            //Insert data user to database
-            $user = AkseslhUserEksternal::create([
+
+            $user = AkseslhUserEksternal::where([
                 'akseslh_kelompok_masyarakat_id'    => $input['akseslh_kelompok_masyarakat_id'],
                 'email_user_eksternal'              => $input['email_user_eksternal'],
-                'password_user_eksternal'           => Hash::make($default_password),
-                'nama_user_eksternal'               => $input['nama_user_eksternal'],
                 'jenis_identitas_user_eksternal'    => $input['jenis_identitas_user_eksternal'],
                 'nomor_identitas_user_eksternal'    => $input['nomor_identitas_user_eksternal'],
-                'nomor_hp_user_eksternal'           => $input['nomor_hp_user_eksternal'],
-            ]);
+            ])->first();
 
-            // Create token for user to access dashboard
-            $token = $user->createToken("auth")->plainTextToken;
+            if ($user) {
+                if ($user->password_user_eksternal != null) {
+                    # code...
+                    return $this->sendError(null, "Already registered");
+                }
+                # code...
+                $user->password_user_eksternal = Hash::make($default_password);
+                $user->save();
 
-            // Send default database to email user
-            Notification::route('mail', $input['email_user_eksternal'])->notify(new RegisterNotification($default_password));
+                // Create token for user to access dashboard
+                $token = $user->createToken("auth")->plainTextToken;
 
-            \DB::commit(); // commit the changes
+                // Send default database to email user
+                Notification::route('mail', $input['email_user_eksternal'])->notify(new RegisterNotification($default_password));
 
-            // Return token to frontend
-            return $this->sendSuccess(['token' => $token]);
+                \DB::commit(); // commit the changes
+
+                // Return token to frontend
+                return $this->sendSuccess(['token' => $token]);
+            }
+
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, "User not found");
+
+            //Insert data user to database
+            // $user = AkseslhUserEksternal::create([
+            //     'akseslh_kelompok_masyarakat_id'    => $input['akseslh_kelompok_masyarakat_id'],
+            //     'email_user_eksternal'              => $input['email_user_eksternal'],
+            //     'password_user_eksternal'           => Hash::make($default_password),
+            //     'nama_user_eksternal'               => $input['nama_user_eksternal'],
+            //     'jenis_identitas_user_eksternal'    => $input['jenis_identitas_user_eksternal'],
+            //     'nomor_identitas_user_eksternal'    => $input['nomor_identitas_user_eksternal'],
+            //     'nomor_hp_user_eksternal'           => $input['nomor_hp_user_eksternal'],
+            // ]);
+
+
         } catch (\Throwable $th) {
 
             \DB::rollBack(); // rollback the changes
