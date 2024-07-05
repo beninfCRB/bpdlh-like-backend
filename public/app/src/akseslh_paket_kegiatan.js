@@ -28,7 +28,7 @@ var data_paket_kegiatan = (function () {
                 { data: "deskripsi_paket_kegiatan" },
                 { data: "quota_paket_kegiatan" },
                 { data: "pagu_paket_kegiatan" },
-                { data: "tahap_paket_kegiatan" },
+                { data: "tahap_pencairan_paket_kegiatan" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -38,6 +38,16 @@ var data_paket_kegiatan = (function () {
                     targets: 0,
                     searchable: false,
                     orderable: false,
+                },
+                {
+                    targets: 1,
+                    render: function (data, type, full, meta) {
+                        if (full.jenis === null) {
+                            return "-";
+                        } else {
+                            return full.jenis_kegiatan.jenis_kegiatan;
+                        }
+                    },
                 },
                 {
                     targets: -1,

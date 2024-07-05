@@ -20,7 +20,7 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with('jenis_kegiatan')->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -44,9 +44,13 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
-
             $data = $this->model->newQuery()->create([
-                'jenis_kegiatan'       =>  $data['jenis_kegiatan'],
+                'akseslh_jenis_kegiatan_id'         => $data['akseslh_jenis_kegiatan_id'],
+                'nama_paket_kegiatan'               => $data['nama_paket_kegiatan'],
+                'deskripsi_paket_kegiatan'          => $data['deskripsi_paket_kegiatan'],
+                'quota_paket_kegiatan'              => $data['quota_paket_kegiatan'],
+                'pagu_paket_kegiatan'               => $data['pagu_paket_kegiatan'],
+                'tahap_pencairan_paket_kegiatan'    => $data['tahap_pencairan_paket_kegiatan'],
             ]);
 
             \DB::commit(); // commit the changes

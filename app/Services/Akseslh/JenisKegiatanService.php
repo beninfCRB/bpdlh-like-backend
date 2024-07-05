@@ -25,6 +25,22 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
 
+    public function getAllAttr()
+    {
+        $result  = $this->model->newQuery()
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        $result->transform(function ($items, $key) {
+            return [
+                'id'                 => $items->id,
+                'jenis_kegiatan'     => $items->jenis_kegiatan,
+            ];
+        });
+
+        return $this->sendSuccess($result);
+    }
+
     public function getPaginated($search = null, $page = null, $perPage = null, $lang = null)
     {
         $result =   $this->switchLang($search, $page, $perPage, $lang);

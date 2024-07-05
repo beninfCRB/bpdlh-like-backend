@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Cms\Announcement\UpdateCareerRequest;
-use App\Services\Akseslh\PaketKegiatanService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
+use App\Http\Controllers\ApiController;
+use App\Services\Akseslh\JenisKegiatanService;
+use App\Services\Akseslh\PaketKegiatanService;
 
 class PaketKegiatanController extends ApiController
 {
     protected $paketKegiatanService;
+    protected $jenisKegiatanService;
 
     public function __construct(
         PaketKegiatanService $paketKegiatanService,
+        JenisKegiatanService $jenisKegiatanService,
         Request $request
     ) {
         $this->paketKegiatanService   =   $paketKegiatanService;
+        $this->jenisKegiatanService   =   $jenisKegiatanService;
         parent::__construct($request);
     }
 
@@ -28,7 +31,8 @@ class PaketKegiatanController extends ApiController
 
     public function create()
     {
-        return view("pages.akseslh.paket-kegiatan.create");
+        $jenisKegiatan = $this->jenisKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.paket-kegiatan.create", compact('jenisKegiatan'));
     }
 
     public function edit($id)
@@ -46,8 +50,12 @@ class PaketKegiatanController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string',
-            'short_id'                      => 'required|numeric|min:0',
+            'akseslh_jenis_kegiatan_id'         => 'required|exists:akseslh_jenis_kegiatans,id',
+            'nama_paket_kegiatan'               => 'required|string',
+            'deskripsi_paket_kegiatan'          => 'required|string',
+            'quota_paket_kegiatan'              => 'required|numeric',
+            'pagu_paket_kegiatan'               => 'required',
+            'tahap_pencairan_paket_kegiatan'    => 'required|numeric',
         ]);
 
         $result =   $this->paketKegiatanService->create($input);

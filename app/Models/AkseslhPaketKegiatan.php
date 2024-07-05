@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AkseslhPaketKegiatan extends AppModel
@@ -21,4 +22,14 @@ class AkseslhPaketKegiatan extends AppModel
         'tahap_pencairan_paket_kegiatan',
         'username'
     ];
+
+    /**
+     * Get the jenis_kegiatan that owns the AkseslhPaketKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function jenis_kegiatan(): BelongsTo
+    {
+        return $this->belongsTo(AkseslhJenisKegiatan::class, 'akseslh_jenis_kegiatan_id');
+    }
 }
