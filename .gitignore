@@ -13,3 +13,8 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 composer.lock
+public/js/app.js
+public/app/src/akseslh_paket_kegiatan.js
+public/app/build/home.js
+public/app/build/app.js
+public/mix-manifest.json

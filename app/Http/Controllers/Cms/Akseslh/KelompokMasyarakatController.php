@@ -33,14 +33,14 @@ class KelompokMasyarakatController extends ApiController
     public function create()
     {
         $jenisKelompokMasyarakat = $this->jenisKelompokMasyarakatService->apiGetAll()->data;
-        // dd($jenisKelompokMasyarakat);
         return view("pages.akseslh.kelompok-masyarakat.create", compact('jenisKelompokMasyarakat'));
     }
 
     public function edit($id)
     {
         $data   =   $this->kelompokMasyarakatService->getById($id);
-        return view("pages.akseslh.kelompok-masyarakat.edit", compact('data'));
+        $jenisKelompokMasyarakat = $this->jenisKelompokMasyarakatService->apiGetAll()->data;
+        return view("pages.akseslh.kelompok-masyarakat.edit", compact('data', 'jenisKelompokMasyarakat'));
     }
 
     public function show($id)
@@ -74,8 +74,8 @@ class KelompokMasyarakatController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string',
-            'short_id'                      => 'required|numeric|min:0',
+            'akseslh_jenis_kelompok_masyarakat_id'     => 'required|string',
+            'kelompok_masyarakat'                      => 'required|string',
         ]);
 
         $result =   $this->kelompokMasyarakatService->update($id, $input);

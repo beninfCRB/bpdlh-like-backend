@@ -38,7 +38,8 @@ class PaketKegiatanController extends ApiController
     public function edit($id)
     {
         $data   =   $this->paketKegiatanService->getById($id);
-        return view("pages.akseslh.paket-kegiatan.edit", compact('data'));
+        $jenisKegiatan = $this->jenisKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan'));
     }
 
     public function show($id)
@@ -76,8 +77,12 @@ class PaketKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string',
-            'short_id'                      => 'required|numeric|min:0',
+            'akseslh_jenis_kegiatan_id'         => 'required|exists:akseslh_jenis_kegiatans,id',
+            'nama_paket_kegiatan'               => 'required|string',
+            'deskripsi_paket_kegiatan'          => 'required|string',
+            'quota_paket_kegiatan'              => 'required|numeric',
+            'pagu_paket_kegiatan'               => 'required',
+            'tahap_pencairan_paket_kegiatan'    => 'required|numeric',
         ]);
 
         $result =   $this->paketKegiatanService->update($id, $input);

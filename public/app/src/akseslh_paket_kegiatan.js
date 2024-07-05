@@ -50,6 +50,30 @@ var data_paket_kegiatan = (function () {
                     },
                 },
                 {
+                    targets: 7,
+                    searchable: false,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        if (full.end_date === null) {
+                            return null;
+                        } else {
+                            return dayJs(full.end_date).format("DD MMM YYYY");
+                        }
+                    },
+                },
+                {
+                    targets: 8,
+                    searchable: false,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        if (full.end_date === null) {
+                            return null;
+                        } else {
+                            return dayJs(full.end_date).format("DD MMM YYYY");
+                        }
+                    },
+                },
+                {
                     targets: -1,
                     orderable: false,
                     render: function (data, type, full, meta) {

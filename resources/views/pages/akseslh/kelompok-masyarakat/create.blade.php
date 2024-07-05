@@ -34,11 +34,18 @@
                             <option class='form-control' value=''>- Pilih Data -</option>
                             @isset($jenisKelompokMasyarakat)
                             @foreach ($jenisKelompokMasyarakat as $item)
+                            @if (old('akseslh_jenis_kelompok_masyarakat_id'))
 
+                            <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                $item['jenis_kelompok_masyarakat']
+                                }}
+                            </option>
+                            @else
                             <option class='form-control' value="{{ $item['id'] }}">{{
                                 $item['jenis_kelompok_masyarakat']
                                 }}
                             </option>
+                            @endif
                             @endforeach
                             @endisset
                         </select>
@@ -51,7 +58,7 @@
                     <div class="form-group @error('kelompok_masyarakat') has-error @enderror">
                         <label for="kelompok_masyarakat">Kelompok Masyarakat <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="kelompok_masyarakat" name="kelompok_masyarakat"
-                            placeholder="Nama Kelompok Masyarakat">
+                            placeholder="Nama Kelompok Masyarakat" value="{{ old('kelompok_masyarakat') }}">
                         @error('kelompok_masyarakat')
                         <span class="error">
                             {{ $message }}
@@ -60,7 +67,8 @@
                     </div>
                     <div class="row">
                         <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
-                        <button type="button" class="btn btn-inverse waves-effect waves-light" onclick="window.location='/akseslh/kelompok-masyarakat';">Kembali</button>
+                        <button type="button" class="btn btn-inverse waves-effect waves-light"
+                            onclick="window.location='/akseslh/kelompok-masyarakat';">Kembali</button>
                     </div>
                 </form>
             </div><!-- panel-body -->

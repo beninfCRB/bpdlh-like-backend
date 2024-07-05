@@ -69,7 +69,12 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
+            $read->akseslh_jenis_kegiatan_id         = $data['akseslh_jenis_kegiatan_id'];
+            $read->nama_paket_kegiatan               = $data['nama_paket_kegiatan'];
+            $read->deskripsi_paket_kegiatan          = $data['deskripsi_paket_kegiatan'];
+            $read->quota_paket_kegiatan              = $data['quota_paket_kegiatan'];
+            $read->pagu_paket_kegiatan               = $data['pagu_paket_kegiatan'];
+            $read->tahap_pencairan_paket_kegiatan    = $data['tahap_pencairan_paket_kegiatan'];
             $read->save();
 
             \DB::commit(); // commit the changes

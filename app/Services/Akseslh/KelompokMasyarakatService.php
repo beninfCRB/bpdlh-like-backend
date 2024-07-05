@@ -66,7 +66,9 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
 
         try {
 
-            $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
+            $read->akseslh_jenis_kelompok_masyarakat_id =   $data['akseslh_jenis_kelompok_masyarakat_id'];
+            $read->kelompok_masyarakat                  =   $data['kelompok_masyarakat'];
+            $read->flag                                 =   1;
             $read->save();
 
             \DB::commit(); // commit the changes

@@ -24,46 +24,102 @@
                 <h3 class="panel-title">Pengelolaan Data Paket Kegiatan</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="#" method="POST">
+                <form role="form" action="{{ route('paket-kegiatan.update', $data->data->id) }}" method="POST">
                     @method('PUT')
                     @csrf
-                    <div class="form-group @error('paket_kegiatan') has-error @enderror row">
-                        <div class="col-md-4">
-                            <label for="jenis_kegiatan">Jenis Kegiatan <span class="text-danger">*</span></label>
-                            <select class="form-control" required id="jenis_kegiatan" name="jenis_kegiatan" required>
+                    <div class="row">
+                        <div class="form-group @error('akseslh_jenis_kegiatan_id') has-error @enderror col-md-4">
+                            <label for="akseslh_jenis_kegiatan_id">Jenis Kegiatan <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-control" required id="akseslh_jenis_kegiatan_id"
+                                name="akseslh_jenis_kegiatan_id" required>
                                 <option class='form-control' value=''>- Pilih Data -</option>
-                                <option class='form-control' value='jns_klp1'>Jenis Kelompok 1</option>
-                                <option class='form-control' value='jns_klp1'>Jenis Kelompok 2</option>
+                                @isset($jenisKegiatan)
+                                @foreach ($jenisKegiatan as $item)
+                                @if (old('akseslh_jenis_kegiatan_id', $data->data->akseslh_jenis_kegiatan_id) ==
+                                $item['id'])
+                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                    $item['jenis_kegiatan'] }}
+                                </option>
+                                @else
+                                <option class='form-control' value="{{ $item['id'] }}">{{
+                                    $item['jenis_kegiatan'] }}
+                                </option>
+                                @endif
+                                @endforeach
+                                @endisset
                             </select>
+                            @error('akseslh_jenis_kegiatan_id')
+                            <span class="error">
+                                {{ $message }}
+                            </span>
+                            @enderror
                         </div>
-                        <div class="col-md-8">
-                            <label for="nama_paket_kegiatan">Nama Paket Kegiatan <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nama_paket_kegiatan" name="nama_paket_kegiatan" placeholder="Nama Paket Kegiatan">
+                        <div class="form-group @error('nama_paket_kegiatan') has-error @enderror col-md-8">
+                            <label for="nama_paket_kegiatan">Nama Paket Kegiatan <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nama_paket_kegiatan" name="nama_paket_kegiatan"
+                                placeholder="Nama Paket Kegiatan"
+                                value="{{ old('nama_paket_kegiatan', $data->data->nama_paket_kegiatan) }}">
+                            @error('nama_paket_kegiatan')
+                            <span class="error">
+                                {{ $message }}
+                            </span>
+                            @enderror
                         </div>
-                        <div class="col-md-12">
-                            <label for="deskripsi_paket_kegiatan">Deskripsi Paket Kegiatan <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="deskripsi_paket_kegiatan" name="deskripsi_paket_kegiatan" rows="3" placeholder="Deskripsi Paket Kegiatan"></textarea>
+                        <div class="form-group @error('deskripsi_paket_kegiatan') has-error @enderror col-md-12">
+                            <label for="deskripsi_paket_kegiatan">Deskripsi Paket Kegiatan <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control" id="deskripsi_paket_kegiatan" name="deskripsi_paket_kegiatan"
+                                rows="3"
+                                placeholder="Deskripsi Paket Kegiatan">{{ old('deskripsi_paket_kegiatan', $data->data->deskripsi_paket_kegiatan) }}</textarea>
+                            @error('deskripsi_paket_kegiatan')
+                            <span class="error">
+                                {{ $message }}
+                            </span>
+                            @enderror
                         </div>
-                        <div class="col-md-4">
-                            <label for="quota_paket_kegiatan">Quota Paket Kegiatan <span class="text-danger">*</span></label>
-                            <input type="number" min=0 class="form-control" id="quota_paket_kegiatan" name="quota_paket_kegiatan">
+                        <div class="form-group @error('quota_paket_kegiatan') has-error @enderror col-md-4">
+                            <label for="quota_paket_kegiatan">Quota Paket Kegiatan <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" min=0 class="form-control" id="quota_paket_kegiatan"
+                                name="quota_paket_kegiatan"
+                                value="{{ old('quota_paket_kegiatan', $data->data->quota_paket_kegiatan) }}">
+                            @error('quota_paket_kegiatan')
+                            <span class="error">
+                                {{ $message }}
+                            </span>
+                            @enderror
                         </div>
-                        <div class="col-md-4">
-                            <label for="pagu_paket_kegiatan">Pagu Paket Kegiatan (Rp) <span class="text-danger">*</span></label>
-                            <input type="number" min=0 step="0.00" class="form-control" id="pagu_paket_kegiatan" name="pagu_paket_kegiatan">
+                        <div class="form-group @error('pagu_paket_kegiatan') has-error @enderror col-md-4">
+                            <label for="pagu_paket_kegiatan">Pagu Paket Kegiatan (Rp) <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" min=0 step="0.00" class="form-control" id="pagu_paket_kegiatan"
+                                name="pagu_paket_kegiatan"
+                                value="{{ old('pagu_paket_kegiatan', $data->data->pagu_paket_kegiatan) }}">
+                            @error('pagu_paket_kegiatan')
+                            <span class="error">
+                                {{ $message }}
+                            </span>
+                            @enderror
                         </div>
-                        <div class="col-md-4">
-                            <label for="tahap_pencairan_paket_kegiatan">Jml Tahap Pencairan <span class="text-danger">*</span></label>
-                            <input type="number" min=0 class="form-control" id="tahap_pencairan_paket_kegiatan" name="tahap_pencairan_paket_kegiatan">
+                        <div class="form-group @error('tahap_pencairan_paket_kegiatan') has-error @enderror col-md-4">
+                            <label for="tahap_pencairan_paket_kegiatan">Jml Tahap Pencairan <span
+                                    class="text-danger">*</span></label>
+                            <input type="number" min=0 class="form-control" id="tahap_pencairan_paket_kegiatan"
+                                name="tahap_pencairan_paket_kegiatan"
+                                value="{{ old('tahap_pencairan_paket_kegiatan', $data->data->tahap_pencairan_paket_kegiatan) }}">
+                            @error('tahap_pencairan_paket_kegiatan')
+                            <span class="error">
+                                {{ $message }}
+                            </span>
+                            @enderror
                         </div>
-                        
-                        @error('paket_kegiatan')
-                        {{ $message }}
-                        @enderror
                     </div>
                     <div class="row">
                         <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
-                        <button type="button" class="btn btn-inverse waves-effect waves-light" onclick="window.location='/akseslh/paket-kegiatan';">Kembali</button>
+                        <button type="button" class="btn btn-inverse waves-effect waves-light"
+                            onclick="window.location='/akseslh/paket-kegiatan';">Kembali</button>
                     </div>
                 </form>
             </div><!-- panel-body -->
