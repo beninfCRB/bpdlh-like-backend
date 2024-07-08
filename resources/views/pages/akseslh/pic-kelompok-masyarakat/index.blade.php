@@ -3,12 +3,7 @@
 @section('title', 'Data PIC Kelompok Masyarakat')
 
 @section('script')
-<script src="{{asset('app/build/akseslh_pic_kelopok_masyarakat.js')}}" type="text/javascript"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#dt_pic_kelompok_masyarakat').dataTable();
-} );
-</script>
+<script src="{{asset('app/build/akseslh_pic_kelompok_masyarakat.js')}}" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -31,7 +26,9 @@ $(document).ready(function() {
             </div>
             <div class="panel-body">
                 <div class="row">
-                    <button type="button" class="btn btn-inverse waves-effect waves-light pull-right" style="margin-right:10px;margin-bottom:10px;" onclick="window.location='/akseslh/pic-kelompok-masyarakat/create';">Tambah Data</button>
+                    <button type="button" class="btn btn-inverse waves-effect waves-light pull-right"
+                        style="margin-right:10px;margin-bottom:10px;"
+                        onclick="window.location='/akseslh/pic-kelompok-masyarakat/create';">Tambah Data</button>
                 </div>
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">

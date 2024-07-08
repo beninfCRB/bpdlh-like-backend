@@ -3,25 +3,46 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\AkseslhKelompokMasyarakat;
+
+use App\Models\AkseslhUserEksternal;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
-use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\RegisterNotification;
 
-class KelompokMasyarakatService extends AppService implements AppServiceInterface
+
+class UserEksternalService extends AppService implements AppServiceInterface
 {
 
-    public function __construct(AkseslhKelompokMasyarakat $model)
+    public function __construct(AkseslhUserEksternal $model)
     {
         parent::__construct($model);
     }
 
     public function getAll()
     {
-        $model = $this->model->query()->with('jenis')->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with('kelompok_masyarakat.jenis')->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
+    }
+
+    public function getAllAttr()
+    {
+        $result  = $this->model->newQuery()
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        $result->transform(function ($items, $key) {
+            return [
+                'id'                 => $items->id,
+                'jenis_kegiatan'     => $items->jenis_kegiatan,
+            ];
+        });
+
+        return $this->sendSuccess($result);
     }
 
     public function getPaginated($search = null, $page = null, $perPage = null, $lang = null)
@@ -40,15 +61,27 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
 
     public function create($data)
     {
+        // Make default password for first login
+        $default_password =
+            crypt($data['email_user_eksternal'] . Carbon::now()->format('d M Y H:i:s'), $data['email_user_eksternal']);
+
         \DB::beginTransaction();
 
         try {
 
+            // Insert data to database
             $data = $this->model->newQuery()->create([
-                'akseslh_jenis_kelompok_masyarakat_id'  =>  $data['akseslh_jenis_kelompok_masyarakat_id'],
-                'kelompok_masyarakat'                   =>  $data['kelompok_masyarakat'],
-                'flag'                                  => 1,
+                'akseslh_kelompok_masyarakat_id'    => $data['akseslh_kelompok_masyarakat_id'],
+                'email_user_eksternal'              => $data['email_user_eksternal'],
+                'password_user_eksternal'           => Hash::make($default_password),
+                'nama_user_eksternal'               => $data['nama_user_eksternal'],
+                'jenis_identitas_user_eksternal'    => $data['jenis_identitas_user_eksternal'],
+                'nomor_identitas_user_eksternal'    => $data['nomor_identitas_user_eksternal'],
+                'nomor_hp_user_eksternal'           => $data['nomor_hp_user_eksternal'],
             ]);
+
+            // Send password default to email
+            Notification::route('mail', $data['email_user_eksternal'])->notify(new RegisterNotification($default_password));
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($data);
@@ -66,9 +99,12 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
 
         try {
 
-            $read->akseslh_jenis_kelompok_masyarakat_id =   $data['akseslh_jenis_kelompok_masyarakat_id'];
-            $read->kelompok_masyarakat                  =   $data['kelompok_masyarakat'];
-            $read->flag                                 =   1;
+            $read->akseslh_kelompok_masyarakat_id   = $data['akseslh_kelompok_masyarakat_id'];
+            $read->email_user_eksternal             = $data['email_user_eksternal'];
+            $read->nama_user_eksternal              = $data['nama_user_eksternal'];
+            $read->jenis_identitas_user_eksternal   = $data['jenis_identitas_user_eksternal'];
+            $read->nomor_identitas_user_eksternal   = $data['nomor_identitas_user_eksternal'];
+            $read->nomor_hp_user_eksternal          = $data['nomor_hp_user_eksternal'];
             $read->save();
 
             \DB::commit(); // commit the changes
@@ -84,6 +120,24 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
         $read   =   $this->model->newQuery()->find($id);
         try {
             $read->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+        }
+    }
+
+    public function updatePublish($id, $isPublish): object
+    {
+        $read = $this->model->newQuery()->find($id);
+
+        \DB::beginTransaction();
+
+        try {
+            $read->is_publish       =   $isPublish;
+            $read->save();
+
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
@@ -193,41 +247,5 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
             });
         }
         return $result;
-    }
-
-    public function apiGetByIdJenisKelompokMasyarakat($id)
-    {
-        $result  = $this->model->newQuery()
-            ->where('akseslh_jenis_kelompok_masyarakat_id', $id)
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                                    => $items->id,
-                'akseslh_jenis_kelompok_masyarakat_id'  => $items->akseslh_jenis_kelompok_masyarakat_id,
-                'kelompok_masyarakat'                   => $items->kelompok_masyarakat,
-                'flag'                                  => $items->flag,
-            ];
-        });
-
-        return $this->sendSuccess($result);
-    }
-
-    public function apiGetAll()
-    {
-        $result  = $this->model->newQuery()
-            ->where('flag', 1)
-            ->orderBy('created_at', 'ASC')
-            ->get();
-
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                            => $items->id,
-                'kelompok_masyarakat'           => $items->kelompok_masyarakat,
-            ];
-        });
-
-        return $this->sendSuccess($result);
     }
 }

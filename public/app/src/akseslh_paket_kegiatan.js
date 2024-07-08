@@ -42,7 +42,7 @@ var data_paket_kegiatan = (function () {
                 {
                     targets: 1,
                     render: function (data, type, full, meta) {
-                        if (full.jenis === null) {
+                        if (full.jenis_kegiatan === null) {
                             return "-";
                         } else {
                             return full.jenis_kegiatan.jenis_kegiatan;

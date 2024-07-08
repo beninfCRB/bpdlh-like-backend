@@ -7,6 +7,7 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\AppAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AkseslhUserEksternal extends AppAuthenticatable
@@ -27,4 +28,14 @@ class AkseslhUserEksternal extends AppAuthenticatable
         'nomor_hp_user_eksternal',
         'username',
     ];
+
+    /**
+     * Get the kelompok_masyarakat that owns the AkseslhUserEksternal
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function kelompok_masyarakat(): BelongsTo
+    {
+        return $this->belongsTo(AkseslhKelompokMasyarakat::class, 'akseslh_kelompok_masyarakat_id');
+    }
 }

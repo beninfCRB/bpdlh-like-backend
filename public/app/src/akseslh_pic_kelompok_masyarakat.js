@@ -23,13 +23,13 @@ var data_pic_kelompok_masyarakat = (function () {
             ajax: "/akseslh/data-pic-kelompok-masyarakat",
             columns: [
                 { data: "DT_RowIndex" },
-                { data: "nama_kelompok" },
-                { data: "jenis_kelompok" },
-                { data: "nama_pic" },
-                { data: "jenis_identitas" },
-                { data: "nomor_identitas" },
-                { data: "nomor_hp" },
-                { data: "email" },
+                {},
+                {},
+                { data: "nama_user_eksternal" },
+                { data: "jenis_identitas_user_eksternal" },
+                { data: "nomor_identitas_user_eksternal" },
+                { data: "email_user_eksternal" },
+                { data: "nomor_hp_user_eksternal" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -41,7 +41,32 @@ var data_pic_kelompok_masyarakat = (function () {
                     orderable: false,
                 },
                 {
+                    targets: 1,
+                    render: function (data, type, full, meta) {
+                        if (full.kelompok_masyarakat === null) {
+                            return "-";
+                        } else {
+                            return full.kelompok_masyarakat.kelompok_masyarakat;
+                        }
+                    },
+                },
+                {
                     targets: 2,
+                    render: function (data, type, full, meta) {
+                        if (full.kelompok_masyarakat === null) {
+                            return "-";
+                        } else {
+                            if (full.kelompok_masyarakat.jenis === null) {
+                                return "-";
+                            } else {
+                                return full.kelompok_masyarakat.jenis
+                                    .jenis_kelompok_masyarakat;
+                            }
+                        }
+                    },
+                },
+                {
+                    targets: -3,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -53,7 +78,7 @@ var data_pic_kelompok_masyarakat = (function () {
                     },
                 },
                 {
-                    targets: 3,
+                    targets: -2,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {

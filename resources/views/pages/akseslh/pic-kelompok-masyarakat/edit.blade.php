@@ -24,51 +24,99 @@
                 <h3 class="panel-title">Pengelolaan Data PIC Kelompok Masyaakat</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="#" method="POST">
-                @method('PUT')
-                @csrf
-                    <div class="form-group @error('pic-kelompok-masyarakat') has-error @enderror row">
-                        <div class="col-md-5">
-                            <label for="kelompok_masyarakat">Kelompok Masyarakat <span class="text-danger">*</span></label>
-                            <select class="form-control" required id="kelompok_masyarakat" name="kelompok_masyarakat" required>
-                                <option class='form-control' value=''>- Pilih Data -</option>
-                                <option class='form-control' value='jns_klp1'>Jenis Kelompok 1</option>
-                                <option class='form-control' value='jns_klp1'>Jenis Kelompok 2</option>
-                            </select>
-                        </div>
-                        <div class="col-md-7">
-                            <label for="nama_user_eksternal">Nama Lengkap <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nama_user_eksternal" name="nama_user_eksternal" placeholder="Nama Lengkap">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="jenis_identitas">Jenis Identitas <span class="text-danger">*</span></label>
-                            <select class="form-control" required id="jenis_identitas" name="jenis_identitas" required>
-                                <option class='form-control' value=''>- Pilih Data -</option>
-                                <option class='form-control' value='KTP'>KTP</option>
-                                <option class='form-control' value='SIM'>SIM</option>
-                                <option class='form-control' value='Kartu Mahasiswa'>Kartu Mahasiswa</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="nomor_identitas">Nomor Identitas <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nomor_identitas" name="nomor_identitas" placeholder="Nomor Identitas">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="nomor_hp">Nomor HP <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nomor_hp" name="nomor_hp" placeholder="Nomor HP">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="email_user">Alamat E-Mail <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="email_user" name="email_user" placeholder="Alamat E-Mail">
-                        </div>
-                        
-                        @error('pic_kelompok_masyarakat')
-                        {{ $message }}
-                        @enderror
-                    </div>
+                <form role="form" action="{{ route('pic-kelompok-masyarakat.update', $data->id) }}" method="POST">
+                    @method('PUT')
+                    @csrf
                     <div class="row">
-                        <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
-                        <button type="button" class="btn btn-inverse waves-effect waves-light" onclick="window.location='/akseslh/pic-kelompok-masyarakat';">Kembali</button>
+                        <div class="form-group @error('akseslh_kelompok_masyarakat_id') has-error @enderror col-md-5">
+                            <label for="akseslh_kelompok_masyarakat_id">Kelompok Masyarakat <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-control" required id="akseslh_kelompok_masyarakat_id"
+                                name="akseslh_kelompok_masyarakat_id" required>
+                                <option class='form-control' value=''>- Pilih Data -</option>
+                                @isset($kelompokMasyarakat)
+                                @foreach ($kelompokMasyarakat as $item)
+                                @if (old('akseslh_kelompok_masyarakat_id', $data->akseslh_kelompok_masyarakat_id) ==
+                                $item['id'])
+                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                    $item['kelompok_masyarakat'] }}</option>
+                                @else
+                                <option class='form-control' value="{{ $item['id'] }}">{{ $item['kelompok_masyarakat']
+                                    }}</option>
+                                @endif
+                                @endforeach
+                                @endisset
+                            </select>
+                            @error('akseslh_kelompok_masyarakat_id')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                        <div class="form-group @error('nama_user_eksternal') has-error @enderror col-md-7">
+                            <label for="nama_user_eksternal">Nama Lengkap <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nama_user_eksternal" name="nama_user_eksternal"
+                                placeholder="Nama Lengkap"
+                                value="{{ old('nama_user_eksternal', $data->nama_user_eksternal) }}">
+                            @error('nama_user_eksternal')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                        <div class="form-group @error('jenis_identitas_user_eksternal') has-error @enderror col-md-4">
+                            <label for="jenis_identitas_user_eksternal">Jenis Identitas <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-control" required id="jenis_identitas_user_eksternal"
+                                name="jenis_identitas_user_eksternal" required>
+                                <option class='form-control' value=''>- Pilih Data -</option>
+                                <option class='form-control' value='KTP' {{ old('jenis_identitas_user_eksternal',
+                                    $data->jenis_identitas_user_eksternal)=='KTP'
+                                    ? 'selected' : '' }}>KTP</option>
+                                <option class='form-control' value='SIM' {{ old('jenis_identitas_user_eksternal',
+                                    $data->jenis_identitas_user_eksternal)=='SIM'
+                                    ? 'selected' : '' }}>SIM</option>
+                                <option class='form-control' value='Kartu Mahasiswa' {{
+                                    old('jenis_identitas_user_eksternal', $data->jenis_identitas_user_eksternal)=='Kartu
+                                    Mahasiswa' ? 'selected' : '' }}>Kartu
+                                    Mahasiswa</option>
+                            </select>
+                            @error('jenis_identitas_user_eksternal')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                        <div class="form-group @error('nomor_identitas_user_eksternal') has-error @enderror col-md-4">
+                            <label for="nomor_identitas_user_eksternal">Nomor Identitas <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nomor_identitas_user_eksternal"
+                                name="nomor_identitas_user_eksternal" placeholder="Nomor Identitas"
+                                value="{{ old('nomor_identitas_user_eksternal', $data->nomor_identitas_user_eksternal) }}">
+                            @error('nomor_identitas_user_eksternal')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                        <div class=" form-group @error('nomor_hp_user_eksternal') has-error @enderror col-md-4">
+                            <label for="nomor_hp_user_eksternal">Nomor HP <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nomor_hp_user_eksternal"
+                                name="nomor_hp_user_eksternal" placeholder="Contoh: 08123234345"
+                                value="{{ old('nomor_hp_user_eksternal', $data->nomor_hp_user_eksternal) }}">
+                            @error('nomor_hp_user_eksternal')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                        <div class=" form-group @error('email_user_eksternal') has-error @enderror col-md-4">
+                            <label for="email_user_eksternal">Alamat E-Mail <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email_user_eksternal"
+                                name="email_user_eksternal" placeholder="Alamat E-Mail"
+                                value="{{ old('email_user_eksternal', $data->email_user_eksternal) }}">
+                            @error('email_user_eksternal')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
+                            <button type="button" class="btn btn-inverse waves-effect waves-light"
+                                onclick="window.location='/akseslh/pic-kelompok-masyarakat';">Kembali</button>
+                        </div>
                     </div>
                 </form>
             </div><!-- panel-body -->
