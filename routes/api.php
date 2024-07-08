@@ -21,6 +21,14 @@ Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'auth
 Route::apiResource('jenisKelompokMasyarakat', App\Http\Controllers\Api\Akseslh\JenisKelompokMasyarakatController::class)->except(['store', 'update', 'edit', 'show', 'destroy']);
 Route::get('kelompok-masyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
 
+Route::post('test-post', function (Request $request) {
+    dd($request->all());
+});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('pengajuan-kegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'store']);
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

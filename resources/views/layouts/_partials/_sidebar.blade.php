@@ -30,7 +30,7 @@
         <div id="sidebar-menu">
             <ul>
                 <li>
-                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-home"
+                    <a href="{{ route('home') }}" class="waves-effect" style="padding-left: 20px;"><i class="md md-home"
                             style="margin-right: 5px;"></i><span> Dashboard</span></a>
                 </li>
                 <li class="has_sub">
@@ -39,19 +39,24 @@
                                 class="md md-add pull-right"></i></span></a>
                     <ul class="list-unstyled">
                         <li>
-                            <a href="/akseslh/jenis-kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
+                            <a href="{{ route('jenis-kelompok-masyarakat.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
                         </li>
                         <li>
-                            <a href="/akseslh/kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Kelompok Masyarakat</span></a>
+                            <a href="{{ route('kelompok-masyarakat.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Kelompok Masyarakat</span></a>
                         </li>
                         <li>
-                            <a href="/akseslh/jenis-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Jenis Kegiatan</span></a>
+                            <a href="{{ route('jenis-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Jenis Kegiatan</span></a>
                         </li>
                         <li>
-                            <a href="/akseslh/paket-kegiatan" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>Paket Kegiatan</span></a>
+                            <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Paket Kegiatan</span></a>
                         </li>
                         <li>
-                            <a href="/akseslh/pic-kelompok-masyarakat" class="waves-effect" style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
+                            <a href="{{ route('pic-kelompok-masyarakat.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
                         </li>
                     </ul>
                 </li>

@@ -13,7 +13,7 @@ class AkseslhPengajuanKegiatan extends AppModel
     protected $table = "akseslh_pengajuan_kegiatans";
 
     protected $fillable = [
-        'akseslh_paket_kegitan_id',
+        'akseslh_paket_kegiatan_id',
         'akseslh_user_eksternal_id',
         'judul_pengajuan_kegiatan',
         'provinsi_kegiatan',
