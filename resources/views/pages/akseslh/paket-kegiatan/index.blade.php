@@ -26,7 +26,9 @@
             </div>
             <div class="panel-body">
                 <div class="row">
-                    <button type="button" class="btn btn-inverse waves-effect waves-light pull-right" style="margin-right:10px;margin-bottom:10px;" onclick="window.location='/akseslh/paket-kegiatan/create';">Tambah Data</button>
+                    <a href="{{ route('paket-kegiatan.create') }}"
+                        class="btn btn-inverse waves-effect waves-light pull-right"
+                        style="margin-right:10px;margin-bottom:10px;">Tambah Data</a>
                 </div>
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">

@@ -114,8 +114,8 @@
                     <div class="row">
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
-                            <button type="button" class="btn btn-inverse waves-effect waves-light"
-                                onclick="window.location='/akseslh/pic-kelompok-masyarakat';">Kembali</button>
+                            <a href="{{ route('pic-kelompok-masyarakat.index') }}"
+                                class="btn btn-inverse waves-effect waves-light">Kembali</a>
                         </div>
                     </div>
                 </form>
