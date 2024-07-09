@@ -43,11 +43,11 @@ Route::prefix('akseslh')->group(function () {
 
 
     // Datatable
-    Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll']);
-    Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKelompokMasyarakatController::class, 'getAll']);
-    Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll']);
-    Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll']);
-    Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\UserEksternalController::class, 'getAll']);
+    Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
+    Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKelompokMasyarakatController::class, 'getAll'])->name('data-jenis-kelompok-masyarakat');
+    Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll'])->name('data-kelompok-masyarakat');
+    Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
+    Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\UserEksternalController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
 
     // Route::view('pic-kelompok-masyarakat', 'pages.akseslh.pic-kelompok-masyarakat.index');
     // Route::view('pic-kelompok-masyarakat/create', 'pages.akseslh.pic-kelompok-masyarakat.create');

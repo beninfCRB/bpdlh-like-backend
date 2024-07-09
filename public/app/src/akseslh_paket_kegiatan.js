@@ -11,6 +11,7 @@ import {
 var data_paket_kegiatan = (function () {
     var initTable1 = function () {
         var table = $("#dt_paket_kegiatan");
+        var url_table = $("#data-table-paket-kegiatan").val();
 
         // begin first table
         table.DataTable({
@@ -20,7 +21,7 @@ var data_paket_kegiatan = (function () {
             responsive: true,
             searchDelay: 500,
             processing: true,
-            ajax: "/akseslh/data-paket-kegiatan",
+            ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
                 {},

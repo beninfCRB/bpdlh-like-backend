@@ -23,6 +23,8 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Daftar Kelompok Masyarakat</h3>
+                <input type="hidden" name="data-table-kelompok-masyarakat" id="data-table-kelompok-masyarakat"
+                    value="{{ route('data-kelompok-masyarakat') }}">
             </div>
             <div class="panel-body">
                 <div class="row">

@@ -13,7 +13,7 @@ class CreateAkseslhKelompokMasyarakatsTable extends Migration
      */
     public function up()
     {
-        Schema::create('akseslh_kelompok_masyarakats', function (Blueprint $table) {
+        Schema::create('kelompok_masyarakats', function (Blueprint $table) {
             // $table->id();
             $table->uuid('id')->primary();
             $table->foreignUuid('akseslh_jenis_kelompok_masyarakat_id');

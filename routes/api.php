@@ -17,13 +17,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
+Route::post('logout', [App\Http\Controllers\Authapi\LogoutController::class, 'logout']);
 
-Route::apiResource('jenisKelompokMasyarakat', App\Http\Controllers\Api\Akseslh\JenisKelompokMasyarakatController::class)->except(['store', 'update', 'edit', 'show', 'destroy']);
-Route::get('kelompok-masyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
+Route::get('jenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\JenisKelompokMasyarakatController::class, 'index']);
+Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
 
-Route::post('test-post', function (Request $request) {
-    dd($request->all());
-});
+// Route::get('pengajuan-kegiatan', function () {
+//     $user = App\Models\AkseslhUserEksternal::find('220d0de5-7cd8-4986-8595-56e70478decc');
+//     // $user->notify(new App\Notifications\PengajuanKegiatanNotification());
+//     foreach ($user->Notifications as $notification) {
+//         return response()->json($notification->data);
+//     }
+// });
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('pengajuan-kegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'store']);

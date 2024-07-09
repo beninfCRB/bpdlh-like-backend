@@ -13,7 +13,7 @@ class CreateAkseslhPaketKegiatansTable extends Migration
      */
     public function up()
     {
-        Schema::create('akseslh_paket_kegiatans', function (Blueprint $table) {
+        Schema::create('paket_kegiatans', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('akseslh_jenis_kegiatan_id');
             $table->string('nama_paket_kegiatan', 150);

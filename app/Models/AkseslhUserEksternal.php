@@ -16,7 +16,7 @@ class AkseslhUserEksternal extends AppAuthenticatable
 
     protected $guard = 'akseslh';
 
-    protected $table = "akseslh_user_eksternals";
+    protected $table = "user_eksternals";
 
     protected $fillable = [
         'akseslh_kelompok_masyarakat_id',

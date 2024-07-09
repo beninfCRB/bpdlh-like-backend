@@ -11,6 +11,7 @@ import {
 var data_kelompok_masyarakat = (function () {
     var initTable1 = function () {
         var table = $("#dt_kelompok_masyarakat");
+        var url_table = $("#data-table-kelompok-masyarakat").val();
 
         // begin first table
         table.DataTable({
@@ -20,7 +21,7 @@ var data_kelompok_masyarakat = (function () {
             responsive: true,
             searchDelay: 500,
             processing: true,
-            ajax: "/akseslh/data-kelompok-masyarakat",
+            ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
                 {},

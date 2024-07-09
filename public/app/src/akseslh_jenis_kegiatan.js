@@ -11,6 +11,7 @@ import {
 var data_jenis_kegiatan = (function () {
     var initTable1 = function () {
         var table = $("#dt_jenis_kegiatan");
+        var url_table = $("#data-table-jenis-kegiatan").val();
 
         // begin first table
         table.DataTable({
@@ -20,7 +21,7 @@ var data_jenis_kegiatan = (function () {
             responsive: true,
             searchDelay: 500,
             processing: true,
-            ajax: "/akseslh/data-jenis-kegiatan",
+            ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
                 { data: "jenis_kegiatan" },

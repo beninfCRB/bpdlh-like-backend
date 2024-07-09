@@ -23,6 +23,8 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Daftar Paket Kegiatan</h3>
+                <input type="hidden" name="data-table-paket-kegiatan" id="data-table-paket-kegiatan"
+                    value="{{ route('data-paket-kegiatan') }}">
             </div>
             <div class="panel-body">
                 <div class="row">

@@ -10,7 +10,7 @@ class AkseslhJenisKelompokMasyarakat extends AppModel
 {
     use HasFactory;
 
-    protected $table = "akseslh_jenis_kelompok_masyarakats";
+    protected $table = "jenis_kelompok_masyarakats";
 
     protected $fillable = [
         'jenis_kelompok_masyarakat',

@@ -49,12 +49,12 @@ class UserEksternalController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'akseslh_kelompok_masyarakat_id'    => 'required|exists:akseslh_kelompok_masyarakats,id',
-            'email_user_eksternal'              => 'required|email|max:100|unique:akseslh_user_eksternals,email_user_eksternal',
+            'akseslh_kelompok_masyarakat_id'    => 'required|exists:kelompok_masyarakats,id',
+            'email_user_eksternal'              => 'required|email|max:100|unique:user_eksternals,email_user_eksternal',
             'nama_user_eksternal'               => 'required|string|max:255',
             'jenis_identitas_user_eksternal'    => 'required',
-            'nomor_identitas_user_eksternal'    => 'required|max:20|unique:akseslh_user_eksternals',
-            'nomor_hp_user_eksternal'           => 'required|max:20|unique:akseslh_user_eksternals',
+            'nomor_identitas_user_eksternal'    => 'required|max:20|unique:user_eksternals',
+            'nomor_hp_user_eksternal'           => 'required|max:20|unique:user_eksternals',
         ]);
 
         $result =   $this->userEksternalService->create($input);
@@ -75,12 +75,12 @@ class UserEksternalController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'akseslh_kelompok_masyarakat_id'    => 'required|exists:akseslh_kelompok_masyarakats,id',
-            'email_user_eksternal'              => 'required|email|max:100|unique:akseslh_user_eksternals,email_user_eksternal,' . $id,
+            'akseslh_kelompok_masyarakat_id'    => 'required|exists:kelompok_masyarakats,id',
+            'email_user_eksternal'              => 'required|email|max:100|unique:user_eksternals,email_user_eksternal,' . $id,
             'nama_user_eksternal'               => 'required|string|max:255',
             'jenis_identitas_user_eksternal'    => 'required',
-            'nomor_identitas_user_eksternal'    => 'required|max:20|unique:akseslh_user_eksternals,nomor_identitas_user_eksternal,' . $id,
-            'nomor_hp_user_eksternal'           => 'required|max:20|unique:akseslh_user_eksternals,nomor_hp_user_eksternal,' . $id,
+            'nomor_identitas_user_eksternal'    => 'required|max:20|unique:user_eksternals,nomor_identitas_user_eksternal,' . $id,
+            'nomor_hp_user_eksternal'           => 'required|max:20|unique:user_eksternals,nomor_hp_user_eksternal,' . $id,
         ]);
 
         $result =   $this->userEksternalService->update($id, $input);

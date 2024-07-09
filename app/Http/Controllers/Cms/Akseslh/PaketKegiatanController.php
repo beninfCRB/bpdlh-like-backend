@@ -51,7 +51,7 @@ class PaketKegiatanController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'akseslh_jenis_kegiatan_id'         => 'required|exists:akseslh_jenis_kegiatans,id',
+            'akseslh_jenis_kegiatan_id'         => 'required|exists:jenis_kegiatans,id',
             'nama_paket_kegiatan'               => 'required|string',
             'deskripsi_paket_kegiatan'          => 'required|string',
             'quota_paket_kegiatan'              => 'required|numeric',
@@ -77,7 +77,7 @@ class PaketKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'akseslh_jenis_kegiatan_id'         => 'required|exists:akseslh_jenis_kegiatans,id',
+            'akseslh_jenis_kegiatan_id'         => 'required|exists:jenis_kegiatans,id',
             'nama_paket_kegiatan'               => 'required|string',
             'deskripsi_paket_kegiatan'          => 'required|string',
             'quota_paket_kegiatan'              => 'required|numeric',
