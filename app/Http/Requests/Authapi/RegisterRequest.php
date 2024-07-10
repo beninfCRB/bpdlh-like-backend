@@ -28,7 +28,7 @@ class RegisterRequest extends FormRequest
         return [
             //
             // 'id_kelompok_masyarakat'            => 'required|exists:akseslh_kelompok_masyarakats',
-            'akseslh_kelompok_masyarakat_id'    => 'required',
+            'kelompok_masyarakat_id'    => 'required',
             // 'email_user_eksternal'              => 'required|email|unique:akseslh_user_eksternals,email_user_eksternal,' . ($this->user ? $this->user->id : 'NULL'),
             'email_user_eksternal'              => 'required|email',
             'nama_user_eksternal'               => 'required|max:255|string',

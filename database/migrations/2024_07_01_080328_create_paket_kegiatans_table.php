@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAkseslhKelompokMasyarakatsTable extends Migration
+class CreatePaketKegiatansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateAkseslhKelompokMasyarakatsTable extends Migration
      */
     public function up()
     {
-        Schema::create('kelompok_masyarakats', function (Blueprint $table) {
-            // $table->id();
+        Schema::create('paket_kegiatans', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('akseslh_jenis_kelompok_masyarakat_id');
-            $table->string('kelompok_masyarakat', 150);
-            $table->tinyInteger('flag');
+            $table->foreignUuid('jenis_kegiatan_id');
+            $table->string('nama_paket_kegiatan', 150);
+            $table->string('deskripsi_paket_kegiatan', 500);
+            $table->integer('quota_paket_kegiatan');
+            $table->double('pagu_paket_kegiatan', 20);
+            $table->boolean('tahap_pencairan_paket_kegiatan')->default(1);
             $table->string('username', 100)->nullable();
             $table->softDeletes();
             $table->timestamps();
@@ -32,6 +34,6 @@ class CreateAkseslhKelompokMasyarakatsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('akseslh_kelompok_masyarakats');
+        Schema::dropIfExists('paket_kegiatans');
     }
 }

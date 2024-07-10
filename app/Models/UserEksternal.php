@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AkseslhUserEksternal extends AppAuthenticatable
+class UserEksternal extends AppAuthenticatable
 {
     use HasFactory, Notifiable;
 
@@ -19,7 +19,7 @@ class AkseslhUserEksternal extends AppAuthenticatable
     protected $table = "user_eksternals";
 
     protected $fillable = [
-        'akseslh_kelompok_masyarakat_id',
+        'kelompok_masyarakat_id',
         'email_user_eksternal',
         'password_user_eksternal',
         'nama_user_eksternal',
@@ -36,6 +36,6 @@ class AkseslhUserEksternal extends AppAuthenticatable
      */
     public function kelompok_masyarakat(): BelongsTo
     {
-        return $this->belongsTo(AkseslhKelompokMasyarakat::class, 'akseslh_kelompok_masyarakat_id');
+        return $this->belongsTo(KelompokMasyarakat::class, 'kelompok_masyarakat_id');
     }
 }

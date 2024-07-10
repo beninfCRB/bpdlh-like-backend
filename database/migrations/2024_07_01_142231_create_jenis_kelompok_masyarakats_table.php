@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAkseslhJenisKegiatansTable extends Migration
+class CreateJenisKelompokMasyarakatsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateAkseslhJenisKegiatansTable extends Migration
      */
     public function up()
     {
-        Schema::create('jenis_kegiatans', function (Blueprint $table) {
+        Schema::create('jenis_kelompok_masyarakats', function (Blueprint $table) {
             // $table->id();
             $table->uuid('id')->primary();
-            $table->string('jenis_kegiatan', 150);
+            $table->string('jenis_kelompok_masyarakat', 150);
+            $table->tinyInteger('short_id');
+            $table->tinyInteger('flag');
             $table->string('username', 100)->nullable();
             $table->softDeletes();
             $table->timestamps();
@@ -30,6 +32,6 @@ class CreateAkseslhJenisKegiatansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('akseslh_jenis_kegiatans');
+        Schema::dropIfExists('jenis_kelompok_masyarakats');
     }
 }

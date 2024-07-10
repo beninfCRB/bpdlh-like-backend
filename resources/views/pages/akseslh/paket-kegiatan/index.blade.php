@@ -3,7 +3,7 @@
 @section('title', 'Data Paket Kegiatan')
 
 @section('script')
-<script src="{{asset('app/build/akseslh_paket_kegiatan.js')}}" type="text/javascript"></script>
+<script src="{{asset('app/build/paket_kegiatan.js')}}" type="text/javascript"></script>
 @endsection
 
 @section('content')

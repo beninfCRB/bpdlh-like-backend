@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AkseslhPaketKegiatan extends AppModel
+class PaketKegiatan extends AppModel
 {
     use HasFactory;
 
     protected $table = "paket_kegiatans";
 
     protected $fillable = [
-        'akseslh_jenis_kegiatan_id',
+        'jenis_kegiatan_id',
         'nama_paket_kegiatan',
         'deskripsi_paket_kegiatan',
         'quota_paket_kegiatan',
@@ -30,6 +30,6 @@ class AkseslhPaketKegiatan extends AppModel
      */
     public function jenis_kegiatan(): BelongsTo
     {
-        return $this->belongsTo(AkseslhJenisKegiatan::class, 'akseslh_jenis_kegiatan_id');
+        return $this->belongsTo(JenisKegiatan::class, 'jenis_kegiatan_id');
     }
 }

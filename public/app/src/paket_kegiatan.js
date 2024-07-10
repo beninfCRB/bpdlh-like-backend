@@ -114,6 +114,18 @@ jQuery(document).ready(function () {
     data_paket_kegiatan.init();
 });
 
+window.generateFormTahapSalur = () => {
+    let jmlTahapSalur = $("#tahap_pencairan_paket_kegiatan").val();
+    if (jmlTahapSalur > 1) {
+        alert("halo " + jmlTahapSalur);
+        for (let index = 0; index < array.length; index++) {
+            const element = array[index];
+        }
+    } else {
+        console.log("Kurang dari 0");
+    }
+};
+
 window.deletePaketKegiatan = (input) => {
     Swal.fire({
         title: "Konfirmasi Hapus",

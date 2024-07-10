@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAkseslhUserEksternalsTable extends Migration
+class CreateUserEksternalsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,7 +16,7 @@ class CreateAkseslhUserEksternalsTable extends Migration
         Schema::create('user_eksternals', function (Blueprint $table) {
             // $table->id();
             $table->uuid('id')->primary();
-            $table->foreignUuid('akseslh_kelompok_masyarakat_id');
+            $table->foreignUuid('kelompok_masyarakat_id');
             $table->string('email_user_eksternal', 100)->unique();
             $table->string('password_user_eksternal', 100)->nullable();
             $table->string('nama_user_eksternal', 255);
@@ -36,6 +36,6 @@ class CreateAkseslhUserEksternalsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('akseslh_user_eksternals');
+        Schema::dropIfExists('user_eksternals');
     }
 }

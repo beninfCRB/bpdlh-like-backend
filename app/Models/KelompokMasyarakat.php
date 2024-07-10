@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AkseslhKelompokMasyarakat extends AppModel
+class KelompokMasyarakat extends AppModel
 {
     use HasFactory;
 
     protected $table = "kelompok_masyarakats";
 
     protected $fillable = [
-        'akseslh_jenis_kelompok_masyarakat_id',
+        'jenis_kelompok_masyarakat_id',
         'kelompok_masyarakat',
         'flag',
         'username'
@@ -27,6 +27,6 @@ class AkseslhKelompokMasyarakat extends AppModel
      */
     public function jenis(): BelongsTo
     {
-        return $this->belongsTo(AkseslhJenisKelompokMasyarakat::class, 'akseslh_jenis_kelompok_masyarakat_id');
+        return $this->belongsTo(JenisKelompokMasyarakat::class, 'jenis_kelompok_masyarakat_id');
     }
 }

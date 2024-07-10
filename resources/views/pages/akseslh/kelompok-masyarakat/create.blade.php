@@ -26,15 +26,15 @@
             <div class="panel-body">
                 <form role="form" action="{{ route('kelompok-masyarakat.store') }}" method="POST">
                     @csrf
-                    <div class="form-group @error('kelompok_masyarakat') has-error @enderror">
-                        <label for="akseslh_jenis_kelompok_masyarakat_id">Jenis Kelompok Masyarakat <span
+                    <div class="form-group @error('kelompok_masyarakat_id') has-error @enderror">
+                        <label for="jenis_kelompok_masyarakat_id">Jenis Kelompok Masyarakat <span
                                 class="text-danger">*</span></label>
-                        <select class="form-control" required id="akseslh_jenis_kelompok_masyarakat_id"
-                            name="akseslh_jenis_kelompok_masyarakat_id">
+                        <select class="form-control" required id="jenis_kelompok_masyarakat_id"
+                            name="jenis_kelompok_masyarakat_id">
                             <option class='form-control' value=''>- Pilih Data -</option>
                             @isset($jenisKelompokMasyarakat)
                             @foreach ($jenisKelompokMasyarakat as $item)
-                            @if (old('akseslh_jenis_kelompok_masyarakat_id'))
+                            @if (old('jenis_kelompok_masyarakat_id'))
 
                             <option class='form-control' value="{{ $item['id'] }}" selected>{{
                                 $item['jenis_kelompok_masyarakat']
@@ -49,7 +49,7 @@
                             @endforeach
                             @endisset
                         </select>
-                        @error('akseslh_jenis_kelompok_masyarakat_id')
+                        @error('jenis_kelompok_masyarakat_id')
                         <span class="error">
                             {{ $message }}
                         </span>

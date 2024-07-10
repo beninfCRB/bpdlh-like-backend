@@ -2,6 +2,10 @@
 
 @section('title', 'Buat Data Paket Kegiatan')
 
+@section('script')
+<script src="{{asset('app/build/akseslh_paket_kegiatan.js')}}" type="text/javascript"></script>
+@endsection
+
 @section('content')
 <!-- Page-Title -->
 <div class="row">
@@ -27,15 +31,14 @@
                 <form role="form" action="{{ route('paket-kegiatan.store') }}" method="POST">
                     @csrf
                     <div class="row">
-                        <div class="form-group @error('akseslh_jenis_kegiatan_id') has-error @enderror col-md-4">
-                            <label for="akseslh_jenis_kegiatan_id">Jenis Kegiatan <span
-                                    class="text-danger">*</span></label>
-                            <select class="form-control" required id="akseslh_jenis_kegiatan_id"
-                                name="akseslh_jenis_kegiatan_id" required>
+                        <div class="form-group @error('jenis_kegiatan_id') has-error @enderror col-md-4">
+                            <label for="jenis_kegiatan_id">Jenis Kegiatan <span class="text-danger">*</span></label>
+                            <select class="form-control" required id="jenis_kegiatan_id" name="jenis_kegiatan_id"
+                                required>
                                 <option class='form-control' value=''>- Pilih Data -</option>
                                 @isset($jenisKegiatan)
                                 @foreach ($jenisKegiatan as $item)
-                                @if (old('akseslh_jenis_kegiatan_id') == $item['id'])
+                                @if (old('jenis_kegiatan_id') == $item['id'])
                                 <option class='form-control' value="{{ $item['id'] }}" selected>{{
                                     $item['jenis_kegiatan'] }}
                                 </option>
@@ -47,7 +50,7 @@
                                 @endforeach
                                 @endisset
                             </select>
-                            @error('akseslh_jenis_kegiatan_id')
+                            @error('jenis_kegiatan_id')
                             <span class="error">
                                 {{ $message }}
                             </span>

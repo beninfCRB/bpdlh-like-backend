@@ -4,7 +4,7 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\AkseslhPaketKegiatan;
+use App\Models\PaketKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 class PaketKegiatanService extends AppService implements AppServiceInterface
 {
 
-    public function __construct(AkseslhPaketKegiatan $model)
+    public function __construct(PaketKegiatan $model)
     {
         parent::__construct($model);
     }
@@ -45,7 +45,7 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
         try {
             $data = $this->model->newQuery()->create([
-                'akseslh_jenis_kegiatan_id'         => $data['akseslh_jenis_kegiatan_id'],
+                'jenis_kegiatan_id'                 => $data['jenis_kegiatan_id'],
                 'nama_paket_kegiatan'               => $data['nama_paket_kegiatan'],
                 'deskripsi_paket_kegiatan'          => $data['deskripsi_paket_kegiatan'],
                 'quota_paket_kegiatan'              => $data['quota_paket_kegiatan'],
@@ -69,7 +69,7 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $read->akseslh_jenis_kegiatan_id         = $data['akseslh_jenis_kegiatan_id'];
+            $read->jenis_kegiatan_id                 = $data['jenis_kegiatan_id'];
             $read->nama_paket_kegiatan               = $data['nama_paket_kegiatan'];
             $read->deskripsi_paket_kegiatan          = $data['deskripsi_paket_kegiatan'];
             $read->quota_paket_kegiatan              = $data['quota_paket_kegiatan'];

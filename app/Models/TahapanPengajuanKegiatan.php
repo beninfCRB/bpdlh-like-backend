@@ -6,16 +6,14 @@ use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AkseslhJenisKelompokMasyarakat extends AppModel
+class TahapanPengajuanKegiatan extends AppModel
 {
     use HasFactory;
 
-    protected $table = "jenis_kelompok_masyarakats";
+    protected $table = 'tahapan_pengajuan_kegiatans';
 
     protected $fillable = [
-        'jenis_kelompok_masyarakat',
-        'short_id',
-        'flag',
-        'username'
+        'deskripsi_tahapan',
+        'username',
     ];
 }

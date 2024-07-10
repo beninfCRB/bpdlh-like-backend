@@ -52,8 +52,8 @@ class KelompokMasyarakatController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'akseslh_jenis_kelompok_masyarakat_id'     => 'required|string',
-            'kelompok_masyarakat'                      => 'required|string',
+            'jenis_kelompok_masyarakat_id'  => 'required|string',
+            'kelompok_masyarakat'           => 'required|string',
         ]);
 
         $result =   $this->kelompokMasyarakatService->create($input);
@@ -74,8 +74,8 @@ class KelompokMasyarakatController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'akseslh_jenis_kelompok_masyarakat_id'     => 'required|string',
-            'kelompok_masyarakat'                      => 'required|string',
+            'jenis_kelompok_masyarakat_id'     => 'required|string',
+            'kelompok_masyarakat'              => 'required|string',
         ]);
 
         $result =   $this->kelompokMasyarakatService->update($id, $input);

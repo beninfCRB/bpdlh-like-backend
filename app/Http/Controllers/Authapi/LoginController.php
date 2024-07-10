@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Authapi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\AkseslhUserEksternal;
+use App\Models\UserEksternal;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
@@ -32,7 +32,7 @@ class LoginController extends ApiController
 
         try {
 
-            $user = AkseslhUserEksternal::where([
+            $user = UserEksternal::where([
                 'email_user_eksternal'              => $input['email_user_eksternal'],
             ])->first();
 

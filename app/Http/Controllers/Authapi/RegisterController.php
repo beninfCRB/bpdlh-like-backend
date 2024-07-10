@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\AkseslhUserEksternal;
+use App\Models\UserEksternal;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
 use App\Notifications\RegisterNotification;
@@ -38,8 +38,8 @@ class RegisterController extends ApiController
         \DB::beginTransaction();
         try {
 
-            $user = AkseslhUserEksternal::where([
-                'akseslh_kelompok_masyarakat_id'    => $input['akseslh_kelompok_masyarakat_id'],
+            $user = UserEksternal::where([
+                'kelompok_masyarakat_id'            => $input['kelompok_masyarakat_id'],
                 'email_user_eksternal'              => $input['email_user_eksternal'],
                 'jenis_identitas_user_eksternal'    => $input['jenis_identitas_user_eksternal'],
                 'nomor_identitas_user_eksternal'    => $input['nomor_identitas_user_eksternal'],

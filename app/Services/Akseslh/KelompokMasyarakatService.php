@@ -3,7 +3,7 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\AkseslhKelompokMasyarakat;
+use App\Models\KelompokMasyarakat;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 class KelompokMasyarakatService extends AppService implements AppServiceInterface
 {
 
-    public function __construct(AkseslhKelompokMasyarakat $model)
+    public function __construct(KelompokMasyarakat $model)
     {
         parent::__construct($model);
     }
@@ -45,9 +45,9 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
         try {
 
             $data = $this->model->newQuery()->create([
-                'akseslh_jenis_kelompok_masyarakat_id'  =>  $data['akseslh_jenis_kelompok_masyarakat_id'],
-                'kelompok_masyarakat'                   =>  $data['kelompok_masyarakat'],
-                'flag'                                  => 1,
+                'jenis_kelompok_masyarakat_id'  =>  $data['jenis_kelompok_masyarakat_id'],
+                'kelompok_masyarakat'           =>  $data['kelompok_masyarakat'],
+                'flag'                          => 1,
             ]);
 
             \DB::commit(); // commit the changes
@@ -66,7 +66,7 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
 
         try {
 
-            $read->akseslh_jenis_kelompok_masyarakat_id =   $data['akseslh_jenis_kelompok_masyarakat_id'];
+            $read->jenis_kelompok_masyarakat_id         =   $data['jenis_kelompok_masyarakat_id'];
             $read->kelompok_masyarakat                  =   $data['kelompok_masyarakat'];
             $read->flag                                 =   1;
             $read->save();

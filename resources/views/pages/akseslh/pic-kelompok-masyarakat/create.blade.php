@@ -27,15 +27,15 @@
                 <form role="form" action="{{ route('pic-kelompok-masyarakat.store') }}" method="POST">
                     @csrf
                     <div class="row">
-                        <div class="form-group @error('akseslh_kelompok_masyarakat_id') has-error @enderror col-md-5">
-                            <label for="akseslh_kelompok_masyarakat_id">Kelompok Masyarakat <span
+                        <div class="form-group @error('kelompok_masyarakat_id') has-error @enderror col-md-5">
+                            <label for="kelompok_masyarakat_id">Kelompok Masyarakat <span
                                     class="text-danger">*</span></label>
-                            <select class="form-control" required id="akseslh_kelompok_masyarakat_id"
-                                name="akseslh_kelompok_masyarakat_id" required>
+                            <select class="form-control" required id="kelompok_masyarakat_id"
+                                name="kelompok_masyarakat_id" required>
                                 <option class='form-control' value=''>- Pilih Data -</option>
                                 @isset($kelompokMasyarakat)
                                 @foreach ($kelompokMasyarakat as $item)
-                                @if (old('akseslh_kelompok_masyarakat_id') == $item['id'])
+                                @if (old('kelompok_masyarakat_id') == $item['id'])
                                 <option class='form-control' value="{{ $item['id'] }}" selected>{{
                                     $item['kelompok_masyarakat'] }}</option>
                                 @else
@@ -45,7 +45,7 @@
                                 @endforeach
                                 @endisset
                             </select>
-                            @error('akseslh_kelompok_masyarakat_id')
+                            @error('kelompok_masyarakat_id')
                             {{ $message }}
                             @enderror
                         </div>

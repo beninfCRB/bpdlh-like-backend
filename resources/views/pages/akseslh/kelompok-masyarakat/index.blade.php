@@ -3,7 +3,7 @@
 @section('title', 'Data Kelompok Masyarakat')
 
 @section('script')
-<script src="{{asset('app/build/akseslh_kelompok_masyarakat.js')}}" type="text/javascript"></script>
+<script src="{{asset('app/build/kelompok_masyarakat.js')}}" type="text/javascript"></script>
 @endsection
 
 @section('content')

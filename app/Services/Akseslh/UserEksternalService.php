@@ -4,7 +4,7 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\AkseslhUserEksternal;
+use App\Models\UserEksternal;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
@@ -17,7 +17,7 @@ use App\Notifications\RegisterNotification;
 class UserEksternalService extends AppService implements AppServiceInterface
 {
 
-    public function __construct(AkseslhUserEksternal $model)
+    public function __construct(UserEksternal $model)
     {
         parent::__construct($model);
     }
@@ -71,7 +71,7 @@ class UserEksternalService extends AppService implements AppServiceInterface
 
             // Insert data to database
             $data = $this->model->newQuery()->create([
-                'akseslh_kelompok_masyarakat_id'    => $data['akseslh_kelompok_masyarakat_id'],
+                'kelompok_masyarakat_id'    => $data['kelompok_masyarakat_id'],
                 'email_user_eksternal'              => $data['email_user_eksternal'],
                 'password_user_eksternal'           => Hash::make($default_password),
                 'nama_user_eksternal'               => $data['nama_user_eksternal'],
@@ -99,7 +99,7 @@ class UserEksternalService extends AppService implements AppServiceInterface
 
         try {
 
-            $read->akseslh_kelompok_masyarakat_id   = $data['akseslh_kelompok_masyarakat_id'];
+            $read->kelompok_masyarakat_id   = $data['kelompok_masyarakat_id'];
             $read->email_user_eksternal             = $data['email_user_eksternal'];
             $read->nama_user_eksternal              = $data['nama_user_eksternal'];
             $read->jenis_identitas_user_eksternal   = $data['jenis_identitas_user_eksternal'];

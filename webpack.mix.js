@@ -18,11 +18,12 @@ mix.js("resources/js/app.js", "public/js")
     .js("public/app/app.js", build)
     .js("public/app/api.js", build)
     .js(source + "home.js", build)
-    .js(source + "akseslh_jenis_kegiatan.js", build)
-    .js(source + "akseslh_jenis_kelompok_masyarakat.js", build)
-    .js(source + "akseslh_kelompok_masyarakat.js", build)
-    .js(source + "akseslh_paket_kegiatan.js", build)
-    .js(source + "akseslh_pic_kelompok_masyarakat.js", build)
+    .js(source + "jenis_kegiatan.js", build)
+    .js(source + "jenis_kelompok_masyarakat.js", build)
+    .js(source + "kelompok_masyarakat.js", build)
+    .js(source + "paket_kegiatan.js", build)
+    .js(source + "pic_kelompok_masyarakat.js", build)
+    .js(source + "tahapan_pengajuan_kegiatan.js", build)
     .version();
 
 mix.disableNotifications();

@@ -4,7 +4,7 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\AkseslhJenisKegiatan;
+use App\Models\JenisKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 class JenisKegiatanService extends AppService implements AppServiceInterface
 {
 
-    public function __construct(AkseslhJenisKegiatan $model)
+    public function __construct(JenisKegiatan $model)
     {
         parent::__construct($model);
     }

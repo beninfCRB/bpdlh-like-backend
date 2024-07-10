@@ -6,7 +6,7 @@ use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AkseslhPengajuanKegiatan extends AppModel
+class PengajuanKegiatan extends AppModel
 {
     use HasFactory;
 
