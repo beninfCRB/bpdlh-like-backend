@@ -58,7 +58,7 @@ var data_paket_kegiatan = (function () {
                         if (full.end_date === null) {
                             return null;
                         } else {
-                            return dayJs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.end_date).format("DD MMM YYYY");
                         }
                     },
                 },
@@ -70,7 +70,7 @@ var data_paket_kegiatan = (function () {
                         if (full.end_date === null) {
                             return null;
                         } else {
-                            return dayJs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.end_date).format("DD MMM YYYY");
                         }
                     },
                 },
@@ -116,13 +116,52 @@ jQuery(document).ready(function () {
 
 window.generateFormTahapSalur = () => {
     let jmlTahapSalur = $("#tahap_pencairan_paket_kegiatan").val();
-    if (jmlTahapSalur > 1) {
-        alert("halo " + jmlTahapSalur);
-        for (let index = 0; index < array.length; index++) {
-            const element = array[index];
-        }
+    if (jmlTahapSalur > 1 && jmlTahapSalur <= 5) {
+        generateForm(jmlTahapSalur);
     } else {
-        console.log("Kurang dari 0");
+        const containerDiv = $("#dynamicForm");
+        const tbody = $("#dynamicForm-tbody");
+        tbody.empty();
+        containerDiv.addClass("hidden");
+    }
+};
+
+window.generateForm = (input) => {
+    const containerDiv = $("#dynamicForm");
+    containerDiv.removeClass("hidden");
+    const tbody = $("#dynamicForm-tbody");
+    tbody.empty();
+
+    for (let index = 1; index <= input; index++) {
+        const fieldGroup =
+            `
+            <div class="form-group col-md-12">
+                <label for="porsi_pencairan">Porsi Tahap Salur ke-` +
+            index +
+            ` <span class="text-danger">*</span></label>
+                <input type="number" min=0 class="form-control" id="porsi_pencairan" name="porsi_pencairan"
+                    value="">
+            </div>
+        `;
+        const tr =
+            `
+            <tr>
+                <td>Tahapan Salur ke-` +
+            index +
+            `</td>
+                <td>
+                    <div class="input-group">
+                        <input type="number" id="example-input2-group1"
+                            name="porsi_pencairan[` +
+            index +
+            `]" class="form-control" min="1"
+                            max="5">
+                        <span class="input-group-addon">%</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+        tbody.append(tr);
     }
 };
 

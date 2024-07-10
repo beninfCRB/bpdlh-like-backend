@@ -44,7 +44,7 @@ var data_jenis_kelompok_masyarakat = (function () {
                         if (full.end_date === null) {
                             return null;
                         } else {
-                            return dayJs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.end_date).format("DD MMM YYYY");
                         }
                     },
                 },
@@ -56,7 +56,7 @@ var data_jenis_kelompok_masyarakat = (function () {
                         if (full.end_date === null) {
                             return null;
                         } else {
-                            return dayJs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.end_date).format("DD MMM YYYY");
                         }
                     },
                 },

@@ -6,10 +6,10 @@ window.toastr = require("toastr");
 window.select2 = require("select2");
 // window.summernote = require("summernote");
 window.chartJs = require("chart.js");
-window.dayJs = require("dayjs");
+// window.dayJs = require("dayjs");
 import "chart.js";
-import "dayjs/locale/id";
-dayJs.locale("id");
+// import "dayjs/locale/id";
+// dayJs.locale("id");
 // import "sweetalert2/src/sweetalert2.scss";
 
 window.baseUrlAsset = "https://bpdlh-cms.dev.pinteraktif.id/storage/";
