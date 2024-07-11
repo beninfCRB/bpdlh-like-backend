@@ -18,7 +18,7 @@ class CreateTematikKegiatansTable extends Migration
             $table->uuid('id')->primary();
             $table->string('tematik_kegiatan', 100);
             $table->tinyInteger('short_id');
-            $table->string('icon_tematic', 255);
+            $table->string('icon_tematik', 255);
             $table->string('username')->nullable();
             $table->softDeletes();
             $table->timestamps();

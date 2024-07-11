@@ -15,6 +15,7 @@ class PaketKegiatan extends AppModel
 
     protected $fillable = [
         'jenis_kegiatan_id',
+        'tematik_kegiatan_id',
         'nama_paket_kegiatan',
         'deskripsi_paket_kegiatan',
         'jumlah_peserta',
@@ -32,5 +33,15 @@ class PaketKegiatan extends AppModel
     public function jenis_kegiatan(): BelongsTo
     {
         return $this->belongsTo(JenisKegiatan::class, 'jenis_kegiatan_id');
+    }
+
+    /**
+     * Get the tematik_kegiatan that owns the AkseslhPaketKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function tematik_kegiatan(): BelongsTo
+    {
+        return $this->belongsTo(TematikKegiatan::class, 'tematik_kegiatan_id');
     }
 }

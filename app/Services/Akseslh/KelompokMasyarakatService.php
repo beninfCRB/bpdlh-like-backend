@@ -198,14 +198,14 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
     public function apiGetByIdJenisKelompokMasyarakat($id)
     {
         $result  = $this->model->newQuery()
-            ->where('akseslh_jenis_kelompok_masyarakat_id', $id)
+            ->where('jenis_kelompok_masyarakat_id', $id)
             ->orderBy('created_at', 'DESC')
             ->get();
 
         $result->transform(function ($items, $key) {
             return [
                 'id'                                    => $items->id,
-                'akseslh_jenis_kelompok_masyarakat_id'  => $items->akseslh_jenis_kelompok_masyarakat_id,
+                'jenis_kelompok_masyarakat_id'          => $items->jenis_kelompok_masyarakat_id,
                 'kelompok_masyarakat'                   => $items->kelompok_masyarakat,
                 'flag'                                  => $items->flag,
             ];

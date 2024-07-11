@@ -20,7 +20,7 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->with('jenis_kegiatan')->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with(['jenis_kegiatan', 'tematik_kegiatan'])->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -46,6 +46,7 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         try {
             $data = $this->model->newQuery()->create([
                 'jenis_kegiatan_id'                 => $data['jenis_kegiatan_id'],
+                'tematik_kegiatan_id'               => $data['tematik_kegiatan_id'],
                 'nama_paket_kegiatan'               => $data['nama_paket_kegiatan'],
                 'deskripsi_paket_kegiatan'          => $data['deskripsi_paket_kegiatan'],
                 'jumlah_peserta'                    => $data['jumlah_peserta'],
@@ -219,5 +220,25 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
             });
         }
         return $result;
+    }
+
+    function apiGetByIdTematikKegiatan($id)
+    {
+        $result  = $this->model->newQuery()
+            ->where('tematik_kegiatan_id', $id)
+
+            ->orderBy('created_at', 'DESC')
+            ->get();
+        $result = $this->model->where('tematik_kegiatan_id', $id)->groupBy('nama_paket_kegiatan')->get();
+
+        // $result->transform(function ($items, $key) {
+        //     return [
+        //         'id'                        => $items->id,
+        //         'tematik_kegiatan_id'       => $items->tematik_kegiatan_id,
+        //         'nama_paket_kegiatan'       => $items->nama_paket_kegiatan,
+        //     ];
+        // });
+
+        return $this->sendSuccess($result);
     }
 }

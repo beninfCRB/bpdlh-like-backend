@@ -18,4 +18,10 @@ class TematikKegiatan extends AppModel
         'icon_tematik',
         'username',
     ];
+
+    public function image()
+    {
+        return $this->morphOne(File::class, 'fileable')
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
+    }
 }

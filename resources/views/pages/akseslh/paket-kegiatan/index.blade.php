@@ -39,6 +39,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Jenis Kegiatan</th>
+                                    <th>Tematik Kegiatan</th>
                                     <th>Nama Paket Kegiatan</th>
                                     <th>Deskripsi Paket Kegiatan</th>
                                     <th>Quota Paket Kegiatan</th>

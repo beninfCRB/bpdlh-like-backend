@@ -3,18 +3,26 @@
 
 namespace App\Services\Akseslh;
 
-
-use App\Models\TematikKegiatan;
+use App\Models\File as FileTable;
 use App\Services\AppService;
+use App\Models\TematikKegiatan;
+use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
 class TematikKegiatanService extends AppService implements AppServiceInterface
 {
+    protected $fileUploadService;
+    protected $fileTable;
 
-    public function __construct(TematikKegiatan $model)
-    {
+    public function __construct(
+        FileUploadService $fileUploadService,
+        FileTable $fileTable,
+        TematikKegiatan $model
+    ) {
+        $this->fileUploadService    =   $fileUploadService;
+        $this->fileTable            =   $fileTable;
         parent::__construct($model);
     }
 
@@ -32,10 +40,25 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
+    public function getAllAttr()
+    {
+        $result  = $this->model->newQuery()
+            ->orderBy('short_id', 'ASC')
+            ->get();
+
+        $result->transform(function ($items, $key) {
+            return [
+                'id'                    => $items->id,
+                'tematik_kegiatan'      => $items->tematik_kegiatan,
+            ];
+        });
+
+        return $this->sendSuccess($result);
+    }
+
     public function getById($id)
     {
         $result =   $this->model->newQuery()->find($id);
-
         return $this->sendSuccess($result);
     }
 
@@ -45,14 +68,25 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $data = $this->model->newQuery()->create([
+            $tematik_kegiatan = $this->model->newQuery()->create([
                 'tematik_kegiatan'  =>  $data['tematik_kegiatan'],
                 'short_id'          =>  $data['short_id'],
-                'icon_tematic'      =>  $data['icon_tematic'],
+                'icon_tematik'      =>  "Icon Tematic",
             ]);
 
+            // upload banner image
+            $upload = $this->fileUploadService->handleImage($data['fileImage'])->saveToDb('image');
+
+            if (!empty($upload)) {
+                $image = $this->fileTable->newQuery()->find($upload->id);
+                $image->update([
+                    'fileable_type' => get_class($tematik_kegiatan),
+                    'fileable_id'   => $tematik_kegiatan->id,
+                ]);
+            }
+
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($data);
+            return $this->sendSuccess($tematik_kegiatan);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
@@ -194,5 +228,23 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
             });
         }
         return $result;
+    }
+
+    public function getApiAll()
+    {
+        $result  = $this->model->newQuery()
+            // ->where('is_publish', true)
+            ->orderBy('short_id', 'ASC')
+            ->get();
+
+        $result->transform(function ($items, $key) {
+            return [
+                'id'                => $items->id,
+                'tematik_kegiatan'  => $items->tematik_kegiatan,
+                'image'             => $items->image
+            ];
+        });
+
+        return $this->sendSuccess($result);
     }
 }

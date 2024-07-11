@@ -3,8 +3,8 @@
 
 namespace App\Services;
 
-use App\Service\AppService;
-use App\Models\Entity\File;
+use App\Services\AppService;
+use App\Models\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;

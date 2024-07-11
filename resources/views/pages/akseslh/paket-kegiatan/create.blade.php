@@ -31,7 +31,7 @@
                 <form role="form" action="{{ route('paket-kegiatan.store') }}" method="POST">
                     @csrf
                     <div class="row">
-                        <div class="form-group @error('jenis_kegiatan_id') has-error @enderror col-md-4">
+                        <div class="form-group @error('jenis_kegiatan_id') has-error @enderror col-md-6">
                             <label for="jenis_kegiatan_id">Jenis Kegiatan <span class="text-danger">*</span></label>
                             <select class="form-control" required id="jenis_kegiatan_id" name="jenis_kegiatan_id"
                                 required>
@@ -56,7 +56,32 @@
                             </span>
                             @enderror
                         </div>
-                        <div class="form-group @error('nama_paket_kegiatan') has-error @enderror col-md-8">
+                        <div class="form-group @error('tematik_kegiatan_id') has-error @enderror col-md-6">
+                            <label for="tematik_kegiatan_id">Tematik Kegiatan <span class="text-danger">*</span></label>
+                            <select class="form-control" required id="tematik_kegiatan_id" name="tematik_kegiatan_id"
+                                required>
+                                <option class='form-control' value=''>- Pilih Data -</option>
+                                @isset($tematikKegiatan)
+                                @foreach ($tematikKegiatan as $item)
+                                @if (old('tematik_kegiatan_id') == $item['id'])
+                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                    $item['tematik_kegiatan'] }}
+                                </option>
+                                @else
+                                <option class='form-control' value="{{ $item['id'] }}">{{
+                                    $item['tematik_kegiatan'] }}
+                                </option>
+                                @endif
+                                @endforeach
+                                @endisset
+                            </select>
+                            @error('jenis_kegiatan_id')
+                            <span class="error">
+                                {{ $message }}
+                            </span>
+                            @enderror
+                        </div>
+                        <div class="form-group @error('nama_paket_kegiatan') has-error @enderror col-md-12">
                             <label for="nama_paket_kegiatan">Nama Paket Kegiatan <span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nama_paket_kegiatan" name="nama_paket_kegiatan"

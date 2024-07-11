@@ -43,8 +43,11 @@ class TematikKegiatanController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kegiatan'    => 'required'
+            'tematik_kegiatan'    => 'required',
+            'short_id'            => 'required',
+            'fileImage'                => 'required',
         ]);
+        $input['fileImage'] = $request->file('fileImage');
 
         $result =   $this->tematikKegiatanService->create($input);
 
@@ -54,7 +57,7 @@ class TematikKegiatanController extends ApiController
                 session()->flash('success', $result->message);
                 return redirect()->route('tematik-kegiatan.index');
             }
-
+            dd($result->message);
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());

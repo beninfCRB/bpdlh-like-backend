@@ -21,6 +21,8 @@ Route::post('logout', [App\Http\Controllers\Authapi\LogoutController::class, 'lo
 
 Route::get('jenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\JenisKelompokMasyarakatController::class, 'index']);
 Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
+Route::get('tematikKegiatan', [App\Http\Controllers\Api\Akseslh\TematikKegiatanController::class, 'index']);
+Route::get('paketKegiatan/{id}/byIdTematikKegiatan', [App\Http\Controllers\Api\Akseslh\PaketKegiatanController::class, 'byIdTematikKegiatan']);
 
 // Route::get('pengajuan-kegiatan', function () {
 //     $user = App\Models\AkseslhUserEksternal::find('220d0de5-7cd8-4986-8595-56e70478decc');

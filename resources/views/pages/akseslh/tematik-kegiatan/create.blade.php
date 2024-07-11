@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Jenis Kegiatan')
+@section('title', 'Buat Tematik Kegiatan')
 
 @section('content')
 <!-- Page-Title -->
 <div class="row">
     <div class="col-sm-12">
-        <h4 class="pull-left page-title">KELOLA DATA JENIS KEGIATAN</h4>
+        <h4 class="pull-left page-title">KELOLA DATA TEMATIK KEGIATAN</h4>
         <ol class="breadcrumb pull-right">
             <li><a href="#">Data Master</a></li>
             <li><a href="#">Forms</a></li>
-            <li class="active">Pengelolaan Data Jenis Kegiatan</li>
+            <li class="active">Pengelolaan Data Tematik Kegiatan</li>
         </ol>
     </div>
 </div>
@@ -21,22 +21,38 @@
     <div class="col-md-6">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">Pengelolaan Data Jenis Kelompok Masyarakat</h3>
+                <h3 class="panel-title">Pengelolaan Data Tematik Kegiatan</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="{{ route('jenis-kegiatan.store') }}" method="POST">
+                <form role="form" action="{{ route('tematik-kegiatan.store') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
-                    <div class="form-group @error('jenis_kegiatan') has-error @enderror">
-                        <label for="jenis_kegiatan">Jenis Kegiatan <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="jenis_kegiatan" name="jenis_kegiatan"
+                    <div class="form-group @error('tematik_kegiatan') has-error @enderror">
+                        <label for="tematik_kegiatan">Tematik Kegiatan <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="tematik_kegiatan" name="tematik_kegiatan"
                             placeholder="Jenis Kegiatan">
-                        @error('jenis_kegiatan')
+                        @error('tematik_kegiatan')
+                        {{ $message }}
+                        @enderror
+                    </div>
+                    <div class="form-group @error('short_id') has-error @enderror">
+                        <label for="short_id">Short Id <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="short_id" name="short_id" min="1"
+                            placeholder="Jenis Kegiatan">
+                        @error('short_id')
+                        {{ $message }}
+                        @enderror
+                    </div>
+                    <div class="form-group @error('fileImage') has-error @enderror">
+                        <label for="fileImage">Short Id <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="fileImage" name="fileImage">
+                        @error('fileImage')
                         {{ $message }}
                         @enderror
                     </div>
                     <div class="row">
                         <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
-                        <a href="{{ route('jenis-kegiatan.index') }}"
+                        <a href="{{ route('tematik-kegiatan.index') }}"
                             class="btn btn-inverse waves-effect waves-light">Kembali</a>
                     </div>
                 </form>

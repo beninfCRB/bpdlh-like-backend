@@ -25,6 +25,7 @@ var data_paket_kegiatan = (function () {
             columns: [
                 { data: "DT_RowIndex" },
                 {},
+                {},
                 { data: "nama_paket_kegiatan" },
                 { data: "deskripsi_paket_kegiatan" },
                 { data: "quota_paket_kegiatan" },
@@ -51,7 +52,17 @@ var data_paket_kegiatan = (function () {
                     },
                 },
                 {
-                    targets: 7,
+                    targets: 2,
+                    render: function (data, type, full, meta) {
+                        if (full.tematik_kegiatan === null) {
+                            return "-";
+                        } else {
+                            return full.tematik_kegiatan.tematik_kegiatan;
+                        }
+                    },
+                },
+                {
+                    targets: 8,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -63,7 +74,7 @@ var data_paket_kegiatan = (function () {
                     },
                 },
                 {
-                    targets: 8,
+                    targets: 9,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {

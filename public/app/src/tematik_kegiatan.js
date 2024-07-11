@@ -24,7 +24,7 @@ var data_tematik_kegiatan = (function () {
             ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
-                {},
+                { data: "icon_tematik" },
                 { data: "tematik_kegiatan" },
                 { data: "short_id" },
                 { data: "created_at" },

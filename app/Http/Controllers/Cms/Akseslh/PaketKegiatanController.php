@@ -8,19 +8,23 @@ use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\JenisKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
+use App\Services\Akseslh\TematikKegiatanService;
 
 class PaketKegiatanController extends ApiController
 {
     protected $paketKegiatanService;
     protected $jenisKegiatanService;
+    protected $tematikKegiatanService;
 
     public function __construct(
         PaketKegiatanService $paketKegiatanService,
         JenisKegiatanService $jenisKegiatanService,
+        TematikKegiatanService $tematikKegiatanService,
         Request $request
     ) {
         $this->paketKegiatanService   =   $paketKegiatanService;
         $this->jenisKegiatanService   =   $jenisKegiatanService;
+        $this->tematikKegiatanService   =   $tematikKegiatanService;
         parent::__construct($request);
     }
 
@@ -32,14 +36,16 @@ class PaketKegiatanController extends ApiController
     public function create()
     {
         $jenisKegiatan = $this->jenisKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.paket-kegiatan.create", compact('jenisKegiatan'));
+        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.paket-kegiatan.create", compact('jenisKegiatan', 'tematikKegiatan'));
     }
 
     public function edit($id)
     {
         $data   =   $this->paketKegiatanService->getById($id);
         $jenisKegiatan = $this->jenisKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan'));
+        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'tematikKegiatan'));
     }
 
     public function show($id)
@@ -52,6 +58,7 @@ class PaketKegiatanController extends ApiController
     {
         $input  =   $request->validate([
             'jenis_kegiatan_id'                 => 'required|exists:jenis_kegiatans,id',
+            'tematik_kegiatan_id'               => 'required|exists:tematik_kegiatans,id',
             'nama_paket_kegiatan'               => 'required|string',
             'deskripsi_paket_kegiatan'          => 'required|string',
             'jumlah_peserta'                    => 'required',
