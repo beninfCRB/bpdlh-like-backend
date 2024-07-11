@@ -51,6 +51,10 @@
                                 style="padding: 10px 25px 10px 30px;">> <span>Jenis Kegiatan</span></a>
                         </li>
                         <li>
+                            <a href="{{ route('tematik-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Tematik Kegiatan</span></a>
+                        </li>
+                        <li>
                             <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">> <span>Paket Kegiatan</span></a>
                         </li>

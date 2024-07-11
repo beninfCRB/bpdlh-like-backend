@@ -3,7 +3,7 @@
 @section('title', 'Buat Data Paket Kegiatan')
 
 @section('script')
-<script src="{{asset('app/build/akseslh_paket_kegiatan.js')}}" type="text/javascript"></script>
+<script src="{{asset('app/build/paket_kegiatan.js')}}" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -79,7 +79,17 @@
                             </span>
                             @enderror
                         </div>
-                        <div class="form-group @error('quota_paket_kegiatan') has-error @enderror col-md-4">
+                        <div class="form-group @error('jumlah_peserta') has-error @enderror col-md-3">
+                            <label for="jumlah_peserta">Jumlah Peserta <span class="text-danger">*</span></label>
+                            <input type="number" min=0 class="form-control" id="jumlah_peserta" name="jumlah_peserta"
+                                value="{{ old('jumlah_peserta') }}">
+                            @error('jumlah_peserta')
+                            <span class="error">
+                                {{ $message }}
+                            </span>
+                            @enderror
+                        </div>
+                        <div class="form-group @error('quota_paket_kegiatan') has-error @enderror col-md-3">
                             <label for="quota_paket_kegiatan">Quota Paket Kegiatan <span
                                     class="text-danger">*</span></label>
                             <input type="number" min=0 class="form-control" id="quota_paket_kegiatan"
@@ -90,7 +100,7 @@
                             </span>
                             @enderror
                         </div>
-                        <div class="form-group @error('pagu_paket_kegiatan') has-error @enderror col-md-4">
+                        <div class="form-group @error('pagu_paket_kegiatan') has-error @enderror col-md-3">
                             <label for="pagu_paket_kegiatan">Pagu Paket Kegiatan (Rp) <span
                                     class="text-danger">*</span></label>
                             <input type="number" min=0 step="0.00" class="form-control" id="pagu_paket_kegiatan"
@@ -101,18 +111,36 @@
                             </span>
                             @enderror
                         </div>
-                        <div class="form-group @error('tahap_pencairan_paket_kegiatan') has-error @enderror col-md-4">
+                        <div class="form-group @error('tahap_pencairan_paket_kegiatan') has-error @enderror col-md-3">
                             <label for="tahap_pencairan_paket_kegiatan">Jml Tahap Pencairan <span
                                     class="text-danger">*</span></label>
                             <input type="number" min=0 class="form-control" id="tahap_pencairan_paket_kegiatan"
                                 name="tahap_pencairan_paket_kegiatan"
-                                value="{{ old('tahap_pencairan_paket_kegiatan') }}">
+                                value="{{ old('tahap_pencairan_paket_kegiatan') }}" onkeyup="generateFormTahapSalur()">
                             @error('tahap_pencairan_paket_kegiatan')
                             <span class="error">
                                 {{ $message }}
                             </span>
                             @enderror
                         </div>
+                    </div>
+                    <div class="row hidden" id="dynamicForm">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tahapan Salur</th>
+                                            <th>Porsi Pencairan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dynamicForm-tbody">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="row">
                         <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>

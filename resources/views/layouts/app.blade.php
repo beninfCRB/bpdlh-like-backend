@@ -106,6 +106,9 @@
     <script src="{{asset('assets/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/datatables/dataTables.bootstrap.js')}}"></script>
 
+    {{-- Day js --}}
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
     {{-- Mix --}}
     <script src="{{ mix('app/build/app.js') }}"></script>
 

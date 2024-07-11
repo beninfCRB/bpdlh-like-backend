@@ -4,23 +4,23 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\PaketKegiatan;
+use App\Models\TematikKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
-class PaketKegiatanService extends AppService implements AppServiceInterface
+class TematikKegiatanService extends AppService implements AppServiceInterface
 {
 
-    public function __construct(PaketKegiatan $model)
+    public function __construct(TematikKegiatan $model)
     {
         parent::__construct($model);
     }
 
     public function getAll()
     {
-        $model = $this->model->query()->with('jenis_kegiatan')->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -44,14 +44,11 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
+
             $data = $this->model->newQuery()->create([
-                'jenis_kegiatan_id'                 => $data['jenis_kegiatan_id'],
-                'nama_paket_kegiatan'               => $data['nama_paket_kegiatan'],
-                'deskripsi_paket_kegiatan'          => $data['deskripsi_paket_kegiatan'],
-                'jumlah_peserta'                    => $data['jumlah_peserta'],
-                'quota_paket_kegiatan'              => $data['quota_paket_kegiatan'],
-                'pagu_paket_kegiatan'               => $data['pagu_paket_kegiatan'],
-                'tahap_pencairan_paket_kegiatan'    => $data['tahap_pencairan_paket_kegiatan'],
+                'tematik_kegiatan'  =>  $data['tematik_kegiatan'],
+                'short_id'          =>  $data['short_id'],
+                'icon_tematic'      =>  $data['icon_tematic'],
             ]);
 
             \DB::commit(); // commit the changes
@@ -70,13 +67,9 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $read->jenis_kegiatan_id                 = $data['jenis_kegiatan_id'];
-            $read->nama_paket_kegiatan               = $data['nama_paket_kegiatan'];
-            $read->deskripsi_paket_kegiatan          = $data['deskripsi_paket_kegiatan'];
-            $read->jumlah_peserta          = $data['jumlah_peserta'];
-            $read->quota_paket_kegiatan              = $data['quota_paket_kegiatan'];
-            $read->pagu_paket_kegiatan               = $data['pagu_paket_kegiatan'];
-            $read->tahap_pencairan_paket_kegiatan    = $data['tahap_pencairan_paket_kegiatan'];
+            $read->tematik_kegiatan     =   $data['tematik_kegiatan'];
+            $read->short_id             =   $data['short_id'];
+            $read->icon_tematik         =   $data['icon_tematik'];
             $read->save();
 
             \DB::commit(); // commit the changes
@@ -92,24 +85,6 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         $read   =   $this->model->newQuery()->find($id);
         try {
             $read->delete();
-            \DB::commit(); // commit the changes
-            return $this->sendSuccess($read);
-        } catch (\Exception $exception) {
-            \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
-        }
-    }
-
-    public function updatePublish($id, $isPublish): object
-    {
-        $read = $this->model->newQuery()->find($id);
-
-        \DB::beginTransaction();
-
-        try {
-            $read->is_publish       =   $isPublish;
-            $read->save();
-
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {

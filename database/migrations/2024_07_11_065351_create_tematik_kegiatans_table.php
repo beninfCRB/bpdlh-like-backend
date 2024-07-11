@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTahapSalurPaketKegiatansTable extends Migration
+class CreateTematikKegiatansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,14 @@ class CreateTahapSalurPaketKegiatansTable extends Migration
      */
     public function up()
     {
-        Schema::create('tahap_salur_paket_kegiatans', function (Blueprint $table) {
+        Schema::create('tematik_kegiatans', function (Blueprint $table) {
             // $table->id();
             $table->uuid('id')->primary();
-            $table->foreignUuid('paket_kegiatan_id');
-            $table->integer('tahap_salur');
+            $table->string('tematik_kegiatan', 100);
+            $table->tinyInteger('short_id');
+            $table->string('icon_tematic', 255);
+            $table->string('username')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ class CreateTahapSalurPaketKegiatansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tahap_salur_paket_kegiatans');
+        Schema::dropIfExists('tematik_kegiatans');
     }
 }

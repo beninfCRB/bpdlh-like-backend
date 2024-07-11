@@ -41,6 +41,7 @@ Route::prefix('akseslh')->group(function () {
     Route::resource('paket-kegiatan', App\Http\Controllers\Cms\Akseslh\PaketKegiatanController::class);
     Route::resource('pic-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\UserEksternalController::class);
     Route::resource('tahapan-pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\TahapanPengajuanKegiatanController::class);
+    Route::resource('tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class);
 
 
     // Datatable
@@ -50,8 +51,5 @@ Route::prefix('akseslh')->group(function () {
     Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll'])->name('data-kelompok-masyarakat');
     Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
     Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\UserEksternalController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
-
-    // Route::view('pic-kelompok-masyarakat', 'pages.akseslh.pic-kelompok-masyarakat.index');
-    // Route::view('pic-kelompok-masyarakat/create', 'pages.akseslh.pic-kelompok-masyarakat.create');
-    // Route::view('pic-kelompok-masyarakat/edit', 'pages.akseslh.pic-kelompok-masyarakat.edit');
+    Route::get('/data-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TematikKegiatanController::class, 'getAll'])->name('data-tematik-kegiatan');
 });

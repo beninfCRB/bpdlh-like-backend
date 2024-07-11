@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\AppModel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class TematikKegiatan extends AppModel
+{
+    use HasFactory;
+
+    protected $table = 'tematik_kegiatans';
+
+    protected $fillable = [
+        'tematik_kegiatan',
+        'short_id',
+        'icon_tematik',
+        'username',
+    ];
+}

@@ -17,6 +17,7 @@ class PaketKegiatan extends AppModel
         'jenis_kegiatan_id',
         'nama_paket_kegiatan',
         'deskripsi_paket_kegiatan',
+        'jumlah_peserta',
         'quota_paket_kegiatan',
         'pagu_paket_kegiatan',
         'tahap_pencairan_paket_kegiatan',
