@@ -18,7 +18,8 @@
                             <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)"><i class="md md-settings-power"></i> Logout</a>
+                            <a href="javascript:void(0)"><i class="md md-settings-power"
+                                    onclick="document.getElementById('logout-form').submit()"></i> Logout</a>
                         </li>
                     </ul>
                 </div>

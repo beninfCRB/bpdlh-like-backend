@@ -96,7 +96,12 @@
                                 <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
                             </li>
                             <li>
-                                <a href="javascript:void(0)"><i class="md md-settings-power"></i> Logout</a>
+                                <form action="/logout" method="post" id="logout-form">
+                                    @csrf
+                                </form>
+                                <a href="javascript:void(0)"
+                                    onclick="document.getElementById('logout-form').submit()"><i
+                                        class="md md-settings-power"></i> Logout</a>
                             </li>
                         </ul>
                     </li>

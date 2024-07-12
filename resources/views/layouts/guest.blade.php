@@ -72,6 +72,8 @@
     <!-- CUSTOM JS -->
     <script src="{{asset('js/jquery.app.js')}}"></script>
 
+    @include('layouts._partials._message')
+
 </body>
 
 </html>
