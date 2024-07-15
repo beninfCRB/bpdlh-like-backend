@@ -24,7 +24,6 @@ var data_tematik_kegiatan = (function () {
             ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
-                { data: "icon_tematik" },
                 { data: "tematik_kegiatan" },
                 { data: "short_id" },
                 { data: "created_at" },
@@ -38,7 +37,7 @@ var data_tematik_kegiatan = (function () {
                     orderable: false,
                 },
                 {
-                    targets: 4,
+                    targets: 3,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -50,7 +49,7 @@ var data_tematik_kegiatan = (function () {
                     },
                 },
                 {
-                    targets: 5,
+                    targets: 4,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {

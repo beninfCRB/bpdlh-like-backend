@@ -3,7 +3,7 @@
 @section('content')
 <div class="panel-heading bg-img">
     <div class="bg-overlay"></div>
-    <h3 class="text-center m-t-10 text-white"> Sign In to <strong>Moltran</strong> </h3>
+    <h3 class="text-center m-t-10 text-white"> Sign In to <strong>CMS</strong> </h3>
 </div>
 
 

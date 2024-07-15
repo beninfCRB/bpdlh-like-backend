@@ -38,7 +38,6 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Icon Tematik</th>
                                     <th>Tematik Kegiatan</th>
                                     <th>Short</th>
                                     <th>Created at</th>

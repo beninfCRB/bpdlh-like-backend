@@ -24,14 +24,6 @@ Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Cont
 Route::get('tematikKegiatan', [App\Http\Controllers\Api\Akseslh\TematikKegiatanController::class, 'index']);
 Route::get('paketKegiatan/{id}/byIdTematikKegiatan', [App\Http\Controllers\Api\Akseslh\PaketKegiatanController::class, 'byIdTematikKegiatan']);
 
-// Route::get('pengajuan-kegiatan', function () {
-//     $user = App\Models\AkseslhUserEksternal::find('220d0de5-7cd8-4986-8595-56e70478decc');
-//     // $user->notify(new App\Notifications\PengajuanKegiatanNotification());
-//     foreach ($user->Notifications as $notification) {
-//         return response()->json($notification->data);
-//     }
-// });
-
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('pengajuan-kegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'store']);
 });
