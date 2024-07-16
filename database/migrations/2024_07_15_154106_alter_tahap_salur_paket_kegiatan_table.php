@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateJenisKegiatansTable extends Migration
+class AlterTahapSalurPaketKegiatanTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateJenisKegiatansTable extends Migration
      */
     public function up()
     {
-        Schema::create('jenis_kegiatans', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('jenis_kegiatan', 150);
-            $table->string('username', 100)->nullable();
+        //
+        Schema::table('tahap_salur_paket_kegiatans', function (Blueprint $table) {
+            //
+            $table->integer('porsi_pencairan')->after('tahap_salur');
+            $table->tinyInteger('flag')->after('porsi_pencairan');
+            $table->string('username', 100)->nullable()->after('flag');
             $table->softDeletes();
-            $table->timestamps();
         });
     }
 
@@ -29,6 +30,6 @@ class CreateJenisKegiatansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('jenis_kegiatans');
+        //
     }
 }

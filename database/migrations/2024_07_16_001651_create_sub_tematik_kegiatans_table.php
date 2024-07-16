@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateJenisKegiatansTable extends Migration
+class CreateSubTematikKegiatansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,13 @@ class CreateJenisKegiatansTable extends Migration
      */
     public function up()
     {
-        Schema::create('jenis_kegiatans', function (Blueprint $table) {
+        Schema::create('sub_tematik_kegiatans', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('jenis_kegiatan', 150);
+            $table->foreignUuid('tematik_kegiatan_id');
+            $table->string('sub_tematik_kegiatan', 100);
+            $table->tinyInteger('short_id');
+            $table->string('deskripsi_tematik', 255);
+            $table->tinyInteger('flag');
             $table->string('username', 100)->nullable();
             $table->softDeletes();
             $table->timestamps();
@@ -29,6 +33,6 @@ class CreateJenisKegiatansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('jenis_kegiatans');
+        Schema::dropIfExists('sub_tematik_kegiatans');
     }
 }

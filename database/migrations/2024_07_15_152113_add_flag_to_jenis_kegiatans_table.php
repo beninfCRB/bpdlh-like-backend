@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserEksternalsTable extends Migration
+class AddFlagToJenisKegiatansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,10 @@ class CreateUserEksternalsTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('user_eksternals');
+        Schema::table('jenis_kegiatans', function (Blueprint $table) {
+            //
+            $table->tinyInteger('flag');
+        });
     }
 
     /**
@@ -23,6 +26,9 @@ class CreateUserEksternalsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_eksternals');
+        Schema::table('jenis_kegiatans', function (Blueprint $table) {
+            //
+            $table->dropColumn('flag');
+        });
     }
 }

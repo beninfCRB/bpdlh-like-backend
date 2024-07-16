@@ -17,7 +17,7 @@ class CreatePengajuanKegiatansTable extends Migration
             // $table->id();
             $table->uuid('id')->primary();
             $table->foreignUuid('paket_kegitan_id');
-            $table->foreignUuid('user_eksternal_id');
+            $table->foreignUuid('user_akseslh_id');
             $table->string('judul_pengajuan_kegiatan', 500);
             $table->integer('provinsi_kegiatan');
             $table->integer('kabupaten_kegiatan');
