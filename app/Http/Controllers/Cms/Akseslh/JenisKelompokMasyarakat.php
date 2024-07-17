@@ -46,7 +46,7 @@ class JenisKelompokMasyarakat extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string',
+            'jenis_kelompok_masyarakat'     => 'required|string|max:150',
             'short_id'                      => 'required|numeric|min:0',
         ]);
 
@@ -68,7 +68,7 @@ class JenisKelompokMasyarakat extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string',
+            'jenis_kelompok_masyarakat'     => 'required|string|max:150',
             'short_id'                      => 'required|numeric|min:0',
         ]);
 

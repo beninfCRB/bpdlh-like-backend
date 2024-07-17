@@ -57,7 +57,6 @@ class JenisKegiatanController extends ApiController
                 session()->flash('success', $result->message);
                 return redirect()->route('jenis-kegiatan.index');
             }
-
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());

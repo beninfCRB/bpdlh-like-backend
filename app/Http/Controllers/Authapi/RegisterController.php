@@ -39,11 +39,12 @@ class RegisterController extends ApiController
         try {
 
             $user = UserEksternal::where([
-                'kelompok_masyarakat_id'            => $input['kelompok_masyarakat_id'],
-                'email_user_eksternal'              => $input['email_user_eksternal'],
-                'jenis_identitas_user_eksternal'    => $input['jenis_identitas_user_eksternal'],
-                'nomor_identitas_user_eksternal'    => $input['nomor_identitas_user_eksternal'],
-            ])->first();
+                'email_pic'              => $input['email_user_eksternal'],
+            ])
+                ->orWhere([
+                    'nohp_pic' => $input['nohp_pic']
+                ])
+                ->first();
 
             if ($user) {
                 if ($user->password_user_eksternal != null) {

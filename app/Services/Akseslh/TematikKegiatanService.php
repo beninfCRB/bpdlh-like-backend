@@ -58,7 +58,7 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->with('image')->find($id);
         return $this->sendSuccess($result);
     }
 
@@ -69,9 +69,10 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
         try {
 
             $tematik_kegiatan = $this->model->newQuery()->create([
-                'tematik_kegiatan'  =>  $data['tematik_kegiatan'],
-                'short_id'          =>  $data['short_id'],
-                'icon_tematik'      =>  "Icon Tematic",
+                'tematik_kegiatan'      =>  $data['tematik_kegiatan'],
+                'short_id'              =>  $data['short_id'],
+                'deskripsi_tematik'     =>  $data['deskripsi_tematik'],
+                'flag'                  => 1,
             ]);
 
             // upload banner image
@@ -103,7 +104,7 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
 
             $read->tematik_kegiatan     =   $data['tematik_kegiatan'];
             $read->short_id             =   $data['short_id'];
-            $read->icon_tematik         =   $data['icon_tematik'];
+            $read->deskripsi_tematik         =   $data['deskripsi_tematik'];
             $read->save();
 
             \DB::commit(); // commit the changes

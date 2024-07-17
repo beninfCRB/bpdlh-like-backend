@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTematikKegiatanIdToPaketKegiatansTable extends Migration
+class AlterTahapanPengajuanKegiatansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class AddTematikKegiatanIdToPaketKegiatansTable extends Migration
      */
     public function up()
     {
-        Schema::table('paket_kegiatans', function (Blueprint $table) {
+        //
+        Schema::table('tahapan_pengajuan_kegiatans', function (Blueprint $table) {
             //
-            $table->foreignUuid('tematik_kegiatan_id');
+            $table->dropColumn('deskripsi_tahapan');
+            $table->string('deskripsi_kegiatan', 100)->after('id');
         });
     }
 
@@ -26,9 +28,6 @@ class AddTematikKegiatanIdToPaketKegiatansTable extends Migration
      */
     public function down()
     {
-        Schema::table('paket_kegiatans', function (Blueprint $table) {
-            //
-            $table->dropColumn('tematik_kegiatan_id');
-        });
+        //
     }
 }

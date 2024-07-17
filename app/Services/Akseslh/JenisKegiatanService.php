@@ -63,6 +63,7 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
 
             $data = $this->model->newQuery()->create([
                 'jenis_kegiatan'       =>  $data['jenis_kegiatan'],
+                'flag'                 => 1,
             ]);
 
             \DB::commit(); // commit the changes

@@ -43,14 +43,6 @@
                         {{ $message }}
                         @enderror
                     </div>
-                    <div class="form-group @error('deskripsi_tematik') has-error @enderror">
-                        <label for="deskripsi_tematik">Deskripsi Tematik <span class="text-danger">*</span></label>
-                        <textarea name="deskripsi_tematik" id="deskripsi_tematik" cols="30" rows="10"
-                            class="form-control">{{ old('deskripsi_tematik') }}</textarea>
-                        @error('deskripsi_tematik')
-                        {{ $message }}
-                        @enderror
-                    </div>
                     <div class="form-group @error('fileImage') has-error @enderror">
                         <label for="fileImage">Short Id <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" id="fileImage" name="fileImage">

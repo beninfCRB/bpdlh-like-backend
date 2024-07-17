@@ -15,7 +15,7 @@ class TematikKegiatan extends AppModel
     protected $fillable = [
         'tematik_kegiatan',
         'short_id',
-        'icon_tematik',
+        'flag',
         'username',
     ];
 

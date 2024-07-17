@@ -14,6 +14,7 @@ class JenisKegiatan extends AppModel
 
     protected $fillable = [
         'jenis_kegiatan',
+        'flag',
         'username',
     ];
 }

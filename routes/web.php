@@ -36,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pic-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\UserEksternalController::class);
         Route::resource('tahapan-pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\TahapanPengajuanKegiatanController::class);
         Route::resource('tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class);
+        Route::resource('sub-tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class);
 
 
         // Datatable
