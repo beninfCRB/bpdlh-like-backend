@@ -36,6 +36,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pic-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\UserEksternalController::class);
         Route::resource('tahapan-pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\TahapanPengajuanKegiatanController::class);
         Route::resource('tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class);
+        Route::resource('satuan', App\Http\Controllers\Cms\Akseslh\SatuanController::class);
+        Route::resource('jenis-komponen-rab', App\Http\Controllers\Cms\Akseslh\JenisKomponenRabController::class);
+        Route::resource('master-komponen-rab', App\Http\Controllers\Cms\Akseslh\MasterKomponenRabController::class);
 
 
         // Datatable
@@ -46,5 +49,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
         Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\UserEksternalController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
         Route::get('/data-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TematikKegiatanController::class, 'getAll'])->name('data-tematik-kegiatan');
+        Route::get('/data-satuan', [App\Http\Controllers\Datatable\Akseslh\SatuanController::class, 'getAll'])->name('data-satuan');
+        Route::get('/data-jenis-komponen-rab', [App\Http\Controllers\Datatable\Akseslh\JenisKomponenRabController::class, 'getAll'])->name('data-jenis-komponen-rab');
+        Route::get('/data-master-komponen-rab', [App\Http\Controllers\Datatable\Akseslh\MasterKomponenRabController::class, 'getAll'])->name('data-master-komponen-rab');
     });
 });
