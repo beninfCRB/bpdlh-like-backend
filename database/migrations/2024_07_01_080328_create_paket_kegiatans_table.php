@@ -16,6 +16,7 @@ class CreatePaketKegiatansTable extends Migration
         Schema::create('paket_kegiatans', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('jenis_kegiatan_id');
+            $table->foreignUuid('sub_tematik_kegiatan_id');
             $table->string('nama_paket_kegiatan', 150);
             $table->string('deskripsi_paket_kegiatan', 500);
             $table->integer('quota_paket_kegiatan');

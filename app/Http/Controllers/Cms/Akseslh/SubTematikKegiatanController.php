@@ -2,61 +2,68 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Cms\Announcement\UpdateCareerRequest;
-use App\Services\Akseslh\JenisKegiatanService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
+use App\Http\Controllers\ApiController;
+use App\Services\Akseslh\TematikKegiatanService;
+use App\Services\Akseslh\SubTematikKegiatanService;
 
-class JenisKegiatanController extends ApiController
+class SubTematikKegiatanController extends ApiController
 {
-    protected $jenisKegiatanService;
+    protected $subTematikKegiatanService;
+    protected $tematikKegiatanService;
 
     public function __construct(
-        JenisKegiatanService $jenisKegiatanService,
+        SubTematikKegiatanService $subTematikKegiatanService,
+        TematikKegiatanService $tematikKegiatanService,
         Request $request
     ) {
-        $this->jenisKegiatanService   =   $jenisKegiatanService;
+        $this->subTematikKegiatanService   =   $subTematikKegiatanService;
+        $this->tematikKegiatanService   =   $tematikKegiatanService;
         parent::__construct($request);
     }
 
     public function index()
     {
-        return view("pages.akseslh.jenis-kegiatan.index");
+        return view("pages.akseslh.sub-tematik-kegiatan.index");
     }
 
     public function create()
     {
-        return view("pages.akseslh.jenis-kegiatan.create");
+        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.sub-tematik-kegiatan.create", compact('tematikKegiatan'));
     }
 
     public function edit($id)
     {
-        $data   =   $this->jenisKegiatanService->getById($id);
-        return view("pages.akseslh.jenis-kegiatan.edit", compact('data'));
+        $data   =   $this->subTematikKegiatanService->getById($id)->data;
+        return view("pages.akseslh.sub-tematik-kegiatan.edit", compact('data'));
     }
 
     public function show($id)
     {
-        $data   =   $this->jenisKegiatanService->getById($id);
-        return view("pages.akseslh.jenis-kegiatan.show", compact('data'));
+        $data   =   $this->subTematikKegiatanService->getById($id);
+        return view("pages.akseslh.sub-tematik-kegiatan.show", compact('data'));
     }
 
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kegiatan'    => 'required'
+            'tematik_kegiatan'    => 'required',
+            'short_id'            => 'required',
+            'deskripsi_tematik'   => 'required',
+            'fileImage'           => 'required',
         ]);
+        $input['fileImage'] = $request->file('fileImage');
 
-        $result =   $this->jenisKegiatanService->create($input);
+        $result =   $this->subTematikKegiatanService->create($input);
 
         try {
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('jenis-kegiatan.index');
+                return redirect()->route('sub-tematik-kegiatan.index');
             }
+
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
@@ -69,13 +76,13 @@ class JenisKegiatanController extends ApiController
             'jenis_kegiatan'    => 'required'
         ]);
 
-        $result =   $this->jenisKegiatanService->update($id, $input);
+        $result =   $this->subTematikKegiatanService->update($id, $input);
 
         try {
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('jenis-kegiatan.index');
+                return redirect()->route('sub-tematik-kegiatan.index');
             }
 
             return back()->with('error', $result->message);
@@ -86,7 +93,7 @@ class JenisKegiatanController extends ApiController
 
     public function destroy($id): \Illuminate\Http\JsonResponse
     {
-        $result =   $this->jenisKegiatanService->delete($id);
+        $result =   $this->subTematikKegiatanService->delete($id);
         try {
             if ($result->success) {
                 $response = $result->data;

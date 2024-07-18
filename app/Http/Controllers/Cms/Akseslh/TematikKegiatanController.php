@@ -30,14 +30,8 @@ class TematikKegiatanController extends ApiController
 
     public function edit($id)
     {
-        $data   =   $this->tematikKegiatanService->getById($id);
+        $data   =   $this->tematikKegiatanService->getById($id)->data;
         return view("pages.akseslh.tematik-kegiatan.edit", compact('data'));
-    }
-
-    public function show($id)
-    {
-        $data   =   $this->tematikKegiatanService->getById($id);
-        return view("pages.akseslh.tematik-kegiatan.show", compact('data'));
     }
 
     public function store(Request $request)
@@ -45,7 +39,8 @@ class TematikKegiatanController extends ApiController
         $input  =   $request->validate([
             'tematik_kegiatan'    => 'required',
             'short_id'            => 'required',
-            'fileImage'                => 'required',
+            'deskripsi_tematik'   => 'required',
+            'fileImage'           => 'required',
         ]);
         $input['fileImage'] = $request->file('fileImage');
 
@@ -57,7 +52,7 @@ class TematikKegiatanController extends ApiController
                 session()->flash('success', $result->message);
                 return redirect()->route('tematik-kegiatan.index');
             }
-            dd($result->message);
+
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());

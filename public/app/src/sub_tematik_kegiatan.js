@@ -1,5 +1,4 @@
 "use strict";
-
 import {
     createData,
     updateData,
@@ -8,10 +7,10 @@ import {
     showData,
 } from "../api";
 
-var data_pic_kelompok_masyarakat = (function () {
+var data_sub_tematik_kegiatan = (function () {
     var initTable1 = function () {
-        var table = $("#dt_pic_kelompok_masyarakat");
-        var url_table = $("#data-table-pic-kelompok-masyarakat").val();
+        var table = $("#dt_sub_tematik_kegiatan");
+        var url_table = $("#data-sub-table-tematik-kegiatan").val();
 
         // begin first table
         table.DataTable({
@@ -25,12 +24,8 @@ var data_pic_kelompok_masyarakat = (function () {
             columns: [
                 { data: "DT_RowIndex" },
                 {},
-                {},
-                { data: "nama_pic" },
-                { data: "jenis_identitas_pic" },
-                { data: "nomor_identitas_pic" },
-                { data: "email_pic" },
-                { data: "nohp_pic" },
+                { data: "sub_tematik_kegiatan" },
+                { data: "short_id" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -42,32 +37,7 @@ var data_pic_kelompok_masyarakat = (function () {
                     orderable: false,
                 },
                 {
-                    targets: 1,
-                    render: function (data, type, full, meta) {
-                        if (full.kelompok_masyarakat === null) {
-                            return "-";
-                        } else {
-                            return full.kelompok_masyarakat.kelompok_masyarakat;
-                        }
-                    },
-                },
-                {
-                    targets: 2,
-                    render: function (data, type, full, meta) {
-                        if (full.kelompok_masyarakat === null) {
-                            return "-";
-                        } else {
-                            if (full.kelompok_masyarakat.jenis === null) {
-                                return "-";
-                            } else {
-                                return full.kelompok_masyarakat.jenis
-                                    .jenis_kelompok_masyarakat;
-                            }
-                        }
-                    },
-                },
-                {
-                    targets: -3,
+                    targets: 4,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -79,7 +49,7 @@ var data_pic_kelompok_masyarakat = (function () {
                     },
                 },
                 {
-                    targets: -2,
+                    targets: 5,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -96,14 +66,14 @@ var data_pic_kelompok_masyarakat = (function () {
                     render: function (data, type, full, meta) {
                         return (
                             `
-                        <a href="/akseslh/pic-kelompok-masyarakat/` +
+                        <a href="/akseslh/sub-tematik-kegiatan/` +
                             full.id +
                             `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
                             full.id +
-                            ` href="#" onclick="deletePICKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                            ` href="#" onclick="deleteSubTematikKegiatan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
                           <i class="fa fa-trash"></i>
                         </a>`
                         );
@@ -122,10 +92,10 @@ var data_pic_kelompok_masyarakat = (function () {
 })();
 
 jQuery(document).ready(function () {
-    data_pic_kelompok_masyarakat.init();
+    data_sub_tematik_kegiatan.init();
 });
 
-window.deletePICKelompokMasyarakat = (input) => {
+window.deleteSUbTematikKegiatan = (input) => {
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -139,7 +109,7 @@ window.deletePICKelompokMasyarakat = (input) => {
     }).then((result) => {
         if (result.value) {
             deleteData(
-                "/akseslh/pic-kelompok-masyarakat/" + $(input).attr("data-id")
+                "/akseslh/tematik-kegiatan/" + $(input).attr("data-id")
             ).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();

@@ -4,23 +4,32 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\JenisKegiatan;
+use App\Models\DataPicKelompokMasyarakat;
+use App\Models\UserAkseslh;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
-use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\RegisterNotification;
 
-class JenisKegiatanService extends AppService implements AppServiceInterface
+
+class DataPicKelompokMasyarakatService extends AppService implements AppServiceInterface
 {
+    protected $modelUserAkseslh;
 
-    public function __construct(JenisKegiatan $model)
-    {
+    public function __construct(
+        DataPicKelompokMasyarakat $model,
+        UserAkseslh $modelAkseslh
+    ) {
         parent::__construct($model);
+        $this->modelUserAkseslh = $modelAkseslh;
     }
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with('kelompok_masyarakat.jenis')->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -57,14 +66,39 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
 
     public function create($data)
     {
+        // Make default password for first login
+        $default_password =
+            crypt($data['email_pic'] . Carbon::now()->format('d M Y H:i:s'), $data['email_pic']);
+
         \DB::beginTransaction();
 
         try {
 
+            // Insert data to database
             $data = $this->model->newQuery()->create([
-                'jenis_kegiatan'       =>  $data['jenis_kegiatan'],
-                'flag'                 => 1,
+                'kelompok_masyarakat_id'    => $data['kelompok_masyarakat_id'],
+                'nama_pic'                  => $data['nama_pic'],
+                'jenis_identitas_pic'       => $data['jenis_identitas_pic'],
+                'nomor_identitas_pic'       => $data['nomor_identitas_pic'],
+                'email_pic'                 => $data['email_pic'],
+                'nohp_pic'                  => $data['nohp_pic'],
+                'alamat_pic'                => $data['alamat_pic'],
+                'kelurahan_pic'             => $data['kelurahan_pic'],
+                'kecamatan_pic'             => $data['kecamatan_pic'],
+                'provinsi_pic'              => $data['provinsi_pic'],
+                'flag'                      => 1,
             ]);
+
+            $dataUserAkseslh = $this->modelUserAkseslh->newQuery()->create([
+                'data_pic_kelompok_masyarakat_id'   => $data->id,
+                'email'                             => $data['email_pic'],
+                'password'                          => $default_password,
+                'status_user'                       => 'ACTIVE',
+                'flag'                              => 1,
+            ]);
+
+            // Send password default to email
+            Notification::route('mail', $data['email_pic'])->notify(new RegisterNotification($default_password));
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($data);
@@ -82,8 +116,23 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
+            $read->kelompok_masyarakat_id   = $data['kelompok_masyarakat_id'];
+            $read->nama_pic                 = $data['nama_pic'];
+            $read->jenis_identitas_pic      = $data['jenis_identitas_pic'];
+            $read->nomor_identitas_pic      = $data['nomor_identitas_pic'];
+            $read->email_pic                = $data['email_pic'];
+            $read->nohp_pic                 = $data['nohp_pic'];
+            $read->alamat_pic               = $data['alamat_pic'];
+            $read->kelurahan_pic            = $data['kelurahan_pic'];
+            $read->kecamatan_pic            = $data['kecamatan_pic'];
+            $read->provinsi_pic             = $data['provinsi_pic'];
             $read->save();
+
+            $read->user_akseslh->email              = $data['email_pic'];
+            $read->user_akseslh->status_user        = $data['status_user'];
+            $read->user_akseslh->save();
+
+
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
@@ -97,25 +146,8 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
         try {
+            $read->user_akseslh->delete();
             $read->delete();
-            \DB::commit(); // commit the changes
-            return $this->sendSuccess($read);
-        } catch (\Exception $exception) {
-            \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
-        }
-    }
-
-    public function updatePublish($id, $isPublish): object
-    {
-        $read = $this->model->newQuery()->find($id);
-
-        \DB::beginTransaction();
-
-        try {
-            $read->is_publish       =   $isPublish;
-            $read->save();
-
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {

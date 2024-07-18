@@ -10,7 +10,7 @@
 <!-- Page-Title -->
 <div class="row">
     <div class="col-sm-12">
-        <h4 class="pull-left page-title">PIC KELOMPOK MASYARAKAT</h4>
+        <h4 class="pull-left page-title">DATA PIC KELOMPOK MASYARAKAT</h4>
         <ol class="breadcrumb pull-right">
             <li><a href="#">Data Master</a></li>
             <li class="active">Daftar PIC Kelompok Masyarakat</li>
@@ -41,8 +41,8 @@
                                     <th>Nama Kelompok</th>
                                     <th>Jenis Kelompok</th>
                                     <th>Nama PIC</th>
-                                    <th>Jenis Identitas</th>
-                                    <th>No Identitas</th>
+                                    <th>Jenis Identitas PIC</th>
+                                    <th>No Identitas PIC</th>
                                     <th>Alamat E-Mail</th>
                                     <th>No HP</th>
                                     <th>Created at</th>

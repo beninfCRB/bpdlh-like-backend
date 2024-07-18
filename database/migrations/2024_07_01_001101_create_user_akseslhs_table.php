@@ -14,7 +14,7 @@ class CreateUserAkseslhsTable extends Migration
     public function up()
     {
         Schema::create('user_akseslhs', function (Blueprint $table) {
-            $table->uuid('uuid')->primary();
+            $table->uuid('id')->primary();
             $table->foreignUuid('data_pic_kelompok_masyarakat_id');
             $table->string('email', 50)->unique();
             $table->string('password', 150);
