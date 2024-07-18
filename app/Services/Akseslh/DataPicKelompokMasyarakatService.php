@@ -3,34 +3,51 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\File as FileTable;
-use App\Services\AppService;
-use App\Models\TematikKegiatan;
-use App\Services\FileUploadService;
-use App\Services\AppServiceInterface;
-use Illuminate\Database\Eloquent\Model;
-use Yajra\DataTables\Facades\DataTables;
 
-class TematikKegiatanService extends AppService implements AppServiceInterface
+use App\Models\DataPicKelompokMasyarakat;
+use App\Models\UserAkseslh;
+use App\Services\AppService;
+use App\Services\AppServiceInterface;
+use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\RegisterNotification;
+
+
+class DataPicKelompokMasyarakatService extends AppService implements AppServiceInterface
 {
-    protected $fileUploadService;
-    protected $fileTable;
+    protected $modelUserAkseslh;
 
     public function __construct(
-        FileUploadService $fileUploadService,
-        FileTable $fileTable,
-        TematikKegiatan $model
+        DataPicKelompokMasyarakat $model,
+        UserAkseslh $modelAkseslh
     ) {
-        $this->fileUploadService    =   $fileUploadService;
-        $this->fileTable            =   $fileTable;
         parent::__construct($model);
+        $this->modelUserAkseslh = $modelAkseslh;
     }
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('short_id', 'ASC');
+        $model = $this->model->query()->with('kelompok_masyarakat.jenis')->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
+    }
+
+    public function getAllAttr()
+    {
+        $result  = $this->model->newQuery()
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        $result->transform(function ($items, $key) {
+            return [
+                'id'                 => $items->id,
+                'jenis_kegiatan'     => $items->jenis_kegiatan,
+            ];
+        });
+
+        return $this->sendSuccess($result);
     }
 
     public function getPaginated($search = null, $page = null, $perPage = null, $lang = null)
@@ -40,54 +57,51 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function getAllAttr()
-    {
-        $result  = $this->model->newQuery()
-            ->orderBy('short_id', 'ASC')
-            ->get();
-
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                    => $items->id,
-                'tematik_kegiatan'      => $items->tematik_kegiatan,
-            ];
-        });
-
-        return $this->sendSuccess($result);
-    }
-
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->with('image')->find($id);
+        $result =   $this->model->newQuery()->find($id);
+
         return $this->sendSuccess($result);
     }
 
     public function create($data)
     {
+        // Make default password for first login
+        $default_password =
+            crypt($data['email_pic'] . Carbon::now()->format('d M Y H:i:s'), $data['email_pic']);
+
         \DB::beginTransaction();
 
         try {
 
-            $tematik_kegiatan = $this->model->newQuery()->create([
-                'tematik_kegiatan'      =>  $data['tematik_kegiatan'],
-                'short_id'              =>  $data['short_id'],
-                'deskripsi_tematik'     =>  $data['deskripsi_tematik'],
-                'flag'                  => 1,
+            // Insert data to database
+            $data = $this->model->newQuery()->create([
+                'kelompok_masyarakat_id'    => $data['kelompok_masyarakat_id'],
+                'nama_pic'                  => $data['nama_pic'],
+                'jenis_identitas_pic'       => $data['jenis_identitas_pic'],
+                'nomor_identitas_pic'       => $data['nomor_identitas_pic'],
+                'email_pic'                 => $data['email_pic'],
+                'nohp_pic'                  => $data['nohp_pic'],
+                'alamat_pic'                => $data['alamat_pic'],
+                'kelurahan_pic'             => $data['kelurahan_pic'],
+                'kecamatan_pic'             => $data['kecamatan_pic'],
+                'provinsi_pic'              => $data['provinsi_pic'],
+                'flag'                      => 1,
             ]);
 
-            // upload banner image
-            $upload = $this->fileUploadService->handleImage($data['fileImage'])->saveToDb('image');
+            $dataUserAkseslh = $this->modelUserAkseslh->newQuery()->create([
+                'data_pic_kelompok_masyarakat_id'   => $data->id,
+                'email'                             => $data['email_pic'],
+                'password'                          => $default_password,
+                'status_user'                       => 'ACTIVE',
+                'flag'                              => 1,
+            ]);
 
-            if (!empty($upload)) {
-                $image = $this->fileTable->newQuery()->find($upload->id);
-                $image->update([
-                    'fileable_type' => get_class($tematik_kegiatan),
-                    'fileable_id'   => $tematik_kegiatan->id,
-                ]);
-            }
+            // Send password default to email
+            Notification::route('mail', $data['email_pic'])->notify(new RegisterNotification($default_password));
 
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($tematik_kegiatan);
+            return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
@@ -102,10 +116,23 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $read->tematik_kegiatan     =   $data['tematik_kegiatan'];
-            $read->short_id             =   $data['short_id'];
-            $read->deskripsi_tematik    =   $data['deskripsi_tematik'];
+            $read->kelompok_masyarakat_id   = $data['kelompok_masyarakat_id'];
+            $read->nama_pic                 = $data['nama_pic'];
+            $read->jenis_identitas_pic      = $data['jenis_identitas_pic'];
+            $read->nomor_identitas_pic      = $data['nomor_identitas_pic'];
+            $read->email_pic                = $data['email_pic'];
+            $read->nohp_pic                 = $data['nohp_pic'];
+            $read->alamat_pic               = $data['alamat_pic'];
+            $read->kelurahan_pic            = $data['kelurahan_pic'];
+            $read->kecamatan_pic            = $data['kecamatan_pic'];
+            $read->provinsi_pic             = $data['provinsi_pic'];
             $read->save();
+
+            $read->user_akseslh->email              = $data['email_pic'];
+            $read->user_akseslh->status_user        = $data['status_user'];
+            $read->user_akseslh->save();
+
+
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
@@ -119,6 +146,7 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
         try {
+            $read->user_akseslh->delete();
             $read->delete();
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
@@ -229,23 +257,5 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
             });
         }
         return $result;
-    }
-
-    public function getApiAll()
-    {
-        $result  = $this->model->newQuery()
-            // ->where('is_publish', true)
-            ->orderBy('short_id', 'ASC')
-            ->get();
-
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                => $items->id,
-                'tematik_kegiatan'  => $items->tematik_kegiatan,
-                'image'             => $items->image
-            ];
-        });
-
-        return $this->sendSuccess($result);
     }
 }

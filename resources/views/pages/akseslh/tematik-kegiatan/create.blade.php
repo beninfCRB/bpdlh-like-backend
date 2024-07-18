@@ -36,7 +36,7 @@
                         @enderror
                     </div>
                     <div class="form-group @error('short_id') has-error @enderror">
-                        <label for="short_id">Short Id <span class="text-danger">*</span></label>
+                        <label for="short_id">Nomor Urut <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" id="short_id" name="short_id" min="1"
                             placeholder="Jenis Kegiatan">
                         @error('short_id')
@@ -52,7 +52,7 @@
                         @enderror
                     </div>
                     <div class="form-group @error('fileImage') has-error @enderror">
-                        <label for="fileImage">Short Id <span class="text-danger">*</span></label>
+                        <label for="fileImage">Gambar <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" id="fileImage" name="fileImage">
                         @error('fileImage')
                         {{ $message }}

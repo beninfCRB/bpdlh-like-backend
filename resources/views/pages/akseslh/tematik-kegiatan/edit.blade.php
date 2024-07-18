@@ -37,9 +37,9 @@
                         @enderror
                     </div>
                     <div class="form-group @error('short_id') has-error @enderror">
-                        <label for="short_id">Short Id <span class="text-danger">*</span></label>
+                        <label for="short_id">Nomor Urut <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" id="short_id" name="short_id" min="1"
-                            placeholder="Jenis Kegiatan">
+                            value="{{ old('short_id', $data->short_id) }}" placeholder="Jenis Kegiatan">
                         @error('short_id')
                         {{ $message }}
                         @enderror
@@ -47,17 +47,16 @@
                     <div class="form-group @error('deskripsi_tematik') has-error @enderror">
                         <label for="deskripsi_tematik">Deskripsi Tematik <span class="text-danger">*</span></label>
                         <textarea name="deskripsi_tematik" id="deskripsi_tematik" cols="30" rows="10"
-                            class="form-control">{{ old('deskripsi_tematik') }}</textarea>
+                            class="form-control">{{ old('deskripsi_tematik', $data->deskripsi_tematik) }}</textarea>
                         @error('deskripsi_tematik')
                         {{ $message }}
                         @enderror
                     </div>
-                    @dd($data->image->file_path)
                     <div class="form-group">
                         <img src="{{ env('APP_URL') . $data->image->file_path }}" alt="" srcset="">
                     </div>
                     <div class="form-group @error('fileImage') has-error @enderror">
-                        <label for="fileImage">Short Id <span class="text-danger">*</span></label>
+                        <label for="fileImage">Gambar <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" id="fileImage" name="fileImage">
                         @error('fileImage')
                         {{ $message }}

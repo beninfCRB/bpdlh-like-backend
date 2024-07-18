@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('jenis-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class);
         Route::resource('kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\KelompokMasyarakatController::class);
         Route::resource('paket-kegiatan', App\Http\Controllers\Cms\Akseslh\PaketKegiatanController::class);
-        Route::resource('pic-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\UserEksternalController::class);
+        Route::resource('pic-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class);
         Route::resource('tahapan-pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\TahapanPengajuanKegiatanController::class);
         Route::resource('tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class);
         Route::resource('sub-tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class);
@@ -45,7 +45,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKelompokMasyarakatController::class, 'getAll'])->name('data-jenis-kelompok-masyarakat');
         Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll'])->name('data-kelompok-masyarakat');
         Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
-        Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\UserEksternalController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
+        Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\DataPicKelompokMasyarakatController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
         Route::get('/data-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TematikKegiatanController::class, 'getAll'])->name('data-tematik-kegiatan');
+        Route::get('/data-sub-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\SubTematikKegiatanController::class, 'getAll'])->name('data-sub-tematik-kegiatan');
     });
 });

@@ -5,13 +5,13 @@ namespace App\Services\Akseslh;
 
 use App\Models\File as FileTable;
 use App\Services\AppService;
-use App\Models\TematikKegiatan;
+use App\Models\SubTematikKegiatan;
 use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
-class TematikKegiatanService extends AppService implements AppServiceInterface
+class SubTematikKegiatanService extends AppService implements AppServiceInterface
 {
     protected $fileUploadService;
     protected $fileTable;
@@ -19,7 +19,7 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
     public function __construct(
         FileUploadService $fileUploadService,
         FileTable $fileTable,
-        TematikKegiatan $model
+        SubTematikKegiatan $model
     ) {
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
@@ -104,7 +104,7 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
 
             $read->tematik_kegiatan     =   $data['tematik_kegiatan'];
             $read->short_id             =   $data['short_id'];
-            $read->deskripsi_tematik    =   $data['deskripsi_tematik'];
+            $read->deskripsi_tematik         =   $data['deskripsi_tematik'];
             $read->save();
 
             \DB::commit(); // commit the changes

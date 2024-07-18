@@ -27,16 +27,44 @@
                 <form role="form" action="{{ route('tematik-kegiatan.store') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
-                    <div class="form-group @error('tematik_kegiatan') has-error @enderror">
-                        <label for="tematik_kegiatan">Tematik Kegiatan <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="tematik_kegiatan" name="tematik_kegiatan"
+                    <div class="form-group @error('tematik_kegiatan_id') has-error @enderror">
+                        <label for="tematik_kegiatan_id">Tematik Kegiatan <span class="text-danger">*</span></label>
+                        <select class="form-control" required id="tematik_kegiatan_id" name="tematik_kegiatan_id">
+                            <option class='form-control' value=''>- Pilih Data -</option>
+                            @isset($tematikKegiatan)
+                            @foreach ($tematikKegiatan as $item)
+                            @if (old('tematik_kegiatan_id'))
+
+                            <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                $item['tematik_kegiatan']
+                                }}
+                            </option>
+                            @else
+                            <option class='form-control' value="{{ $item['id'] }}">{{
+                                $item['tematik_kegiatan']
+                                }}
+                            </option>
+                            @endif
+                            @endforeach
+                            @endisset
+                        </select>
+                        @error('tematik_kegiatan_id')
+                        <span class="error">
+                            {{ $message }}
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="form-group @error('sub_tematik_kegiatan') has-error @enderror">
+                        <label for="sub_tematik_kegiatan">Sub Tematik Kegiatan <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="sub_tematik_kegiatan" name="sub_tematik_kegiatan"
                             placeholder="Jenis Kegiatan">
-                        @error('tematik_kegiatan')
+                        @error('sub_tematik_kegiatan')
                         {{ $message }}
                         @enderror
                     </div>
                     <div class="form-group @error('short_id') has-error @enderror">
-                        <label for="short_id">Short Id <span class="text-danger">*</span></label>
+                        <label for="short_id">Nomor Urut <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" id="short_id" name="short_id" min="1"
                             placeholder="Jenis Kegiatan">
                         @error('short_id')
@@ -44,7 +72,7 @@
                         @enderror
                     </div>
                     <div class="form-group @error('fileImage') has-error @enderror">
-                        <label for="fileImage">Short Id <span class="text-danger">*</span></label>
+                        <label for="fileImage">Gambar <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" id="fileImage" name="fileImage">
                         @error('fileImage')
                         {{ $message }}

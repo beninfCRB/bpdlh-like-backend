@@ -2,36 +2,47 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\TematikKegiatanService;
-use Illuminate\Http\Request;
+use App\Services\Akseslh\SubTematikKegiatanService;
 
-class TematikKegiatanController extends ApiController
+class SubTematikKegiatanController extends ApiController
 {
+    protected $subTematikKegiatanService;
     protected $tematikKegiatanService;
 
     public function __construct(
+        SubTematikKegiatanService $subTematikKegiatanService,
         TematikKegiatanService $tematikKegiatanService,
         Request $request
     ) {
+        $this->subTematikKegiatanService   =   $subTematikKegiatanService;
         $this->tematikKegiatanService   =   $tematikKegiatanService;
         parent::__construct($request);
     }
 
     public function index()
     {
-        return view("pages.akseslh.tematik-kegiatan.index");
+        return view("pages.akseslh.sub-tematik-kegiatan.index");
     }
 
     public function create()
     {
-        return view("pages.akseslh.tematik-kegiatan.create");
+        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.sub-tematik-kegiatan.create", compact('tematikKegiatan'));
     }
 
     public function edit($id)
     {
-        $data   =   $this->tematikKegiatanService->getById($id)->data;
-        return view("pages.akseslh.tematik-kegiatan.edit", compact('data'));
+        $data   =   $this->subTematikKegiatanService->getById($id)->data;
+        return view("pages.akseslh.sub-tematik-kegiatan.edit", compact('data'));
+    }
+
+    public function show($id)
+    {
+        $data   =   $this->subTematikKegiatanService->getById($id);
+        return view("pages.akseslh.sub-tematik-kegiatan.show", compact('data'));
     }
 
     public function store(Request $request)
@@ -44,13 +55,13 @@ class TematikKegiatanController extends ApiController
         ]);
         $input['fileImage'] = $request->file('fileImage');
 
-        $result =   $this->tematikKegiatanService->create($input);
+        $result =   $this->subTematikKegiatanService->create($input);
 
         try {
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('tematik-kegiatan.index');
+                return redirect()->route('sub-tematik-kegiatan.index');
             }
 
             return back()->with('error', $result->message);
@@ -65,13 +76,13 @@ class TematikKegiatanController extends ApiController
             'jenis_kegiatan'    => 'required'
         ]);
 
-        $result =   $this->tematikKegiatanService->update($id, $input);
+        $result =   $this->subTematikKegiatanService->update($id, $input);
 
         try {
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('tematik-kegiatan.index');
+                return redirect()->route('sub-tematik-kegiatan.index');
             }
 
             return back()->with('error', $result->message);
@@ -82,7 +93,7 @@ class TematikKegiatanController extends ApiController
 
     public function destroy($id): \Illuminate\Http\JsonResponse
     {
-        $result =   $this->tematikKegiatanService->delete($id);
+        $result =   $this->subTematikKegiatanService->delete($id);
         try {
             if ($result->success) {
                 $response = $result->data;
