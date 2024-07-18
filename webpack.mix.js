@@ -26,6 +26,9 @@ mix.js("resources/js/app.js", "public/js")
     .js(source + "tahapan_pengajuan_kegiatan.js", build)
     .js(source + "tematik_kegiatan.js", build)
     .js(source + "sub_tematik_kegiatan.js", build)
+    .js(source + "satuan.js", build)
+    .js(source + "jenis_komponen_rab.js", build)
+    .js(source + "master_komponen_rab.js", build)
     .version();
 
 mix.disableNotifications();
