@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\AppAuthenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
 class DataPicKelompokMasyarakat extends AppModel
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
+
+    protected $guard = 'akseslh';
 
     protected $table = "data_pic_kelompok_masyarakats";
 

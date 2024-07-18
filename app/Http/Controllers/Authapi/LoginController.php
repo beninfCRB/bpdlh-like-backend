@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers\Authapi;
 
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\UserEksternal;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Authapi\LoginRequest;
-use App\Notifications\RegisterNotification;
-use Illuminate\Support\Facades\Notification;
+use App\Models\UserAkseslh;
 
 class LoginController extends ApiController
 {
@@ -32,18 +27,18 @@ class LoginController extends ApiController
 
         try {
 
-            $user = UserEksternal::where([
-                'email_user_eksternal'              => $input['email_user_eksternal'],
+            $user = UserAkseslh::where([
+                'email'              => $input['email_pic'],
             ])->first();
 
             if ($user) {
 
-                if (!$user->password_user_eksternal) {
+                if (!$user->password) {
 
                     return $this->sendError(null, "account is not active yet");
                 }
 
-                if (Hash::check($input['password_user_eksternal'], $user->password_user_eksternal)) {
+                if (Hash::check($input['password'], $user->password)) {
 
                     // Create token for user to access dashboard
                     $token = $user->createToken("auth")->plainTextToken;

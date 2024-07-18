@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Authapi;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\UserEksternal;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
 use App\Notifications\RegisterNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Authapi\RegisterRequest;
+use App\Models\DataPicKelompokMasyarakat;
+use App\Models\UserAkseslh;
+use App\Models\UserEksternal;
 
 class RegisterController extends ApiController
 {
@@ -30,16 +31,12 @@ class RegisterController extends ApiController
         // Get all input
         $input = $request->all();
 
-        // Make default password for first login
-        $default_password =
-            crypt($input['email_user_eksternal'] . Carbon::now()->format('d M Y H:i:s'), $input['email_user_eksternal']);
-
         // Begin db transaction
         \DB::beginTransaction();
         try {
 
-            $user = UserEksternal::where([
-                'email_pic'              => $input['email_user_eksternal'],
+            $user = DataPicKelompokMasyarakat::where([
+                'email_pic'              => $input['email_pic'],
             ])
                 ->orWhere([
                     'nohp_pic' => $input['nohp_pic']
@@ -47,41 +44,18 @@ class RegisterController extends ApiController
                 ->first();
 
             if ($user) {
-                if ($user->password_user_eksternal != null) {
-                    # code...
-                    return $this->sendError(null, "Already registered");
-                }
-                # code...
-                $user->password_user_eksternal = Hash::make($default_password);
-                $user->save();
-
                 // Create token for user to access dashboard
-                $token = $user->createToken("auth")->plainTextToken;
+                $token = $user->user_akseslh->createToken("auth")->plainTextToken;
 
-                // Send default database to email user
-                Notification::route('mail', $input['email_user_eksternal'])->notify(new RegisterNotification($default_password));
-
-                \DB::commit(); // commit the changes
-
+                // Commit Change
+                \DB::commit();
                 // Return token to frontend
                 return $this->sendSuccess(['token' => $token]);
+            } else {
+
+                \DB::rollBack(); // rollback the changes
+                return $this->sendError(null, "User not found");
             }
-
-            \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, "User not found");
-
-            //Insert data user to database
-            // $user = AkseslhUserEksternal::create([
-            //     'akseslh_kelompok_masyarakat_id'    => $input['akseslh_kelompok_masyarakat_id'],
-            //     'email_user_eksternal'              => $input['email_user_eksternal'],
-            //     'password_user_eksternal'           => Hash::make($default_password),
-            //     'nama_user_eksternal'               => $input['nama_user_eksternal'],
-            //     'jenis_identitas_user_eksternal'    => $input['jenis_identitas_user_eksternal'],
-            //     'nomor_identitas_user_eksternal'    => $input['nomor_identitas_user_eksternal'],
-            //     'nomor_hp_user_eksternal'           => $input['nomor_hp_user_eksternal'],
-            // ]);
-
-
         } catch (\Throwable $th) {
 
             \DB::rollBack(); // rollback the changes

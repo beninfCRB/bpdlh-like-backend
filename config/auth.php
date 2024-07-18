@@ -78,7 +78,7 @@ return [
 
         'akseslh' => [
             'driver'    => 'eloquent',
-            'model'     => App\Model\AkseslhUserEksternal::class,
+            'model'     => App\Models\UserAkseslh::class,
         ],
 
         // 'users' => [
