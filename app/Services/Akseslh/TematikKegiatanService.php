@@ -242,6 +242,7 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
             return [
                 'id'                => $items->id,
                 'tematik_kegiatan'  => $items->tematik_kegiatan,
+                'deskripsi_tematik' => $items->deskripsi_tematik,
                 'image'             => $items->image
             ];
         });

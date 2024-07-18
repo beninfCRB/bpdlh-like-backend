@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Models\AppModel;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\AppAuthenticatable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

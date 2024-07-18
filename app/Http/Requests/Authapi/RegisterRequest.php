@@ -29,12 +29,11 @@ class RegisterRequest extends FormRequest
             //
             // 'id_kelompok_masyarakat'            => 'required|exists:akseslh_kelompok_masyarakats',
             'kelompok_masyarakat_id'    => 'required',
-            // 'email_user_eksternal'              => 'required|email|unique:akseslh_user_eksternals,email_user_eksternal,' . ($this->user ? $this->user->id : 'NULL'),
-            'email_user_eksternal'              => 'required|email',
-            'nama_user_eksternal'               => 'required|max:255|string',
-            'jenis_identitas_user_eksternal'    => 'required',
-            'nomor_identitas_user_eksternal'    => 'required|string|max:20',
-            'nomor_hp_user_eksternal'           => 'required',
+            'email_pic'                 => 'required|email',
+            'nama_pic'                  => 'required|max:255|string',
+            'jenis_identitas_pic'       => 'required',
+            'nomor_identitas_pic'       => 'required|string|max:20',
+            'nohp_pic'                  => 'required',
         ];
     }
 

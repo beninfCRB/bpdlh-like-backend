@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use App\Models\AppModel;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\AppAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
-class UserAkseslh extends AppModel
+class UserAkseslh extends AppAuthenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
+
+    protected $guard = 'akseslh';
 
     protected $table = "user_akseslhs";
 
