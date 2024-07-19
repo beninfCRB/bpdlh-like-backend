@@ -13,7 +13,8 @@ class TahapanPengajuanKegiatan extends AppModel
     protected $table = 'tahapan_pengajuan_kegiatans';
 
     protected $fillable = [
-        'deskripsi_tahapan',
+        'deskripsi_kegiatan',
+        'flag',
         'username',
     ];
 }

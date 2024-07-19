@@ -62,7 +62,8 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
         try {
 
             $data = $this->model->newQuery()->create([
-                'deskripsi_tahapan'       =>  $data['deskripsi_tahapan'],
+                'deskripsi_kegiatan'     =>  $data['deskripsi_kegiatan'],
+                'flag'                  => 1,
             ]);
 
             \DB::commit(); // commit the changes
@@ -81,7 +82,7 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
 
         try {
 
-            $read->deskripsi_tahapan    =   $data['deskripsi_tahapan'];
+            $read->deskripsi_kegiatan    =   $data['deskripsi_kegiatan'];
             $read->save();
 
             \DB::commit(); // commit the changes

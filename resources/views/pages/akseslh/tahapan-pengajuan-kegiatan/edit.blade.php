@@ -26,12 +26,12 @@
                 <form role="form" action="{{ route('tahapan-pengajuan-kegiatan.update', $data->id) }}" method="POST">
                     @method('PUT')
                     @csrf
-                    <div class="form-group @error('deskripsi_tahapan') has-error @enderror">
-                        <label for="deskripsi_tahapan">Deskripsi Tahapan <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="deskripsi_tahapan" name="deskripsi_tahapan"
-                            value="{{ old('deskripsi_tahapan', $data->deskripsi_tahapan) }}"
+                    <div class="form-group @error('deskripsi_kegiatan') has-error @enderror">
+                        <label for="deskripsi_kegiatan">Deskripsi Kegiatan <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="deskripsi_kegiatan" name="deskripsi_kegiatan"
+                            value="{{ old('deskripsi_kegiatan', $data->deskripsi_kegiatan) }}"
                             placeholder="Jenis Kegiatan">
-                        @error('deskripsi_tahapan')
+                        @error('deskripsi_kegiatan')
                         {{ $message }}
                         @enderror
                     </div>

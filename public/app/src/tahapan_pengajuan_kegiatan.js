@@ -24,7 +24,7 @@ var tahapan_pengajuan_kegiatan = (function () {
             ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
-                { data: "deskripsi_tahapan" },
+                { data: "deskripsi_kegiatan" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -65,11 +65,6 @@ var tahapan_pengajuan_kegiatan = (function () {
                     render: function (data, type, full, meta) {
                         return (
                             `
-                       <a href="/career/` +
-                            full.id +
-                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Detail">
-                          <i class="fa fa-eye"></i>
-                        </a>
                         <a href="/akseslh/tahapan-pengajuan-kegiatan/` +
                             full.id +
                             `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">

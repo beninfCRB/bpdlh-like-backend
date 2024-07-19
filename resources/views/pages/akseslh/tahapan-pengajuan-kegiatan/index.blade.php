@@ -38,7 +38,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Deskripsi Tahapan</th>
+                                    <th>Deskripsi Kegiatan</th>
                                     <th>Created at</th>
                                     <th>Updated at</th>
                                     <th></th>
