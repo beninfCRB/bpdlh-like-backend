@@ -8,7 +8,7 @@
 
 
 <div class="panel-body">
-    <form class="form-horizontal m-t-20" action="/login" method="POST">
+    <form class="form-horizontal m-t-20" action="{{ route('login.auth') }}" method="POST">
         @csrf
         <div class="form-group ">
             <div class="col-xs-12">

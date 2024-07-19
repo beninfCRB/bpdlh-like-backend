@@ -24,21 +24,73 @@
                 <h3 class="panel-title">Pengelolaan Data Jenis Kegiatan</h3>
             </div>
             <div class="panel-body">
-                <form role="form" action="{{ route('jenis-kegiatan.update', $data->data->id) }}" method="POST">
+                <form role="form" action="{{ route('sub-tematik-kegiatan.update', $data->id) }}" method="POST"
+                    enctype="multipart/form-data">
                     @method('PUT')
                     @csrf
-                    <div class="form-group @error('jenis_kegiatan') has-error @enderror">
-                        <label for="jenis_kegiatan">Jenis Kegiatan <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="jenis_kegiatan" name="jenis_kegiatan"
-                            placeholder="Jenis Kegiatan"
-                            value="{{ old('jenis_kegiatan', $data->data->jenis_kegiatan) }}">
-                        @error('jenis_kegiatan')
+                    <div class="form-group @error('tematik_kegiatan_id') has-error @enderror">
+                        <label for="tematik_kegiatan_id">Tematik Kegiatan <span class="text-danger">*</span></label>
+                        <select class="form-control" required id="tematik_kegiatan_id" name="tematik_kegiatan_id">
+                            <option class='form-control' value=''>- Pilih Data -</option>
+                            @isset($tematikKegiatan)
+                            @foreach ($tematikKegiatan as $item)
+                            @if (old('tematik_kegiatan_id', $data->tematik_kegiatan_id) == $item['id'])
+
+                            <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                $item['tematik_kegiatan']
+                                }}
+                            </option>
+                            @else
+                            <option class='form-control' value="{{ $item['id'] }}">{{
+                                $item['tematik_kegiatan']
+                                }}
+                            </option>
+                            @endif
+                            @endforeach
+                            @endisset
+                        </select>
+                        @error('tematik_kegiatan_id')
+                        <span class="error">
+                            {{ $message }}
+                        </span>
+                        @enderror
+                    </div>
+                    <div class="form-group @error('sub_tematik_kegiatan') has-error @enderror">
+                        <label for="sub_tematik_kegiatan">Sub Tematik Kegiatan <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="sub_tematik_kegiatan" name="sub_tematik_kegiatan"
+                            value="{{ old('sub_tematik_kegiatan', $data->sub_tematik_kegiatan) }}"
+                            placeholder="Jenis Kegiatan">
+                        @error('sub_tematik_kegiatan')
+                        {{ $message }}
+                        @enderror
+                    </div>
+                    <div class="form-group @error('short_id') has-error @enderror">
+                        <label for="short_id">Nomor Urut <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="short_id" name="short_id" min="1"
+                            placeholder="Jenis Kegiatan" value="{{ old('short_id', $data->short_id) }}">
+                        @error('short_id')
+                        {{ $message }}
+                        @enderror
+                    </div>
+                    <div class="form-group @error('deskripsi_tematik') has-error @enderror">
+                        <label for="deskripsi_tematik">Deskripsi Tematik <span class="text-danger">*</span></label>
+                        <textarea name="deskripsi_tematik" id="deskripsi_tematik" cols="30" rows="10"
+                            class="form-control">{{ old('deskripsi_tematik', $data->deskripsi_tematik) }}</textarea>
+                        @error('deskripsi_tematik')
+                        {{ $message }}
+                        @enderror
+                    </div>
+                    <div class="form-group @error('fileImage') has-error @enderror">
+                        <label for="fileImage">Gambar <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="fileImage" name="fileImage">
+                        @error('fileImage')
                         {{ $message }}
                         @enderror
                     </div>
                     <div class="row">
                         <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
-                        <a href="{{ route('jenis-kegiatan.index') }}"
+                        <a href="{{ route('sub-tematik-kegiatan.index') }}"
                             class="btn btn-inverse waves-effect waves-light">Kembali</a>
                     </div>
                 </form>

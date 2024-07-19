@@ -28,7 +28,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('short_id', 'ASC');
+        $model = $this->model->query()->with('tematik_kegiatan')->orderBy('short_id', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -69,10 +69,11 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         try {
 
             $tematik_kegiatan = $this->model->newQuery()->create([
-                'tematik_kegiatan'      =>  $data['tematik_kegiatan'],
-                'short_id'              =>  $data['short_id'],
-                'deskripsi_tematik'     =>  $data['deskripsi_tematik'],
-                'flag'                  => 1,
+                'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
+                'sub_tematik_kegiatan'      =>  $data['sub_tematik_kegiatan'],
+                'short_id'                  =>  $data['short_id'],
+                'deskripsi_tematik'         =>  $data['deskripsi_tematik'],
+                'flag'                      => 1,
             ]);
 
             // upload banner image
@@ -102,7 +103,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
         try {
 
-            $read->tematik_kegiatan     =   $data['tematik_kegiatan'];
+            $read->sub_tematik_kegiatan     =   $data['sub_tematik_kegiatan'];
             $read->short_id             =   $data['short_id'];
             $read->deskripsi_tematik         =   $data['deskripsi_tematik'];
             $read->save();
