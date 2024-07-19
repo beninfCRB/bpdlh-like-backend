@@ -92,7 +92,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $dataUserAkseslh = $this->modelUserAkseslh->newQuery()->create([
                 'data_pic_kelompok_masyarakat_id'   => $data->id,
                 'email'                             => $data['email_pic'],
-                'password'                          => $default_password,
+                'password'                          => Hash::make($default_password),
                 'status_user'                       => 'ACTIVE',
                 'flag'                              => 1,
             ]);
