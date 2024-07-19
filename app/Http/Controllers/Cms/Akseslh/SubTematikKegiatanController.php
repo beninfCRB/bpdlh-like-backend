@@ -36,7 +36,8 @@ class SubTematikKegiatanController extends ApiController
     public function edit($id)
     {
         $data   =   $this->subTematikKegiatanService->getById($id)->data;
-        return view("pages.akseslh.sub-tematik-kegiatan.edit", compact('data'));
+        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.sub-tematik-kegiatan.edit", compact('data', 'tematikKegiatan'));
     }
 
     public function show($id)
@@ -48,10 +49,11 @@ class SubTematikKegiatanController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'tematik_kegiatan'    => 'required',
-            'short_id'            => 'required',
-            'deskripsi_tematik'   => 'required',
-            'fileImage'           => 'required',
+            'tematik_kegiatan_id'       => 'required',
+            'sub_tematik_kegiatan'      => 'required',
+            'short_id'                  => 'required',
+            'deskripsi_tematik'         => 'required',
+            'fileImage'                 => 'required',
         ]);
         $input['fileImage'] = $request->file('fileImage');
 
@@ -73,7 +75,11 @@ class SubTematikKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kegiatan'    => 'required'
+            'tematik_kegiatan_id'       => 'required',
+            'sub_tematik_kegiatan'      => 'required',
+            'short_id'                  => 'required',
+            'deskripsi_tematik'         => 'required',
+            'fileImage'                 => 'required',
         ]);
 
         $result =   $this->subTematikKegiatanService->update($id, $input);
@@ -84,7 +90,7 @@ class SubTematikKegiatanController extends ApiController
                 session()->flash('success', $result->message);
                 return redirect()->route('sub-tematik-kegiatan.index');
             }
-
+            dd($result->message);
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());

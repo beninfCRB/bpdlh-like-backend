@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SubTematikKegiatan extends AppModel
 {
@@ -14,10 +15,21 @@ class SubTematikKegiatan extends AppModel
     protected $fillable = [
         'tematik_kegiatan_id',
         'sub_tematik_kegiatan',
+        'deskripsi_tematik',
         'short_id',
         'flag',
         'username',
     ];
+
+    /**
+     * Get the tematik_kegiatan that owns the SubTematikKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function tematik_kegiatan(): BelongsTo
+    {
+        return $this->belongsTo(TematikKegiatan::class, 'tematik_kegiatan_id');
+    }
 
     public function image()
     {

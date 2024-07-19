@@ -10,7 +10,7 @@ import {
 var data_sub_tematik_kegiatan = (function () {
     var initTable1 = function () {
         var table = $("#dt_sub_tematik_kegiatan");
-        var url_table = $("#data-sub-table-tematik-kegiatan").val();
+        var url_table = $("#data-table-sub-tematik-kegiatan").val();
 
         // begin first table
         table.DataTable({
@@ -35,6 +35,16 @@ var data_sub_tematik_kegiatan = (function () {
                     targets: 0,
                     searchable: false,
                     orderable: false,
+                },
+                {
+                    targets: 1,
+                    render: function (data, type, full, meta) {
+                        if (full.tematik_kegiatan === null) {
+                            return "-";
+                        } else {
+                            return full.tematik_kegiatan.tematik_kegiatan;
+                        }
+                    },
                 },
                 {
                     targets: 4,
@@ -95,7 +105,7 @@ jQuery(document).ready(function () {
     data_sub_tematik_kegiatan.init();
 });
 
-window.deleteSUbTematikKegiatan = (input) => {
+window.deleteSubTematikKegiatan = (input) => {
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -109,7 +119,7 @@ window.deleteSUbTematikKegiatan = (input) => {
     }).then((result) => {
         if (result.value) {
             deleteData(
-                "/akseslh/tematik-kegiatan/" + $(input).attr("data-id")
+                "/akseslh/sub-tematik-kegiatan/" + $(input).attr("data-id")
             ).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
