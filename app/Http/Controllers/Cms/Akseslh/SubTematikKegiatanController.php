@@ -79,7 +79,7 @@ class SubTematikKegiatanController extends ApiController
             'sub_tematik_kegiatan'      => 'required',
             'short_id'                  => 'required',
             'deskripsi_tematik'         => 'required',
-            'fileImage'                 => 'required',
+            'fileImage'                 => 'nullable',
         ]);
 
         $result =   $this->subTematikKegiatanService->update($id, $input);
@@ -90,7 +90,7 @@ class SubTematikKegiatanController extends ApiController
                 session()->flash('success', $result->message);
                 return redirect()->route('sub-tematik-kegiatan.index');
             }
-            dd($result->message);
+
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());

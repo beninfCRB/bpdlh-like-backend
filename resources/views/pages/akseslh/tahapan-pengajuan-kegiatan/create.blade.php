@@ -28,7 +28,7 @@
                     <div class="form-group @error('deskripsi_kegiatan') has-error @enderror">
                         <label for="deskripsi_kegiatan">Deskripsi Kegiatan <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="deskripsi_kegiatan" name="deskripsi_kegiatan"
-                            value="{{ old('deskripsi_kegiatan') }}" placeholder="Jenis Kegiatan">
+                            value="{{ old('deskripsi_kegiatan') }}" placeholder="Deskripsi Kegiatan">
                         @error('deskripsi_kegiatan')
                         {{ $message }}
                         @enderror

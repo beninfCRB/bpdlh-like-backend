@@ -232,18 +232,19 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         return $result;
     }
 
-    public function getApiAll()
+    public function getApiAll($input)
     {
         $result  = $this->model->newQuery()
-            // ->where('is_publish', true)
+            ->where(['tematik_kegiatan_id' => $input['tematik_kegiatan_id']])
             ->orderBy('short_id', 'ASC')
             ->get();
 
         $result->transform(function ($items, $key) {
             return [
-                'id'                => $items->id,
-                'tematik_kegiatan'  => $items->tematik_kegiatan,
-                'image'             => $items->image
+                'id'                    => $items->id,
+                'tematik_kegiatan_id'   => $items->tematik_kegiatan_id,
+                'sub_tematik_kegiatan'  => $items->sub_tematik_kegiatan,
+                'image'                 => $items->image
             ];
         });
 

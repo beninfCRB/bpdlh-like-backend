@@ -25,6 +25,8 @@
                 <h3 class="panel-title">Daftar Jenis Kegiatan</h3>
                 <input type="hidden" name="data-table-jenis-kegiatan" id="data-table-jenis-kegiatan"
                     value="{{ route('data-jenis-kegiatan') }}">
+                <input type="hidden" name="jenis-kegiatan-route" id="jenis-kegiatan-route"
+                    value="{{ route('jenis-kegiatan.index') }}">
             </div>
             <div class="panel-body">
                 <div class="row">

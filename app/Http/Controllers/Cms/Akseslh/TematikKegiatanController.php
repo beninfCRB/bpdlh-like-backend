@@ -52,7 +52,6 @@ class TematikKegiatanController extends ApiController
                 session()->flash('success', $result->message);
                 return redirect()->route('tematik-kegiatan.index');
             }
-
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
@@ -62,7 +61,10 @@ class TematikKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kegiatan'    => 'required'
+            'tematik_kegiatan'    => 'required',
+            'short_id'            => 'required',
+            'deskripsi_tematik'   => 'required',
+            'fileImage'           => 'nullable',
         ]);
 
         $result =   $this->tematikKegiatanService->update($id, $input);

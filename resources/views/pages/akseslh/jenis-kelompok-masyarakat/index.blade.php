@@ -25,6 +25,8 @@
                 <h3 class="panel-title">Daftar Jenis Kelompok Masyarakat</h3>
                 <input type="hidden" name="data-table-jenis-kelompok-masyarakat"
                     id="data-table-jenis-kelompok-masyarakat" value="{{ route('data-jenis-kelompok-masyarakat') }}">
+                <input type="hidden" name="jenis-kelompok-masyarakat-route" id="jenis-kelompok-masyarakat-route"
+                    value="{{ route('jenis-kelompok-masyarakat.index') }}">
             </div>
             <div class="panel-body">
                 <div class="row">
