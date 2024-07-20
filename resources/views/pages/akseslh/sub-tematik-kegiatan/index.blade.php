@@ -25,6 +25,8 @@
                 <h3 class="panel-title">Daftar Sub Tematik Kegiatan</h3>
                 <input type="hidden" name="data-table-sub-tematik-kegiatan" id="data-table-sub-tematik-kegiatan"
                     value="{{ route('data-sub-tematik-kegiatan') }}">
+                <input type="hidden" name="sub-tematik-kegiatan-route" id="sub-tematik-kegiatan-route"
+                    value="{{ route('sub-tematik-kegiatan.index') }}">
             </div>
             <div class="panel-body">
                 <div class="row">

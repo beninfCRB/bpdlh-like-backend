@@ -25,6 +25,8 @@
                 <h3 class="panel-title">Tahapan Pengajuan Kegiatan</h3>
                 <input type="hidden" name="data-tahapan-pengajuan-kegiatan" id="data-tahapan-pengajuan-kegiatan"
                     value="{{ route('data-tahapan-pengajuan-kegiatan') }}">
+                <input type="hidden" name="tahapan-pengajuan-kegiatan-route" id="tahapan-pengajuan-kegiatan-route"
+                    value="{{ route('tahapan-pengajuan-kegiatan.index') }}">
             </div>
             <div class="panel-body">
                 <div class="row">

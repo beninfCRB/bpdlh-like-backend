@@ -7,6 +7,7 @@ import {
     deleteData,
     showData,
 } from "../api";
+var route = $("#satuan-route").val();
 
 var data_satuan = (function () {
     var initTable1 = function () {
@@ -63,11 +64,13 @@ var data_satuan = (function () {
                     targets: -1,
                     orderable: false,
                     render: function (data, type, full, meta) {
+                        var editRoute = route + "/" + full.id + "/edit";
+
                         return (
                             `
-                        <a href="/akseslh/satuan/` +
-                            full.id +
-                            `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                         <a href="` +
+                            editRoute +
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
@@ -95,6 +98,7 @@ jQuery(document).ready(function () {
 });
 
 window.deleteSatuan = (input) => {
+    var deleteRoute = route + "/" + $(input).attr("data-id");
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -107,9 +111,7 @@ window.deleteSatuan = (input) => {
         reverseButtons: false,
     }).then((result) => {
         if (result.value) {
-            deleteData(
-                "/akseslh/satuan/" + $(input).attr("data-id")
-            ).then((res) => {
+            deleteData(deleteRoute).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
             });

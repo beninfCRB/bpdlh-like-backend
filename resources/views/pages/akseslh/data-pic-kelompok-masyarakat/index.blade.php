@@ -25,6 +25,8 @@
                 <h3 class="panel-title">Daftar PIC Kelompok Masyarakat</h3>
                 <input type="hidden" name="data-table-pic-kelompok-masyarakat" id="data-table-pic-kelompok-masyarakat"
                     value="{{ route('data-pic-kelompok-masyarakat') }}">
+                <input type="hidden" name="pic-kelompok-masyarakat-route" id="pic-kelompok-masyarakat-route"
+                    value="{{ route('pic-kelompok-masyarakat.index') }}">
             </div>
             <div class="panel-body">
                 <div class="row">

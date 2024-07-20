@@ -7,6 +7,7 @@ import {
     deleteData,
     showData,
 } from "../api";
+var route = $("#jenis-komponen-rab-route").val();
 
 var data_jenis_komponen_rab = (function () {
     var initTable1 = function () {
@@ -63,11 +64,13 @@ var data_jenis_komponen_rab = (function () {
                     targets: -1,
                     orderable: false,
                     render: function (data, type, full, meta) {
+                        var editRoute = route + "/" + full.id + "/edit";
+
                         return (
                             `
-                        <a href="/akseslh/jenis-komponen-rab/` +
-                            full.id +
-                            `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                        <a href="` +
+                            editRoute +
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
@@ -95,6 +98,7 @@ jQuery(document).ready(function () {
 });
 
 window.deleteJenisKomponenRab = (input) => {
+    var deleteRoute = route + "/" + $(input).attr("data-id");
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -107,9 +111,7 @@ window.deleteJenisKomponenRab = (input) => {
         reverseButtons: false,
     }).then((result) => {
         if (result.value) {
-            deleteData(
-                "/akseslh/jenis-komponen-rab/" + $(input).attr("data-id")
-            ).then((res) => {
+            deleteData(deleteRoute).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
             });

@@ -53,10 +53,17 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <img src="{{ env('APP_URL') . $data->image->file_path }}" alt="" srcset="">
+                        @if (env('APP_ENV') == 'local')
+
+                        <img src="{{ env('APP_URL').'/storage/' . $data->image->file_path }}" alt="" srcset=""
+                            width="128">
+                        @else
+                        <img src="{{ env('APP_URL').'/' . $data->image->file_path }}" alt="" srcset="" width="128">
+
+                        @endif
                     </div>
                     <div class="form-group @error('fileImage') has-error @enderror">
-                        <label for="fileImage">Gambar <span class="text-danger">*</span></label>
+                        <label for="fileImage">Gambar </label>
                         <input type="file" class="form-control" id="fileImage" name="fileImage">
                         @error('fileImage')
                         {{ $message }}

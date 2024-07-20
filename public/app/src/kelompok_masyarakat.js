@@ -7,6 +7,7 @@ import {
     deleteData,
     showData,
 } from "../api";
+var route = $("#kelompok-masyarakat-route").val();
 
 var data_kelompok_masyarakat = (function () {
     var initTable1 = function () {
@@ -74,16 +75,13 @@ var data_kelompok_masyarakat = (function () {
                     targets: -1,
                     orderable: false,
                     render: function (data, type, full, meta) {
+                        var editRoute = route + "/" + full.id + "/edit";
+
                         return (
                             `
-                       <a href="/career/` +
-                            full.id +
-                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Detail">
-                          <i class="fa fa-eye"></i>
-                        </a>
-                        <a href="/akseslh/kelompok-masyarakat/` +
-                            full.id +
-                            `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                        <a href="` +
+                            editRoute +
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
@@ -111,6 +109,7 @@ jQuery(document).ready(function () {
 });
 
 window.deleteKelompokMasyarakat = (input) => {
+    var deleteRoute = route + "/" + $(input).attr("data-id");
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -123,9 +122,7 @@ window.deleteKelompokMasyarakat = (input) => {
         reverseButtons: false,
     }).then((result) => {
         if (result.value) {
-            deleteData(
-                "/akseslh/kelompok-masyarakat/" + $(input).attr("data-id")
-            ).then((res) => {
+            deleteData(deleteRoute).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
             });

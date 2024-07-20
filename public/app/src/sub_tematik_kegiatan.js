@@ -6,6 +6,7 @@ import {
     deleteData,
     showData,
 } from "../api";
+var route = $("#sub-tematik-kegiatan-route").val();
 
 var data_sub_tematik_kegiatan = (function () {
     var initTable1 = function () {
@@ -74,11 +75,13 @@ var data_sub_tematik_kegiatan = (function () {
                     targets: -1,
                     orderable: false,
                     render: function (data, type, full, meta) {
+                        var editRoute = route + "/" + full.id + "/edit";
+
                         return (
                             `
-                        <a href="/akseslh/sub-tematik-kegiatan/` +
-                            full.id +
-                            `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                       <a href="` +
+                            editRoute +
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
@@ -106,6 +109,7 @@ jQuery(document).ready(function () {
 });
 
 window.deleteSubTematikKegiatan = (input) => {
+    var deleteRoute = route + "/" + $(input).attr("data-id");
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -118,9 +122,7 @@ window.deleteSubTematikKegiatan = (input) => {
         reverseButtons: false,
     }).then((result) => {
         if (result.value) {
-            deleteData(
-                "/akseslh/sub-tematik-kegiatan/" + $(input).attr("data-id")
-            ).then((res) => {
+            deleteData(deleteRoute).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
             });

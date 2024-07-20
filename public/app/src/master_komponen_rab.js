@@ -7,12 +7,13 @@ import {
     deleteData,
     showData,
 } from "../api";
+var route = $("#jenis-komponen-rab-route").val();
 
 var data_master_komponen_rab = (function () {
     var initTable1 = function () {
         var table = $("#dt_master_komponen_rab");
         var url_table = $("#data-table-master-komponen-rab").val();
-    
+
         // begin first table
         table.DataTable({
             language: {
@@ -26,8 +27,8 @@ var data_master_komponen_rab = (function () {
                 { data: "DT_RowIndex" },
                 {},
                 {},
-                { data: "komponen_rab"},
-                { data: "standar_harga_unit"},
+                { data: "komponen_rab" },
+                { data: "standar_harga_unit" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -86,11 +87,13 @@ var data_master_komponen_rab = (function () {
                     targets: -1,
                     orderable: false,
                     render: function (data, type, full, meta) {
+                        var editRoute = route + "/" + full.id + "/edit";
+
                         return (
                             `
-                        <a href="/akseslh/master-komponen-rab/` +
-                            full.id +
-                            `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                        <a href="` +
+                            editRoute +
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
@@ -118,6 +121,7 @@ jQuery(document).ready(function () {
 });
 
 window.deleteMasterKomponenRab = (input) => {
+    var deleteRoute = route + "/" + $(input).attr("data-id");
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -130,9 +134,7 @@ window.deleteMasterKomponenRab = (input) => {
         reverseButtons: false,
     }).then((result) => {
         if (result.value) {
-            deleteData(
-                "/akseslh/master-komponen-rab/" + $(input).attr("data-id")
-            ).then((res) => {
+            deleteData(deleteRoute).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
             });
