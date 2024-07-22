@@ -44,6 +44,13 @@ class RegisterController extends ApiController
                 ->first();
 
             if ($user) {
+                // Change user status to active
+                $user->user_akseslh->status_user = 'ACTIVE';
+                $user->user_akseslh->save();
+
+                //Send email notification
+                Notification::send($user->user_akseslh, new RegisterNotification($user->user_akseslh->password));
+
                 // Create token for user to access dashboard
                 $token = $user->user_akseslh->createToken("auth")->plainTextToken;
 

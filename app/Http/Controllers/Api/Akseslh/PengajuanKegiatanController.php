@@ -55,7 +55,7 @@ class PengajuanKegiatanController extends ApiController
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'akseslh_paket_kegiatan_id'  => 'required|exists:akseslh_paket_kegiatans,id',
+            'paket_kegiatan_id'         => 'required|exists:paket_kegiatans,id',
             'judul_pengajuan_kegiatan'  => 'required|string|max:500',
             'provinsi_kegiatan'         => 'required',
             'kabupaten_kegiatan'        => 'required',
@@ -71,7 +71,7 @@ class PengajuanKegiatanController extends ApiController
         }
 
         $input = $validator->validated();
-        $input["akseslh_user_eksternal_id"] = $request->user()->id;
+        $input["user_eksternal_id"] = $request->user()->id;
 
         $result = $this->pengajuanKegiatanService->create($input);
 

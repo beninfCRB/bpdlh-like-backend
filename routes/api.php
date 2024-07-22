@@ -1,9 +1,5 @@
 <?php
 
-use App\Models\DataPicKelompokMasyarakat;
-use App\Models\User;
-use App\Models\UserAkseslh;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,19 +64,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'data'      => $result
         ]);
     });
-    Route::post('pengajuanKegiatan', function (Request $request) {
-        return response()->json([
-            'code'      => 200,
-            'success'   => true,
-            'message'   => 'success',
-            'data'      => [
-                'nomor_pengajuan'   => '12345678',
-            ]
-        ]);
-    });
-});
-
-Route::get('/user', function (Request $request) {
-    return User::all();
-    return $request->user();
+    Route::post('pengajuanKegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'store']);
 });

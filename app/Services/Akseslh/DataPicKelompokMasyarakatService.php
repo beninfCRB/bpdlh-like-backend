@@ -93,12 +93,9 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
                 'data_pic_kelompok_masyarakat_id'   => $data->id,
                 'email'                             => $data['email_pic'],
                 'password'                          => Hash::make($default_password),
-                'status_user'                       => 'ACTIVE',
+                'status_user'                       => 'NON ACTIVE',
                 'flag'                              => 1,
             ]);
-
-            // Send password default to email
-            Notification::route('mail', $data['email_pic'])->notify(new RegisterNotification($default_password));
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($data);
