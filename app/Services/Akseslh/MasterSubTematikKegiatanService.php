@@ -5,13 +5,13 @@ namespace App\Services\Akseslh;
 
 use App\Models\File as FileTable;
 use App\Services\AppService;
-use App\Models\SubTematikKegiatan;
+use App\Models\MasterSubTematikKegiatan;
 use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
-class SubTematikKegiatanService extends AppService implements AppServiceInterface
+class MasterSubTematikKegiatanService extends AppService implements AppServiceInterface
 {
     protected $fileUploadService;
     protected $fileTable;
@@ -19,7 +19,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
     public function __construct(
         FileUploadService $fileUploadService,
         FileTable $fileTable,
-        SubTematikKegiatan $model
+        MasterSubTematikKegiatan $model
     ) {
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
@@ -28,7 +28,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('short_id', 'ASC');
+        $model = $this->model->query()->with(['tematik_kegiatan', 'sub_tematik_kegiatan'])->orderBy('short_id', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -49,7 +49,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         $result->transform(function ($items, $key) {
             return [
                 'id'                    => $items->id,
-                'sub_tematik_kegiatan'      => $items->sub_tematik_kegiatan,
+                'tematik_kegiatan'      => $items->tematik_kegiatan,
             ];
         });
 
@@ -58,7 +58,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->with('image')->find($id);
+        $result =   $this->model->newQuery()->find($id);
         return $this->sendSuccess($result);
     }
 
@@ -69,22 +69,12 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         try {
 
             $tematik_kegiatan = $this->model->newQuery()->create([
-                'sub_tematik_kegiatan'      =>  $data['sub_tematik_kegiatan'],
+                'tematik_kegiatan_id'       =>  $data['tematik_kegiatan_id'],
+                'sub_tematik_kegiatan_id'   =>  $data['sub_tematik_kegiatan_id'],
                 'short_id'                  =>  $data['short_id'],
                 'deskripsi_tematik'         =>  $data['deskripsi_tematik'],
                 'flag'                      => 1,
             ]);
-
-            // upload banner image
-            $upload = $this->fileUploadService->handleImage($data['fileImage'])->saveToDb('image');
-
-            if (!empty($upload)) {
-                $image = $this->fileTable->newQuery()->find($upload->id);
-                $image->update([
-                    'fileable_type' => get_class($tematik_kegiatan),
-                    'fileable_id'   => $tematik_kegiatan->id,
-                ]);
-            }
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($tematik_kegiatan);
@@ -102,7 +92,8 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
         try {
 
-            $read->sub_tematik_kegiatan     =   $data['sub_tematik_kegiatan'];
+            $read->tematik_kegiatan_id      =   $data['tematik_kegiatan_id'];
+            $read->sub_tematik_kegiatan_id  =   $data['sub_tematik_kegiatan_id'];
             $read->short_id                 =   $data['short_id'];
             $read->deskripsi_tematik        =   $data['deskripsi_tematik'];
             $read->save();

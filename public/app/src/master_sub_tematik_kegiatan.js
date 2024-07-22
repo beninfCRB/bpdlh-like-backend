@@ -6,12 +6,12 @@ import {
     deleteData,
     showData,
 } from "../api";
-var route = $("#sub-tematik-kegiatan-route").val();
+var route = $("#master-sub-tematik-kegiatan-route").val();
 
-var data_sub_tematik_kegiatan = (function () {
+var data_master_sub_tematik_kegiatan = (function () {
     var initTable1 = function () {
-        var table = $("#dt_sub_tematik_kegiatan");
-        var url_table = $("#data-table-sub-tematik-kegiatan").val();
+        var table = $("#dt_master_sub_tematik_kegiatan");
+        var url_table = $("#data-table-master-sub-tematik-kegiatan").val();
 
         // begin first table
         table.DataTable({
@@ -24,7 +24,8 @@ var data_sub_tematik_kegiatan = (function () {
             ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
-                { data: "sub_tematik_kegiatan" },
+                {},
+                {},
                 { data: "short_id" },
                 { data: "created_at" },
                 { data: "updated_at" },
@@ -37,7 +38,28 @@ var data_sub_tematik_kegiatan = (function () {
                     orderable: false,
                 },
                 {
-                    targets: 3,
+                    targets: 1,
+                    render: function (data, type, full, meta) {
+                        if (full.tematik_kegiatan === null) {
+                            return "-";
+                        } else {
+                            return full.tematik_kegiatan.tematik_kegiatan;
+                        }
+                    },
+                },
+                {
+                    targets: 2,
+                    render: function (data, type, full, meta) {
+                        if (full.sub_tematik_kegiatan === null) {
+                            return "-";
+                        } else {
+                            return full.sub_tematik_kegiatan
+                                .sub_tematik_kegiatan;
+                        }
+                    },
+                },
+                {
+                    targets: -3,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -49,7 +71,7 @@ var data_sub_tematik_kegiatan = (function () {
                     },
                 },
                 {
-                    targets: 4,
+                    targets: -2,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -75,7 +97,7 @@ var data_sub_tematik_kegiatan = (function () {
                         </a>
                         <a data-id=` +
                             full.id +
-                            ` href="#" onclick="deleteSubTematikKegiatan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                            ` href="#" onclick="deleteMasterSubTematikKegiatan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
                           <i class="fa fa-trash"></i>
                         </a>`
                         );
@@ -94,10 +116,10 @@ var data_sub_tematik_kegiatan = (function () {
 })();
 
 jQuery(document).ready(function () {
-    data_sub_tematik_kegiatan.init();
+    data_master_sub_tematik_kegiatan.init();
 });
 
-window.deleteSubTematikKegiatan = (input) => {
+window.deleteMasterSubTematikKegiatan = (input) => {
     var deleteRoute = route + "/" + $(input).attr("data-id");
     Swal.fire({
         title: "Konfirmasi Hapus",
