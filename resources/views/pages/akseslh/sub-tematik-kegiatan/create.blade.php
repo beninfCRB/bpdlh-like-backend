@@ -27,33 +27,6 @@
                 <form role="form" action="{{ route('sub-tematik-kegiatan.store') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
-                    <div class="form-group @error('tematik_kegiatan_id') has-error @enderror">
-                        <label for="tematik_kegiatan_id">Tematik Kegiatan <span class="text-danger">*</span></label>
-                        <select class="form-control" required id="tematik_kegiatan_id" name="tematik_kegiatan_id">
-                            <option class='form-control' value=''>- Pilih Data -</option>
-                            @isset($tematikKegiatan)
-                            @foreach ($tematikKegiatan as $item)
-                            @if (old('tematik_kegiatan_id'))
-
-                            <option class='form-control' value="{{ $item['id'] }}" selected>{{
-                                $item['tematik_kegiatan']
-                                }}
-                            </option>
-                            @else
-                            <option class='form-control' value="{{ $item['id'] }}">{{
-                                $item['tematik_kegiatan']
-                                }}
-                            </option>
-                            @endif
-                            @endforeach
-                            @endisset
-                        </select>
-                        @error('tematik_kegiatan_id')
-                        <span class="error">
-                            {{ $message }}
-                        </span>
-                        @enderror
-                    </div>
                     <div class="form-group @error('sub_tematik_kegiatan') has-error @enderror">
                         <label for="sub_tematik_kegiatan">Sub Tematik Kegiatan <span
                                 class="text-danger">*</span></label>

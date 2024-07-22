@@ -29,15 +29,13 @@ class SubTematikKegiatanController extends ApiController
 
     public function create()
     {
-        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.sub-tematik-kegiatan.create", compact('tematikKegiatan'));
+        return view("pages.akseslh.sub-tematik-kegiatan.create");
     }
 
     public function edit($id)
     {
         $data   =   $this->subTematikKegiatanService->getById($id)->data;
-        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.sub-tematik-kegiatan.edit", compact('data', 'tematikKegiatan'));
+        return view("pages.akseslh.sub-tematik-kegiatan.edit", compact('data'));
     }
 
     public function show($id)
@@ -49,7 +47,6 @@ class SubTematikKegiatanController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'tematik_kegiatan_id'       => 'required',
             'sub_tematik_kegiatan'      => 'required',
             'short_id'                  => 'required',
             'deskripsi_tematik'         => 'required',
@@ -75,7 +72,6 @@ class SubTematikKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'tematik_kegiatan_id'       => 'required',
             'sub_tematik_kegiatan'      => 'required',
             'short_id'                  => 'required',
             'deskripsi_tematik'         => 'required',

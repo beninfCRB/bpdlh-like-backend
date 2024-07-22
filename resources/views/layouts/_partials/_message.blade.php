@@ -3,9 +3,8 @@
     Swal.fire({
         icon: 'success',
         title: 'Berhasil!',
-        text: '{{ session('message') }}',
+        text: '{{ session('success') }}',
         showConfirmButton: true,
-        timer: 1500
     });
 </script>
 @endif
@@ -16,9 +15,9 @@
     Swal.fire({
         icon: 'error',
         title: 'Error!',
-        text: '{{ session('message') }}',
+        text: '{{ session('error') }}',
         showConfirmButton: true,
-        timer: 1500
+        showCancelButton: true,
     });
 </script>
 @endif

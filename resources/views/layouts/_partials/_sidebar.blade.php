@@ -6,7 +6,9 @@
       </div>
       <div class="user-info">
         <div class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">John Doe
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{
+            auth()->user()->nama_lengkap
+            }}
             <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li>
@@ -24,7 +26,7 @@
           </ul>
         </div>
 
-        <p class="text-muted m-0">Administrator</p>
+        <p class="text-muted m-0">{{ auth()->user()->username }}</p>
       </div>
     </div>
     <!--- Divider -->
@@ -57,6 +59,10 @@
             <li>
               <a href="{{ route('sub-tematik-kegiatan.index') }}" class="waves-effect"
                 style="padding: 10px 25px 10px 30px;">> <span>Sub Tematik Kegiatan</span></a>
+            </li>
+            <li>
+              <a href="{{ route('master-sub-tematik-kegiatan.index') }}" class="waves-effect"
+                style="padding: 10px 25px 10px 30px;">> <span>Master Sub Tematik Kegiatan</span></a>
             </li>
             <li>
               <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
