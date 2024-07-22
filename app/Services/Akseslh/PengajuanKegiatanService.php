@@ -62,8 +62,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         try {
 
             $data = $this->model->newQuery()->create([
-                'akseslh_paket_kegiatan_id'     => $data['akseslh_paket_kegiatan_id'],
-                'akseslh_user_eksternal_id'     => $data['akseslh_user_eksternal_id'],
+                'paket_kegiatan_id'             => $data['paket_kegiatan_id'],
+                'user_akseslh_id'               => $data['user_akseslh_id'],
                 'judul_pengajuan_kegiatan'      => $data['judul_pengajuan_kegiatan'],
                 'provinsi_kegiatan'             => $data['provinsi_kegiatan'],
                 'kabupaten_kegiatan'            => $data['kabupaten_kegiatan'],
@@ -71,6 +71,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kelurahan_kegiatan'            => $data['kelurahan_kegiatan'],
                 'alamat_kegiatan'               => $data['alamat_kegiatan'],
                 'tanggal_kegiatan'              => date_create($data['tanggal_kegiatan']),
+                'username'                      => auth()->user()->username
             ]);
 
             \DB::commit(); // commit the changes

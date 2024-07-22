@@ -13,8 +13,8 @@ class PengajuanKegiatan extends AppModel
     protected $table = "pengajuan_kegiatans";
 
     protected $fillable = [
-        'akseslh_paket_kegiatan_id',
-        'akseslh_user_eksternal_id',
+        'paket_kegiatan_id',
+        'user_eksternal_id',
         'judul_pengajuan_kegiatan',
         'provinsi_kegiatan',
         'kabupaten_kegiatan',
