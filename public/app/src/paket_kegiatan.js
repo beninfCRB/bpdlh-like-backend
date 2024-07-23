@@ -54,10 +54,16 @@ var data_paket_kegiatan = (function () {
                 {
                     targets: 2,
                     render: function (data, type, full, meta) {
-                        if (full.tematik_kegiatan === null) {
+                        if (full.master_sub_tematik_kegiatan === null) {
                             return "-";
                         } else {
-                            return full.tematik_kegiatan.tematik_kegiatan;
+                            return (
+                                full.master_sub_tematik_kegiatan
+                                    .tematik_kegiatan.tematik_kegiatan +
+                                " - " +
+                                full.master_sub_tematik_kegiatan
+                                    .sub_tematik_kegiatan.sub_tematik_kegiatan
+                            );
                         }
                     },
                 },

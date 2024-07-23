@@ -8,23 +8,23 @@ use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\JenisKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
-use App\Services\Akseslh\TematikKegiatanService;
+use App\Services\Akseslh\MasterSubTematikKegiatanService;
 
 class PaketKegiatanController extends ApiController
 {
     protected $paketKegiatanService;
     protected $jenisKegiatanService;
-    protected $tematikKegiatanService;
+    protected $masterSubTematikKegiatanService;
 
     public function __construct(
         PaketKegiatanService $paketKegiatanService,
         JenisKegiatanService $jenisKegiatanService,
-        TematikKegiatanService $tematikKegiatanService,
+        MasterSubTematikKegiatanService $masterSubTematikKegiatanService,
         Request $request
     ) {
         $this->paketKegiatanService   =   $paketKegiatanService;
         $this->jenisKegiatanService   =   $jenisKegiatanService;
-        $this->tematikKegiatanService   =   $tematikKegiatanService;
+        $this->masterSubTematikKegiatanService   =   $masterSubTematikKegiatanService;
         parent::__construct($request);
     }
 
@@ -35,30 +35,24 @@ class PaketKegiatanController extends ApiController
 
     public function create()
     {
-        $jenisKegiatan = $this->jenisKegiatanService->getAllAttr()->data;
-        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.paket-kegiatan.create", compact('jenisKegiatan', 'tematikKegiatan'));
+        $jenisKegiatan              = $this->jenisKegiatanService->getAllAttr()->data;
+        $masterSubTematikKegiatan   = $this->masterSubTematikKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.paket-kegiatan.create", compact('jenisKegiatan', 'masterSubTematikKegiatan'));
     }
 
     public function edit($id)
     {
-        $data   =   $this->paketKegiatanService->getById($id);
-        $jenisKegiatan = $this->jenisKegiatanService->getAllAttr()->data;
-        $tematikKegiatan = $this->tematikKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'tematikKegiatan'));
-    }
-
-    public function show($id)
-    {
-        $data   =   $this->paketKegiatanService->getById($id);
-        return view("pages.akseslh.paket-kegiatan.show", compact('data'));
+        $data                       = $this->paketKegiatanService->getById($id);
+        $jenisKegiatan              = $this->jenisKegiatanService->getAllAttr()->data;
+        $masterSubTematikKegiatan   = $this->masterSubTematikKegiatanService->getAllAttr()->data;
+        return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'masterSubTematikKegiatan'));
     }
 
     public function store(Request $request)
     {
         $input  =   $request->validate([
             'jenis_kegiatan_id'                 => 'required|exists:jenis_kegiatans,id',
-            'tematik_kegiatan_id'               => 'required|exists:tematik_kegiatans,id',
+            'master_sub_tematik_kegiatan_id'    => 'required|exists:master_sub_tematik_kegiatans,id',
             'nama_paket_kegiatan'               => 'required|string',
             'deskripsi_paket_kegiatan'          => 'required|string',
             'jumlah_peserta'                    => 'required',
@@ -86,6 +80,7 @@ class PaketKegiatanController extends ApiController
     {
         $input  =   $request->validate([
             'jenis_kegiatan_id'                 => 'required|exists:jenis_kegiatans,id',
+            'master_sub_tematik_kegiatan_id'    => 'required|exists:master_sub_tematik_kegiatans,id',
             'nama_paket_kegiatan'               => 'required|string',
             'deskripsi_paket_kegiatan'          => 'required|string',
             'jumlah_peserta'                    => 'required|string',

@@ -56,26 +56,27 @@
                             </span>
                             @enderror
                         </div>
-                        <div class="form-group @error('tematik_kegiatan_id') has-error @enderror col-md-6">
-                            <label for="tematik_kegiatan_id">Tematik Kegiatan <span class="text-danger">*</span></label>
-                            <select class="form-control" required id="tematik_kegiatan_id" name="tematik_kegiatan_id"
-                                required>
+                        <div class="form-group @error('master_sub_tematik_kegiatan_id') has-error @enderror col-md-6">
+                            <label for="master_sub_tematik_kegiatan_id">Tematik Kegiatan <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-control" required id="master_sub_tematik_kegiatan_id"
+                                name="master_sub_tematik_kegiatan_id" required>
                                 <option class='form-control' value=''>- Pilih Data -</option>
-                                @isset($tematikKegiatan)
-                                @foreach ($tematikKegiatan as $item)
-                                @if (old('tematik_kegiatan_id') == $item['id'])
+                                @isset($masterSubTematikKegiatan)
+                                @foreach ($masterSubTematikKegiatan as $item)
+                                @if (old('master_sub_tematik_kegiatan_id') == $item['id'])
                                 <option class='form-control' value="{{ $item['id'] }}" selected>{{
                                     $item['tematik_kegiatan'] }}
                                 </option>
                                 @else
                                 <option class='form-control' value="{{ $item['id'] }}">{{
-                                    $item['tematik_kegiatan'] }}
+                                    $item['tematik'] }}
                                 </option>
                                 @endif
                                 @endforeach
                                 @endisset
                             </select>
-                            @error('jenis_kegiatan_id')
+                            @error('master_sub_tematik_kegiatan_id')
                             <span class="error">
                                 {{ $message }}
                             </span>

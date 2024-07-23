@@ -3,7 +3,7 @@
 
 namespace App\Services\Akseslh;
 
-
+use App\Models\MasterSubTematikKegiatan;
 use App\Models\PaketKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
@@ -12,7 +12,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PaketKegiatanService extends AppService implements AppServiceInterface
 {
-
     public function __construct(PaketKegiatan $model)
     {
         parent::__construct($model);
@@ -20,7 +19,7 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->with(['jenis_kegiatan', 'tematik_kegiatan'])->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with(['jenis_kegiatan', 'master_sub_tematik_kegiatan.tematik_kegiatan', 'master_sub_tematik_kegiatan.sub_tematik_kegiatan'])->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -46,13 +45,14 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         try {
             $data = $this->model->newQuery()->create([
                 'jenis_kegiatan_id'                 => $data['jenis_kegiatan_id'],
-                'tematik_kegiatan_id'               => $data['tematik_kegiatan_id'],
+                'master_sub_tematik_kegiatan_id'    => $data['master_sub_tematik_kegiatan_id'],
                 'nama_paket_kegiatan'               => $data['nama_paket_kegiatan'],
                 'deskripsi_paket_kegiatan'          => $data['deskripsi_paket_kegiatan'],
                 'jumlah_peserta'                    => $data['jumlah_peserta'],
                 'quota_paket_kegiatan'              => $data['quota_paket_kegiatan'],
                 'pagu_paket_kegiatan'               => $data['pagu_paket_kegiatan'],
                 'tahap_pencairan_paket_kegiatan'    => $data['tahap_pencairan_paket_kegiatan'],
+                'flag'                              => 1,
             ]);
 
             \DB::commit(); // commit the changes
@@ -72,9 +72,10 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         try {
 
             $read->jenis_kegiatan_id                 = $data['jenis_kegiatan_id'];
+            $read->master_sub_tematik_kegiatan_id    = $data['master_sub_tematik_kegiatan_id'];
             $read->nama_paket_kegiatan               = $data['nama_paket_kegiatan'];
             $read->deskripsi_paket_kegiatan          = $data['deskripsi_paket_kegiatan'];
-            $read->jumlah_peserta          = $data['jumlah_peserta'];
+            $read->jumlah_peserta                    = $data['jumlah_peserta'];
             $read->quota_paket_kegiatan              = $data['quota_paket_kegiatan'];
             $read->pagu_paket_kegiatan               = $data['pagu_paket_kegiatan'];
             $read->tahap_pencairan_paket_kegiatan    = $data['tahap_pencairan_paket_kegiatan'];
@@ -101,143 +102,22 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         }
     }
 
-    public function updatePublish($id, $isPublish): object
+    function apiGetAll($data)
     {
-        $read = $this->model->newQuery()->find($id);
+        $result  = $this->model
+            ->select('nama_paket_kegiatan')
 
-        \DB::beginTransaction();
-
-        try {
-            $read->is_publish       =   $isPublish;
-            $read->save();
-
-            \DB::commit(); // commit the changes
-            return $this->sendSuccess($read);
-        } catch (\Exception $exception) {
-            \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
-        }
-    }
-
-    protected function switchLang($search = null, $page = null, $perPage = null, $lang = 'ID')
-    {
-        $result  = $this->model->newQuery()
-            ->where('is_publish', true)
-            ->when($search, function ($query, $search) {
-                return $query->where('title', 'like', '%' . $search . '%');
+            ->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
+                $q->where([
+                    'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
+                    'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
+                ]);
             })
-            ->orderBy('created_at', 'DESC')
-            ->paginate((int)$perPage, ['*'], null, $page);
-
-        if ($lang === 'ID') {
-            $result->getCollection()->transform(function ($items, $key) {
-                return [
-                    'id'            => $items->id,
-                    'title'         => $items->title_id,
-                    'desc'          => $items->desc_id,
-                    'lastUpdate'    => $items->created_at,
-                ];
-            });
-        } else {
-            $result->getCollection()->transform(function ($items, $key) {
-                return [
-                    'id'            => $items->id,
-                    'title'         => $items->title_en,
-                    'desc'          => $items->desc_en,
-                    'lastUpdate'    => $items->created_at,
-                ];
-            });
-        }
-        return $result;
-    }
-
-    public function apiLang($id, $lang = 'ID')
-    {
-        $model =   $this->model->newQuery()->where('is_publish', true)->find($id);
-
-        if (!$model)  return $this->sendError(null, 'Not Published');
-
-        if ($lang === 'ID') {
-            $result =   [
-                'id'            => $model->id,
-                'title'         => $model->title_id,
-                'desc'          => $model->desc_id,
-                'lastUpdate'    => $model->created_at
-            ];
-        } else {
-            $result =   [
-                'id'            => $model->id,
-                'title'         => $model->title_en,
-                'desc'          => $model->desc_en,
-                'lastUpdate'    => $model->created_at
-            ];
-        }
-
-        return $this->sendSuccess($result);
-    }
-
-    public function searchLang($lang = 'ID', $search = null)
-    {
-        if ($lang === 'ID') {
-
-            $result  = $this->model->newQuery()
-                ->when($search, function ($query, $search) {
-                    return $query->where('title_id', 'like', '%' . $search . '%')
-                        ->orWhere('desc_id', 'like', '%' . $search . '%');
-                })
-                ->where('is_publish', true)
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            $result->transform(function ($items, $key) {
-                return [
-                    'type'          => 'CAREER',
-                    'id'            => $items->id,
-                    'title'         => $items->title_id,
-                    'desc'          => $items->desc_id,
-                    'lastUpdate'    => $items->created_at
-                ];
-            });
-        } else {
-
-            $result  = $this->model->newQuery()
-                ->when($search, function ($query, $search) {
-                    return $query->where('title_en', 'like', '%' . $search . '%')
-                        ->orWhere('desc_en', 'like', '%' . $search . '%');
-                })
-                ->where('is_publish', true)
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            $result->transform(function ($items, $key) {
-                return [
-                    'type'          => 'CAREER',
-                    'id'            => $items->id,
-                    'title'         => $items->title_en,
-                    'desc'          => $items->desc_en,
-                    'lastUpdate'    => $items->created_at
-                ];
-            });
-        }
-        return $result;
-    }
-
-    function apiGetByIdTematikKegiatan($id)
-    {
-        $result  = $this->model->newQuery()
-            ->where('tematik_kegiatan_id', $id)
-
-            ->orderBy('created_at', 'DESC')
+            ->with(['peserta' => function ($query) {
+                $query->select('nama_paket_kegiatan', 'id', 'deskripsi_paket_kegiatan', 'jumlah_peserta')->orderBy('jumlah_peserta', 'ASC');
+            }])
+            ->distinct()
             ->get();
-        $result = $this->model->where('tematik_kegiatan_id', $id)->groupBy('nama_paket_kegiatan')->get();
-
-        // $result->transform(function ($items, $key) {
-        //     return [
-        //         'id'                        => $items->id,
-        //         'tematik_kegiatan_id'       => $items->tematik_kegiatan_id,
-        //         'nama_paket_kegiatan'       => $items->nama_paket_kegiatan,
-        //     ];
-        // });
 
         return $this->sendSuccess($result);
     }

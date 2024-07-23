@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
-use App\Services\Akseslh\PaketKegiatanService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Validator;
+use App\Services\Akseslh\PaketKegiatanService;
 
 class PaketKegiatanController extends ApiController
 {
@@ -21,7 +22,19 @@ class PaketKegiatanController extends ApiController
 
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $result = $this->paketKegiatanService->apiGetAll();
+        $validator = Validator::make($request->all(), [
+            'tematik_kegiatan_id'         => 'required|exists:tematik_kegiatans,id',
+            'sub_tematik_kegiatan_id'     => 'required|exists:sub_tematik_kegiatans,id',
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input = $validator->validated();
+
+        $result = $this->paketKegiatanService->apiGetAll($input);
 
         try {
             if ($result->success) {
