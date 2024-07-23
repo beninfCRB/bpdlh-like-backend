@@ -3,9 +3,10 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\File as FileTable;
 use App\Services\AppService;
+use App\Models\File as FileTable;
 use App\Models\SubTematikKegiatan;
+use App\Models\MasterSubTematikKegiatan;
 use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -13,16 +14,19 @@ use Yajra\DataTables\Facades\DataTables;
 
 class SubTematikKegiatanService extends AppService implements AppServiceInterface
 {
+    protected $modelMasterSubTematikKegiatan;
     protected $fileUploadService;
     protected $fileTable;
 
     public function __construct(
         FileUploadService $fileUploadService,
         FileTable $fileTable,
-        SubTematikKegiatan $model
+        SubTematikKegiatan $model,
+        MasterSubTematikKegiatan $modelMasterSubTematikKegiatan
     ) {
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
+        $this->modelMasterSubTematikKegiatan = $modelMasterSubTematikKegiatan;
         parent::__construct($model);
     }
 
@@ -231,19 +235,20 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         return $result;
     }
 
-    public function getApiAll($input)
+    public function getApiAll($data)
     {
-        $result  = $this->model->newQuery()
-            ->where(['tematik_kegiatan_id' => $input['tematik_kegiatan_id']])
+        $result  = $this->modelMasterSubTematikKegiatan->newQuery()
+            ->with(['sub_tematik_kegiatan.image'])
+            ->where(['tematik_kegiatan_id' => $data['tematik_kegiatan_id']])
             ->orderBy('short_id', 'ASC')
             ->get();
 
         $result->transform(function ($items, $key) {
             return [
-                'id'                    => $items->id,
+                'id'                    => $items->sub_tematik_kegiatan->id,
                 'tematik_kegiatan_id'   => $items->tematik_kegiatan_id,
-                'sub_tematik_kegiatan'  => $items->sub_tematik_kegiatan,
-                'image'                 => $items->image
+                'sub_tematik_kegiatan'  => $items->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'image'                 => $items->sub_tematik_kegiatan->image
             ];
         });
 
