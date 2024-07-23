@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -15,13 +16,14 @@ class PaketKegiatan extends AppModel
 
     protected $fillable = [
         'jenis_kegiatan_id',
-        'tematik_kegiatan_id',
+        'master_sub_tematik_kegiatan_id',
         'nama_paket_kegiatan',
         'deskripsi_paket_kegiatan',
         'jumlah_peserta',
         'quota_paket_kegiatan',
         'pagu_paket_kegiatan',
         'tahap_pencairan_paket_kegiatan',
+        'flag',
         'username'
     ];
 
@@ -36,12 +38,22 @@ class PaketKegiatan extends AppModel
     }
 
     /**
-     * Get the tematik_kegiatan that owns the AkseslhPaketKegiatan
+     * Get the master_sub_tematik_kegiatan that owns the AkseslhPaketKegiatan
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function tematik_kegiatan(): BelongsTo
+    public function master_sub_tematik_kegiatan(): BelongsTo
     {
-        return $this->belongsTo(TematikKegiatan::class, 'tematik_kegiatan_id');
+        return $this->belongsTo(MasterSubTematikKegiatan::class, 'master_sub_tematik_kegiatan_id');
+    }
+
+    /**
+     * Get all of the peserta for the PaketKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function peserta(): HasMany
+    {
+        return $this->hasMany(PaketKegiatan::class, 'nama_paket_kegiatan', 'nama_paket_kegiatan');
     }
 }
