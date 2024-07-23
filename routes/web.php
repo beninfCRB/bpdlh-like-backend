@@ -42,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('jenis-komponen-rab', App\Http\Controllers\Cms\Akseslh\JenisKomponenRabController::class);
         Route::resource('master-komponen-rab', App\Http\Controllers\Cms\Akseslh\MasterKomponenRabController::class);
         Route::resource('pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class);
+        Route::resource('master-data-bank', App\Http\Controllers\Cms\Akseslh\MasterDataBankController::class);
 
 
         // Datatable
@@ -58,5 +59,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-jenis-komponen-rab', [App\Http\Controllers\Datatable\Akseslh\JenisKomponenRabController::class, 'getAll'])->name('data-jenis-komponen-rab');
         Route::get('/data-master-komponen-rab', [App\Http\Controllers\Datatable\Akseslh\MasterKomponenRabController::class, 'getAll'])->name('data-master-komponen-rab');
         Route::get('/data-pengajuan-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PengajuanKegiatanController::class, 'getAll'])->name('data-pengajuan-kegiatan');
+        Route::get('/data-master-data-bank', [App\Http\Controllers\Datatable\Akseslh\MasterDataBankController::class, 'getAll'])->name('data-master-data-bank');
     });
 });

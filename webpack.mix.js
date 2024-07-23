@@ -30,6 +30,7 @@ mix.js("resources/js/app.js", "public/js")
     .js(source + "satuan.js", build)
     .js(source + "jenis_komponen_rab.js", build)
     .js(source + "master_komponen_rab.js", build)
+    .js(source + "master_data_bank.js", build)
     .version();
 
 mix.disableNotifications();

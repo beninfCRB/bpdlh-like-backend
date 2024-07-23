@@ -6,9 +6,8 @@
       </div>
       <div class="user-info">
         <div class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{
-            auth()->user()->nama_lengkap
-            }}
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+            aria-expanded="false">{{ auth()->user()->nama_lengkap }}
             <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li>
@@ -65,7 +64,8 @@
                 style="padding: 10px 25px 10px 30px;">> <span>Master Sub Tematik Kegiatan</span></a>
             </li>
             <li>
-              <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
+              <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect"
+                style="padding: 10px 25px 10px 30px;">>
                 <span>Paket Kegiatan</span></a>
             </li>
             <li>
@@ -94,6 +94,11 @@
               <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"
                 style="padding: 10px 25px 10px 30px;">>
                 <span>Pengajuan Kegiatan</span></a>
+            </li>
+            <li>
+              <a href="{{ route('master-data-bank.index') }}" class="waves-effect"
+                style="padding: 10px 25px 10px 30px;">>
+                <span>Master Data Bank</span></a>
             </li>
           </ul>
         </li>
