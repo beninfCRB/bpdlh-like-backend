@@ -82,7 +82,7 @@ class PengajuanKegiatanController extends ApiController
         $waktuArray     = explode(" - ", $input["waktu_kegiatan"]);
 
         //add new key for required field in table
-        $input["user_eksternal_id"] = $request->user()->id;
+        $input["user_akseslh_id"] = $request->user()->id;
         $input["tanggal_mulai_kegiatan"]    = $tanggalArray[0];
         $input["tanggal_akhir_kegiatan"]    = $tanggalArray[1];
         $input["time_mulai_kegiatan"]      = $waktuArray[0];
