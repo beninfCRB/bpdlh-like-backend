@@ -115,7 +115,7 @@
                             {{ $message }}
                             @enderror
                         </div>
-                        <div class=" form-group @error('kelurahan_pic') has-error @enderror col-md-4">
+                        <div class=" form-group @error('kelurahan_pic') has-error @enderror col-md-3">
                             <label for="kelurahan_pic">Kelurahan PIC <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="kelurahan_pic" name="kelurahan_pic"
                                 placeholder="" value="{{ old('kelurahan_pic', $data->kelurahan_pic) }}">
@@ -123,7 +123,7 @@
                             {{ $message }}
                             @enderror
                         </div>
-                        <div class=" form-group @error('kecamatan_pic') has-error @enderror col-md-4">
+                        <div class=" form-group @error('kecamatan_pic') has-error @enderror col-md-3">
                             <label for="kecamatan_pic">Kecamatan PIC <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="kecamatan_pic" name="kecamatan_pic"
                                 placeholder="" value="{{ old('kecamatan_pic', $data->kecamatan_pic) }}">
@@ -131,7 +131,15 @@
                             {{ $message }}
                             @enderror
                         </div>
-                        <div class=" form-group @error('provinsi_pic') has-error @enderror col-md-4">
+                        <div class=" form-group @error('kabupaten_pic') has-error @enderror col-md-3">
+                            <label for="kabupaten_pic">Kabupaten PIC <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="kabupaten_pic" name="kabupaten_pic"
+                                placeholder="" value="{{ old('kabupaten_pic', $data->kabupaten_pic) }}">
+                            @error('kabupaten_pic')
+                            {{ $message }}
+                            @enderror
+                        </div>
+                        <div class=" form-group @error('provinsi_pic') has-error @enderror col-md-3">
                             <label for="provinsi_pic">Provinsi PIC <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="provinsi_pic" name="provinsi_pic" placeholder=""
                                 value="{{ old('provinsi_pic', $data->provinsi_pic) }}">
@@ -139,7 +147,7 @@
                             {{ $message }}
                             @enderror
                         </div>
-                        <div class="form-group @error('status_user') has-error @enderror col-md-4">
+                        <div class="form-group @error('status_user') has-error @enderror col-md-3">
                             <label for="status_user">Status User <span class="text-danger">*</span></label>
                             <select class="form-control" required id="status_user" name="status_user" required>
                                 <option class='form-control' value=''>- Pilih Data -</option>

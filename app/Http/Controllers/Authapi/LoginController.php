@@ -38,6 +38,11 @@ class LoginController extends ApiController
                     return $this->sendError(null, "account is not active yet");
                 }
 
+                if ($user->status_user == 'NON ACTIVE') {
+                    # code...
+                    return $this->sendError(null, "account is not active yet");
+                }
+
                 if (Hash::check($input['password'], $user->password)) {
 
                     // Create token for user to access dashboard

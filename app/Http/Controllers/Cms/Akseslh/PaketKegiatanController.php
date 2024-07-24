@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\ApiController;
+use App\Rules\TahapanSalurValidation;
 use App\Services\Akseslh\JenisKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
 use App\Services\Akseslh\MasterSubTematikKegiatanService;
@@ -59,7 +60,10 @@ class PaketKegiatanController extends ApiController
             'quota_paket_kegiatan'              => 'required|numeric',
             'pagu_paket_kegiatan'               => 'required',
             'tahap_pencairan_paket_kegiatan'    => 'required|numeric',
+            'porsi_pencairan'                   => ['nullable', new TahapanSalurValidation]
         ]);
+
+        dd($input);
 
         $result =   $this->paketKegiatanService->create($input);
 

@@ -71,7 +71,7 @@ class PengajuanKegiatanController extends ApiController
         }
 
         $input = $validator->validated();
-        $input["user_eksternal_id"] = $request->user()->id;
+        $input["user_akseslh_id"] = $request->user()->id;
 
         $result = $this->pengajuanKegiatanService->create($input);
 

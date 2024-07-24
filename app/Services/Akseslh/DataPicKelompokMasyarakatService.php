@@ -85,6 +85,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
                 'alamat_pic'                => $data['alamat_pic'],
                 'kelurahan_pic'             => $data['kelurahan_pic'],
                 'kecamatan_pic'             => $data['kecamatan_pic'],
+                'kabupaten_pic'             => $data['kabupaten_pic'],
                 'provinsi_pic'              => $data['provinsi_pic'],
                 'flag'                      => 1,
             ]);
@@ -122,6 +123,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->alamat_pic               = $data['alamat_pic'];
             $read->kelurahan_pic            = $data['kelurahan_pic'];
             $read->kecamatan_pic            = $data['kecamatan_pic'];
+            $read->kabupaten_pic            = $data['kabupaten_pic'];
             $read->provinsi_pic             = $data['provinsi_pic'];
             $read->save();
 
