@@ -56,13 +56,19 @@ class PengajuanKegiatanController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'paket_kegiatan_id'         => 'required|exists:paket_kegiatans,id',
+            // 'paket_kegiatan_id'         => 'required',
             'judul_pengajuan_kegiatan'  => 'required|string|max:500',
             'provinsi_kegiatan'         => 'required',
             'kabupaten_kegiatan'        => 'required',
             'kecamatan_kegiatan'        => 'required',
             'kelurahan_kegiatan'        => 'required',
             'alamat_kegiatan'           => 'required',
-            'tanggal_kegiatan'          => 'required|date',
+            'tanggal_kegiatan'          => 'required',
+            'waktu_kegiatan'            => 'required',
+            'proposal_kegiatan'         => 'required',
+            'tujuan_kegiatan'           => 'required',
+            'ruang_lingkup_kegiatan'    => 'required',
+            // 'lampiran'                  => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -70,8 +76,21 @@ class PengajuanKegiatanController extends ApiController
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
-        $input = $validator->validated();
-        $input["user_akseslh_id"] = $request->user()->id;
+        $input          = $validator->validated();
+
+        $tanggalArray   = explode(" - ", $input["tanggal_kegiatan"]);
+        $waktuArray     = explode(" - ", $input["waktu_kegiatan"]);
+
+        //add new key for required field in table
+        $input["user_eksternal_id"] = $request->user()->id;
+        $input["tanggal_mulai_kegiatan"]    = $tanggalArray[0];
+        $input["tanggal_akhir_kegiatan"]    = $tanggalArray[1];
+        $input["time_mulai_kegiatan"]      = $waktuArray[0];
+        $input["time_akhir_kegiatan"]      = $waktuArray[1];
+
+        //eliminate unnecessary key 
+        unset($input["tanggal_kegiatan"]);
+        unset($input["waktu_kegiatan"]);
 
         $result = $this->pengajuanKegiatanService->create($input);
 
