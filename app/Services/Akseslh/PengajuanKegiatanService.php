@@ -33,8 +33,16 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $result->transform(function ($items, $key) {
             return [
-                'id'                 => $items->id,
-                'jenis_kegiatan'     => $items->jenis_kegiatan,
+                'id'                        => $items->id,
+                'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
+                'alamat_kegiatan'           => $items->alamat_kegiatan,
+                'tanggal_mulai_kegiatan'    => $items->tanggal_mulai_kegiatan,
+                'tanggal_akhir_kegiatan'    => $items->tanggal_akhir_kegiatan,
+                'time_mulai_kegiatan'       => $items->time_mulai_kegiatan,
+                'time_akhir_kegiatan'       => $items->time_akhir_kegiatan,
+                'proposal_kegiatan'         => $items->proposal_kegiatan,
+                'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
             ];
         });
 
@@ -70,8 +78,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kecamatan_kegiatan'            => $data['kecamatan_kegiatan'],
                 'kelurahan_kegiatan'            => $data['kelurahan_kegiatan'],
                 'alamat_kegiatan'               => $data['alamat_kegiatan'],
-                'tanggal_kegiatan'              => date_create($data['tanggal_kegiatan']),
-                'username'                      => auth()->user()->username
+                'proposal_kegiatan'             => $data['proposal_kegiatan'],
+                'tujuan_kegiatan'               => $data['tujuan_kegiatan'],
+                'ruang_lingkup_kegiatan'        => $data['ruang_lingkup_kegiatan'],
+                'tanggal_mulai_kegiatan'        => date_create($data['tanggal_mulai_kegiatan']),
+                'tanggal_akhir_kegiatan'        => date_create($data['tanggal_akhir_kegiatan']),
+                'time_mulai_kegiatan'           => $data['time_mulai_kegiatan'],
+                'time_akhir_kegiatan'           => $data['time_akhir_kegiatan'],
             ]);
 
             \DB::commit(); // commit the changes
