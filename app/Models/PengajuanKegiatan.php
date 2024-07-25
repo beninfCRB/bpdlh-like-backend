@@ -14,6 +14,7 @@ class PengajuanKegiatan extends AppModel
     protected $table = "pengajuan_kegiatans";
 
     protected $fillable = [
+        'nomor_pengajuan',
         'paket_kegiatan_id',
         'user_akseslh_id',
         'judul_pengajuan_kegiatan',
@@ -50,5 +51,16 @@ class PengajuanKegiatan extends AppModel
     public function user_eksternal(): BelongsTo
     {
         return $this->belongsTo(UserEksternal::class, 'akseslh_user_eksternal_id');
+    }
+    public static function generateNomorPengajuan()
+    {
+        $dateTime = now()->format('YmdHi');
+        $lastRecord = self::whereDate('created_at', now()->toDateString())
+            ->orderBy('id', 'desc')
+            ->first();
+        $lastNumber = $lastRecord ? intval(substr($lastRecord->nomor_pengajuan, -4)) : 0;
+        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+
+        return $dateTime . '' . $newNumber;
     }
 }
