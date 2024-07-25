@@ -43,7 +43,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('master-komponen-rab', App\Http\Controllers\Cms\Akseslh\MasterKomponenRabController::class);
         Route::resource('pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class);
         Route::resource('master-data-bank', App\Http\Controllers\Cms\Akseslh\MasterDataBankController::class);
-
+        Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
+        Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
 
         // Datatable
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
