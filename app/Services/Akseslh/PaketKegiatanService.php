@@ -5,15 +5,20 @@ namespace App\Services\Akseslh;
 
 use App\Models\MasterSubTematikKegiatan;
 use App\Models\PaketKegiatan;
+use App\Models\TahapSalurPaketKegiatan;
+use App\Models\StandarRabPaketKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
+use Ramsey\Uuid\Uuid;
 
 class PaketKegiatanService extends AppService implements AppServiceInterface
 {
-    public function __construct(PaketKegiatan $model)
+    protected $modelTahapSalurPaketKegiatan;
+    public function __construct(PaketKegiatan $model, TahapSalurPaketKegiatan $tahapSalurPaketKegiatan)
     {
+        $this->modelTahapSalurPaketKegiatan = $tahapSalurPaketKegiatan;
         parent::__construct($model);
     }
 
@@ -58,7 +63,7 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
-            $data = $this->model->newQuery()->create([
+            $dataPaketKegiatan = $this->model->newQuery()->create([
                 'jenis_kegiatan_id'                 => $data['jenis_kegiatan_id'],
                 'master_sub_tematik_kegiatan_id'    => $data['master_sub_tematik_kegiatan_id'],
                 'nama_paket_kegiatan'               => $data['nama_paket_kegiatan'],
@@ -69,6 +74,44 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
                 'tahap_pencairan_paket_kegiatan'    => $data['tahap_pencairan_paket_kegiatan'],
                 'flag'                              => 1,
             ]);
+
+            $tahap_salur = 1;
+            $dataTahapSalur = [];
+            foreach ($data['porsi_pencairan'] as $item) {
+                # code...
+                $dataTahapSalur[] = [
+                    'tahap_salur'       => $tahap_salur,
+                    'porsi_pencairan'   => (int) $item,
+                    'flag' => 1,
+                ];
+
+                $tahap_salur++;
+            }
+
+            foreach ($data['komponen_rab'] as $item) {
+                # code...
+                if (isset($item['id']) && isset($item['qty']) && isset($item['harga_unit'])) {
+                    # code...
+                    $dataKomponenRab[] = [
+                        'master_komponen_rab_id'    => $item['id'],
+                        'standar_qty'               => $item['qty'],
+                        'standar_harga_unit'        => $item['harga_unit'],
+                        'flag'                      => 1,
+                    ];
+                }
+            }
+
+            $dataPaketKegiatan->tahap_salur_paket_kegiatan()->saveMany(
+                collect($dataTahapSalur)->map(function ($tahapSalur) {
+                    return new TahapSalurPaketKegiatan($tahapSalur);
+                })
+            );
+
+            $dataPaketKegiatan->standar_rab_paket_kegiatan()->saveMany(
+                collect($dataKomponenRab)->map(function ($komponenRab) {
+                    return new StandarRabPaketKegiatan($komponenRab);
+                })
+            );
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($data);

@@ -19327,7 +19327,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module) {
 
 /*!
-* sweetalert2 v11.12.2
+* sweetalert2 v11.12.3
 * Released under the MIT License.
 */
 (function (global, factory) {
@@ -19594,77 +19594,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   var swalPrefix = 'swal2-';
 
   /**
-   * @typedef
-   * { | 'container'
-   *   | 'shown'
-   *   | 'height-auto'
-   *   | 'iosfix'
-   *   | 'popup'
-   *   | 'modal'
-   *   | 'no-backdrop'
-   *   | 'no-transition'
-   *   | 'toast'
-   *   | 'toast-shown'
-   *   | 'show'
-   *   | 'hide'
-   *   | 'close'
-   *   | 'title'
-   *   | 'html-container'
-   *   | 'actions'
-   *   | 'confirm'
-   *   | 'deny'
-   *   | 'cancel'
-   *   | 'default-outline'
-   *   | 'footer'
-   *   | 'icon'
-   *   | 'icon-content'
-   *   | 'image'
-   *   | 'input'
-   *   | 'file'
-   *   | 'range'
-   *   | 'select'
-   *   | 'radio'
-   *   | 'checkbox'
-   *   | 'label'
-   *   | 'textarea'
-   *   | 'inputerror'
-   *   | 'input-label'
-   *   | 'validation-message'
-   *   | 'progress-steps'
-   *   | 'active-progress-step'
-   *   | 'progress-step'
-   *   | 'progress-step-line'
-   *   | 'loader'
-   *   | 'loading'
-   *   | 'styled'
-   *   | 'top'
-   *   | 'top-start'
-   *   | 'top-end'
-   *   | 'top-left'
-   *   | 'top-right'
-   *   | 'center'
-   *   | 'center-start'
-   *   | 'center-end'
-   *   | 'center-left'
-   *   | 'center-right'
-   *   | 'bottom'
-   *   | 'bottom-start'
-   *   | 'bottom-end'
-   *   | 'bottom-left'
-   *   | 'bottom-right'
-   *   | 'grow-row'
-   *   | 'grow-column'
-   *   | 'grow-fullscreen'
-   *   | 'rtl'
-   *   | 'timer-progress-bar'
-   *   | 'timer-progress-bar-container'
-   *   | 'scrollbar-measure'
-   *   | 'icon-success'
-   *   | 'icon-warning'
-   *   | 'icon-info'
-   *   | 'icon-question'
-   *   | 'icon-error'
-   * } SwalClass
    * @typedef {Record<SwalClass, string>} SwalClasses
    */
 
@@ -20733,6 +20662,9 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
       return;
     }
     var inputContainer = getInputContainer(params.input);
+    if (!inputContainer) {
+      return;
+    }
     var input = renderInputType[params.input](inputContainer, params);
     show(inputContainer);
 
@@ -20761,7 +20693,11 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
    * @param {SweetAlertOptions['inputAttributes']} inputAttributes
    */
   var setAttributes = function setAttributes(inputClass, inputAttributes) {
-    var input = getInput$1(getPopup(), inputClass);
+    var popup = getPopup();
+    if (!popup) {
+      return;
+    }
+    var input = getInput$1(popup, inputClass);
     if (!input) {
       return;
     }
@@ -20775,9 +20711,12 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
    * @param {SweetAlertOptions} params
    */
   var setCustomClass = function setCustomClass(params) {
+    if (!params.input) {
+      return;
+    }
     var inputContainer = getInputContainer(params.input);
-    if (_typeof(params.customClass) === 'object') {
-      addClass(inputContainer, params.customClass.input);
+    if (inputContainer) {
+      applyCustomClass(inputContainer, params, 'input');
     }
   };
 
@@ -20786,7 +20725,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
    * @param {SweetAlertOptions} params
    */
   var setInputPlaceholder = function setInputPlaceholder(input, params) {
-    if (!input.placeholder || params.inputPlaceholder) {
+    if (!input.placeholder && params.inputPlaceholder) {
       input.placeholder = params.inputPlaceholder;
     }
   };
@@ -20811,11 +20750,15 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   };
 
   /**
-   * @param {SweetAlertOptions['input']} inputType
-   * @returns {HTMLElement}
+   * @param {SweetAlertInput} inputType
+   * @returns {HTMLElement | undefined}
    */
   var getInputContainer = function getInputContainer(inputType) {
-    return getDirectChildByClass(getPopup(), swalClasses[inputType] || swalClasses.input);
+    var popup = getPopup();
+    if (!popup) {
+      return;
+    }
+    return getDirectChildByClass(popup, swalClasses[( /** @type {SwalClass} */inputType)] || swalClasses.input);
   };
 
   /**
@@ -20838,7 +20781,8 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
    * @param {SweetAlertOptions} params
    * @returns {HTMLInputElement}
    */
-  renderInputType.text = renderInputType.email = renderInputType.password = renderInputType.number = renderInputType.tel = renderInputType.url = renderInputType.search = renderInputType.date = renderInputType['datetime-local'] = renderInputType.time = renderInputType.week = renderInputType.month = function (input, params) {
+  renderInputType.text = renderInputType.email = renderInputType.password = renderInputType.number = renderInputType.tel = renderInputType.url = renderInputType.search = renderInputType.date = renderInputType['datetime-local'] = renderInputType.time = renderInputType.week = renderInputType.month = /** @type {(input: Input | HTMLElement, params: SweetAlertOptions) => Input} */
+  function (input, params) {
     checkAndSetInputValue(input, params.inputValue);
     setInputLabel(input, input, params);
     setInputPlaceholder(input, params);
@@ -23272,8 +23216,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
    * @returns {SweetAlertOptions}
    */
   var getTemplateParams = function getTemplateParams(params) {
-    /** @type {HTMLTemplateElement} */
-    var template = typeof params.template === 'string' ? document.querySelector(params.template) : params.template;
+    var template = typeof params.template === 'string' ? ( /** @type {HTMLTemplateElement} */document.querySelector(params.template)) : params.template;
     if (!template) {
       return {};
     }
@@ -23286,16 +23229,20 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   var getSwalParams = function getSwalParams(templateContent) {
+    /** @type {Record<string, any>} */
     var result = {};
     /** @type {HTMLElement[]} */
     var swalParams = Array.from(templateContent.querySelectorAll('swal-param'));
     swalParams.forEach(function (param) {
       showWarningsForAttributes(param, ['name', 'value']);
-      var paramName = param.getAttribute('name');
+      var paramName = /** @type {keyof SweetAlertOptions} */param.getAttribute('name');
       var value = param.getAttribute('value');
+      if (!paramName || !value) {
+        return;
+      }
       if (typeof defaultParams[paramName] === 'boolean') {
         result[paramName] = value !== 'false';
       } else if (_typeof(defaultParams[paramName]) === 'object') {
@@ -23309,15 +23256,19 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   var getSwalFunctionParams = function getSwalFunctionParams(templateContent) {
+    /** @type {Record<string, any>} */
     var result = {};
     /** @type {HTMLElement[]} */
     var swalFunctions = Array.from(templateContent.querySelectorAll('swal-function-param'));
     swalFunctions.forEach(function (param) {
-      var paramName = param.getAttribute('name');
+      var paramName = /** @type {keyof SweetAlertOptions} */param.getAttribute('name');
       var value = param.getAttribute('value');
+      if (!paramName || !value) {
+        return;
+      }
       result[paramName] = new Function("return ".concat(value))();
     });
     return result;
@@ -23325,15 +23276,19 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   var getSwalButtons = function getSwalButtons(templateContent) {
+    /** @type {Record<string, any>} */
     var result = {};
     /** @type {HTMLElement[]} */
     var swalButtons = Array.from(templateContent.querySelectorAll('swal-button'));
     swalButtons.forEach(function (button) {
       showWarningsForAttributes(button, ['type', 'color', 'aria-label']);
       var type = button.getAttribute('type');
+      if (!type || !['confirm', 'cancel', 'deny'].includes(type)) {
+        return;
+      }
       result["".concat(type, "ButtonText")] = button.innerHTML;
       result["show".concat(capitalizeFirstLetter(type), "Button")] = true;
       if (button.hasAttribute('color')) {
@@ -23374,17 +23329,15 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   var getSwalIcon = function getSwalIcon(templateContent) {
     var result = {};
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     var icon = templateContent.querySelector('swal-icon');
     if (icon) {
       showWarningsForAttributes(icon, ['type', 'color']);
       if (icon.hasAttribute('type')) {
-        /** @type {SweetAlertIcon} */
-        // @ts-ignore
         result.icon = icon.getAttribute('type');
       }
       if (icon.hasAttribute('color')) {
@@ -23397,16 +23350,15 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
   /**
    * @param {DocumentFragment} templateContent
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   var getSwalInput = function getSwalInput(templateContent) {
+    /** @type {Record<string, any>} */
     var result = {};
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement | null} */
     var input = templateContent.querySelector('swal-input');
     if (input) {
       showWarningsForAttributes(input, ['type', 'label', 'placeholder', 'value']);
-      /** @type {SweetAlertInput} */
-      // @ts-ignore
       result.input = input.getAttribute('type') || 'text';
       if (input.hasAttribute('label')) {
         result.inputLabel = input.getAttribute('label');
@@ -23425,6 +23377,9 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
       inputOptions.forEach(function (option) {
         showWarningsForAttributes(option, ['value']);
         var optionValue = option.getAttribute('value');
+        if (!optionValue) {
+          return;
+        }
         var optionName = option.innerHTML;
         result.inputOptions[optionValue] = optionName;
       });
@@ -23435,13 +23390,14 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   /**
    * @param {DocumentFragment} templateContent
    * @param {string[]} paramNames
-   * @returns {SweetAlertOptions}
+   * @returns {Record<string, any>}
    */
   var getSwalStringParams = function getSwalStringParams(templateContent, paramNames) {
+    /** @type {Record<string, any>} */
     var result = {};
     for (var i in paramNames) {
       var paramName = paramNames[i];
-      /** @type {HTMLElement} */
+      /** @type {HTMLElement | null} */
       var tag = templateContent.querySelector(paramName);
       if (tag) {
         showWarningsForAttributes(tag, []);
@@ -23985,7 +23941,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
   });
   SweetAlert.DismissReason = DismissReason;
-  SweetAlert.version = '11.12.2';
+  SweetAlert.version = '11.12.3';
 
   var Swal = SweetAlert;
   // @ts-ignore
