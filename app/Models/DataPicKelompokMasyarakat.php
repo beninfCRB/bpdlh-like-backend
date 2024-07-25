@@ -27,6 +27,7 @@ class DataPicKelompokMasyarakat extends AppModel
         'alamat_pic',
         'kelurahan_pic',
         'kecamatan_pic',
+        'kabupaten_pic',
         'provinsi_pic',
         'flag',
         'username',

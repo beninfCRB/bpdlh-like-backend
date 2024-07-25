@@ -58,6 +58,7 @@ class DataPicKelompokMasyarakatController extends ApiController
             'alamat_pic'                        => 'required',
             'kelurahan_pic'                     => 'required',
             'kecamatan_pic'                     => 'required',
+            'kabupaten_pic'                     => 'required',
             'provinsi_pic'                      => 'required',
         ]);
 
@@ -88,6 +89,7 @@ class DataPicKelompokMasyarakatController extends ApiController
             'alamat_pic'                        => 'required',
             'kelurahan_pic'                     => 'required',
             'kecamatan_pic'                     => 'required',
+            'kabupaten_pic'                     => 'required',
             'provinsi_pic'                      => 'required',
             'status_user'                       => 'required'
         ]);
