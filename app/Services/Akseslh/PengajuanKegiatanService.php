@@ -68,8 +68,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
-
+            // Menghasilkan nomor pengajuan otomatis
+            $data['nomor_pengajuan'] = PengajuanKegiatan::generateNomorPengajuan();
+            // echo $data['nomor_pengajuan'];
+            // exit;
             $data = $this->model->newQuery()->create([
+                'nomor_pengajuan'               => $data['nomor_pengajuan'],
                 'paket_kegiatan_id'             => $data['paket_kegiatan_id'],
                 'user_akseslh_id'               => $data['user_akseslh_id'],
                 'judul_pengajuan_kegiatan'      => $data['judul_pengajuan_kegiatan'],
@@ -86,9 +90,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'time_mulai_kegiatan'           => $data['time_mulai_kegiatan'],
                 'time_akhir_kegiatan'           => $data['time_akhir_kegiatan'],
             ]);
-
+            $dataSend = array('nomor_pengajuan' => $data['nomor_pengajuan']);
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($data);
+            return $this->sendSuccess($dataSend);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
