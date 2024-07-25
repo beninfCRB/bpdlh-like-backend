@@ -28,6 +28,9 @@
                 <h3 class="panel-title">Pengelolaan Data Paket Kegiatan</h3>
             </div>
             <div class="panel-body">
+                @error('porsi_pencairan')
+                <h1>{{ $message }}</h1>
+                @enderror
                 <form role="form" action="{{ route('paket-kegiatan.store') }}" method="POST">
                     @csrf
                     <div class="row">

@@ -66,10 +66,6 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
 
     public function create($data)
     {
-        // Make default password for first login
-        $default_password =
-            crypt($data['email_pic'] . Carbon::now()->format('d M Y H:i:s'), $data['email_pic']);
-
         \DB::beginTransaction();
 
         try {
@@ -93,7 +89,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $dataUserAkseslh = $this->modelUserAkseslh->newQuery()->create([
                 'data_pic_kelompok_masyarakat_id'   => $data->id,
                 'email'                             => $data['email_pic'],
-                'password'                          => Hash::make($default_password),
+                // 'password'                          => Hash::make($default_password),
                 'status_user'                       => 'NON ACTIVE',
                 'flag'                              => 1,
             ]);

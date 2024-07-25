@@ -26,8 +26,8 @@ class TahapanSalurValidation implements Rule
     public function passes($attribute, $value)
     {
         //
-        foreach ($value as $item) {
-            if ($item < 100 || $item > 100) {
+        foreach ($value as $key => $value) {
+            if ($key < 100 || $key > 100) {
                 return false;
             }
         }
