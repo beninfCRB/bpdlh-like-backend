@@ -6,39 +6,41 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\ApiController;
-use App\Rules\TahapanSalurValidation;
 use App\Services\Akseslh\JenisKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
 use App\Services\Akseslh\MasterSubTematikKegiatanService;
+use App\Http\Requests\Cms\Announcement\UpdateCareerRequest;
+use App\Services\Akseslh\MasterKomponenRabService;
 
-class PaketKegiatanController extends ApiController
+class StandarRabPaketKegiatanController extends ApiController
 {
     protected $paketKegiatanService;
     protected $jenisKegiatanService;
     protected $masterSubTematikKegiatanService;
+    protected $masterKomponenRabService;
 
     public function __construct(
         PaketKegiatanService $paketKegiatanService,
         JenisKegiatanService $jenisKegiatanService,
         MasterSubTematikKegiatanService $masterSubTematikKegiatanService,
+        MasterKomponenRabService $masterKomponenRabService,
         Request $request
     ) {
         $this->paketKegiatanService   =   $paketKegiatanService;
         $this->jenisKegiatanService   =   $jenisKegiatanService;
-        $this->masterSubTematikKegiatanService   =   $masterSubTematikKegiatanService;
+        $this->masterSubTematikKegiatanService      =   $masterSubTematikKegiatanService;
+        $this->masterKomponenRabService             =   $masterKomponenRabService;
         parent::__construct($request);
     }
 
     public function index()
     {
-        return view("pages.akseslh.paket-kegiatan.index");
+        return view("pages.akseslh.jenis-kegiatan.index");
     }
 
     public function create()
     {
-        $jenisKegiatan              = $this->jenisKegiatanService->getAllAttr()->data;
-        $masterSubTematikKegiatan   = $this->masterSubTematikKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.paket-kegiatan.create", compact('jenisKegiatan', 'masterSubTematikKegiatan'));
+        return view("pages.akseslh.jenis-kegiatan.create");
     }
 
     public function edit($id)
@@ -46,32 +48,31 @@ class PaketKegiatanController extends ApiController
         $data                       = $this->paketKegiatanService->getById($id);
         $jenisKegiatan              = $this->jenisKegiatanService->getAllAttr()->data;
         $masterSubTematikKegiatan   = $this->masterSubTematikKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'masterSubTematikKegiatan'));
+        $masterKomponenRab          = $this->masterKomponenRabService->getAllAttr()->data;
+        return view("pages.akseslh.standar-rab-paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'masterSubTematikKegiatan', 'masterKomponenRab'));
+    }
+
+    public function show($id)
+    {
+        $data   =   $this->jenisKegiatanService->getById($id);
+        return view("pages.akseslh.jenis-kegiatan.show", compact('data'));
     }
 
     public function store(Request $request)
     {
+        dd($request->all());
         $input  =   $request->validate([
-            'jenis_kegiatan_id'                 => 'required|exists:jenis_kegiatans,id',
-            'master_sub_tematik_kegiatan_id'    => 'required|exists:master_sub_tematik_kegiatans,id',
-            'nama_paket_kegiatan'               => 'required|string',
-            'deskripsi_paket_kegiatan'          => 'required|string',
-            'jumlah_peserta'                    => 'required',
-            'quota_paket_kegiatan'              => 'required|numeric',
-            'pagu_paket_kegiatan'               => 'required',
-            'tahap_pencairan_paket_kegiatan'    => 'required|numeric',
-            'porsi_pencairan'                   => ['nullable', new TahapanSalurValidation]
+            'jenis_kegiatan'    => 'required'
         ]);
 
-        $result =   $this->paketKegiatanService->create($input);
+        $result =   $this->jenisKegiatanService->create($input);
 
         try {
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('paket-kegiatan.index');
+                return redirect()->route('jenis-kegiatan.index');
             }
-
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
@@ -81,23 +82,16 @@ class PaketKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kegiatan_id'                 => 'required|exists:jenis_kegiatans,id',
-            'master_sub_tematik_kegiatan_id'    => 'required|exists:master_sub_tematik_kegiatans,id',
-            'nama_paket_kegiatan'               => 'required|string',
-            'deskripsi_paket_kegiatan'          => 'required|string',
-            'jumlah_peserta'                    => 'required|string',
-            'quota_paket_kegiatan'              => 'required|numeric',
-            'pagu_paket_kegiatan'               => 'required',
-            'tahap_pencairan_paket_kegiatan'    => 'required|numeric',
+            'jenis_kegiatan'    => 'required'
         ]);
 
-        $result =   $this->paketKegiatanService->update($id, $input);
+        $result =   $this->jenisKegiatanService->update($id, $input);
 
         try {
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('paket-kegiatan.index');
+                return redirect()->route('jenis-kegiatan.index');
             }
 
             return back()->with('error', $result->message);
@@ -108,7 +102,7 @@ class PaketKegiatanController extends ApiController
 
     public function destroy($id): \Illuminate\Http\JsonResponse
     {
-        $result =   $this->paketKegiatanService->delete($id);
+        $result =   $this->jenisKegiatanService->delete($id);
         try {
             if ($result->success) {
                 $response = $result->data;
