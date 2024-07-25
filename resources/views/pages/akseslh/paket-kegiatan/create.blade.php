@@ -28,6 +28,9 @@
                 <h3 class="panel-title">Pengelolaan Data Paket Kegiatan</h3>
             </div>
             <div class="panel-body">
+                @error('porsi_pencairan')
+                <h1>{{ $message }}</h1>
+                @enderror
                 <form role="form" action="{{ route('paket-kegiatan.store') }}" method="POST">
                     @csrf
                     <div class="row">
@@ -66,7 +69,7 @@
                                 @foreach ($masterSubTematikKegiatan as $item)
                                 @if (old('master_sub_tematik_kegiatan_id') == $item['id'])
                                 <option class='form-control' value="{{ $item['id'] }}" selected>{{
-                                    $item['tematik_kegiatan'] }}
+                                    $item['tematik'] }}
                                 </option>
                                 @else
                                 <option class='form-control' value="{{ $item['id'] }}">{{
@@ -140,9 +143,10 @@
                         <div class="form-group @error('tahap_pencairan_paket_kegiatan') has-error @enderror col-md-3">
                             <label for="tahap_pencairan_paket_kegiatan">Jml Tahap Pencairan <span
                                     class="text-danger">*</span></label>
-                            <input type="number" min=0 class="form-control" id="tahap_pencairan_paket_kegiatan"
+                            <input type="number" min=1 max=5 class="form-control" id="tahap_pencairan_paket_kegiatan"
                                 name="tahap_pencairan_paket_kegiatan"
-                                value="{{ old('tahap_pencairan_paket_kegiatan') }}" onkeyup="generateFormTahapSalur()">
+                                value="{{ old('tahap_pencairan_paket_kegiatan', 1) }}"
+                                onkeyup="generateFormTahapSalur()">
                             @error('tahap_pencairan_paket_kegiatan')
                             <span class="error">
                                 {{ $message }}

@@ -28,6 +28,10 @@ class RegisterController extends ApiController
 
     public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
     {
+        // Make default password for first login
+        $default_password =
+            crypt($request->email_pic . Carbon::now()->format('d M Y H:i:s'), $request->email_pic);
+
         // Get all input
         $input = $request->all();
 
@@ -45,11 +49,12 @@ class RegisterController extends ApiController
 
             if ($user) {
                 // Change user status to active
-                $user->user_akseslh->status_user = 'ACTIVE';
+                $user->user_akseslh->password       = Hash::make($default_password);
+                $user->user_akseslh->status_user    = 'ACTIVE';
                 $user->user_akseslh->save();
 
                 //Send email notification
-                Notification::send($user->user_akseslh, new RegisterNotification($user->user_akseslh->password));
+                Notification::send($user->user_akseslh, new RegisterNotification($default_password));
 
                 // Create token for user to access dashboard
                 $token = $user->user_akseslh->createToken("auth")->plainTextToken;

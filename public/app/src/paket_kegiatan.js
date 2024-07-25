@@ -163,16 +163,15 @@ window.generateForm = (input) => {
         const tr =
             `
             <tr>
-                <td>Tahapan Salur ke-` +
+                <td width='50%'>Tahapan Salur ke-` +
             index +
             `</td>
-                <td>
+                <td width='50%'>
                     <div class="input-group">
                         <input type="number" id="example-input2-group1"
                             name="porsi_pencairan[` +
             index +
-            `]" class="form-control" min="1"
-                            max="5">
+            `]" class="form-control" min="1">
                         <span class="input-group-addon">%</span>
                     </div>
                 </td>
