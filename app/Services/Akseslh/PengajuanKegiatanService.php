@@ -5,6 +5,8 @@ namespace App\Services\Akseslh;
 
 
 use App\Models\PengajuanKegiatan;
+use App\Models\TahapanPengajuanKegiatan;
+use App\Models\LogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -12,10 +14,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
-
-    public function __construct(PengajuanKegiatan $model)
-    {
+    protected $modelTahapanPengajuanKegiatan;
+    protected $modelLogTahapanPengajuanKegiatan;
+    public function __construct(
+        PengajuanKegiatan $model,
+        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+    ) {
         parent::__construct($model);
+        $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
+        $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -70,8 +78,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         try {
             // Menghasilkan nomor pengajuan otomatis
             $data['nomor_pengajuan'] = PengajuanKegiatan::generateNomorPengajuan();
-            // echo $data['nomor_pengajuan'];
-            // exit;
+
+            $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
+                ->orderBy('created_at', 'DESC')->get();
             $data = $this->model->newQuery()->create([
                 'nomor_pengajuan'               => $data['nomor_pengajuan'],
                 'paket_kegiatan_id'             => $data['paket_kegiatan_id'],
@@ -90,6 +99,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'time_mulai_kegiatan'           => $data['time_mulai_kegiatan'],
                 'time_akhir_kegiatan'           => $data['time_akhir_kegiatan'],
             ]);
+            foreach ($dataTahapanPengajuanKegiatan as $dt) {
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id'         => $data->id,
+                    'tahapan_pengajuan_kegiatan_id' =>  $dt->id,
+                    'tanggal_masuk'                 => date("Y-m-d")
+                ]);
+            }
             $dataSend = array('nomor_pengajuan' => $data['nomor_pengajuan']);
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
