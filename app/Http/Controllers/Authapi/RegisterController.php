@@ -13,17 +13,20 @@ use App\Http\Requests\Authapi\RegisterRequest;
 use App\Models\DataPicKelompokMasyarakat;
 use App\Models\UserAkseslh;
 use App\Models\UserEksternal;
+use App\Services\EmailPhpService;
 
 class RegisterController extends ApiController
 {
+    protected $emailPhpService;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(EmailPhpService $emailPhpService)
     {
         $this->middleware('guest');
+        $this->emailPhpService = $emailPhpService;
     }
 
     public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
@@ -54,7 +57,8 @@ class RegisterController extends ApiController
                 $user->user_akseslh->save();
 
                 //Send email notification
-                Notification::send($user->user_akseslh, new RegisterNotification($default_password));
+                // Notification::send($user->user_akseslh, new RegisterNotification($default_password));
+                $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
 
                 // Create token for user to access dashboard
                 $token = $user->user_akseslh->createToken("auth")->plainTextToken;

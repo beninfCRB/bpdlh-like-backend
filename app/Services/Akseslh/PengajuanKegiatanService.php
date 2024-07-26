@@ -19,7 +19,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     public function __construct(
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
-        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
@@ -66,7 +66,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->with(['paket_kegiatan'])->find($id);
 
         return $this->sendSuccess($result);
     }
@@ -145,6 +145,22 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
         }
+    }
+
+    public function apiGetBydId($id)
+    {
+        $model = $this->model->newQuery()->find($id);
+
+        if (!$model)  return $this->sendError(null, 'Not Published');
+
+        $result = [
+            'id'                        => $model->id,
+            'paket_kegiatan_id'         => $model->paket_kegiatan->id,
+            'tematik_kegiatan_id'       => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan_id,
+            'sub_tematik_kegiatan_id'   => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id,
+        ];
+
+        return $this->sendSuccess($result);
     }
 
     public function updatePublish($id, $isPublish): object
