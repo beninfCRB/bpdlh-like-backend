@@ -129,11 +129,12 @@ var data_paket_kegiatan = (function () {
 
 jQuery(document).ready(function () {
     data_paket_kegiatan.init();
+    // generateFormTahapSalur();
 });
 
 window.generateFormTahapSalur = () => {
     let jmlTahapSalur = $("#tahap_pencairan_paket_kegiatan").val();
-    if (jmlTahapSalur > 1 && jmlTahapSalur <= 5) {
+    if (jmlTahapSalur >= 1 && jmlTahapSalur <= 5) {
         generateForm(jmlTahapSalur);
     } else {
         const containerDiv = $("#dynamicForm");
@@ -171,7 +172,7 @@ window.generateForm = (input) => {
                         <input type="number" id="example-input2-group1"
                             name="porsi_pencairan[` +
             index +
-            `]" class="form-control" min="1">
+            `]" class="form-control" min="1" required>
                         <span class="input-group-addon">%</span>
                     </div>
                 </td>
@@ -179,6 +180,20 @@ window.generateForm = (input) => {
         `;
         tbody.append(tr);
     }
+};
+
+window.createPaketKegiatan = (input, evt) => {
+    evt.preventDefault();
+
+    let saveButton = document.getElementById("saveBtn");
+
+    saveButton.addEventListener("click", function () {
+        var formData = new FormData();
+
+        formData.append("title_id", getValue("title_id"));
+
+        alert("Halo dunia");
+    });
 };
 
 window.deletePaketKegiatan = (input) => {

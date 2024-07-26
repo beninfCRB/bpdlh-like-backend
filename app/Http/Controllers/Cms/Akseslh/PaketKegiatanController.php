@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Cms\Akseslh;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Rules\TahapanSalurValidation;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\ApiController;
-use App\Rules\TahapanSalurValidation;
 use App\Services\Akseslh\JenisKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
+use App\Services\Akseslh\MasterKomponenRabService;
 use App\Services\Akseslh\MasterSubTematikKegiatanService;
 
 class PaketKegiatanController extends ApiController
@@ -16,16 +17,19 @@ class PaketKegiatanController extends ApiController
     protected $paketKegiatanService;
     protected $jenisKegiatanService;
     protected $masterSubTematikKegiatanService;
+    protected $masterKomponenRabService;
 
     public function __construct(
         PaketKegiatanService $paketKegiatanService,
         JenisKegiatanService $jenisKegiatanService,
         MasterSubTematikKegiatanService $masterSubTematikKegiatanService,
+        MasterKomponenRabService $masterKomponenRabService,
         Request $request
     ) {
         $this->paketKegiatanService   =   $paketKegiatanService;
         $this->jenisKegiatanService   =   $jenisKegiatanService;
         $this->masterSubTematikKegiatanService   =   $masterSubTematikKegiatanService;
+        $this->masterKomponenRabService             =   $masterKomponenRabService;
         parent::__construct($request);
     }
 
@@ -38,15 +42,25 @@ class PaketKegiatanController extends ApiController
     {
         $jenisKegiatan              = $this->jenisKegiatanService->getAllAttr()->data;
         $masterSubTematikKegiatan   = $this->masterSubTematikKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.paket-kegiatan.create", compact('jenisKegiatan', 'masterSubTematikKegiatan'));
+        $masterKomponenRab          = $this->masterKomponenRabService->getAllAttr()->data;
+        return view("pages.akseslh.paket-kegiatan.create", compact('jenisKegiatan', 'masterSubTematikKegiatan', 'masterKomponenRab'));
     }
 
     public function edit($id)
     {
-        $data                       = $this->paketKegiatanService->getById($id);
+        $data                       = $this->paketKegiatanService->getById($id)->data;
         $jenisKegiatan              = $this->jenisKegiatanService->getAllAttr()->data;
         $masterSubTematikKegiatan   = $this->masterSubTematikKegiatanService->getAllAttr()->data;
-        return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'masterSubTematikKegiatan'));
+        $masterKomponenRab          = $this->masterKomponenRabService->getAllAttr()->data;
+        foreach ($masterKomponenRab as $item) {
+            # code...
+            if (array_search($item['id'], $data->standar_rab_paket_kegiatan->toArray())) {
+                # code...
+                dd(array_search($item['id'], $data->standar_rab_paket_kegiatan->toArray()));
+            }
+        }
+        dd($masterKomponenRab, $data->standar_rab_paket_kegiatan->toArray());
+        return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'masterSubTematikKegiatan', 'masterKomponenRab'));
     }
 
     public function store(Request $request)
@@ -60,7 +74,8 @@ class PaketKegiatanController extends ApiController
             'quota_paket_kegiatan'              => 'required|numeric',
             'pagu_paket_kegiatan'               => 'required',
             'tahap_pencairan_paket_kegiatan'    => 'required|numeric',
-            'porsi_pencairan'                   => ['nullable', new TahapanSalurValidation]
+            'porsi_pencairan'                   => ['nullable', new TahapanSalurValidation],
+            'komponen_rab'                      => 'nullable',
         ]);
 
         $result =   $this->paketKegiatanService->create($input);

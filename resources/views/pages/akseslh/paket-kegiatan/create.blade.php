@@ -23,16 +23,16 @@
 <div class="row">
     <!-- Basic example -->
     <div class="col-md-12">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">Pengelolaan Data Paket Kegiatan</h3>
-            </div>
-            <div class="panel-body">
-                @error('porsi_pencairan')
-                <h1>{{ $message }}</h1>
-                @enderror
-                <form role="form" action="{{ route('paket-kegiatan.store') }}" method="POST">
-                    @csrf
+        @error('porsi_pencairan')
+        <h1>{{ $message }}</h1>
+        @enderror
+        <form role="form" action="{{ route('paket-kegiatan.store') }}" method="POST">
+            @csrf
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Pengelolaan Data Paket Kegiatan</h3>
+                </div>
+                <div class="panel-body">
                     <div class="row">
                         <div class="form-group @error('jenis_kegiatan_id') has-error @enderror col-md-6">
                             <label for="jenis_kegiatan_id">Jenis Kegiatan <span class="text-danger">*</span></label>
@@ -154,7 +154,11 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="row hidden" id="dynamicForm">
+                </div><!-- panel-body -->
+            </div> <!-- panel -->
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <div class="row" id="dynamicForm">
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table">
@@ -165,21 +169,75 @@
                                         </tr>
                                     </thead>
                                     <tbody id="dynamicForm-tbody">
-
+                                        <tr>
+                                            <td width='50%'>Tahapan Salur ke-1</td>
+                                            <td width='50%'>
+                                                <div class="input-group">
+                                                    <input type="number" id="example-input2-group1"
+                                                        name="porsi_pencairan[1]" class="form-control" min="1" required>
+                                                    <span class="input-group-addon">%</span>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-
                     </div>
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-body">
                     <div class="row">
-                        <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
-                        <a href="{{ route('paket-kegiatan.index') }}"
-                            class="btn btn-inverse waves-effect waves-light">Kembali</a>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Komponen Rab</th>
+                                            <th>Standar Harga Unit</th>
+                                            <th>Qty</th>
+                                            <th>Harga Unit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @isset($masterKomponenRab)
+                                        @foreach ($masterKomponenRab as $item)
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="komponen_rab[{{ $loop->iteration }}][id]"
+                                                    id="" value="{{ $item['id'] }}">
+                                            </td>
+                                            <td>{{ $item['komponen_rab'] }}</td>
+                                            <td>{{ $item['standar_harga_unit'] }}</td>
+                                            <td>
+                                                <input type="number" class="form-control"
+                                                    name="komponen_rab[{{ $loop->iteration }}][qty]" id="" min="1"
+                                                    onkeyup="">
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control"
+                                                    name="komponen_rab[{{ $loop->iteration }}][harga_unit]" id="">
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        @endisset
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                </form>
-            </div><!-- panel-body -->
-        </div> <!-- panel -->
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <button type="submit" class="btn btn-primary waves-effect waves-light" id="saveBtn">Simpan</button>
+                    <a href="{{ route('paket-kegiatan.index') }}"
+                        class="btn btn-inverse waves-effect waves-light">Kembali</a>
+                </div>
+            </div>
+        </form>
     </div> <!-- col-->
 
 </div> <!-- End row -->
