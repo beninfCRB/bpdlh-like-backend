@@ -56,4 +56,24 @@ class PaketKegiatan extends AppModel
     {
         return $this->hasMany(PaketKegiatan::class, 'nama_paket_kegiatan', 'nama_paket_kegiatan');
     }
+
+    /**
+     * Get all of the tahap_salur_paket_kegiatan for the PaketKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tahap_salur_paket_kegiatan(): HasMany
+    {
+        return $this->hasMany(TahapSalurPaketKegiatan::class, 'paket_kegiatan_id');
+    }
+
+    /**
+     * Get all of the standar_rab_paket_kegiatan for the PaketKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function standar_rab_paket_kegiatan(): HasMany
+    {
+        return $this->hasMany(StandarRabPaketKegiatan::class, 'paket_kegiatan_id');
+    }
 }

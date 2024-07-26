@@ -6,6 +6,7 @@ use Illuminate\Contracts\Validation\Rule;
 
 class TahapanSalurValidation implements Rule
 {
+    private $uhuy;
     /**
      * Create a new rule instance.
      *
@@ -26,12 +27,18 @@ class TahapanSalurValidation implements Rule
     public function passes($attribute, $value)
     {
         //
+        $total = 0;
         foreach ($value as $key => $value) {
-            if ($key < 100 || $key > 100) {
-                return false;
-            }
+            $total += (int) $value;
         }
-        return true;
+
+        if ($total < 100 || $total > 100) {
+            # code...
+            return false;
+        } else {
+            # code...
+            return true;
+        }
     }
 
     /**

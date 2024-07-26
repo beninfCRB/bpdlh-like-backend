@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TahapSalurPaketKegiatan extends Model
+class TahapSalurPaketKegiatan extends AppModel
 {
     use HasFactory;
 
@@ -14,6 +14,8 @@ class TahapSalurPaketKegiatan extends Model
     protected $fillable = [
         'paket_kegiatan_id',
         'tahap_salur',
+        'porsi_pencairan',
+        'flag',
         'username',
     ];
 }
