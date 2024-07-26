@@ -23,7 +23,7 @@ class EmailPhpService
         $this->mail->Port       = env('PHPEMAIL_PORT');
     }
 
-    public function sendEmail($to, $subject, $body, $altBody = '')
+    public function sendEmail($to, $subject, $data, $default_password, $altBody = '')
     {
         try {
             // Pengaturan pengirim dan penerima
@@ -33,7 +33,7 @@ class EmailPhpService
             // Konten email
             $this->mail->isHTML(true);
             $this->mail->Subject = $subject;
-            $this->mail->Body    = $body;
+            $this->mail->Body    = view('mail.register-mail', ['data' => $data, 'default_password' => $default_password]);
             $this->mail->AltBody = $altBody;
 
             $this->mail->send();

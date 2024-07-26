@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureHeaderIsValid;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('test-email', [App\Http\Controllers\Authapi\RegisterController::class, 'test_email'])->excludedMiddleware(EnsureHeaderIsValid::class);
 
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
