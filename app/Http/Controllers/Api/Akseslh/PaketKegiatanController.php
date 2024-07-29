@@ -47,9 +47,14 @@ class PaketKegiatanController extends ApiController
         }
     }
 
-    public function byIdTematikKegiatan($id)
+    public function byIdTematik($tematik_kegiatan_id, $sub_tematik_kegiatan_id)
     {
-        $result = $this->paketKegiatanService->apiGetByIdTematikKegiatan($id);
+        $input = [
+            'tematik_kegiatan_id'       => $tematik_kegiatan_id,
+            'sub_tematik_kegiatan_id'   => $sub_tematik_kegiatan_id,
+        ];
+
+        $result = $this->paketKegiatanService->apiGetAll($input);
 
         try {
             if ($result->success) {
