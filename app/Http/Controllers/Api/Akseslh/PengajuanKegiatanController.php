@@ -68,8 +68,10 @@ class PengajuanKegiatanController extends ApiController
             'proposal_kegiatan'         => 'required',
             'tujuan_kegiatan'           => 'required',
             'ruang_lingkup_kegiatan'    => 'required',
-            // 'lampiran'                  => 'required',
+            'fileDocument'              => 'required',
         ]);
+
+        $input['fileDocument'] = $request->file('fileDocument');
 
         if ($validator->fails()) {
             # code...

@@ -16,6 +16,7 @@
         "laravel/framework": "^8.0",
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.0",
+        "phpmailer/phpmailer": "*",
         "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {
@@ -39,10 +40,7 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/",
-            "files": [
-                "app/Helpers/CustomHelper.php"
-            ]
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {

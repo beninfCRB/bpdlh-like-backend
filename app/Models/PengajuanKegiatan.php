@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -40,7 +41,7 @@ class PengajuanKegiatan extends AppModel
      */
     public function paket_kegiatan(): BelongsTo
     {
-        return $this->belongsTo(PaketKegiatan::class, 'akseslh_paket_kegiatan_id');
+        return $this->belongsTo(PaketKegiatan::class, 'paket_kegiatan_id');
     }
 
     /**
@@ -52,6 +53,7 @@ class PengajuanKegiatan extends AppModel
     {
         return $this->belongsTo(UserEksternal::class, 'akseslh_user_eksternal_id');
     }
+
     public static function generateNomorPengajuan()
     {
         $dateTime = now()->format('YmdHi');
@@ -62,5 +64,21 @@ class PengajuanKegiatan extends AppModel
         $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
 
         return $dateTime . '' . $newNumber;
+    }
+
+    /**
+     * Get all of the log_tahapan_pengajuan for the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function log_tahapan_pengajuan(): HasMany
+    {
+        return $this->hasMany(LogTahapanPengajuanKegiatan::class, 'pengajuan_kegiatan_id');
+    }
+
+    public function document()
+    {
+        return $this->morphOne(File::class, 'fileable')
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
     }
 }
