@@ -11,12 +11,19 @@ use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\File as FileTable;
+use App\Services\FileUploadService;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
     protected $modelTahapanPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
+    protected $fileUploadService;
+    protected $fileTable;
+
     public function __construct(
+        FileUploadService $fileUploadService,
+        FileTable $fileTable,
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
@@ -24,6 +31,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
+        $this->fileUploadService    =   $fileUploadService;
+        $this->fileTable            =   $fileTable;
     }
 
     public function getAll()
@@ -81,7 +90,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
                 ->orderBy('created_at', 'DESC')->get();
-            $data = $this->model->newQuery()->create([
+            $newData = $this->model->newQuery()->create([
                 'nomor_pengajuan'               => $data['nomor_pengajuan'],
                 'paket_kegiatan_id'             => $data['paket_kegiatan_id'],
                 'user_akseslh_id'               => $data['user_akseslh_id'],
@@ -101,12 +110,25 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ]);
             foreach ($dataTahapanPengajuanKegiatan as $dt) {
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
-                    'pengajuan_kegiatan_id'         => $data->id,
-                    'tahapan_pengajuan_kegiatan_id' =>  $dt->id,
+                    'pengajuan_kegiatan_id'         => $newData->id,
+                    'tahapan_pengajuan_kegiatan_id' => $dt->id,
                     'tanggal_masuk'                 => date("Y-m-d")
                 ]);
             }
             $dataSend = array('nomor_pengajuan' => $data['nomor_pengajuan']);
+
+            // Save document 
+            // upload document
+            $upload = $this->fileUploadService->handleImage($data['fileDocument'])->saveToDb('document');
+
+            if (!empty($upload)) {
+                $image = $this->fileTable->newQuery()->find($upload->id);
+                $image->update([
+                    'fileable_type' => get_class($newData),
+                    'fileable_id'   => $newData->id,
+                ]);
+            }
+
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
         } catch (\Exception $exception) {
@@ -158,6 +180,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'paket_kegiatan_id'         => $model->paket_kegiatan->id,
             'tematik_kegiatan_id'       => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan_id,
             'sub_tematik_kegiatan_id'   => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id,
+            'document'                  => $model->document,
         ];
 
         return $this->sendSuccess($result);

@@ -53,6 +53,7 @@ class PengajuanKegiatan extends AppModel
     {
         return $this->belongsTo(UserEksternal::class, 'akseslh_user_eksternal_id');
     }
+
     public static function generateNomorPengajuan()
     {
         $dateTime = now()->format('YmdHi');
@@ -73,5 +74,11 @@ class PengajuanKegiatan extends AppModel
     public function log_tahapan_pengajuan(): HasMany
     {
         return $this->hasMany(LogTahapanPengajuanKegiatan::class, 'pengajuan_kegiatan_id');
+    }
+
+    public function document()
+    {
+        return $this->morphOne(File::class, 'fileable')
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
     }
 }
