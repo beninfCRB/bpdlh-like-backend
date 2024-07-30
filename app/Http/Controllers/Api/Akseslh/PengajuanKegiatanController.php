@@ -56,7 +56,7 @@ class PengajuanKegiatanController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'paket_kegiatan_id'         => 'required|exists:paket_kegiatans,id',
-            // 'paket_kegiatan_id'         => 'required',
+            'lokasi_bidang_folu_id'     => 'required|exists:lokasi_bidang_folus,id',
             'judul_pengajuan_kegiatan'  => 'required|string|max:500',
             'provinsi_kegiatan'         => 'required',
             'kabupaten_kegiatan'        => 'required',
@@ -89,6 +89,8 @@ class PengajuanKegiatanController extends ApiController
         $input["tanggal_akhir_kegiatan"]    = $tanggalArray[1];
         $input["time_mulai_kegiatan"]      = $waktuArray[0];
         $input["time_akhir_kegiatan"]      = $waktuArray[1];
+
+        $input['user']                      = $request->user();
 
         //eliminate unnecessary key 
         unset($input["tanggal_kegiatan"]);
