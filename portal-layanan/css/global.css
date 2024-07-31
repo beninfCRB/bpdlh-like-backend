@@ -56,6 +56,21 @@ a:focus {
     color: #fff !important;
 }
 
+.button_2 {
+    background: #12a34a;
+    color: #fff !important;
+    display: inline-block;
+    font-size: smaller;
+    transition: 0.3s;
+    padding: 5px 20px 5px 20px;
+    border-radius: 15px;
+}
+
+.button_2:hover {
+    background: #1f8bf3 !important;
+    color: #fff !important;
+}
+
 .grid figure {
     position: relative;
     float: left;
