@@ -71,6 +71,21 @@ a:focus {
     color: #fff !important;
 }
 
+.button_tag {
+    background: #feb005;
+    color: #003300 !important;
+    display: inline-block;
+    font-size: smaller;
+    transition: 0.3s;
+    padding: 5px 10px 5px 10px;
+    border-radius: 5px;
+}
+
+.button_2:tag {
+    background: #1f8bf3 !important;
+    color: #fff !important;
+}
+
 .grid figure {
     position: relative;
     float: left;
