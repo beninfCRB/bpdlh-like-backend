@@ -1,7 +1,9 @@
 <?php
 
-use App\Http\Middleware\EnsureHeaderIsValid;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Middleware\EnsureHeaderIsValid;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('generate-pdf', function () {
+    // Generate the PDF from a view
+    $pdf = Pdf::loadView('pdf.template-small-grant', []);
+
+    // Path to save the PDF
+    $filePath = 'public/uploads/' . '123' . '.pdf';
+
+    // Save the PDF to the storage folder
+    Storage::put($filePath, $pdf->output());
+});
 Route::get('test-email', [App\Http\Controllers\Authapi\RegisterController::class, 'test_email'])->excludedMiddleware(EnsureHeaderIsValid::class);
 
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);

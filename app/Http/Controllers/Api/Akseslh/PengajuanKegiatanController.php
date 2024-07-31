@@ -5,18 +5,22 @@ namespace App\Http\Controllers\Api\Akseslh;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Services\Akseslh\PengajuanKegiatanService;
+use App\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PengajuanKegiatanController extends ApiController
 {
     protected $pengajuanKegiatanService;
+    protected $pdfService;
 
     public function __construct(
         PengajuanKegiatanService $pengajuanKegiatanService,
+        PdfService $pdfService,
         Request $request
     ) {
         $this->pengajuanKegiatanService    =   $pengajuanKegiatanService;
+        $this->pdfService = $pdfService;
         parent::__construct($request);
     }
 
@@ -106,6 +110,20 @@ class PengajuanKegiatanController extends ApiController
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function pdf()
+    {
+        try {
+            //code...
+            $path = $this->pdfService->generateAndSavePdf('pdf.template-small-grant', [], 'Small Grant Kalpataru');
+            $this->sendSuccess([
+                'path'  => $path
+            ], 'message');
+        } catch (\Throwable $th) {
+            //throw $th;
+            $this->sendError(null, $th->getMessage(), 500);
         }
     }
 }

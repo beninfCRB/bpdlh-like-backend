@@ -4,15 +4,17 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\PengajuanKegiatan;
-use App\Models\TahapanPengajuanKegiatan;
-use App\Models\LogTahapanPengajuanKegiatan;
 use App\Services\AppService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\File as FileTable;
+use App\Models\PengajuanKegiatan;
+use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\File as FileTable;
-use App\Services\FileUploadService;
+use App\Models\LogTahapanPengajuanKegiatan;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
@@ -123,7 +125,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             // Save document 
             // upload document
-            $upload = $this->fileUploadService->handleImage($data['fileDocument'])->saveToDb('document');
+            $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
 
             if (!empty($upload)) {
                 $image = $this->fileTable->newQuery()->find($upload->id);
@@ -132,6 +134,18 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     'fileable_id'   => $newData->id,
                 ]);
             }
+
+            // Generate the PDF from a view
+            $pdf = Pdf::loadView('pdf.template-small-grant', $data);
+
+            // Path to save the PDF
+            $filePath = 'public/uploads/2024/07/' . $dataSend . '.pdf';
+
+            // Save the PDF to the storage folder
+            Storage::put($filePath, $pdf->output());
+
+            // Return the path to the saved PDF
+            // return $filePath;
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
