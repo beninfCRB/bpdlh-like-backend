@@ -9,64 +9,9 @@
 </head>
 
 <body>
-    <center>
-        <table border="2">
-            <tr>
-                <td>
-                    <h1>Proposal Small Grant</h1>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    UMUM
-                    <table border="1">
-                        <tr>
-                            <td>Judul Kegiatan</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Isi Judul Kegiatan
-                            </td>
-                        </tr>
-                    </table>
-
-                    <table border="1" style="margin-top: 5px;">
-                        <tr>
-                            <td>
-                                <b>Pengusul</b>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <table>
-                                    <tr>
-                                        <td>Nama</td>
-                                        <td>:</td>
-                                        <td>Nama Pengusul</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Nama</td>
-                                        <td>:</td>
-                                        <td>Nama Pengusul</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Nama</td>
-                                        <td>:</td>
-                                        <td>Nama Pengusul</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Nama</td>
-                                        <td>:</td>
-                                        <td>Nama Pengusul</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-    </center>
+    <div style="margin: 0 auto; max-width: 800px;">
+        <h1>PROPOSAL SMALL GRANT</h1>
+    </div>
 </body>
 
 </html>
