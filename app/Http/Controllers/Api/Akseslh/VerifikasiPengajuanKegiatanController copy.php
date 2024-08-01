@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\ValidasiPengajuanKegiatanService;
 
-class ValidasiPengajuanKegiatanController extends ApiController
+class VerifikasiPengajuanKegiatanController extends ApiController
 {
     protected $validasiPengajuanKegiatanService;
     protected $pengajuanKegiatanService;

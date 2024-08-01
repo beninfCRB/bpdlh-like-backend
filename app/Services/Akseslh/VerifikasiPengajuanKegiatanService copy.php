@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
-class ValidasiPengajuanKegiatanService extends AppService implements AppServiceInterface
+class VerifikasiPengajuanKegiatanService extends AppService implements AppServiceInterface
 {
     private $modelTahapanPengajuanKegiatan;
 
@@ -27,23 +27,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         $model = $this->model->query()->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
-    }
-
-    public function apiGetAll()
-    {
-        $result  = $this->model->newQuery()
-            ->where('flag', 3)
-            ->orderBy('created_at', 'ASC')
-            ->get();
-
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                 => $items->id,
-                'jenis_kegiatan'     => $items->jenis_kegiatan,
-            ];
-        });
-
-        return $this->sendSuccess($result);
     }
 
     public function getAllAttr()
