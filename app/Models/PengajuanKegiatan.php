@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\AppModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,6 +33,7 @@ class PengajuanKegiatan extends AppModel
         'tujuan_kegiatan',
         'ruang_lingkup_kegiatan',
         'username',
+        'lokasi_bidang_folu_id'
     ];
 
     /**
@@ -54,16 +56,24 @@ class PengajuanKegiatan extends AppModel
         return $this->belongsTo(UserEksternal::class, 'akseslh_user_eksternal_id');
     }
 
-    public static function generateNomorPengajuan()
+    public static function generateNomorPengajuan($paket_kegiatan_id, $user)
     {
-        $dateTime = now()->format('YmdHi');
+        $paket_kegiatan = PaketKegiatan::find($paket_kegiatan_id);
+        $jenis_kelompok = str_pad($user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->short_id, 2, "0", STR_PAD_LEFT);
+        $tematik_kegiatan = $paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->short_id;
+        $sub_tematik_kegiatan = $paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->short_id;
+        $paket_kegiatan = $paket_kegiatan->jenis_kegiatan->short_id ? $paket_kegiatan->jenis_kegiatan->short_id : 0;
+        $tahun = Carbon::now()->format('y');
+        $bulan = Carbon::now()->format('m');
         $lastRecord = self::whereDate('created_at', now()->toDateString())
             ->orderBy('id', 'desc')
             ->first();
-        $lastNumber = $lastRecord ? intval(substr($lastRecord->nomor_pengajuan, -4)) : 0;
-        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
 
-        return $dateTime . '' . $newNumber;
+        $lastNumber = $lastRecord ? intval(substr($lastRecord->nomor_pengajuan, -6)) : 0;
+        $lastNumber += 1;
+        $newNumber = str_pad($lastNumber, 7, '0', STR_PAD_LEFT);
+
+        return $jenis_kelompok . $tematik_kegiatan . $sub_tematik_kegiatan . $paket_kegiatan . "-" . $tahun . $bulan . "-" . $newNumber;
     }
 
     /**

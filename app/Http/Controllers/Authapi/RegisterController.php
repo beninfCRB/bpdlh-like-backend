@@ -66,7 +66,12 @@ class RegisterController extends ApiController
                 // Commit Change
                 \DB::commit();
                 // Return token to frontend
-                return $this->sendSuccess(['token' => $token]);
+                return $this->sendSuccess([
+                    'token'                     => $token,
+                    'jenis_kelompok_masyarakat' => $user->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
+                    'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
+                    'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
+                ]);
             } else {
 
                 \DB::rollBack(); // rollback the changes

@@ -49,7 +49,12 @@ class LoginController extends ApiController
                     $token = $user->createToken("auth")->plainTextToken;
 
                     // Return token to frontend
-                    return $this->sendSuccess(['token' => $token]);
+                    return $this->sendSuccess([
+                        'token'                 => $token,
+                        'jenis_kelompok_masyarakat' => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
+                        'kelompok_masyarakat_id'    => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->id,
+                        'kelompok_masyarakat'       => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                    ]);
                 }
 
                 return $this->sendError(null, "Credential not match");

@@ -86,10 +86,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
             // Menghasilkan nomor pengajuan otomatis
-            $data['nomor_pengajuan'] = PengajuanKegiatan::generateNomorPengajuan();
+            $data['nomor_pengajuan'] = PengajuanKegiatan::generateNomorPengajuan($data['paket_kegiatan_id'], $data['user']);
 
             $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
                 ->orderBy('created_at', 'DESC')->get();
+
             $newData = $this->model->newQuery()->create([
                 'nomor_pengajuan'               => $data['nomor_pengajuan'],
                 'paket_kegiatan_id'             => $data['paket_kegiatan_id'],
@@ -107,7 +108,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tanggal_akhir_kegiatan'        => date_create($data['tanggal_akhir_kegiatan']),
                 'time_mulai_kegiatan'           => $data['time_mulai_kegiatan'],
                 'time_akhir_kegiatan'           => $data['time_akhir_kegiatan'],
+                'lokasi_bidang_folu_id'         => $data['lokasi_bidang_folu_id'],
             ]);
+
             foreach ($dataTahapanPengajuanKegiatan as $dt) {
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
                     'pengajuan_kegiatan_id'         => $newData->id,
@@ -115,6 +118,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     'tanggal_masuk'                 => date("Y-m-d")
                 ]);
             }
+
             $dataSend = array('nomor_pengajuan' => $data['nomor_pengajuan']);
 
             // Save document 
@@ -173,7 +177,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $model = $this->model->newQuery()->find($id);
 
-        if (!$model)  return $this->sendError(null, 'Not Published');
+        if (!$model)  return $this->sendError(null, 'Not Found');
+
+        dd($model);
 
         $result = [
             'id'                        => $model->id,
