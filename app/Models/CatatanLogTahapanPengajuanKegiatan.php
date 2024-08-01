@@ -13,7 +13,7 @@ class CatatanLogTahapanPengajuanKegiatan extends AppModel
     protected $table = 'catatan_log_tahapan_pengajuan_kegiatans';
 
     protected $fillable = [
-        'log_tahapan_pengajuan_kegiatan_id',
+        'pengajuan_kegiatan_id',
         'catatan_log',
         'flag',
         'username',

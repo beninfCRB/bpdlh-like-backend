@@ -56,6 +56,51 @@ a:focus {
     color: #fff !important;
 }
 
+.button_2 {
+    background: #12a34a;
+    color: #fff !important;
+    display: inline-block;
+    font-size: smaller;
+    transition: 0.3s;
+    padding: 5px 20px 5px 20px;
+    border-radius: 15px;
+}
+
+.button_2:hover {
+    background: #1f8bf3 !important;
+    color: #fff !important;
+}
+
+.button_ajukan {
+    background: #f56505;
+    color: #fff !important;
+    display: inline-block;
+    font-size: smaller;
+    transition: 0.3s;
+    padding: 5px 20px 5px 20px;
+    border-radius: 15px;
+}
+
+.button_ajukan:hover {
+    background: #1f8bf3 !important;
+    color: #fff !important;
+}
+
+.button_tag {
+    background: #feb005;
+    color: #003300 !important;
+    display: inline-block;
+    font-size: smaller;
+    transition: 0.3s;
+    padding: 5px 10px 5px 10px;
+    border-radius: 5px;
+}
+
+.button_2:tag {
+    background: #1f8bf3 !important;
+    color: #fff !important;
+}
+
 .grid figure {
     position: relative;
     float: left;
