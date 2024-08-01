@@ -26,7 +26,7 @@ Route::get('kota', [App\Http\Controllers\Api\Akseslh\KotaController::class, 'ind
 Route::get('kecamatan', [App\Http\Controllers\Api\Akseslh\KecamatanController::class, 'index']);
 Route::get('kelurahan', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'index']);
 Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
-
+Route::put('verifikasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiController::class, 'update']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('logout', [App\Http\Controllers\Authapi\LogoutController::class, 'logout']);
 

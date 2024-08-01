@@ -27,6 +27,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
@@ -115,7 +116,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
                     'pengajuan_kegiatan_id'         => $newData->id,
                     'tahapan_pengajuan_kegiatan_id' => $dt->id,
-                    'tanggal_masuk'                 => date("Y-m-d")
+                    'tanggal_masuk'                 => date("Y-m-d"),
+                    'tanggal_selesai'               => ($dt->deskripsi_kegiatan=="Pengajuan"?date("Y-m-d"):NULL)
                 ]);
             }
 
