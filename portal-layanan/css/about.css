@@ -57,7 +57,7 @@ Licence: <a href="https://www.templateonweb.com/license">Website Template Licenc
     .serv_h1i {
         margin-top: 8px;
         margin-bottom: 8px;
-        text-align: center;
+        /* text-align: center; */
     }
     .serv_h1i p {
         text-align: left;
