@@ -71,6 +71,21 @@ a:focus {
     color: #fff !important;
 }
 
+.button_ajukan {
+    background: #f56505;
+    color: #fff !important;
+    display: inline-block;
+    font-size: smaller;
+    transition: 0.3s;
+    padding: 5px 20px 5px 20px;
+    border-radius: 15px;
+}
+
+.button_ajukan:hover {
+    background: #1f8bf3 !important;
+    color: #fff !important;
+}
+
 .button_tag {
     background: #feb005;
     color: #003300 !important;
