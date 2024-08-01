@@ -47,19 +47,43 @@ class PdfService extends AppService
      * @param string $fileName
      * @return string The path to the saved PDF
      */
-    public function generateAndSavePdf(string $viewName, array $data, string $fileName): string
+    public function generateAndSavePdf(string $viewName, $newClass, $data, string $fileName): string
     {
         // Generate the PDF from a view
-        $pdf = Pdf::loadView($viewName, $data);
+        $pdf = Pdf::loadView($viewName, []);
 
         // Path to save the PDF
-        $filePath = 'pdfs/' . $fileName . '.pdf';
+        $filePath = 'public/uploads/' . date('Y') . '/' . date('m') . '/' . $fileName . '.pdf';
 
         // Save the PDF to the storage folder
         Storage::put($filePath, $pdf->output());
 
+        \DB::beginTransaction();
+
+        try {
+            $fileRecord = $this->model->newQuery()->create([
+                'group'      => 'document',
+                'visibility' => 'private',
+                'real_name'  => $fileName . '.pdf',
+                'extension'  => 'pdf',
+                'size'       => 25924,
+                'mime_type'  => 'application/pdf',
+                'file_dir'   => 'public/uploads/' . date('Y') . '/' . date('m'),
+                'file_name'  => $fileName . '.pdf',
+                'file_path'  => 'uploads/' . date('Y') . '/' . date('m') . '/' . $fileName . '.pdf',
+                'fileable_type' => $newClass,
+                'fileable_id'   => $data['id'],
+            ]);
+            //code...
+            \DB::commit(); // commit the changes
+            return $filePath;
+        } catch (\Exception $exception) {
+            //throw $th;
+            \DB::rollBack(); // rollback the changes
+            return $exception->getMessage();
+        }
+
         // Return the path to the saved PDF
-        return $filePath;
     }
 
 

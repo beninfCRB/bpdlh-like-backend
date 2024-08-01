@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Services\PdfService;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
@@ -22,20 +23,22 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     protected $modelLogTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
+    protected $pdfService;
 
     public function __construct(
         FileUploadService $fileUploadService,
         FileTable $fileTable,
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
-        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
-        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        PdfService $pdfService
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
+        $this->pdfService           =   $pdfService;
     }
 
     public function getAll()
@@ -119,7 +122,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     'pengajuan_kegiatan_id'         => $newData->id,
                     'tahapan_pengajuan_kegiatan_id' => $dt->id,
                     'tanggal_masuk'                 => date("Y-m-d"),
-                    'tanggal_selesai'               => ($dt->deskripsi_kegiatan=="Pengajuan"?date("Y-m-d"):NULL)
+                    'tanggal_selesai'               => ($dt->deskripsi_kegiatan == "Pengajuan" ? date("Y-m-d") : NULL)
                 ]);
             }
 
@@ -137,17 +140,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ]);
             }
 
-            // Generate the PDF from a view
-            $pdf = Pdf::loadView('pdf.template-small-grant', $data);
-
-            // Path to save the PDF
-            $filePath = 'public/uploads/2024/07/' . $dataSend . '.pdf';
-
             // Save the PDF to the storage folder
-            Storage::put($filePath, $pdf->output());
-
-            // Return the path to the saved PDF
-            // return $filePath;
+            $pdf = $this->pdfService->generateAndSavePdf('pdf.template-small-grant', get_class($newData), $newData, $data['nomor_pengajuan']);
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
@@ -194,8 +188,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $model = $this->model->newQuery()->find($id);
 
         if (!$model)  return $this->sendError(null, 'Not Found');
-
-        dd($model);
 
         $result = [
             'id'                        => $model->id,

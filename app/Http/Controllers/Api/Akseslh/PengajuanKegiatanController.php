@@ -112,18 +112,4 @@ class PengajuanKegiatanController extends ApiController
             $this->sendError($exception->getMessage(), "", 500);
         }
     }
-
-    public function pdf()
-    {
-        try {
-            //code...
-            $path = $this->pdfService->generateAndSavePdf('pdf.template-small-grant', [], 'Small Grant Kalpataru');
-            $this->sendSuccess([
-                'path'  => $path
-            ], 'message');
-        } catch (\Throwable $th) {
-            //throw $th;
-            $this->sendError(null, $th->getMessage(), 500);
-        }
-    }
 }

@@ -39,18 +39,9 @@ class ValidasiPengajuanKegiatanController extends ApiController
         }
     }
 
-    public function show(Request $request)
+    public function show($id)
     {
-        $validator = Validator::make($request->all(), [
-            'pengajuan_id'              => 'required|exists:pengajuan_kegiatans,id',
-        ]);
-
-        if ($validator->fails()) {
-            # code...
-            return $this->sendError(null, $validator->getMessageBag(), 422);
-        }
-
-        $input = $validator->validated();
+        $input['pengajuan_id'] = $id;
 
         $result = $this->pengajuanKegiatanService->apiGetBydId($input['pengajuan_id']);
 
