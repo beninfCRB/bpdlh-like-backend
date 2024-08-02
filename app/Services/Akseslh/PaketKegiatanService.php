@@ -3,6 +3,7 @@
 
 namespace App\Services\Akseslh;
 
+use App\Models\JenisKegiatan;
 use App\Models\MasterSubTematikKegiatan;
 use App\Models\PaketKegiatan;
 use App\Models\TahapSalurPaketKegiatan;
@@ -16,10 +17,13 @@ use Ramsey\Uuid\Uuid;
 class PaketKegiatanService extends AppService implements AppServiceInterface
 {
     protected $modelTahapSalurPaketKegiatan;
-    public function __construct(PaketKegiatan $model, TahapSalurPaketKegiatan $tahapSalurPaketKegiatan)
+    protected $modelJenisKegiatan;
+
+    public function __construct(PaketKegiatan $model, TahapSalurPaketKegiatan $tahapSalurPaketKegiatan, JenisKegiatan $jenisKegiatan)
     {
-        $this->modelTahapSalurPaketKegiatan = $tahapSalurPaketKegiatan;
         parent::__construct($model);
+        $this->modelTahapSalurPaketKegiatan = $tahapSalurPaketKegiatan;
+        $this->modelJenisKegiatan           = $jenisKegiatan;
     }
 
     public function getAll()
@@ -162,20 +166,30 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
     function apiGetAll($data)
     {
-        $result  = $this->model
-            ->select('nama_paket_kegiatan')
+        // $result  = $this->model
+        //     ->select('nama_paket_kegiatan')
 
-            ->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
+        //     ->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
+        //         $q->where([
+        //             'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
+        //             'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
+        //         ]);
+        //     })
+        //     ->with(['peserta' => function ($query) {
+        //         $query->select('nama_paket_kegiatan', 'id', 'deskripsi_paket_kegiatan', 'jumlah_peserta')->orderBy('jumlah_peserta', 'ASC');
+        //     }])
+        //     ->distinct()
+        //     ->get();
+        $result = null;
+
+        $result = $this->modelJenisKegiatan->select(['id', 'jenis_kegiatan'])->with(['paket_kegiatan' => function ($q) use ($data) {
+            $q->select('jenis_kegiatan_id', 'id', 'jumlah_peserta')->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
                 $q->where([
                     'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
                     'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
                 ]);
-            })
-            ->with(['peserta' => function ($query) {
-                $query->select('nama_paket_kegiatan', 'id', 'deskripsi_paket_kegiatan', 'jumlah_peserta')->orderBy('jumlah_peserta', 'ASC');
-            }])
-            ->distinct()
-            ->get();
+            });
+        }])->get();
 
         return $this->sendSuccess($result);
     }

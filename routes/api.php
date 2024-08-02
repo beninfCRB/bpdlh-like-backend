@@ -4,6 +4,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Middleware\EnsureHeaderIsValid;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,7 @@ use App\Http\Middleware\EnsureHeaderIsValid;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 
 Route::get('generate-pdf', function () {
     // Generate the PDF from a view
@@ -42,6 +44,13 @@ Route::put('validasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\V
 Route::put('verifikasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiController::class, 'update']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('check-role', function () {
+        return response()->json([
+            'message'   => 'Ini Maker'
+        ]);
+    })->middleware('ensurerole:maker');
+
     Route::post('logout', [App\Http\Controllers\Authapi\LogoutController::class, 'logout']);
 
     Route::get('tematikKegiatan', [App\Http\Controllers\Api\Akseslh\TematikKegiatanController::class, 'index']);
@@ -52,10 +61,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Route::post('paketKegiatan', [App\Http\Controllers\Api\Akseslh\PaketKegiatanController::class, 'index']);
     Route::post('pengajuanKegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'store']);
 
-    Route::get('getDataVerifikasiPengajuan', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'index']);
-    Route::get('getDataValidasiPengajuan', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'index']);
-    Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiController::class, 'show']);
-    Route::get('getDataValidasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'show']);
-
     Route::get('getLokasiBidangFolu', [App\Http\Controllers\Api\Akseslh\LokasiBidangFoluController::class, 'index']);
+
+    Route::middleware(['ensurerole:verifikator'])->group(function () {
+        Route::get('getDataVerifikasiPengajuan', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'index']);
+        Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiController::class, 'show']);
+    });
+    Route::middleware(['ensurerole:verifikator'])->group(function () {
+        Route::get('getDataValidasiPengajuan', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'index']);
+        Route::get('getDataValidasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'show']);
+    });
 });
