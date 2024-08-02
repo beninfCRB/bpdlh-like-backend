@@ -22,6 +22,7 @@ class SubTematikKegiatanController extends ApiController
 
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
+
         $validator = Validator::make($request->all(), [
             'tematik_kegiatan_id'         => 'required|exists:tematik_kegiatans,id',
         ]);
@@ -46,11 +47,13 @@ class SubTematikKegiatanController extends ApiController
         }
     }
 
-    public function show($id, Request $request)
+    public function show($id)
     {
-        $lang           = $request->input('lang')  ?: 'ID';
+        $input = [
+            'tematik_kegiatan_id' => $id
+        ];
 
-        $result = $this->subTematikKegiatanService->apiLang($id, $lang);
+        $result = $this->subTematikKegiatanService->getApiAll($input);
 
         try {
             if ($result->success) {
