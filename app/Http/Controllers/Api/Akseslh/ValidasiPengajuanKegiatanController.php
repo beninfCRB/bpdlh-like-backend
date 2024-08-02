@@ -56,13 +56,11 @@ class ValidasiPengajuanKegiatanController extends ApiController
         }
     }
 
-    public function update(Request $request)
+    public function update($id, Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'pengajuan_id'      => 'required',
-            'catatan_log'       => 'nullable',
-            'paket_kegiatan_id' => 'required',
-            'status'            => 'required'
+            'catatan_log'               => 'required',
+            'status'                    => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -72,7 +70,7 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
         $input = $validator->validated();
 
-        $result = $this->validasiPengajuanKegiatanService->update($input['pengajuan_id'], $input);
+        $result = $this->validasiPengajuanKegiatanService->update($id, $input);
 
         try {
             if ($result->success) {

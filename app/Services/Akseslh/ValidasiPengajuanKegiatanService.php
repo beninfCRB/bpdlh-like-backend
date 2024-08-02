@@ -3,9 +3,10 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\PengajuanKegiatan;
 use App\Models\TahapanPengajuanKegiatan;
+use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\CatatanLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Carbon\Carbon;
@@ -15,11 +16,19 @@ use Yajra\DataTables\Facades\DataTables;
 class ValidasiPengajuanKegiatanService extends AppService implements AppServiceInterface
 {
     private $modelTahapanPengajuanKegiatan;
+    protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelCatatanLogTahapanPengajuanKegiatan;
 
-    public function __construct(PengajuanKegiatan $model, TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan)
-    {
+    public function __construct(
+        PengajuanKegiatan $model,
+        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan
+    ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
+        $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
+        $this->modelCatatanLogTahapanPengajuanKegiatan = $modelCatatanLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -103,48 +112,47 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
         try {
 
-            if ($read->paket_kegiatan_id != $data['paket_kegiatan_id']) {
-                # code...
-                $temp = $read->log_tahapan_pengajuan;
-                $arrayTemp = $temp->toArray();
+            $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
+                ->create([
+                    'pengajuan_kegiatan_id' => $id,
+                    'catatan_log'           => $data['catatan_log'],
+                    'flag'                  => "2"
+                ]);
 
-                $tahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->get();
+            $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
+                ->orderBy('created_at', 'DESC')->get();
+            $dataLogTahapanPengajuanKegiatan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->with(['tahapan_pengajuan_kegiatan'])
+                ->where('pengajuan_kegiatan_id', $id)
+                ->orderBy('created_at', 'DESC')->get();
+            if ($data['status'] == 0) {
+                $read->flag = '20';
+                $read->save();
 
-                $dataTahapanPengajuanKegiatan = [];
-                foreach ($tahapanPengajuanKegiatan as $item) {
-                    # code...
-                    if ($item->deskripsi_kegiatan == "Validasi") {
-                        # code...
-                        $dataTahapanPengajuanKegiatan[] = [
-                            'tahapan_pengajuan_kegiatan_id' => $item->id,
-                            'tanggal_masuk'                 => isset($arrayTemp[array_search($item->id, $temp->pluck('tahapan_pengajuan_kegiatan_id')->toArray())]['tanggal_masuk']) ?  $arrayTemp[array_search($item->id, $temp->pluck('tahapan_pengajuan_kegiatan_id')->toArray())]['tanggal_masuk'] : null,
-                            'tanggal_selesai'               => Carbon::now()->format('Y-m-d'),
-                            'flag'                          => 1,
-                        ];
-                    } else {
-                        $dataTahapanPengajuanKegiatan[] = [
-                            'tahapan_pengajuan_kegiatan_id' => $item->id,
-                            'tanggal_masuk'                 => isset($arrayTemp[array_search($item->id, $temp->pluck('tahapan_pengajuan_kegiatan_id')->toArray())]['tanggal_masuk']) ?  $arrayTemp[array_search($item->id, $temp->pluck('tahapan_pengajuan_kegiatan_id')->toArray())]['tanggal_masuk'] : null,
-                            'tanggal_selesai'               => isset($arrayTemp[array_search($item->id, $temp->pluck('tahapan_pengajuan_kegiatan_id')->toArray())]['tanggal_selesai']) ?  $arrayTemp[array_search($item->id, $temp->pluck('tahapan_pengajuan_kegiatan_id')->toArray())]['tanggal_selesai'] : null,
-                            'flag'                          => 1,
-                        ];
-                    }
-                }
-
-                $read->log_tahapan_pengajuan()->saveMany(
-                    collect($dataTahapanPengajuanKegiatan)->map(function ($tahapanPengajuanKegiatan) {
-                        return new LogTahapanPengajuanKegiatan($tahapanPengajuanKegiatan);
-                    })
+                $dataSend = array(
+                    'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'keterangan'      => 'Ditolak',
+                    'status'          => '20'
                 );
-
-                dd($read->log_tahapan_pengajuan);
             } else {
+
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->where('deskripsi_kegiatan', 'Validasi')
+                    ->update(['tanggal_selesai' => date("Y-m-d")]);
+                $read->flag = '3';
+                $read->save();
+
+                $dataSend = array(
+                    'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'keterangan'      => 'Disetujui',
+                    'status'          => '3'
+                );
             }
 
-            $read->save();
-
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($read);
+            return $this->sendSuccess($dataSend);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
