@@ -63,6 +63,8 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
 
             $data = $this->model->newQuery()->create([
                 'jenis_kegiatan'       =>  $data['jenis_kegiatan'],
+                'short_id'                      =>  $data['short_id'],
+                'code_id'                      =>  $data['code_id'],
                 'flag'                 => 1,
             ]);
 
@@ -83,6 +85,8 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
         try {
 
             $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
+            $read->short_id                     =   $data['short_id'];
+            $read->code_id                     =   $data['code_id'];
             $read->save();
 
             \DB::commit(); // commit the changes

@@ -39,8 +39,16 @@
                     <div class="form-group @error('short_id') has-error @enderror">
                         <label for="short_id">Nomor Urut <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" id="short_id" name="short_id" min="1"
-                            value="{{ old('short_id', $data->short_id) }}" placeholder="Jenis Kegiatan">
+                            value="{{ old('short_id', $data->short_id) }}">
                         @error('short_id')
+                        {{ $message }}
+                        @enderror
+                    </div>
+                    <div class="form-group @error('code_id') has-error @enderror">
+                        <label for="code_id">Code ID <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="code_id" name="code_id" min="1"
+                            value="{{ old('code_id', $data->code_id) }}">
+                        @error('code_id')
                         {{ $message }}
                         @enderror
                     </div>

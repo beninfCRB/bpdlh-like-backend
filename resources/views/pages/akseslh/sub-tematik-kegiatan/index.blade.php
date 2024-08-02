@@ -42,6 +42,7 @@
                                     <th>No</th>
                                     <th>Sub Tematik Kegiatan</th>
                                     <th>Short</th>
+                                    <th>Code ID</th>
                                     <th>Created at</th>
                                     <th>Updated at</th>
                                     <th></th>

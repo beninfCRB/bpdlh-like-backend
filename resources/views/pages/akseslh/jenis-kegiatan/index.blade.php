@@ -41,6 +41,8 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Jenis Kegiatan</th>
+                                    <th>Short ID</th>
+                                    <th>Code ID</th>
                                     <th>Created at</th>
                                     <th>Updated at</th>
                                     <th></th>

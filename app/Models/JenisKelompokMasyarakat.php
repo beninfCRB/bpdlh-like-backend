@@ -15,6 +15,7 @@ class JenisKelompokMasyarakat extends AppModel
     protected $fillable = [
         'jenis_kelompok_masyarakat',
         'short_id',
+        'code_id',
         'flag',
         'username'
     ];

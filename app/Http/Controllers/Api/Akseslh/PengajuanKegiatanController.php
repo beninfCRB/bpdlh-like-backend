@@ -60,7 +60,7 @@ class PengajuanKegiatanController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'paket_kegiatan_id'         => 'required|exists:paket_kegiatans,id',
-            'lokasi_bidang_folu_id'     => 'required|exists:lokasi_bidang_folus,id',
+            'lokasi_bidang_folu_id'     => 'nullable|exists:lokasi_bidang_folus,id',
             'judul_pengajuan_kegiatan'  => 'required|string|max:500',
             'provinsi_kegiatan'         => 'required',
             'kabupaten_kegiatan'        => 'required',

@@ -48,15 +48,27 @@ class LoginController extends ApiController
                     // Create token for user to access dashboard
                     $token = $user->createToken("auth")->plainTextToken;
 
-                    // Return token to frontend
-                    return $this->sendSuccess([
-                        'token'                     => $token,
-                        'jenis_kelompok_masyarakat' => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
-                        'kelompok_masyarakat_id'    => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->id,
-                        'kelompok_masyarakat'       => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
-                        'role_user'                 => $user->role_user,
+                    if ($user->data_pic_kelompok_masyarakat) {
+                        # code...
+                        // Return token to frontend
+                        return $this->sendSuccess([
+                            'token'                     => $token,
+                            'jenis_kelompok_masyarakat' => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
+                            'kelompok_masyarakat_id'    => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->id,
+                            'kelompok_masyarakat'       => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'role_user'                 => $user->role_user,
 
-                    ]);
+                        ]);
+                    } else {
+                        return $this->sendSuccess([
+                            'token'                     => $token,
+                            'jenis_kelompok_masyarakat' => null,
+                            'kelompok_masyarakat_id'    => null,
+                            'kelompok_masyarakat'       => null,
+                            'role_user'                 => $user->role_user,
+
+                        ]);
+                    }
                 }
 
                 return $this->sendError(null, "Credential not match");

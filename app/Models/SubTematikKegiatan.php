@@ -16,6 +16,7 @@ class SubTematikKegiatan extends AppModel
         'sub_tematik_kegiatan',
         'deskripsi_tematik',
         'short_id',
+        'code_id',
         'flag',
         'username',
     ];

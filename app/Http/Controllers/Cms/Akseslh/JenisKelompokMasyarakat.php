@@ -48,6 +48,7 @@ class JenisKelompokMasyarakat extends ApiController
         $input  =   $request->validate([
             'jenis_kelompok_masyarakat'     => 'required|string|max:150',
             'short_id'                      => 'required|numeric|min:0',
+            'code_id'                       => 'required|numeric|min:0',
         ]);
 
         $result =   $this->jenisKelompokMasyarakatService->create($input);
@@ -70,6 +71,7 @@ class JenisKelompokMasyarakat extends ApiController
         $input  =   $request->validate([
             'jenis_kelompok_masyarakat'     => 'required|string|max:150',
             'short_id'                      => 'required|numeric|min:0',
+            'code_id'                      => 'required|numeric|min:0',
         ]);
 
         $result =   $this->jenisKelompokMasyarakatService->update($id, $input);
