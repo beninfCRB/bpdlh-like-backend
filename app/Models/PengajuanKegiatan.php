@@ -51,9 +51,9 @@ class PengajuanKegiatan extends AppModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user_eksternal(): BelongsTo
+    public function user_akseslh(): BelongsTo
     {
-        return $this->belongsTo(UserEksternal::class, 'akseslh_user_eksternal_id');
+        return $this->belongsTo(UserAkseslh::class, 'user_akseslh_id');
     }
 
     public static function generateNomorPengajuan($paket_kegiatan_id, $user)

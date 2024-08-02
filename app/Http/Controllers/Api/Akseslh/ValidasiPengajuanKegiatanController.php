@@ -24,9 +24,9 @@ class ValidasiPengajuanKegiatanController extends ApiController
         parent::__construct($request);
     }
 
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        $result = $this->validasiPengajuanKegiatanService->apiGetAll();
+        $result = $this->validasiPengajuanKegiatanService->getAllAttr();
 
         try {
             if ($result->success) {

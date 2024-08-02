@@ -32,13 +32,23 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
     public function getAllAttr()
     {
         $result  = $this->model->newQuery()
+            ->whereHas('log_tahapan_pengajuan', function ($q) {
+                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where(['deskripsi_kegiatan' => 'Verifikasi',]);
+                })->whereNotNull('tanggal_masuk')
+                    ->whereNull('tanggal_selesai');
+            })
             ->orderBy('created_at', 'ASC')
             ->get();
 
         $result->transform(function ($items, $key) {
             return [
-                'id'                 => $items->id,
-                'jenis_kegiatan'     => $items->jenis_kegiatan,
+                'id'                        => $items->id,
+                'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'kegiatan'                  => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                'tanggal_akhir_verifikasi'  => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
             ];
         });
 
