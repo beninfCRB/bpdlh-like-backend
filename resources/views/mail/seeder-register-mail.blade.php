@@ -64,7 +64,7 @@
             Terima kasih telah mendaftar di Layanan Akses Dana Lingkungan Hidup. Berikut adalah detail akun Anda:
         </p>
         <div class="info">
-            <p><strong>Email:</strong> {{ $data->user_akseslh->email }}</p>
+            <p><strong>Email:</strong> {{ $data->email }}</p>
             <p><strong>Password:</strong> {{ $default_password }}</p>
         </div>
         <p>
