@@ -7,26 +7,26 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\PengajuanKegiatanService;
-use App\Services\Akseslh\ValidasiPengajuanKegiatanService;
+use App\Services\Akseslh\VerifikasiPengajuanKegiatanService;
 
 class VerifikasiPengajuanKegiatanController extends ApiController
 {
-    protected $validasiPengajuanKegiatanService;
+    protected $verifikasiPengajuanKegiatanService;
     protected $pengajuanKegiatanService;
 
     public function __construct(
-        ValidasiPengajuanKegiatanService $validasiPengajuanKegiatanService,
+        VerifikasiPengajuanKegiatanService $verifikasiPengajuanKegiatanService,
         PengajuanKegiatanService $pengajuanKegiatanService,
         Request $request
     ) {
-        $this->validasiPengajuanKegiatanService     =   $validasiPengajuanKegiatanService;
+        $this->verifikasiPengajuanKegiatanService     =   $verifikasiPengajuanKegiatanService;
         $this->pengajuanKegiatanService             =   $pengajuanKegiatanService;
         parent::__construct($request);
     }
 
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $result = $this->validasiPengajuanKegiatanService->apiGetAll();
+        $result = $this->verifikasiPengajuanKegiatanService->getAllAttr();
 
         try {
             if ($result->success) {
@@ -74,7 +74,7 @@ class VerifikasiPengajuanKegiatanController extends ApiController
 
         $input = $validator->validated();
 
-        $result = $this->validasiPengajuanKegiatanService->update($input['pengajuan_id'], $input);
+        $result = $this->verifikasiPengajuanKegiatanService->update($input['pengajuan_id'], $input);
 
         try {
             if ($result->success) {
