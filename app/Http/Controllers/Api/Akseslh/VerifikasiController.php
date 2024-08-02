@@ -97,7 +97,6 @@ class VerifikasiController extends ApiController
   public function update($id, Request $request): \Illuminate\Http\JsonResponse
   {
     $validator = Validator::make($request->all(), [
-      'paket_kegiatan_id'         => 'required',
       'catatan_log'               => 'required',
       'status'                    => 'required'
     ]);
