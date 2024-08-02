@@ -141,7 +141,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             }
 
             // Save the PDF to the storage folder
-            $pdf = $this->pdfService->generateAndSavePdf('pdf.template-small-grant', get_class($newData), $newData, $data['nomor_pengajuan']);
+            // Dicomment dulu,
+            // $pdf = $this->pdfService->generateAndSavePdf('pdf.template-small-grant', get_class($newData), $newData, $data['nomor_pengajuan']);
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);

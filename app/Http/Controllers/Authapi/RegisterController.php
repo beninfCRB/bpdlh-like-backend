@@ -71,6 +71,7 @@ class RegisterController extends ApiController
                     'jenis_kelompok_masyarakat' => $user->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
                     'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
                     'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
+                    'role_user'                 => $user->user_akseslh->role_user,
                 ]);
             } else {
 
