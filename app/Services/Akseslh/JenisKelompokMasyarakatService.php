@@ -48,6 +48,7 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
             $data = $this->model->newQuery()->create([
                 'jenis_kelompok_masyarakat'     =>  $data['jenis_kelompok_masyarakat'],
                 'short_id'                      =>  $data['short_id'],
+                'code_id'                      =>  $data['code_id'],
                 'flag'                          =>  1,
             ]);
 
@@ -69,6 +70,7 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
 
             $read->jenis_kelompok_masyarakat    =   $data['jenis_kelompok_masyarakat'];
             $read->short_id                     =   $data['short_id'];
+            $read->code_id                     =   $data['code_id'];
             $read->save();
 
             \DB::commit(); // commit the changes

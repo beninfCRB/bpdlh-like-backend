@@ -46,7 +46,9 @@ class JenisKegiatanController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kegiatan'    => 'required'
+            'jenis_kegiatan'    => 'required',
+            'short_id'                      => 'required|numeric|min:0',
+            'code_id'                       => 'required|numeric|min:0',
         ]);
 
         $result =   $this->jenisKegiatanService->create($input);
@@ -66,7 +68,9 @@ class JenisKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kegiatan'    => 'required'
+            'jenis_kegiatan'    => 'required',
+            'short_id'                      => 'required|numeric|min:0',
+            'code_id'                       => 'required|numeric|min:0',
         ]);
 
         $result =   $this->jenisKegiatanService->update($id, $input);

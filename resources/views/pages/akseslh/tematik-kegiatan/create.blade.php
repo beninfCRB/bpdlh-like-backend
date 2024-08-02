@@ -43,6 +43,14 @@
                         {{ $message }}
                         @enderror
                     </div>
+                    <div class="form-group @error('code_id') has-error @enderror">
+                        <label for="code_id">Code ID <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="code_id" name="code_id" min="1"
+                            placeholder="Jenis Kegiatan">
+                        @error('code_id')
+                        {{ $message }}
+                        @enderror
+                    </div>
                     <div class="form-group @error('deskripsi_tematik') has-error @enderror">
                         <label for="deskripsi_tematik">Deskripsi Tematik <span class="text-danger">*</span></label>
                         <textarea name="deskripsi_tematik" id="deskripsi_tematik" cols="30" rows="10"

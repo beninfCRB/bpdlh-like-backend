@@ -48,6 +48,17 @@
                         </span>
                         @enderror
                     </div>
+
+                    <div class="form-group @error('code_id') has-error @enderror">
+                        <label for="code_id">Code ID <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" min=0 id="code_id" name="code_id"
+                            value="{{ old('code_id') }}">
+                        @error('code_id')
+                        <span class="error">
+                            {{ $message }}
+                        </span>
+                        @enderror
+                    </div>
                     <div class="row">
                         <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
                         <a href="{{ route('jenis-kelompok-masyarakat.index') }}"

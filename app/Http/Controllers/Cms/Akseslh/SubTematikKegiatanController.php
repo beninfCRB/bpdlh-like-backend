@@ -49,6 +49,7 @@ class SubTematikKegiatanController extends ApiController
         $input  =   $request->validate([
             'sub_tematik_kegiatan'      => 'required',
             'short_id'                  => 'required',
+            'code_id'                  => 'required',
             'deskripsi_tematik'         => 'required',
             'fileImage'                 => 'required',
         ]);
@@ -71,9 +72,11 @@ class SubTematikKegiatanController extends ApiController
 
     public function update($id, Request $request)
     {
+
         $input  =   $request->validate([
             'sub_tematik_kegiatan'      => 'required',
             'short_id'                  => 'required',
+            'code_id'                   => 'required',
             'deskripsi_tematik'         => 'required',
             'fileImage'                 => 'nullable',
         ]);

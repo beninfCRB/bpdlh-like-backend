@@ -59,10 +59,10 @@ class PengajuanKegiatan extends AppModel
     public static function generateNomorPengajuan($paket_kegiatan_id, $user)
     {
         $paket_kegiatan = PaketKegiatan::find($paket_kegiatan_id);
-        $jenis_kelompok = str_pad($user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->short_id, 2, "0", STR_PAD_LEFT);
-        $tematik_kegiatan = $paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->short_id;
-        $sub_tematik_kegiatan = $paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->short_id;
-        $paket_kegiatan = $paket_kegiatan->jenis_kegiatan->short_id ? $paket_kegiatan->jenis_kegiatan->short_id : 0;
+        $jenis_kelompok = str_pad($user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->code_id, 2, "0", STR_PAD_LEFT);
+        $tematik_kegiatan = $paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->code_id;
+        $sub_tematik_kegiatan = $paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->code_id;
+        $paket_kegiatan = $paket_kegiatan->jenis_kegiatan->code_id ? $paket_kegiatan->jenis_kegiatan->code_id : 0;
         $tahun = Carbon::now()->format('y');
         $bulan = Carbon::now()->format('m');
         $lastRecord = self::whereDate('created_at', now()->toDateString())

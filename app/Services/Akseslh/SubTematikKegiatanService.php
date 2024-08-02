@@ -75,6 +75,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
             $tematik_kegiatan = $this->model->newQuery()->create([
                 'sub_tematik_kegiatan'      =>  $data['sub_tematik_kegiatan'],
                 'short_id'                  =>  $data['short_id'],
+                'code_id'                  =>  $data['code_id'],
                 'deskripsi_tematik'         =>  $data['deskripsi_tematik'],
                 'flag'                      => 1,
             ]);
@@ -108,6 +109,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
             $read->sub_tematik_kegiatan     =   $data['sub_tematik_kegiatan'];
             $read->short_id                 =   $data['short_id'];
+            $read->code_id                  =   $data['code_id'];
             $read->deskripsi_tematik        =   $data['deskripsi_tematik'];
             $read->save();
 

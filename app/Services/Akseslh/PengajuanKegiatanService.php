@@ -114,7 +114,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tanggal_akhir_kegiatan'        => date_create($data['tanggal_akhir_kegiatan']),
                 'time_mulai_kegiatan'           => $data['time_mulai_kegiatan'],
                 'time_akhir_kegiatan'           => $data['time_akhir_kegiatan'],
-                'lokasi_bidang_folu_id'         => $data['lokasi_bidang_folu_id'],
+                'lokasi_bidang_folu_id'         => $data['lokasi_bidang_folu_id'] ?? null,
             ]);
 
             foreach ($dataTahapanPengajuanKegiatan as $dt) {

@@ -26,6 +26,8 @@ var data_jenis_kegiatan = (function () {
             columns: [
                 { data: "DT_RowIndex" },
                 { data: "jenis_kegiatan" },
+                { data: "short_id" },
+                { data: "code_id" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -37,7 +39,7 @@ var data_jenis_kegiatan = (function () {
                     orderable: false,
                 },
                 {
-                    targets: 2,
+                    targets: -3,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -49,7 +51,7 @@ var data_jenis_kegiatan = (function () {
                     },
                 },
                 {
-                    targets: 3,
+                    targets: -2,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {

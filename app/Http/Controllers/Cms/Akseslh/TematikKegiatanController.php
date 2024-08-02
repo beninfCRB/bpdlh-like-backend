@@ -39,6 +39,7 @@ class TematikKegiatanController extends ApiController
         $input  =   $request->validate([
             'tematik_kegiatan'    => 'required',
             'short_id'            => 'required',
+            'code_id'            => 'required',
             'deskripsi_tematik'   => 'required',
             'fileImage'           => 'required',
         ]);
@@ -63,6 +64,7 @@ class TematikKegiatanController extends ApiController
         $input  =   $request->validate([
             'tematik_kegiatan'    => 'required',
             'short_id'            => 'required',
+            'code_id'               => 'required',
             'deskripsi_tematik'   => 'required',
             'fileImage'           => 'nullable',
         ]);

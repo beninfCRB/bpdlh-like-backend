@@ -43,6 +43,7 @@
                                     <th>No</th>
                                     <th>Jenis Kelompok Masyarakat</th>
                                     <th>Short ID</th>
+                                    <th>Code ID</th>
                                     <th>Created at</th>
                                     <th>Updated at</th>
                                     <th></th>
