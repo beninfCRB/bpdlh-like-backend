@@ -59,7 +59,7 @@ class PaketKegiatanController extends ApiController
                 dd(array_search($item['id'], $data->standar_rab_paket_kegiatan->toArray()));
             }
         }
-        dd($masterKomponenRab, $data->standar_rab_paket_kegiatan->toArray());
+
         return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'masterSubTematikKegiatan', 'masterKomponenRab'));
     }
 

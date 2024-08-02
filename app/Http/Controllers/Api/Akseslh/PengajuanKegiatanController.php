@@ -5,18 +5,22 @@ namespace App\Http\Controllers\Api\Akseslh;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Services\Akseslh\PengajuanKegiatanService;
+use App\Services\PdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PengajuanKegiatanController extends ApiController
 {
     protected $pengajuanKegiatanService;
+    protected $pdfService;
 
     public function __construct(
         PengajuanKegiatanService $pengajuanKegiatanService,
+        PdfService $pdfService,
         Request $request
     ) {
         $this->pengajuanKegiatanService    =   $pengajuanKegiatanService;
+        $this->pdfService = $pdfService;
         parent::__construct($request);
     }
 

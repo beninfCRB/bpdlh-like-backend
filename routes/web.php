@@ -23,6 +23,8 @@ Route::get('/', function () {
 Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->middleware('auth');
 Route::view('/blank', 'pages.blank.index')->name('blank');
 
+Route::view('/pdf', 'pdf.template-small-grant');
+
 Route::middleware(['auth'])->group(function () {
 
 
