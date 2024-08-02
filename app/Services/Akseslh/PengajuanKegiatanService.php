@@ -4,15 +4,18 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\PengajuanKegiatan;
-use App\Models\TahapanPengajuanKegiatan;
-use App\Models\LogTahapanPengajuanKegiatan;
 use App\Services\AppService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\File as FileTable;
+use App\Models\PengajuanKegiatan;
+use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\File as FileTable;
-use App\Services\FileUploadService;
+use App\Models\LogTahapanPengajuanKegiatan;
+use App\Services\PdfService;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
@@ -20,20 +23,22 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     protected $modelLogTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
+    protected $pdfService;
 
     public function __construct(
         FileUploadService $fileUploadService,
         FileTable $fileTable,
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
-        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
-        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        PdfService $pdfService
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
+        $this->pdfService           =   $pdfService;
     }
 
     public function getAll()
@@ -117,7 +122,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     'pengajuan_kegiatan_id'         => $newData->id,
                     'tahapan_pengajuan_kegiatan_id' => $dt->id,
                     'tanggal_masuk'                 => date("Y-m-d"),
-                    'tanggal_selesai'               => ($dt->deskripsi_kegiatan=="Pengajuan"?date("Y-m-d"):NULL)
+                    'tanggal_selesai'               => ($dt->deskripsi_kegiatan == "Pengajuan" ? date("Y-m-d") : NULL)
                 ]);
             }
 
@@ -125,7 +130,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             // Save document 
             // upload document
-            $upload = $this->fileUploadService->handleImage($data['fileDocument'])->saveToDb('document');
+            $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
 
             if (!empty($upload)) {
                 $image = $this->fileTable->newQuery()->find($upload->id);
@@ -134,6 +139,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     'fileable_id'   => $newData->id,
                 ]);
             }
+
+            // Save the PDF to the storage folder
+            $pdf = $this->pdfService->generateAndSavePdf('pdf.template-small-grant', get_class($newData), $newData, $data['nomor_pengajuan']);
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
@@ -180,8 +188,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $model = $this->model->newQuery()->find($id);
 
         if (!$model)  return $this->sendError(null, 'Not Found');
-
-        dd($model);
 
         $result = [
             'id'                        => $model->id,

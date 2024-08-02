@@ -41,9 +41,7 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
     public function show($id)
     {
-        $input = [
-            'pengajuan_id'  => $id
-        ];
+        $input['pengajuan_id'] = $id;
 
         $result = $this->pengajuanKegiatanService->apiGetBydId($input['pengajuan_id']);
 
