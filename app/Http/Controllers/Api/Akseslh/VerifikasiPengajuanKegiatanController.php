@@ -45,7 +45,7 @@ class VerifikasiPengajuanKegiatanController extends ApiController
             'pengajuan_id'  => $id
         ];
 
-        $result = $this->pengajuanKegiatanService->apiGetBydId($input['pengajuan_id']);
+        $result = $this->verifikasiPengajuanKegiatanService->apiGetBydId($input['pengajuan_id']);
 
         try {
             if ($result->success) {

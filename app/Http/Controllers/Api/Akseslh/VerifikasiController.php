@@ -22,7 +22,7 @@ class VerifikasiController extends ApiController
 
   public function index(Request $request): \Illuminate\Http\JsonResponse
   {
-    $result = $this->VerifikasiService->getAll();
+    $result = $this->VerifikasiService->getAllAttr();
 
     try {
       if ($result->success) {
@@ -35,11 +35,9 @@ class VerifikasiController extends ApiController
     }
   }
 
-  public function show($id, Request $request)
+  public function show($id)
   {
-    $lang           = $request->input('lang')  ?: 'ID';
-
-    $result = $this->VerifikasiService->apiLang($id, $lang);
+    $result = $this->VerifikasiService->apiLang($id);
 
     try {
       if ($result->success) {

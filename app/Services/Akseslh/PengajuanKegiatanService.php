@@ -184,23 +184,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         }
     }
 
-    public function apiGetBydId($id)
-    {
-        $model = $this->model->newQuery()->find($id);
-
-        if (!$model)  return $this->sendError(null, 'Not Found');
-
-        $result = [
-            'id'                        => $model->id,
-            'paket_kegiatan_id'         => $model->paket_kegiatan->id,
-            'tematik_kegiatan_id'       => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan_id,
-            'sub_tematik_kegiatan_id'   => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id,
-            'document'                  => $model->document,
-        ];
-
-        return $this->sendSuccess($result);
-    }
-
     public function updatePublish($id, $isPublish): object
     {
         $read = $this->model->newQuery()->find($id);
@@ -251,74 +234,27 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $result;
     }
 
-    public function apiLang($id, $lang = 'ID')
+    public function getDataRab($id)
     {
-        $model =   $this->model->newQuery()->where('is_publish', true)->find($id);
+        $result = $this->model->find($id);
 
-        if (!$model)  return $this->sendError(null, 'Not Published');
+        if (!$result)  return $this->sendError(null, 'Not Found');
 
-        if ($lang === 'ID') {
-            $result =   [
-                'id'            => $model->id,
-                'title'         => $model->title_id,
-                'desc'          => $model->desc_id,
-                'lastUpdate'    => $model->created_at
-            ];
-        } else {
-            $result =   [
-                'id'            => $model->id,
-                'title'         => $model->title_en,
-                'desc'          => $model->desc_en,
-                'lastUpdate'    => $model->created_at
+        $rab = null;
+        foreach ($result->paket_kegiatan->standar_rab_paket_kegiatan as $item) {
+            # code...
+            $rab[] = [
+                'id_komponen'           => $item->master_komponen_rab_id,
+                'jenis_komponen_rab'    => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
+                'satuan'                => $item->master_komponen_rab->satuan->satuan,
+                'harga_unit'            => $item->standar_harga_unit,
+                'qty'                   => $item->standar_qty,
             ];
         }
+        $collectRab = collect($rab);
 
+        $result = $collectRab->groupBy('jenis_komponen_rab');
         return $this->sendSuccess($result);
-    }
-
-    public function searchLang($lang = 'ID', $search = null)
-    {
-        if ($lang === 'ID') {
-
-            $result  = $this->model->newQuery()
-                ->when($search, function ($query, $search) {
-                    return $query->where('title_id', 'like', '%' . $search . '%')
-                        ->orWhere('desc_id', 'like', '%' . $search . '%');
-                })
-                ->where('is_publish', true)
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            $result->transform(function ($items, $key) {
-                return [
-                    'type'          => 'CAREER',
-                    'id'            => $items->id,
-                    'title'         => $items->title_id,
-                    'desc'          => $items->desc_id,
-                    'lastUpdate'    => $items->created_at
-                ];
-            });
-        } else {
-
-            $result  = $this->model->newQuery()
-                ->when($search, function ($query, $search) {
-                    return $query->where('title_en', 'like', '%' . $search . '%')
-                        ->orWhere('desc_en', 'like', '%' . $search . '%');
-                })
-                ->where('is_publish', true)
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            $result->transform(function ($items, $key) {
-                return [
-                    'type'          => 'CAREER',
-                    'id'            => $items->id,
-                    'title'         => $items->title_en,
-                    'desc'          => $items->desc_en,
-                    'lastUpdate'    => $items->created_at
-                ];
-            });
-        }
-        return $result;
     }
 }

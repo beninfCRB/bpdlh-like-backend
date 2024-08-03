@@ -18,6 +18,7 @@ class LogTahapanPengajuanKegiatan extends AppModel
         'tahapan_pengajuan_kegiatan_id',
         'tanggal_masuk',
         'tanggal_selesai',
+        'user_akseslh',
         'flag',
         'username',
     ];

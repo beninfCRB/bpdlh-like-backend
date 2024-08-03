@@ -112,4 +112,21 @@ class PengajuanKegiatanController extends ApiController
             $this->sendError($exception->getMessage(), "", 500);
         }
     }
+
+    public function getDataRab($id): \Illuminate\Http\JsonResponse
+    {
+        $result = $this->pengajuanKegiatanService->getDataRab($id);
+
+        try {
+            //code...
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            //throw $th;
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
 }

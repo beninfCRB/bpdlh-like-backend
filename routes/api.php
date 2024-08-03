@@ -28,6 +28,7 @@ Route::get('generate-pdf', function () {
     // Save the PDF to the storage folder
     Storage::put($filePath, $pdf->output());
 });
+
 Route::get('test-email', [App\Http\Controllers\Authapi\RegisterController::class, 'test_email'])->excludedMiddleware(EnsureHeaderIsValid::class);
 
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
@@ -60,12 +61,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('paketKegiatan/{tematik_kegiatan_id}/{sub_tematik_kegiatan_id}', [App\Http\Controllers\Api\Akseslh\PaketKegiatanController::class, 'byIdTematik']);
     // Route::post('paketKegiatan', [App\Http\Controllers\Api\Akseslh\PaketKegiatanController::class, 'index']);
     Route::post('pengajuanKegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'store']);
+    Route::get('getDataRab/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'getDataRab']);
 
     Route::get('getLokasiBidangFolu', [App\Http\Controllers\Api\Akseslh\LokasiBidangFoluController::class, 'index']);
 
     Route::middleware(['ensurerole:verifikator'])->group(function () {
         Route::get('getDataVerifikasiPengajuan', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'index']);
-        Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiController::class, 'show']);
+        Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'show']);
     });
     Route::middleware(['ensurerole:approver'])->group(function () {
         Route::get('getDataValidasiPengajuan', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'index']);

@@ -16,6 +16,7 @@ class AlterLogPengajuanKegiatanTableNullTanggalMasuk extends Migration
         //
         Schema::table('log_tahapan_pengajuan_kegiatans', function (Blueprint $table) {
             $table->date('tanggal_masuk')->nullable()->change();
+            $table->foreignUuid('user_akseslh')->after('tanggal_selesai')->nullable();
         });
 
         Schema::table('user_akseslhs', function (Blueprint $table) {
