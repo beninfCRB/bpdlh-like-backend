@@ -43,7 +43,7 @@ class ValidasiPengajuanKegiatanController extends ApiController
     {
         $input['pengajuan_id'] = $id;
 
-        $result = $this->pengajuanKegiatanService->apiGetBydId($input['pengajuan_id']);
+        $result = $this->validasiPengajuanKegiatanService->apiGetBydId($input['pengajuan_id']);
 
         try {
             if ($result->success) {

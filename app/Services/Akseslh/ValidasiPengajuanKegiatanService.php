@@ -81,6 +81,29 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         return $this->sendSuccess($result);
     }
 
+    public function apiGetBydId($id)
+    {
+        $model = $this->model->newQuery()->find($id);
+
+        if (!$model)  return $this->sendError(null, 'Not Found');
+
+        $result = [
+            'id'                        => $model->id,
+            'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+            'nama_pic'                  => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+            'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+            'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+            'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+            'jenis_kegiatan'            => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+            'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta > 50 ? " Orang" : "Hectare"),
+            'lokasi'                    => $model->alamat_kegiatan,
+            'nomor_pengajuan'           => $model->nomor_pengajuan,
+            'paket_kegiatan_id'         => $model->paket_kegiatan->id,
+        ];
+
+        return $this->sendSuccess($result);
+    }
+
     public function getPaginated($search = null, $page = null, $perPage = null, $lang = null)
     {
         $result =   $this->switchLang($search, $page, $perPage, $lang);
