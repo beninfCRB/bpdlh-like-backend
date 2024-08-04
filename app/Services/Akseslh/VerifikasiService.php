@@ -77,11 +77,15 @@ class VerifikasiService extends AppService implements AppServiceInterface
 
     public function create($data)
     {
+        return $this->sendSuccess();
     }
 
     public function update($id, $data)
     {
         $read   =   $this->model->newQuery()->find($id);
+
+        if (!$read) return $this->sendError(null, 'Not Found');
+
         \DB::beginTransaction();
 
         try {
@@ -92,13 +96,21 @@ class VerifikasiService extends AppService implements AppServiceInterface
                     'catatan_log'           => $data['catatan_log']
                 ]);
 
-            $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
-                ->orderBy('created_at', 'DESC')->get();
-            $dataLogTahapanPengajuanKegiatan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->with(['tahapan_pengajuan_kegiatan'])
-                ->where('pengajuan_kegiatan_id', $id)
-                ->orderBy('created_at', 'DESC')->get();
+            // $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
+            //     ->orderBy('created_at', 'DESC')->get();
+
+            // $dataLogTahapanPengajuanKegiatan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            //     ->with(['tahapan_pengajuan_kegiatan'])
+            //     ->where('pengajuan_kegiatan_id', $id)
+            //     ->orderBy('created_at', 'DESC')->get();
             if ($data['status'] == 0) {
+                // $read->user_akseslh = $data['user_akselh_id'];
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi');
+                    })
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh' => $data['user_akselh_id']]);
                 $read->flag = '20';
                 $read->save();
 
@@ -112,8 +124,18 @@ class VerifikasiService extends AppService implements AppServiceInterface
                 // Update data langsung berdasarkan pengajuan_kegiatan_id
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
-                    ->where('deskripsi_kegiatan', 'Verifikasi')
-                    ->update(['tanggal_selesai' => date("Y-m-d")]);
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi');
+                    })
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh' => $data['user_akselh_id']]);
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Validasi');
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
+
                 $read->flag = '2';
                 $read->save();
 
