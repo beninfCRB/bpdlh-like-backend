@@ -91,4 +91,14 @@ class PengajuanKegiatan extends AppModel
         return $this->morphMany(File::class, 'fileable')
             ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
     }
+
+    /**
+     * Get all of the rab_pengajuan_paket_kegiatans for the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rab_pengajuan_paket_kegiatans(): HasMany
+    {
+        return $this->hasMany(RabPengajuanPaketKegiatan::class, 'pengajuan_kegiatan_id');
+    }
 }

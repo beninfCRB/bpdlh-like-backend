@@ -5,6 +5,7 @@ namespace App\Services\Akseslh;
 
 
 use App\Services\AppService;
+use App\Services\PdfService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\File as FileTable;
 use App\Models\PengajuanKegiatan;
@@ -14,8 +15,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\RabPengajuanPaketKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
-use App\Services\PdfService;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
@@ -231,7 +232,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         }
         $collectRab = collect($rab);
 
-        $result = $collectRab->groupBy('jenis_komponen_rab');
+        $result = [
+            'id_pengajuan'  => $id,
+            'komponen_rab'  => $collectRab->groupBy('jenis_komponen_rab'),
+        ];
 
         if ($inController) {
             # code...
@@ -256,5 +260,30 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     break;
             }
         }
+    }
+
+    public function updateRab($id, $dataKomponenRab)
+    {
+        $model = $this->model->find($id);
+
+        $dataKomponenRabInput = null;
+        foreach ($dataKomponenRab as $item) {
+            # code...
+            $dataKomponenRabInput[] = [
+                'pengajuan_kegiatan_id' => $id,
+                'komponen_rab_id'       => $item['id_komponen'],
+                'harga_unit'            => $item['harga_unit'],
+                'qty'                   => $item['qty'],
+            ];
+        }
+
+        $result = ['nomor_pengajuan' => $model->nomor_pengajuan];
+
+        $model->rab_pengajuan_paket_kegiatans()->saveMany(
+            collect($dataKomponenRabInput)->map(function ($tahapSalur) {
+                return new RabPengajuanPaketKegiatan($tahapSalur);
+            })
+        );
+        return $this->sendSuccess($result);
     }
 }
