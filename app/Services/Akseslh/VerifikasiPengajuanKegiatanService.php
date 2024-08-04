@@ -69,7 +69,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
             'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
             'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
             'jenis_kegiatan'            => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
-            'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta > 50 ? " Orang" : "Hectare"),
+            'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
             'lokasi'                    => $model->alamat_kegiatan,
             'nomor_pengajuan'           => $model->nomor_pengajuan,
             'paket_kegiatan_id'         => $model->paket_kegiatan->id,

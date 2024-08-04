@@ -72,6 +72,31 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
+    public function getDataProsesKegiatan($user_akseslh_id)
+    {
+        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->first();
+
+        $data = null;
+        if ($result) {
+            # code...
+            $data[] = [
+                'nomor_pengajuan'   => $result->nomor_pengajuan,
+                'tematik_kegiatan'          => $result->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_kegiatan'      => $result->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'jumlah'                    => $result->paket_kegiatan->jumlah_peserta . " " . ($result->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                'lokasi'                    => $result->alamat_kegiatan,
+                'tahapan_pengajuan'         => "Dalam Proses " . $result->log_tahapan_pengajuan->whereNull('tanggal_selesai')->first()->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
+                'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->log_tahapan_pengajuan),
+                'dana_yang_disetujui'       => 0,
+                'dana_yang_dicairkan'       => 0,
+                'tanggal_kegiatan'          => $result->tanggal_mulai_kegiatan . " - " . $result->tanggal_akhir_kegiatan,
+            ];
+        }
+
+        return $this->sendSuccess($data);
+    }
+
     public function getPaginated($search = null, $page = null, $perPage = null, $lang = null)
     {
         $result =   $this->switchLang($search, $page, $perPage, $lang);
@@ -184,56 +209,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         }
     }
 
-    public function updatePublish($id, $isPublish): object
-    {
-        $read = $this->model->newQuery()->find($id);
-
-        \DB::beginTransaction();
-
-        try {
-            $read->is_publish       =   $isPublish;
-            $read->save();
-
-            \DB::commit(); // commit the changes
-            return $this->sendSuccess($read);
-        } catch (\Exception $exception) {
-            \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
-        }
-    }
-
-    protected function switchLang($search = null, $page = null, $perPage = null, $lang = 'ID')
-    {
-        $result  = $this->model->newQuery()
-            ->where('is_publish', true)
-            ->when($search, function ($query, $search) {
-                return $query->where('title', 'like', '%' . $search . '%');
-            })
-            ->orderBy('created_at', 'DESC')
-            ->paginate((int)$perPage, ['*'], null, $page);
-
-        if ($lang === 'ID') {
-            $result->getCollection()->transform(function ($items, $key) {
-                return [
-                    'id'            => $items->id,
-                    'title'         => $items->title_id,
-                    'desc'          => $items->desc_id,
-                    'lastUpdate'    => $items->created_at,
-                ];
-            });
-        } else {
-            $result->getCollection()->transform(function ($items, $key) {
-                return [
-                    'id'            => $items->id,
-                    'title'         => $items->title_en,
-                    'desc'          => $items->desc_en,
-                    'lastUpdate'    => $items->created_at,
-                ];
-            });
-        }
-        return $result;
-    }
-
     public function getDataRab($id)
     {
         $result = $this->model->find($id);
@@ -256,5 +231,23 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $result = $collectRab->groupBy('jenis_komponen_rab');
         return $this->sendSuccess($result);
+    }
+
+    private function checkAngkaPengajuan($logTahapanPengajuanKegiatan)
+    {
+        if ($logTahapanPengajuanKegiatan->count() == 9) {
+            # code...
+            switch ($logTahapanPengajuanKegiatan->whereNull('tanggal_selesai')->first()->tahapan_pengajuan_kegiatan->deskripsi_kegiatan) {
+                case 'Verifikasi':
+                    # code...
+                    return 6;
+                    break;
+
+                default:
+                    # code...
+                    0;
+                    break;
+            }
+        }
     }
 }
