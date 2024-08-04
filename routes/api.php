@@ -65,6 +65,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getLokasiBidangFolu', [App\Http\Controllers\Api\Akseslh\LokasiBidangFoluController::class, 'index']);
 
+    Route::get('getDataProsesKegiatan', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getDataProsesKegiatan']);
+
     Route::middleware(['ensurerole:verifikator'])->group(function () {
         Route::get('getDataVerifikasiPengajuan', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'index']);
         Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'show']);
