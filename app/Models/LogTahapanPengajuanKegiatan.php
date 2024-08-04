@@ -18,7 +18,7 @@ class LogTahapanPengajuanKegiatan extends AppModel
         'tahapan_pengajuan_kegiatan_id',
         'tanggal_masuk',
         'tanggal_selesai',
-        'user_akseslh',
+        'user_akseslh_id',
         'flag',
         'username',
     ];
@@ -38,8 +38,8 @@ class LogTahapanPengajuanKegiatan extends AppModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): BelongsTo
+    public function user_akseslh(): BelongsTo
     {
-        return $this->belongsTo(UserAkseslh::class, 'user_akseslh');
+        return $this->belongsTo(UserAkseslh::class, 'user_akseslh_id');
     }
 }

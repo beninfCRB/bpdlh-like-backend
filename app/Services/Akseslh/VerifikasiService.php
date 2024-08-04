@@ -110,7 +110,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                         $q->where('deskripsi_kegiatan', 'Verifikasi');
                     })
-                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh' => $data['user_akselh_id']]);
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
                 $read->flag = '20';
                 $read->save();
 
@@ -127,7 +127,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                         $q->where('deskripsi_kegiatan', 'Verifikasi');
                     })
-                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh' => $data['user_akselh_id']]);
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
 
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
