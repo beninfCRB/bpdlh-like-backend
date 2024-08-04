@@ -32,4 +32,14 @@ class LogTahapanPengajuanKegiatan extends AppModel
     {
         return $this->belongsTo(TahapanPengajuanKegiatan::class, 'tahapan_pengajuan_kegiatan_id');
     }
+
+    /**
+     * Get the user_akselh that owns the LogTahapanPengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(UserAkseslh::class, 'user_akseslh');
+    }
 }

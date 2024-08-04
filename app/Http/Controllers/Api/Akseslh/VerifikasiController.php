@@ -92,7 +92,8 @@ class VerifikasiController extends ApiController
       $this->sendError($exception->getMessage(), "", 500);
     }
   }
-  public function update($id, Request $request): \Illuminate\Http\JsonResponse
+
+  public function update($id, Request $request)
   {
     $validator = Validator::make($request->all(), [
       'catatan_log'               => 'required',
@@ -105,6 +106,8 @@ class VerifikasiController extends ApiController
     }
 
     $input  = $validator->validated();
+
+    $input['user_akselh_id']  = $request->user()->id;
 
     $result = $this->VerifikasiService->update($id, $input);
 

@@ -50,6 +50,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                 'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
                 'kegiatan'                  => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hektare"),
                 'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
                 'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
                 'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
                 'tanggal_akhir_verifikasi'  => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
@@ -58,6 +59,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                 'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
                 'lokasi'                    => $items->alamat_kegiatan,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
+                'document'                  => $items->document
             ];
         });
 
