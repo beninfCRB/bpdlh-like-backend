@@ -33,6 +33,21 @@ class DashboardPenerimaManfaatController extends ApiController
         }
     }
 
+    public function getDataRiwayatPengajuan(Request $request)
+    {
+        $result = $this->pengajuanKegiatanService->getDataRiwayatPengajuan($request->user()->id);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $result = $this->pengajuanKegiatanService->apiGetAll();
