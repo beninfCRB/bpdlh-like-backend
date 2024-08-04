@@ -98,6 +98,32 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($data);
     }
 
+    public function getDataRiwayatPengajuan($user_akseslh_id)
+    {
+        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->get();
+
+        if (!$result)  return $this->sendError(null);
+
+        $result->transform(function ($items, $key) {
+            return [
+                'id'                        => $items->id,
+                'nomor_pengajuan'           => $items->nomor_pengajuan,
+                'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                'lokasi'                    => $items->alamat_kegiatan,
+                'tahapan_pengajuan'         => "Dalam Proses " . $items->log_tahapan_pengajuan->whereNull('tanggal_selesai')->first()->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
+                'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->log_tahapan_pengajuan),
+                'dana_yang_disetujui'       => 0,
+                'dana_yang_dicairkan'       => 0,
+                'tanggal_kegiatan'          => $items->tanggal_mulai_kegiatan,
+            ];
+        });
+
+        return $this->sendSuccess($result);
+    }
+
     public function getPaginated($search = null, $page = null, $perPage = null, $lang = null)
     {
         $result =   $this->switchLang($search, $page, $perPage, $lang);
