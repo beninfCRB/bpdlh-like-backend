@@ -154,12 +154,15 @@ figure.effect-jazz:hover img {
 }
 
 .bg-light {
+    color: white;
     margin: 20px 20px 20px 20px;
-    border-radius: 50px;
-    border-radius: 50px 50px 50px 50px;
-    border: 2px solid #ffffff;
-    background-color: white;
-    box-shadow: 3px 10px 20px #003300;
+    border-radius: 25px 25px 25px 25px;
+    background-color: rgba(0, 0, 0, 0.354);
+    opacity: 1;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .bg_light {
