@@ -90,7 +90,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => 0,
                 'dana_yang_dicairkan'       => 0,
-                'tanggal_kegiatan'          => $result->tanggal_mulai_kegiatan . " - " . $result->tanggal_akhir_kegiatan,
+                'tanggal_kegiatan'          => $result->tanggal_mulai_kegiatan,
             ];
         }
 
@@ -146,7 +146,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
                     'pengajuan_kegiatan_id'         => $newData->id,
                     'tahapan_pengajuan_kegiatan_id' => $dt->id,
-                    'tanggal_masuk'                 => date("Y-m-d"),
+                    'tanggal_masuk'                 => ($dt->deskripsi_kegiatan == "Pengajuan" || $dt->deskripsi_kegiatan == "Verifikasi"  ? date("Y-m-d") : NULL),
                     'tanggal_selesai'               => ($dt->deskripsi_kegiatan == "Pengajuan" ? date("Y-m-d") : NULL)
                 ]);
             }
@@ -164,6 +164,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     'fileable_id'   => $newData->id,
                 ]);
             }
+
+            $dataSend = $this->getDataRab($newData->id, true);
 
             // Save the PDF to the storage folder
             // Dicomment dulu,
@@ -209,7 +211,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         }
     }
 
-    public function getDataRab($id)
+    public function getDataRab($id, $inController = false)
     {
         $result = $this->model->find($id);
 
@@ -230,6 +232,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $collectRab = collect($rab);
 
         $result = $collectRab->groupBy('jenis_komponen_rab');
+
+        if ($inController) {
+            # code...
+            return $result;
+        }
         return $this->sendSuccess($result);
     }
 
