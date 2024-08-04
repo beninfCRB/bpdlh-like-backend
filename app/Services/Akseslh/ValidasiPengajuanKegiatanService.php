@@ -84,8 +84,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
                 'lokasi'                    => $items->alamat_kegiatan,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
-                'nama_verifikator'          => $items->log_tahapan_pengajuan->whereNotNull('user_akseslh')->first()->user->email,
-                'tanggal_verifikasi'        => $items->log_tahapan_pengajuan->whereNotNull('user_akseslh')->first()->tanggal_selesai,
+                'nama_verifikator'          => $items->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh->email,
+                'tanggal_verifikasi'        => $items->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->tanggal_selesai,
                 'document'                  => $items->document
             ];
         });
@@ -179,7 +179,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
-                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh' => $data['user_akselh_id']]);
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
 
                 $read->flag = '20';
                 $read->save();
@@ -197,7 +197,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
-                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh' => $data['user_akselh_id']]);
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
                 $read->flag = '3';
                 $read->save();
 
