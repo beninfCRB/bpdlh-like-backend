@@ -90,10 +90,16 @@ class VerifikasiService extends AppService implements AppServiceInterface
 
         try {
 
+            $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi');
+                })->first()->id;
+
             $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
                 ->create([
-                    'pengajuan_kegiatan_id' => $id,
-                    'catatan_log'           => $data['catatan_log']
+                    'log_tahapan_pengajuan_kegiatan_id' => $idLog,
+                    'catatan_log'                       => $data['catatan_log']
                 ]);
 
             // $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()

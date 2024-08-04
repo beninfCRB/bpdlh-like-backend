@@ -159,9 +159,15 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
         try {
 
+            $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Validasi');
+                })->first()->id;
+
             $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
                 ->create([
-                    'pengajuan_kegiatan_id' => $id,
+                    'log_tahapan_pengajuan_kegiatan_id' => $id,
                     'catatan_log'           => $data['catatan_log'],
                     'flag'                  => "2"
                 ]);
