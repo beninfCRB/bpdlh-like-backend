@@ -34,7 +34,7 @@ class KotaService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->with(['provinsi'])->find($id);
+        $result =   $this->model->newQuery()->with(['kecamatan'])->find($id);
         return $this->sendSuccess($result);
     }
 

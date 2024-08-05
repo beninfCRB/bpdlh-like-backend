@@ -34,7 +34,7 @@ class KecamatanService extends AppService implements AppServiceInterface
 
   public function getById($id)
   {
-    $result =   $this->model->newQuery()->with(['kota.provinsi'])->find($id);
+    $result =   $this->model->newQuery()->with(['kelurahan'])->find($id);
 
     return $this->sendSuccess($result);
   }
