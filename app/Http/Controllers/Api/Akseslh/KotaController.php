@@ -34,11 +34,9 @@ class KotaController extends ApiController
     }
   }
 
-  public function show($id, Request $request)
+  public function show($id)
   {
-    $lang           = $request->input('lang')  ?: 'ID';
-
-    $result = $this->KotaService->apiLang($id, $lang);
+    $result = $this->KotaService->getById($id);
 
     try {
       if ($result->success) {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\AppModel;
+use App\Models\City;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -32,4 +33,9 @@ class Province extends AppModel
     protected $fillable = [
         'code', 'name', 'meta',
     ];
+
+    public function kota()
+    {
+        return $this->hasMany(City::class, 'province_code', 'code');
+    }
 }

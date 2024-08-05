@@ -59,9 +59,12 @@ class ValidasiPengajuanKegiatanController extends ApiController
     public function update($id, Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'catatan_log'               => 'required',
-            'status'                    => 'required'
+            'status' => 'required',
         ]);
+
+        $validator->sometimes('catatan_log', 'required', function ($input) {
+            return $input->status == 0;
+        });
 
         if ($validator->fails()) {
             # code...
