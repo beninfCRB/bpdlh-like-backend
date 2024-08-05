@@ -58,7 +58,7 @@
                             @enderror
                         </div>
                         <div class=" form-group @error('email_pic') has-error @enderror col-md-4">
-                            <label for="email_pic">Alamat E-Mail PIC<span class="text-danger">*</span></label>
+                            <label for="email_pic">Alamat E-Mail PIC </label>
                             <input type="email" class="form-control" id="email_pic" name="email_pic"
                                 placeholder="Alamat E-Mail" value="{{ old('email_pic') }}">
                             @error('email_pic')
