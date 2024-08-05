@@ -36,7 +36,7 @@ class ProvinsiController extends ApiController
 
   public function show($id)
   {
-    $result = $this->ProvinsiService->apiLang($id);
+    $result = $this->ProvinsiService->getById($id);
 
     try {
       if ($result->success) {

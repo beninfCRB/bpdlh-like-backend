@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\AppModel;
+use App\Models\City;
+use App\Models\Village;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,4 +34,12 @@ class District extends AppModel
     protected $fillable = [
         'code', 'city_code', 'name', 'meta',
     ];
+    public function kota()
+    {
+        return $this->belongsTo(City::class, 'city_code', 'code');
+    }
+    public function kelurahan()
+    {
+        return $this->hasMany(Village::class, 'district_code', 'code');
+    }
 }

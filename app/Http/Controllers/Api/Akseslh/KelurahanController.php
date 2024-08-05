@@ -34,11 +34,9 @@ class KelurahanController extends ApiController
     }
   }
 
-  public function show($id, Request $request)
+  public function show($id)
   {
-    $lang           = $request->input('lang')  ?: 'ID';
-
-    $result = $this->KelurahanService->apiLang($id, $lang);
+    $result = $this->KelurahanService->getById($id);
 
     try {
       if ($result->success) {

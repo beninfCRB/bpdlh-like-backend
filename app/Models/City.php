@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\AppModel;
+use App\Models\Province;
+use App\Models\District;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,4 +34,13 @@ class City extends AppModel
     protected $fillable = [
         'code', 'province_code', 'name', 'meta',
     ];
+    // Definisikan relasi belongsTo ke model Provinsi
+    public function provinsi()
+    {
+        return $this->belongsTo(Province::class, 'province_code', 'code');
+    }
+    public function kecamatan()
+    {
+        return $this->hasMany(District::class, 'city_code', 'code');
+    }
 }
