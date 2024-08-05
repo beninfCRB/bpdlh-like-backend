@@ -11,7 +11,7 @@ class LogTahapanPengajuanKegiatan extends AppModel
 {
     use HasFactory;
 
-    protected $table = 'log_tahapan_pengajuan_kegiatans';
+    protected $table = 'log_tahapan_pengajuan_kegiatans', $with = ['tahapan_pengajuan_kegiatan', 'user_akseslh'];
 
     protected $fillable = [
         'pengajuan_kegiatan_id',
