@@ -88,7 +88,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'jumlah'                    => $result->paket_kegiatan->jumlah_peserta . " " . ($result->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
                 'lokasi'                    => $result->alamat_kegiatan,
                 'tahapan_pengajuan'         => "Dalam Proses " . $result->log_tahapan_pengajuan->whereNull('tanggal_selesai')->first()->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
-                'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->log_tahapan_pengajuan),
+                'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->flag, $result->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => 0,
                 'dana_yang_dicairkan'       => 0,
                 'tanggal_kegiatan'          => $result->tanggal_mulai_kegiatan,
@@ -100,11 +100,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->get();
+        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan'])->where(['user_akseslh_id' => $user_akseslh_id])->get();
 
         if (!$result)  return $this->sendError(null);
+
         $result->transform(function ($items, $key) {
-            dd($items->log_tahapan_pengajuan);
+
             return [
                 'id'                        => $items->id,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
@@ -113,8 +114,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                 'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
                 'lokasi'                    => $items->alamat_kegiatan,
-                'tahapan_pengajuan'         => "Dalam Proses " . $items->log_tahapan_pengajuan->whereNull('tanggal_selesai')->first()->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
-                'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->log_tahapan_pengajuan),
+                'tahapan_pengajuan'         => "Dalam Proses " . $this->checkStatusPengajuan($items->flag, $items->log_tahapan_pengajuan),
+                'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->flag, $items->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => 0,
                 'dana_yang_dicairkan'       => 0,
                 'tanggal_kegiatan'          => $items->tanggal_mulai_kegiatan,
@@ -270,12 +271,30 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    private function checkAngkaPengajuan($logTahapanPengajuanKegiatan)
+    private function checkStatusPengajuan($angka, $logTahapanPengajuanKegiatan)
     {
         if ($logTahapanPengajuanKegiatan->count() == 9) {
             # code...
-            switch ($logTahapanPengajuanKegiatan->whereNull('tanggal_selesai')->first()->tahapan_pengajuan_kegiatan->deskripsi_kegiatan) {
-                case 'Verifikasi':
+            switch ($angka) {
+                case 1:
+                    # code...
+                    return 'Verifikasi';
+                    break;
+
+                default:
+                    # code...
+                    0;
+                    break;
+            }
+        }
+    }
+
+    private function checkAngkaPengajuan($angka, $logTahapanPengajuanKegiatan)
+    {
+        if ($logTahapanPengajuanKegiatan->count() == 9) {
+            # code...
+            switch ($angka) {
+                case 1:
                     # code...
                     return 6;
                     break;
