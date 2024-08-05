@@ -72,7 +72,7 @@ class RegisterController extends ApiController
                 if ($user->user_akseslh->status_user == 'ACTIVE') return $this->sendError(null, 'Already active');
 
                 // Change user status to active
-                $user->email = $request->email_pic;
+                $user->email_pic = $request->email_pic;
                 $user->save();
 
                 $user->user_akseslh->email          = $request->email_pic;

@@ -50,7 +50,7 @@ class DataPicKelompokMasyarakatController extends ApiController
     {
         $input  =   $request->validate([
             'kelompok_masyarakat_id'            => 'required|exists:kelompok_masyarakats,id',
-            'email_pic'                         => 'required|email|max:100|unique:data_pic_kelompok_masyarakats,email_pic',
+            'email_pic'                         => 'nullable|email|max:100|unique:data_pic_kelompok_masyarakats,email_pic',
             'nama_pic'                          => 'required|string|max:255',
             'jenis_identitas_pic'               => 'required',
             'nomor_identitas_pic'               => 'required|max:20|unique:data_pic_kelompok_masyarakats,nomor_identitas_pic',
@@ -81,7 +81,7 @@ class DataPicKelompokMasyarakatController extends ApiController
     {
         $input  =   $request->validate([
             'kelompok_masyarakat_id'            => 'required|exists:kelompok_masyarakats,id',
-            'email_pic'                         => 'required|email|max:100|unique:data_pic_kelompok_masyarakats,email_pic,' . $id,
+            'email_pic'                         => 'nullable|email|max:100|unique:data_pic_kelompok_masyarakats,email_pic,' . $id,
             'nama_pic'                          => 'required|string|max:255',
             'jenis_identitas_pic'               => 'required',
             'nomor_identitas_pic'               => 'required|max:20|unique:data_pic_kelompok_masyarakats,nomor_identitas_pic,' . $id,

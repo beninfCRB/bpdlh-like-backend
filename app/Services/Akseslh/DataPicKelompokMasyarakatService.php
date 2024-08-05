@@ -76,7 +76,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
                 'nama_pic'                  => $data['nama_pic'],
                 'jenis_identitas_pic'       => $data['jenis_identitas_pic'],
                 'nomor_identitas_pic'       => $data['nomor_identitas_pic'],
-                'email_pic'                 => $data['email_pic'],
+                'email_pic'                 => $data['email_pic'] ?? null,
                 'nohp_pic'                  => $data['nohp_pic'],
                 'alamat_pic'                => $data['alamat_pic'],
                 'kelurahan_pic'             => $data['kelurahan_pic'],
@@ -88,7 +88,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
 
             $dataUserAkseslh = $this->modelUserAkseslh->newQuery()->create([
                 'data_pic_kelompok_masyarakat_id'   => $data->id,
-                'email'                             => $data['email_pic'],
+                'email'                             => $data['email_pic'] ?? null,
                 // 'password'                          => Hash::make($default_password),
                 'status_user'                       => 'NON ACTIVE',
                 'flag'                              => 1,
@@ -114,7 +114,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->nama_pic                 = $data['nama_pic'];
             $read->jenis_identitas_pic      = $data['jenis_identitas_pic'];
             $read->nomor_identitas_pic      = $data['nomor_identitas_pic'];
-            $read->email_pic                = $data['email_pic'];
+            $read->email_pic                = $data['email_pic'] ?? null;
             $read->nohp_pic                 = $data['nohp_pic'];
             $read->alamat_pic               = $data['alamat_pic'];
             $read->kelurahan_pic            = $data['kelurahan_pic'];
@@ -123,7 +123,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->provinsi_pic             = $data['provinsi_pic'];
             $read->save();
 
-            $read->user_akseslh->email              = $data['email_pic'];
+            $read->user_akseslh->email              = $data['email_pic'] ?? null;
             $read->user_akseslh->status_user        = $data['status_user'];
             $read->user_akseslh->save();
 
