@@ -34,7 +34,7 @@ class ProvinsiService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->with(['kota'])->find($id);
 
         return $this->sendSuccess($result);
     }
