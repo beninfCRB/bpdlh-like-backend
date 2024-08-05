@@ -65,9 +65,7 @@ class PengajuanKegiatan extends AppModel
         $paket_kegiatan = $paket_kegiatan->jenis_kegiatan->code_id ? $paket_kegiatan->jenis_kegiatan->code_id : 0;
         $tahun = Carbon::now()->format('y');
         $bulan = Carbon::now()->format('m');
-        $lastRecord = self::whereDate('created_at', now()->toDateString())
-            ->orderBy('id', 'desc')
-            ->first();
+        $lastRecord = self::latest()->first();
 
         $lastNumber = $lastRecord ? intval(substr($lastRecord->nomor_pengajuan, -6)) : 0;
         $lastNumber += 1;
