@@ -103,8 +103,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->get();
 
         if (!$result)  return $this->sendError(null);
-
         $result->transform(function ($items, $key) {
+            dd($items->log_tahapan_pengajuan);
             return [
                 'id'                        => $items->id,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
