@@ -143,6 +143,51 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
             $read->tahap_pencairan_paket_kegiatan    = $data['tahap_pencairan_paket_kegiatan'];
             $read->save();
 
+            $tahap_salur = 1;
+            $dataTahapSalur = [];
+            foreach ($data['porsi_pencairan'] as $item) {
+                # code...
+                $dataTahapSalur[] = [
+                    'tahap_salur'       => $tahap_salur,
+                    'porsi_pencairan'   => (int) $item,
+                    'flag' => 1,
+                ];
+
+                $tahap_salur++;
+            }
+
+            foreach ($data['komponen_rab'] as $item) {
+                # code...
+                if (isset($item['id']) && isset($item['qty']) && isset($item['harga_unit'])) {
+                    # code...
+                    $dataKomponenRab[] = [
+                        'master_komponen_rab_id'    => $item['id'],
+                        'standar_qty'               => $item['qty'],
+                        'standar_harga_unit'        => $item['harga_unit'],
+                        'flag'                      => 1,
+                    ];
+                }
+            }
+
+            $read->tahap_salur_paket_kegiatan()->forceDelete();
+            $read->standar_rab_paket_kegiatan()->forceDelete();
+
+            $read->tahap_salur_paket_kegiatan()->saveMany(
+                collect($dataTahapSalur)->map(function ($tahapSalur) {
+                    return new TahapSalurPaketKegiatan($tahapSalur);
+                })
+            );
+
+            if (isset($dataKomponenRab)) {
+                # code...
+                $read->standar_rab_paket_kegiatan()->saveMany(
+                    collect($dataKomponenRab)->map(function ($komponenRab) {
+                        return new StandarRabPaketKegiatan($komponenRab);
+                    })
+                );
+            }
+
+
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
@@ -155,6 +200,8 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
         try {
+            $read->tahap_salur_paket_kegiatan()->forceDelete();
+            $read->standar_rab_paket_kegiatan()->forceDelete();
             $read->delete();
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);

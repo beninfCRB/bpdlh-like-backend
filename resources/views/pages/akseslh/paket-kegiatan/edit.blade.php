@@ -25,7 +25,8 @@
         @error('porsi_pencairan')
         <h1>{{ $message }}</h1>
         @enderror
-        <form role="form" action="{{ route('paket-kegiatan.store') }}" method="POST">
+        <form role="form" action="{{ route('paket-kegiatan.update', $data->id) }}" method="POST">
+            @method('PUT')
             @csrf
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -40,7 +41,7 @@
                                 <option class='form-control' value=''>- Pilih Data -</option>
                                 @isset($jenisKegiatan)
                                 @foreach ($jenisKegiatan as $item)
-                                @if (old('jenis_kegiatan_id') == $item['id'])
+                                @if (old('jenis_kegiatan_id', $data->jenis_kegiatan_id) == $item['id'])
                                 <option class='form-control' value="{{ $item['id'] }}" selected>{{
                                     $item['jenis_kegiatan'] }}
                                 </option>
@@ -66,7 +67,8 @@
                                 <option class='form-control' value=''>- Pilih Data -</option>
                                 @isset($masterSubTematikKegiatan)
                                 @foreach ($masterSubTematikKegiatan as $item)
-                                @if (old('master_sub_tematik_kegiatan_id') == $item['id'])
+                                @if (old('master_sub_tematik_kegiatan_id', $data->master_sub_tematik_kegiatan_id) ==
+                                $item['id'])
                                 <option class='form-control' value="{{ $item['id'] }}" selected>{{
                                     $item['tematik'] }}
                                 </option>
@@ -88,7 +90,8 @@
                             <label for="nama_paket_kegiatan">Nama Paket Kegiatan <span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nama_paket_kegiatan" name="nama_paket_kegiatan"
-                                placeholder="Nama Paket Kegiatan" value="{{ old('nama_paket_kegiatan') }}">
+                                placeholder="Nama Paket Kegiatan"
+                                value="{{ old('nama_paket_kegiatan', $data->nama_paket_kegiatan) }}">
                             @error('nama_paket_kegiatan')
                             <span class="error">
                                 {{ $message }}
@@ -100,7 +103,7 @@
                                     class="text-danger">*</span></label>
                             <textarea class="form-control" id="deskripsi_paket_kegiatan" name="deskripsi_paket_kegiatan"
                                 rows="3"
-                                placeholder="Deskripsi Paket Kegiatan">{{ old('deskripsi_paket_kegiatan') }}</textarea>
+                                placeholder="Deskripsi Paket Kegiatan">{{ old('deskripsi_paket_kegiatan', $data->deskripsi_paket_kegiatan) }}</textarea>
                             @error('deskripsi_paket_kegiatan')
                             <span class="error">
                                 {{ $message }}
@@ -110,7 +113,7 @@
                         <div class="form-group @error('jumlah_peserta') has-error @enderror col-md-3">
                             <label for="jumlah_peserta">Jumlah Peserta <span class="text-danger">*</span></label>
                             <input type="number" min=0 class="form-control" id="jumlah_peserta" name="jumlah_peserta"
-                                value="{{ old('jumlah_peserta') }}">
+                                value="{{ old('jumlah_peserta', $data->jumlah_peserta) }}">
                             @error('jumlah_peserta')
                             <span class="error">
                                 {{ $message }}
@@ -121,7 +124,8 @@
                             <label for="quota_paket_kegiatan">Quota Paket Kegiatan <span
                                     class="text-danger">*</span></label>
                             <input type="number" min=0 class="form-control" id="quota_paket_kegiatan"
-                                name="quota_paket_kegiatan" value="{{ old('quota_paket_kegiatan') }}">
+                                name="quota_paket_kegiatan"
+                                value="{{ old('quota_paket_kegiatan', $data->quota_paket_kegiatan) }}">
                             @error('quota_paket_kegiatan')
                             <span class="error">
                                 {{ $message }}
@@ -132,7 +136,8 @@
                             <label for="pagu_paket_kegiatan">Pagu Paket Kegiatan (Rp) <span
                                     class="text-danger">*</span></label>
                             <input type="number" min=0 step="0.00" class="form-control" id="pagu_paket_kegiatan"
-                                name="pagu_paket_kegiatan" value="{{ old('pagu_paket_kegiatan') }}">
+                                name="pagu_paket_kegiatan"
+                                value="{{ old('pagu_paket_kegiatan', $data->pagu_paket_kegiatan) }}">
                             @error('pagu_paket_kegiatan')
                             <span class="error">
                                 {{ $message }}
@@ -210,19 +215,31 @@
                                         <tr>
                                             <td>
                                                 <input type="checkbox" name="komponen_rab[{{ $loop->iteration }}][id]"
-                                                    id="" value="{{ $item['id'] }}">
+                                                    id="" value="{{ $item['id'] }}" {{
+                                                    $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id',
+                                                $item['id'])->first() ?
+                                                'checked' : null }}>
                                             </td>
                                             <td>{{ $item['komponen_rab'] }}</td>
-                                            <td>{{ $item['standar_harga_unit'] }}</td>
                                             <td>
-                                                <input type="number" class="form-control"
-                                                    name="komponen_rab[{{ $loop->iteration }}][qty]" id="" min="1"
-                                                    value="{{ array_search($item['id'], $data->standar_rab_paket_kegiatan->toArray()) }}"
-                                                    onkeyup="">
+                                                <span id="standar_harga_unit_{{ $loop->iteration }}">
+                                                    {{ $item['standar_harga_unit'] }}
+                                                </span>
                                             </td>
                                             <td>
                                                 <input type="number" class="form-control"
-                                                    name="komponen_rab[{{ $loop->iteration }}][harga_unit]" id="">
+                                                    name="komponen_rab[{{ $loop->iteration }}][qty]"
+                                                    id="qty_{{ $loop->iteration }}" min="1"
+                                                    value="{{ $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first() ? $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_qty : null }}"
+                                                    onkeyup="countSum({{ $loop->iteration }})">
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control"
+                                                    name="komponen_rab[{{ $loop->iteration }}][harga_unit]"
+                                                    id="harga_unit_{{ $loop->iteration }}"
+                                                    value="{{ $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first() ?
+                                                    $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_harga_unit : null }}"
+                                                    readonly>
                                             </td>
                                         </tr>
                                         @endforeach

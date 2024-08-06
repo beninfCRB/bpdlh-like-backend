@@ -77,9 +77,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->latest()->first();
 
-        if (!$result) return $this->sendError(null, 'null');
-
         $data = null;
+
+        if (!$result) return $this->sendSuccess($data, 'Success');
+
         if ($result) {
             # code...
             $data[] = [
