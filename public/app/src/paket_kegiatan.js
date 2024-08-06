@@ -7,6 +7,7 @@ import {
     deleteData,
     showData,
 } from "../api";
+var route = $("#paket-kegiatan-route").val();
 
 var data_paket_kegiatan = (function () {
     var initTable1 = function () {
@@ -95,16 +96,13 @@ var data_paket_kegiatan = (function () {
                     targets: -1,
                     orderable: false,
                     render: function (data, type, full, meta) {
+                        var editRoute = route + "/" + full.id + "/edit";
+
                         return (
                             `
-                       <a href="/career/` +
-                            full.id +
-                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Detail">
-                          <i class="fa fa-eye"></i>
-                        </a>
-                        <a href="/akseslh/paket-kegiatan/` +
-                            full.id +
-                            `/edit" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                        <a href="` +
+                            editRoute +
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
@@ -182,6 +180,15 @@ window.generateForm = (input) => {
     }
 };
 
+window.countSum = (iteration) => {
+    let standar_harga_unit = $.trim(
+        $("#standar_harga_unit_" + iteration).text()
+    );
+    let int_standar_harga_unit = parseInt(standar_harga_unit, 10);
+    let qty = $("#qty_" + iteration).val();
+    $("#harga_unit_" + iteration).val(int_standar_harga_unit);
+};
+
 window.createPaketKegiatan = (input, evt) => {
     evt.preventDefault();
 
@@ -197,6 +204,8 @@ window.createPaketKegiatan = (input, evt) => {
 };
 
 window.deletePaketKegiatan = (input) => {
+    var deleteRoute = route + "/" + $(input).attr("data-id");
+
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
@@ -209,9 +218,7 @@ window.deletePaketKegiatan = (input) => {
         reverseButtons: false,
     }).then((result) => {
         if (result.value) {
-            deleteData(
-                "/akseslh/paket-kegiatan/" + $(input).attr("data-id")
-            ).then((res) => {
+            deleteData(deleteRoute).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
             });

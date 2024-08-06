@@ -210,15 +210,19 @@
                                                     id="" value="{{ $item['id'] }}">
                                             </td>
                                             <td>{{ $item['komponen_rab'] }}</td>
-                                            <td>{{ $item['standar_harga_unit'] }}</td>
+                                            <td><span id="standar_harga_unit_{{ $loop->iteration }}">
+                                                    {{ $item['standar_harga_unit'] }}
+                                                </span></td>
                                             <td>
                                                 <input type="number" class="form-control"
-                                                    name="komponen_rab[{{ $loop->iteration }}][qty]" id="" min="1"
-                                                    onkeyup="">
+                                                    name="komponen_rab[{{ $loop->iteration }}][qty]"
+                                                    id="qty_{{ $loop->iteration }}" min="1"
+                                                    onkeyup="countSum({{ $loop->iteration }})">
                                             </td>
                                             <td>
                                                 <input type="number" class="form-control"
-                                                    name="komponen_rab[{{ $loop->iteration }}][harga_unit]" id="">
+                                                    name="komponen_rab[{{ $loop->iteration }}][harga_unit]"
+                                                    id="harga_unit_{{ $loop->iteration }}" readonly>
                                             </td>
                                         </tr>
                                         @endforeach

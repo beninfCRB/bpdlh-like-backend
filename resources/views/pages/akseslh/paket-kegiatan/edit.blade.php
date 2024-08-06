@@ -221,18 +221,25 @@
                                                 'checked' : null }}>
                                             </td>
                                             <td>{{ $item['komponen_rab'] }}</td>
-                                            <td>{{ $item['standar_harga_unit'] }}</td>
                                             <td>
-                                                <input type="number" class="form-control"
-                                                    name="komponen_rab[{{ $loop->iteration }}][qty]" id="" min="1"
-                                                    value="{{ $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first() ? $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_harga_unit : null }}"
-                                                    onkeyup="">
+                                                <span id="standar_harga_unit_{{ $loop->iteration }}">
+                                                    {{ $item['standar_harga_unit'] }}
+                                                </span>
                                             </td>
                                             <td>
                                                 <input type="number" class="form-control"
-                                                    name="komponen_rab[{{ $loop->iteration }}][harga_unit]" id=""
+                                                    name="komponen_rab[{{ $loop->iteration }}][qty]"
+                                                    id="qty_{{ $loop->iteration }}" min="1"
+                                                    value="{{ $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first() ? $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_qty : null }}"
+                                                    onkeyup="countSum({{ $loop->iteration }})">
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control"
+                                                    name="komponen_rab[{{ $loop->iteration }}][harga_unit]"
+                                                    id="harga_unit_{{ $loop->iteration }}"
                                                     value="{{ $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first() ?
-                                                    $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_qty : null }}">
+                                                    $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_harga_unit : null }}"
+                                                    readonly>
                                             </td>
                                         </tr>
                                         @endforeach

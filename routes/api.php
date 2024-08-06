@@ -4,6 +4,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Middleware\EnsureHeaderIsValid;
+use App\Notifications\PengajuanKegiatanNotification;
 use Illuminate\Http\Request;
 
 /*
@@ -29,8 +30,6 @@ Route::get('generate-pdf', function () {
     Storage::put($filePath, $pdf->output());
 });
 
-Route::get('test-email', [App\Http\Controllers\Authapi\RegisterController::class, 'test_email'])->excludedMiddleware(EnsureHeaderIsValid::class);
-
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
 
@@ -48,11 +47,10 @@ Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Cont
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::get('check-role', function () {
-        return response()->json([
-            'message'   => 'Ini Maker'
-        ]);
-    })->middleware('ensurerole:maker');
+    Route::get('test-notification', function (Request $request) {
+        // $request->user()->notify(new PengajuanKegiatanNotification());
+        return $request->user()->notifications;
+    });
 
     Route::post('logout', [App\Http\Controllers\Authapi\LogoutController::class, 'logout']);
 
