@@ -75,7 +75,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataProsesKegiatan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->first();
+        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->latest()->first();
+
+        if (!$result) return $this->sendError(null, 'null');
 
         $data = null;
         if ($result) {
@@ -87,7 +89,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                 'jumlah'                    => $result->paket_kegiatan->jumlah_peserta . " " . ($result->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
                 'lokasi'                    => $result->alamat_kegiatan,
-                'tahapan_pengajuan'         => "Dalam Proses " . $result->log_tahapan_pengajuan->whereNull('tanggal_selesai')->first()->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
+                'tahapan_pengajuan'         => "Dalam Proses " . $this->checkStatusPengajuan($result->flag, $result->log_tahapan_pengajuan),
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->flag, $result->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => 0,
                 'dana_yang_dicairkan'       => 0,
