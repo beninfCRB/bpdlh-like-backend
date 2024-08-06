@@ -52,14 +52,13 @@ class PaketKegiatanController extends ApiController
         $jenisKegiatan              = $this->jenisKegiatanService->getAllAttr()->data;
         $masterSubTematikKegiatan   = $this->masterSubTematikKegiatanService->getAllAttr()->data;
         $masterKomponenRab          = $this->masterKomponenRabService->getAllAttr()->data;
+        // dd($data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', 'c3a12676-b793-41bd-924e-e489aca11588')->first());
+        // dd(array_search('c3a12676-b793-41bd-924e-e489aca11588', $data->standar_rab_paket_kegiatan->toArray()));
         foreach ($masterKomponenRab as $item) {
             # code...
-            if (array_search($item['id'], $data->standar_rab_paket_kegiatan->toArray())) {
-                # code...
-                dd(array_search($item['id'], $data->standar_rab_paket_kegiatan->toArray()));
-            }
+            // dd($item);
         }
-
+        // dd($masterKomponenRab, $data->standar_rab_paket_kegiatan->toArray());
         return view("pages.akseslh.paket-kegiatan.edit", compact('data', 'jenisKegiatan', 'masterSubTematikKegiatan', 'masterKomponenRab'));
     }
 
@@ -104,6 +103,8 @@ class PaketKegiatanController extends ApiController
             'quota_paket_kegiatan'              => 'required|numeric',
             'pagu_paket_kegiatan'               => 'required',
             'tahap_pencairan_paket_kegiatan'    => 'required|numeric',
+            'porsi_pencairan'                   => ['nullable', new TahapanSalurValidation],
+            'komponen_rab'                      => 'nullable'
         ]);
 
         $result =   $this->paketKegiatanService->update($id, $input);

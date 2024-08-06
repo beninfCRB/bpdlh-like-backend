@@ -143,6 +143,34 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
             $read->tahap_pencairan_paket_kegiatan    = $data['tahap_pencairan_paket_kegiatan'];
             $read->save();
 
+            $tahap_salur = 1;
+            $dataTahapSalur = [];
+            foreach ($data['porsi_pencairan'] as $item) {
+                # code...
+                $dataTahapSalur[] = [
+                    'tahap_salur'       => $tahap_salur,
+                    'porsi_pencairan'   => (int) $item,
+                    'flag' => 1,
+                ];
+
+                $tahap_salur++;
+            }
+
+            foreach ($data['komponen_rab'] as $item) {
+                # code...
+                if (isset($item['id']) && isset($item['qty']) && isset($item['harga_unit'])) {
+                    # code...
+                    $dataKomponenRab[] = [
+                        'master_komponen_rab_id'    => $item['id'],
+                        'standar_qty'               => $item['qty'],
+                        'standar_harga_unit'        => $item['harga_unit'],
+                        'flag'                      => 1,
+                    ];
+                }
+            }
+
+            $read->tahap_salur_paket_kegiatan->sync($dataTahapSalur);
+
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
