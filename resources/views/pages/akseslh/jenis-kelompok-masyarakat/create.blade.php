@@ -30,7 +30,8 @@
                         <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="jenis_kelompok_masyarakat"
-                            name="jenis_kelompok_masyarakat" placeholder="Jenis Kelompok Masyarakat">
+                            name="jenis_kelompok_masyarakat" placeholder="Jenis Kelompok Masyarakat"
+                            value="{{ old('jenis_kelompok_masyarakat') }}">
                         @error('jenis_kelompok_masyarakat')
                         <span class="error">
                             {{ $message }}
