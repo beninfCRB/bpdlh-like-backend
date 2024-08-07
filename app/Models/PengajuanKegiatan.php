@@ -67,9 +67,9 @@ class PengajuanKegiatan extends AppModel
         $bulan = Carbon::now()->format('m');
         $lastRecord = self::latest()->first();
 
-        $lastNumber = $lastRecord ? intval(substr($lastRecord->nomor_pengajuan, -6)) : 0;
+        $lastNumber = $lastRecord ? intval(substr($lastRecord->nomor_pengajuan, -4)) : 0;
         $lastNumber += 1;
-        $newNumber = str_pad($lastNumber, 7, '0', STR_PAD_LEFT);
+        $newNumber = str_pad($lastNumber, 5, '0', STR_PAD_LEFT);
 
         return $jenis_kelompok . $tematik_kegiatan . $sub_tematik_kegiatan . $paket_kegiatan . "-" . $tahun . $bulan . "-" . $newNumber;
     }

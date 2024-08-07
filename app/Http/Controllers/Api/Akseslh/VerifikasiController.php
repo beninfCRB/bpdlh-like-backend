@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Akseslh;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
+use App\Notifications\VerifikasiValidasiNotification;
 use App\Services\Akseslh\VerifikasiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -113,6 +114,7 @@ class VerifikasiController extends ApiController
 
 		try {
 			if ($result->success) {
+				$request->user()->notify(new VerifikasiValidasiNotification($result->data['nomor_pengajuan']));
 				return $this->sendSuccess($result->data, $result->message, $result->code);
 			}
 
