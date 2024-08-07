@@ -314,6 +314,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $model = $this->model->find($id);
 
+        if (!$model) return $this->sendError(null, 'Not found');
+
         $dataKomponenRabInput = null;
         foreach ($dataKomponenRab as $item) {
             # code...

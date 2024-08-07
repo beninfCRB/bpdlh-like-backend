@@ -114,7 +114,7 @@ class VerifikasiController extends ApiController
 
 		try {
 			if ($result->success) {
-				$request->user()->notify(new VerifikasiValidasiNotification($result->data['nomor_pengajuan']));
+
 				return $this->sendSuccess($result->data, $result->message, $result->code);
 			}
 

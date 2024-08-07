@@ -6,19 +6,23 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\DataPicKelompokMasyarakatService;
 use App\Services\Akseslh\KelompokMasyarakatService;
+use App\Services\Akseslh\ProvinsiService;
 
 class DataPicKelompokMasyarakatController extends ApiController
 {
     protected $dataPicKelompokMasyarakatService;
     protected $kelompokMasyarakatService;
+    protected $provinsiService;
 
     public function __construct(
         DataPicKelompokMasyarakatService $dataPicKelompokMasyarakatService,
         KelompokMasyarakatService $kelompokMasyarakatService,
+        ProvinsiService $provinsiService,
         Request $request
     ) {
-        $this->dataPicKelompokMasyarakatService   =   $dataPicKelompokMasyarakatService;
-        $this->kelompokMasyarakatService   =   $kelompokMasyarakatService;
+        $this->dataPicKelompokMasyarakatService     =   $dataPicKelompokMasyarakatService;
+        $this->kelompokMasyarakatService            =   $kelompokMasyarakatService;
+        $this->provinsiService                      =   $provinsiService;
         parent::__construct($request);
     }
 
@@ -30,7 +34,8 @@ class DataPicKelompokMasyarakatController extends ApiController
     public function create()
     {
         $kelompokMasyarakat = $this->kelompokMasyarakatService->apiGetAll()->data;
-        return view("pages.akseslh.data-pic-kelompok-masyarakat.create", compact('kelompokMasyarakat'));
+        $provinsi    = $this->provinsiService->apiGetAll()->data;
+        return view("pages.akseslh.data-pic-kelompok-masyarakat.create", compact('kelompokMasyarakat', 'provinsi'));
     }
 
     public function edit($id)
