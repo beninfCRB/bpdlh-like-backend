@@ -9,6 +9,7 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Notifications\PengajuanKegiatanNotification;
+use Carbon\Carbon;
 
 class PengajuanKegiatanController extends ApiController
 {
@@ -62,21 +63,24 @@ class PengajuanKegiatanController extends ApiController
         $validator = Validator::make($request->all(), [
             'paket_kegiatan_id'         => 'required|exists:paket_kegiatans,id',
             'lokasi_bidang_folu_id'     => 'nullable|exists:lokasi_bidang_folus,id',
-            'judul_pengajuan_kegiatan'  => 'required|string|max:500',
-            'provinsi_kegiatan'         => 'required',
-            'kabupaten_kegiatan'        => 'required',
-            'kecamatan_kegiatan'        => 'required',
-            'kelurahan_kegiatan'        => 'required',
-            'alamat_kegiatan'           => 'required',
-            'tanggal_kegiatan'          => 'required',
-            'waktu_kegiatan'            => 'required',
-            'proposal_kegiatan'         => 'required',
-            'tujuan_kegiatan'           => 'required',
-            'ruang_lingkup_kegiatan'    => 'required',
-            'fileDocument'              => 'required',
+            'judul_pengajuan_kegiatan'  => 'nullable|string|max:500',
+            'provinsi_kegiatan'         => 'nullable',
+            'kabupaten_kegiatan'        => 'nullable',
+            'kecamatan_kegiatan'        => 'nullable',
+            'kelurahan_kegiatan'        => 'nullable',
+            'alamat_kegiatan'           => 'nullable',
+            'tanggal_kegiatan'          => 'nullable',
+            'waktu_kegiatan'            => 'nullable',
+            'proposal_kegiatan'         => 'nullable',
+            'tujuan_kegiatan'           => 'nullable',
+            'ruang_lingkup_kegiatan'    => 'nullable',
+            'fileDocument'              => 'nullable',
         ]);
 
-        $input['fileDocument'] = $request->file('fileDocument');
+        if (isset($request->fileDocument)) {
+            # code...
+            $input['fileDocument'] = $request->file('fileDocument');
+        }
 
         if ($validator->fails()) {
             # code...
@@ -85,21 +89,23 @@ class PengajuanKegiatanController extends ApiController
 
         $input          = $validator->validated();
 
-        $tanggalArray   = explode(" - ", $input["tanggal_kegiatan"]);
-        $waktuArray     = explode(" - ", $input["waktu_kegiatan"]);
+        if (isset($request->tanggal_kegiatan)) {
+            # code...
+            $tanggalArray   = explode(" - ", $input["tanggal_kegiatan"]);
+            $waktuArray     = explode(" - ", $input["waktu_kegiatan"]);
+            $input["tanggal_mulai_kegiatan"]    = $tanggalArray[0];
+            $input["tanggal_akhir_kegiatan"]    = $tanggalArray[1];
+            $input["time_mulai_kegiatan"]       = $waktuArray[0];
+            $input["time_akhir_kegiatan"]       = $waktuArray[1];
+
+            //eliminate unnecessary key 
+            unset($input["tanggal_kegiatan"]);
+            unset($input["waktu_kegiatan"]);
+        }
 
         //add new key for required field in table
-        $input["user_akseslh_id"] = $request->user()->id;
-        $input["tanggal_mulai_kegiatan"]    = $tanggalArray[0];
-        $input["tanggal_akhir_kegiatan"]    = $tanggalArray[1];
-        $input["time_mulai_kegiatan"]      = $waktuArray[0];
-        $input["time_akhir_kegiatan"]      = $waktuArray[1];
-
+        $input["user_akseslh_id"]           = $request->user()->id;
         $input['user']                      = $request->user();
-
-        //eliminate unnecessary key 
-        unset($input["tanggal_kegiatan"]);
-        unset($input["waktu_kegiatan"]);
 
         $result = $this->pengajuanKegiatanService->create($input);
 
@@ -124,7 +130,7 @@ class PengajuanKegiatanController extends ApiController
             //code...
             if ($result->success) {
                 // Send notification database
-                $request->user()->notify(new PengajuanKegiatanNotification($result->data['nomor_pengajuan']));
+                $request->user()->notify(new PengajuanKegiatanNotification($result->data['nomor_pengajuan'], $result->data['atas_nama'], $result->data['sebesar']));
 
                 return $this->sendSuccess($result->data, $result->message, $result->code);
             }
