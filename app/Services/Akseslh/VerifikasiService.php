@@ -8,6 +8,7 @@ use App\Models\PengajuanKegiatan;
 use App\Models\TahapanPengajuanKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
+use App\Notifications\VerifikasiValidasiNotification;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -151,6 +152,8 @@ class VerifikasiService extends AppService implements AppServiceInterface
                     'status'          => '2'
                 );
             }
+
+            $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan));
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
