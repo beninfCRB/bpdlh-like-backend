@@ -57,15 +57,17 @@ class LoginController extends ApiController
                             'kelompok_masyarakat_id'    => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->id,
                             'kelompok_masyarakat'       => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                             'role_user'                 => $user->role_user,
+                            'nama'                      => $user->data_pic_kelompok_masyarakat->nama_pic,
 
                         ]);
                     } else {
                         return $this->sendSuccess([
                             'token'                     => $token,
-                            'jenis_kelompok_masyarakat' => null,
-                            'kelompok_masyarakat_id'    => null,
-                            'kelompok_masyarakat'       => null,
+                            'jenis_kelompok_masyarakat' => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator',
+                            'kelompok_masyarakat_id'    => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator',
+                            'kelompok_masyarakat'       => 'Verifikator',
                             'role_user'                 => $user->role_user,
+                            'nama'                      => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator'
 
                         ]);
                     }
