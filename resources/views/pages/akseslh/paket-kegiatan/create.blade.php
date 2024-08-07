@@ -216,13 +216,12 @@
                                             <td>
                                                 <input type="number" class="form-control"
                                                     name="komponen_rab[{{ $loop->iteration }}][qty]"
-                                                    id="qty_{{ $loop->iteration }}" min="1"
-                                                    onkeyup="countSum({{ $loop->iteration }})">
+                                                    id="qty_{{ $loop->iteration }}" min="1">
                                             </td>
                                             <td>
                                                 <input type="number" class="form-control"
                                                     name="komponen_rab[{{ $loop->iteration }}][harga_unit]"
-                                                    id="harga_unit_{{ $loop->iteration }}" readonly>
+                                                    id="harga_unit_{{ $loop->iteration }}">
                                             </td>
                                         </tr>
                                         @endforeach

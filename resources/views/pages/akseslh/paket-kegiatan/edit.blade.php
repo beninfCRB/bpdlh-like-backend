@@ -230,16 +230,14 @@
                                                 <input type="number" class="form-control"
                                                     name="komponen_rab[{{ $loop->iteration }}][qty]"
                                                     id="qty_{{ $loop->iteration }}" min="1"
-                                                    value="{{ $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first() ? $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_qty : null }}"
-                                                    onkeyup="countSum({{ $loop->iteration }})">
+                                                    value="{{ $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first() ? $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_qty : null }}">
                                             </td>
                                             <td>
                                                 <input type="number" class="form-control"
                                                     name="komponen_rab[{{ $loop->iteration }}][harga_unit]"
                                                     id="harga_unit_{{ $loop->iteration }}"
                                                     value="{{ $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first() ?
-                                                    $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_harga_unit : null }}"
-                                                    readonly>
+                                                    $data->standar_rab_paket_kegiatan->where('master_komponen_rab_id', $item['id'])->first()->standar_harga_unit : null }}">
                                             </td>
                                         </tr>
                                         @endforeach
