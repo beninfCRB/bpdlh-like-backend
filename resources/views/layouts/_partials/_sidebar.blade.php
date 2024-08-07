@@ -6,8 +6,8 @@
       </div>
       <div class="user-info">
         <div class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-            aria-expanded="false">{{ auth()->user()->nama_lengkap }}
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{
+            auth()->user()->nama_lengkap }}
             <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li>
@@ -19,8 +19,11 @@
               <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
             </li>
             <li>
-              <a href="javascript:void(0)"><i class="md md-settings-power"
-                  onclick="document.getElementById('logout-form').submit()"></i> Logout</a>
+              <form action="/logout" method="post" id="logout-form-sidebar">
+                @csrf
+              </form>
+              <a href="javascript:void(0)"><i class="md md-settings-power" onclick="alert('uhuy')"></i>
+                Logout</a>
             </li>
           </ul>
         </div>
@@ -64,8 +67,7 @@
                 style="padding: 10px 25px 10px 30px;">> <span>Master Sub Tematik Kegiatan</span></a>
             </li>
             <li>
-              <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">>
+              <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
                 <span>Paket Kegiatan</span></a>
             </li>
             <li>

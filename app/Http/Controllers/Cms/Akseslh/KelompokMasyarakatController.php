@@ -84,7 +84,7 @@ class KelompokMasyarakatController extends ApiController
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('jenis-kelompok-masyarakat.index');
+                return redirect()->route('kelompok-masyarakat.index');
             }
 
             return back()->with('error', $result->message);

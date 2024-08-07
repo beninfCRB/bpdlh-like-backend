@@ -109,6 +109,9 @@
     {{-- Day js --}}
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 
+    {{-- Sweetalert --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     {{-- Mix --}}
     <script src="{{ mix('app/build/app.js') }}"></script>
 
