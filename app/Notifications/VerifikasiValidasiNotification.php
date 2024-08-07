@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PengajuanKegiatanNotification extends Notification
+class VerifikasiValidasiNotification extends Notification
 {
     use Queueable;
     protected $nomor_pengajuan;
@@ -42,10 +42,10 @@ class PengajuanKegiatanNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        // return (new MailMessage)
-        //     ->line('The introduction to the notification.')
-        //     ->action('Notification Action', url('/'))
-        //     ->line('Thank you for using our application!');
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -59,7 +59,7 @@ class PengajuanKegiatanNotification extends Notification
         return [
             //
             'message_header'    => 'Nomor permohonan: #' . $this->nomor_pengajuan,
-            'message_body'      => 'Permohonan anda diterima. Data anda sedang diverifikasi.'
+            'message_body'      => 'Selamat! Proses Verifikasi dan Validasi berhasil. Segera lengkapi informasi pencairan dana.'
         ];
     }
 }

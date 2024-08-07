@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
-use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\PdfService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
+use App\Services\Akseslh\PengajuanKegiatanService;
+use App\Notifications\PengajuanKegiatanNotification;
 
 class PengajuanKegiatanController extends ApiController
 {
@@ -122,6 +123,9 @@ class PengajuanKegiatanController extends ApiController
         try {
             //code...
             if ($result->success) {
+                // Send notification database
+                $request->user()->notify(new PengajuanKegiatanNotification($result->data['nomor_pengajuan']));
+
                 return $this->sendSuccess($result->data, $result->message, $result->code);
             }
 
