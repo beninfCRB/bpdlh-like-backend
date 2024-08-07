@@ -85,6 +85,14 @@ class VerifikasiService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
 
+        // dd($read->rab_pengajuan_paket_kegiatans);
+
+        $total = 0;
+        foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
+            # code...
+            $total += ($items->qty * $items->harga_unit);
+        }
+
         if (!$read) return $this->sendError(null, 'Not Found');
 
         \DB::beginTransaction();
@@ -153,7 +161,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
                 );
             }
 
-            $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan));
+            $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);

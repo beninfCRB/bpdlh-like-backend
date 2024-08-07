@@ -17,6 +17,7 @@ use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\RabPengajuanPaketKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
+use Carbon\Carbon;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
@@ -89,7 +90,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'sub_tematik_kegiatan'      => $result->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
                 'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                 'jumlah'                    => $result->paket_kegiatan->jumlah_peserta . " " . ($result->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
-                'lokasi'                    => $result->alamat_kegiatan,
+                'lokasi'                    => $result->alamat_kegiatan ?? 'Alamat',
                 'tahapan_pengajuan'         => "Dalam Proses " . $this->checkStatusPengajuan($result->flag, $result->log_tahapan_pengajuan),
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->flag, $result->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => 0,
@@ -116,7 +117,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
                 'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                 'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
-                'lokasi'                    => $items->alamat_kegiatan,
+                'lokasi'                    => $items->alamat_kegiatan ?? 'Alamat',
                 'tahapan_pengajuan'         => "Dalam Proses " . $this->checkStatusPengajuan($items->flag, $items->log_tahapan_pengajuan),
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->flag, $items->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => 0,
@@ -157,19 +158,19 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'nomor_pengajuan'               => $data['nomor_pengajuan'],
                 'paket_kegiatan_id'             => $data['paket_kegiatan_id'],
                 'user_akseslh_id'               => $data['user_akseslh_id'],
-                'judul_pengajuan_kegiatan'      => $data['judul_pengajuan_kegiatan'],
-                'provinsi_kegiatan'             => $data['provinsi_kegiatan'],
-                'kabupaten_kegiatan'            => $data['kabupaten_kegiatan'],
-                'kecamatan_kegiatan'            => $data['kecamatan_kegiatan'],
-                'kelurahan_kegiatan'            => $data['kelurahan_kegiatan'],
-                'alamat_kegiatan'               => $data['alamat_kegiatan'],
-                'proposal_kegiatan'             => $data['proposal_kegiatan'],
-                'tujuan_kegiatan'               => $data['tujuan_kegiatan'],
-                'ruang_lingkup_kegiatan'        => $data['ruang_lingkup_kegiatan'],
-                'tanggal_mulai_kegiatan'        => date_create($data['tanggal_mulai_kegiatan']),
-                'tanggal_akhir_kegiatan'        => date_create($data['tanggal_akhir_kegiatan']),
-                'time_mulai_kegiatan'           => $data['time_mulai_kegiatan'],
-                'time_akhir_kegiatan'           => $data['time_akhir_kegiatan'],
+                'judul_pengajuan_kegiatan'      => $data['judul_pengajuan_kegiatan'] ?? null,
+                'provinsi_kegiatan'             => $data['provinsi_kegiatan'] ?? null,
+                'kabupaten_kegiatan'            => $data['kabupaten_kegiatan'] ?? null,
+                'kecamatan_kegiatan'            => $data['kecamatan_kegiatan'] ?? null,
+                'kelurahan_kegiatan'            => $data['kelurahan_kegiatan'] ?? null,
+                'alamat_kegiatan'               => $data['alamat_kegiatan'] ?? null,
+                'proposal_kegiatan'             => $data['proposal_kegiatan'] ?? null,
+                'tujuan_kegiatan'               => $data['tujuan_kegiatan'] ?? null,
+                'ruang_lingkup_kegiatan'        => $data['ruang_lingkup_kegiatan'] ?? null,
+                'tanggal_mulai_kegiatan'        => isset($data['tanggal_mulai_kegiatan']) ? date_create($data['tanggal_mulai_kegiatan']) : Carbon::now()->format('Y-m-d'),
+                'tanggal_akhir_kegiatan'        => isset($data['tanggal_akhir_kegiatan']) ? date_create($data['tanggal_akhir_kegiatan']) : Carbon::now()->format('Y-m-d'),
+                'time_mulai_kegiatan'           => $data['time_mulai_kegiatan'] ?? '08:00',
+                'time_akhir_kegiatan'           => $data['time_akhir_kegiatan'] ?? '16:00',
                 'lokasi_bidang_folu_id'         => $data['lokasi_bidang_folu_id'] ?? null,
             ]);
 
@@ -184,16 +185,18 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             $dataSend = array('nomor_pengajuan' => $data['nomor_pengajuan']);
 
-            // Save document 
-            // upload document
-            $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+            if (isset($data['fileDocument'])) {
+                // Save document 
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
 
-            if (!empty($upload)) {
-                $image = $this->fileTable->newQuery()->find($upload->id);
-                $image->update([
-                    'fileable_type' => get_class($newData),
-                    'fileable_id'   => $newData->id,
-                ]);
+                if (!empty($upload)) {
+                    $image = $this->fileTable->newQuery()->find($upload->id);
+                    $image->update([
+                        'fileable_type' => get_class($newData),
+                        'fileable_id'   => $newData->id,
+                    ]);
+                }
             }
 
             $dataSend = $this->getDataRab($newData->id, true);
@@ -316,6 +319,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found');
 
+        $total = 0;
         $dataKomponenRabInput = null;
         foreach ($dataKomponenRab as $item) {
             # code...
@@ -325,9 +329,14 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'harga_unit'            => $item['harga_unit'],
                 'qty'                   => $item['qty'],
             ];
+            $total += ($item['qty'] * $item['harga_unit']);
         }
 
-        $result = ['nomor_pengajuan' => $model->nomor_pengajuan];
+        $result = [
+            'nomor_pengajuan'   => $model->nomor_pengajuan,
+            'sebesar'           => $total,
+            'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
+        ];
 
         $model->rab_pengajuan_paket_kegiatans()->saveMany(
             collect($dataKomponenRabInput)->map(function ($tahapSalur) {

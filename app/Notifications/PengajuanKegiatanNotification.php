@@ -10,17 +10,19 @@ use Illuminate\Notifications\Notification;
 class PengajuanKegiatanNotification extends Notification
 {
     use Queueable;
-    protected $nomor_pengajuan;
+    protected $nomor_pengajuan, $atas_nama, $sebesar;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($nomor_pengajuan)
+    public function __construct($nomor_pengajuan, $atas_nama, $sebesar)
     {
         //
-        $this->nomor_pengajuan = $nomor_pengajuan;
+        $this->nomor_pengajuan  = $nomor_pengajuan;
+        $this->atas_nama        = $atas_nama;
+        $this->sebesar          = $sebesar;
     }
 
     /**
@@ -58,8 +60,8 @@ class PengajuanKegiatanNotification extends Notification
     {
         return [
             //
-            'message_header'    => 'Nomor permohonan: #' . $this->nomor_pengajuan,
-            'message_body'      => 'Permohonan anda diterima. Data anda sedang diverifikasi.'
+            'message_header'    => 'Proposal No. ' . $this->nomor_pengajuan . ' atas nama ' . $this->atas_nama . ' sebesar Rp. ' . number_format($this->sebesar) . ' telah diterima.',
+            'message_body'      => 'Pantau proses berikutnya di Layanan Dana Masyarakat untuk Lingkungan.'
         ];
     }
 }
