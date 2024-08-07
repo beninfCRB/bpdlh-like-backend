@@ -69,6 +69,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getDataProsesKegiatan', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getDataProsesKegiatan']);
     Route::get('getDataRiwayatPengajuan', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getDataRiwayatPengajuan']);
 
+    Route::post('informasiPencairanDana', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'store']);
+    Route::put('informasiPencairanDana/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'update']);
+
     Route::middleware(['ensurerole:verifikator'])->group(function () {
         Route::get('getDataVerifikasiPengajuan', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'index']);
         Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'show']);
