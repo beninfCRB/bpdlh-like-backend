@@ -148,6 +148,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
+            $cekData = PengajuanKegiatan::where(['user_akseslh_id' => $data['user_akseslh_id']])->latest()->first();
+
+            if ($cekData->rab_pengajuan_paket_kegiatans->count() <= 0 || $cekData->flag == 0) {
+                # code...
+                $cekData->forceDelete();
+            }
             // Menghasilkan nomor pengajuan otomatis
             $data['nomor_pengajuan'] = PengajuanKegiatan::generateNomorPengajuan($data['paket_kegiatan_id'], $data['user']);
 
@@ -172,6 +178,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'time_mulai_kegiatan'           => isset($data['time_mulai_kegiatan']) ? $data['time_mulai_kegiatan'] : '08:00',
                 'time_akhir_kegiatan'           => isset($data['time_akhir_kegiatan']) ? $data['time_akhir_kegiatan'] : '16:00',
                 'lokasi_bidang_folu_id'         => $data['lokasi_bidang_folu_id'] ?? null,
+                'flag'                          => 0
             ]);
 
             foreach ($dataTahapanPengajuanKegiatan as $dt) {
@@ -319,30 +326,43 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found');
 
-        $total = 0;
-        $dataKomponenRabInput = null;
-        foreach ($dataKomponenRab as $item) {
-            # code...
-            $dataKomponenRabInput[] = [
-                'pengajuan_kegiatan_id' => $id,
-                'komponen_rab_id'       => $item['id_komponen'],
-                'harga_unit'            => $item['harga_unit'],
-                'qty'                   => $item['qty'],
+        \DB::beginTransaction();
+
+        try {
+            //code...
+            $total = 0;
+            $dataKomponenRabInput = null;
+            foreach ($dataKomponenRab as $item) {
+                # code...
+                $dataKomponenRabInput[] = [
+                    'pengajuan_kegiatan_id' => $id,
+                    'komponen_rab_id'       => $item['id_komponen'],
+                    'harga_unit'            => $item['harga_unit'],
+                    'qty'                   => $item['qty'],
+                ];
+                $total += ($item['qty'] * $item['harga_unit']);
+            }
+
+            $result = [
+                'nomor_pengajuan'   => $model->nomor_pengajuan,
+                'sebesar'           => $total,
+                'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
             ];
-            $total += ($item['qty'] * $item['harga_unit']);
+
+            $model->rab_pengajuan_paket_kegiatans()->saveMany(
+                collect($dataKomponenRabInput)->map(function ($tahapSalur) {
+                    return new RabPengajuanPaketKegiatan($tahapSalur);
+                })
+            );
+
+            $model->flag = 1;
+            $model->save();
+
+            \DB::commit();
+            return $this->sendSuccess($result);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
         }
-
-        $result = [
-            'nomor_pengajuan'   => $model->nomor_pengajuan,
-            'sebesar'           => $total,
-            'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
-        ];
-
-        $model->rab_pengajuan_paket_kegiatans()->saveMany(
-            collect($dataKomponenRabInput)->map(function ($tahapSalur) {
-                return new RabPengajuanPaketKegiatan($tahapSalur);
-            })
-        );
-        return $this->sendSuccess($result);
     }
 }
