@@ -19,7 +19,7 @@
               <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
             </li>
             <li>
-              <form action="/logout" method="post" id="logout-form-sidebar">
+              <form action="{{ route('logout') }}" method="post" id="logout-form-sidebar">
                 @csrf
               </form>
               <a href="javascript:void(0)"><i class="md md-settings-power" onclick="alert('uhuy')"></i>
