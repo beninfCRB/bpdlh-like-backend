@@ -169,8 +169,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'ruang_lingkup_kegiatan'        => $data['ruang_lingkup_kegiatan'] ?? null,
                 'tanggal_mulai_kegiatan'        => isset($data['tanggal_mulai_kegiatan']) ? date_create($data['tanggal_mulai_kegiatan']) : Carbon::now()->format('Y-m-d'),
                 'tanggal_akhir_kegiatan'        => isset($data['tanggal_akhir_kegiatan']) ? date_create($data['tanggal_akhir_kegiatan']) : Carbon::now()->format('Y-m-d'),
-                'time_mulai_kegiatan'           => $data['time_mulai_kegiatan'] ?? '08:00',
-                'time_akhir_kegiatan'           => $data['time_akhir_kegiatan'] ?? '16:00',
+                'time_mulai_kegiatan'           => isset($data['time_mulai_kegiatan']) ? $data['time_mulai_kegiatan'] : '08:00',
+                'time_akhir_kegiatan'           => isset($data['time_akhir_kegiatan']) ? $data['time_akhir_kegiatan'] : '16:00',
                 'lokasi_bidang_folu_id'         => $data['lokasi_bidang_folu_id'] ?? null,
             ]);
 

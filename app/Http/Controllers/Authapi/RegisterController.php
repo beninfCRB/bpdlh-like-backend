@@ -99,9 +99,9 @@ class RegisterController extends ApiController
                     'role_user'                 => $user->user_akseslh->role_user,
                 ]);
             } else {
+                \DB::rollBack();
 
-                \DB::rollBack(); // rollback the changes
-                return $this->sendError(null, "Anda belum memenuhi persyaratan untuk mendaftar. Untuk informasi lebih lanjut email layanandanamasyarakat@bpdlh.id");
+                return $this->sendError(null, "Mohon maaf. Kelompok anda belum terdaftar sebagai calon penerima. Untuk informasi lebih lanjut hubungi layanandanamasyarakat@bpdlh.id");
             }
         } catch (\Throwable $th) {
 

@@ -63,17 +63,17 @@ class PengajuanKegiatanController extends ApiController
         $validator = Validator::make($request->all(), [
             'paket_kegiatan_id'         => 'required|exists:paket_kegiatans,id',
             'lokasi_bidang_folu_id'     => 'nullable|exists:lokasi_bidang_folus,id',
-            'judul_pengajuan_kegiatan'  => 'nullable|string|max:500',
-            'provinsi_kegiatan'         => 'nullable',
-            'kabupaten_kegiatan'        => 'nullable',
-            'kecamatan_kegiatan'        => 'nullable',
-            'kelurahan_kegiatan'        => 'nullable',
-            'alamat_kegiatan'           => 'nullable',
-            'tanggal_kegiatan'          => 'nullable',
-            'waktu_kegiatan'            => 'nullable',
-            'proposal_kegiatan'         => 'nullable',
-            'tujuan_kegiatan'           => 'nullable',
-            'ruang_lingkup_kegiatan'    => 'nullable',
+            'judul_pengajuan_kegiatan'  => 'required|string|max:500',
+            'provinsi_kegiatan'         => 'required',
+            'kabupaten_kegiatan'        => 'required',
+            'kecamatan_kegiatan'        => 'required',
+            'kelurahan_kegiatan'        => 'required',
+            'alamat_kegiatan'           => 'required',
+            'tanggal_kegiatan'          => 'required',
+            'waktu_kegiatan'            => 'required',
+            'proposal_kegiatan'         => 'required',
+            'tujuan_kegiatan'           => 'required',
+            'ruang_lingkup_kegiatan'    => 'required',
             'fileDocument'              => 'nullable',
         ]);
 
@@ -89,7 +89,7 @@ class PengajuanKegiatanController extends ApiController
 
         $input          = $validator->validated();
 
-        if (isset($request->tanggal_kegiatan)) {
+        if (isset($request->tanggal_kegiatan) && isset($request->waktu_kegiatan)) {
             # code...
             $tanggalArray   = explode(" - ", $input["tanggal_kegiatan"]);
             $waktuArray     = explode(" - ", $input["waktu_kegiatan"]);
