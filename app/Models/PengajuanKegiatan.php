@@ -33,7 +33,8 @@ class PengajuanKegiatan extends AppModel
         'tujuan_kegiatan',
         'ruang_lingkup_kegiatan',
         'username',
-        'lokasi_bidang_folu_id'
+        'lokasi_bidang_folu_id',
+        'flag'
     ];
 
     /**
