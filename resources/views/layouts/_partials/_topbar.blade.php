@@ -96,7 +96,7 @@
                                 <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
                             </li>
                             <li>
-                                <form action="/logout" method="post" id="logout-form">
+                                <form action="{{ route('logout') }}" method="post" id="logout-form">
                                     @csrf
                                 </form>
                                 <a href="javascript:void(0)"
