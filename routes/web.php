@@ -1,8 +1,10 @@
 <?php
 
+use App\Exports\DataPicKelompokMasyarakatExport;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-
+use Maatwebsite\Excel\Facades\Excel;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,7 +29,6 @@ Route::view('/pdf', 'pdf.template-small-grant');
 
 Route::middleware(['auth'])->group(function () {
 
-
     Route::view('/home', 'pages.home.index')->name('home');
 
     Route::prefix('akseslh')->group(function () {
@@ -47,6 +48,12 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('master-data-bank', App\Http\Controllers\Cms\Akseslh\MasterDataBankController::class);
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
+        Route::post('import-excel-pic-kelompok-masyarakat', function (Request $request) {
+            dd($request->all());
+        })->name('import-excel-pic-kelompok-masyarakat');
+        Route::get('export-excel', function () {
+            return Excel::download(new DataPicKelompokMasyarakatExport, 'uhuy.xlsx');
+        });
 
         // Datatable
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
