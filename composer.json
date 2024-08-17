@@ -17,6 +17,7 @@
         "laravel/framework": "^8.0",
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.0",
+        "maatwebsite/excel": "^1.1",
         "phpmailer/phpmailer": "*",
         "yajra/laravel-datatables-oracle": "^9.21"
     },

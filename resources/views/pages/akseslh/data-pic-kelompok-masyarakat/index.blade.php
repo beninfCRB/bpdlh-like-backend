@@ -29,12 +29,14 @@
                     value="{{ route('pic-kelompok-masyarakat.index') }}">
             </div>
             <div class="panel-body">
-                <div class="row justify-content-end">
-                    <div class="col-md-6"></div>
-                    <div class="col col-md-6 bg-danger">
-                        <a href="{{ route('pic-kelompok-masyarakat.create') }}"
-                            class="btn btn-inverse waves-effect waves-light">Tambah Data</a>
-                        <button class="btn btn-success waves-effect waves-light">Import Data</button>
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-md-12">
+                        <div class="pull-right">
+                            <a href="{{ route('pic-kelompok-masyarakat.create') }}"
+                                class="btn btn-inverse waves-effect waves-light">Tambah Data</a>
+                            <button class="btn btn-success waves-effect waves-light" data-toggle="modal"
+                                data-target=".bs-example-modal-sm">Import Excel</button>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -60,6 +62,28 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+            aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="mySmallModalLabel">Import Data PIC</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('import-excel-pic-kelompok-masyarakat') }}" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label for="fileExcel">File Excel</label>
+                                <input type="file" class="form-control" id="fileExcel" name="fileExcel">
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Submit</button>
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     </div>
 
 </div>
