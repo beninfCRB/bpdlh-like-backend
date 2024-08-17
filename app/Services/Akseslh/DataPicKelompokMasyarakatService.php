@@ -88,6 +88,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
 
             $dataUserAkseslh = $this->modelUserAkseslh->newQuery()->create([
                 'data_pic_kelompok_masyarakat_id'   => $data->id,
+                'nama_pic'                          => $data->nama_pic,
                 'email'                             => $data['email_pic'] ?? null,
                 // 'password'                          => Hash::make($default_password),
                 'status_user'                       => 'NON ACTIVE',
@@ -123,6 +124,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->provinsi_pic             = $data['provinsi_pic'];
             $read->save();
 
+            $read->user_akseslh->nama_pic           = $data['nama_pic'] ?? null;
             $read->user_akseslh->email              = $data['email_pic'] ?? null;
             $read->user_akseslh->status_user        = $data['status_user'];
             $read->user_akseslh->save();
