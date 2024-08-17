@@ -29,10 +29,13 @@
                     value="{{ route('pic-kelompok-masyarakat.index') }}">
             </div>
             <div class="panel-body">
-                <div class="row">
-                    <a href="{{ route('pic-kelompok-masyarakat.create') }}"
-                        class="btn btn-inverse waves-effect waves-light pull-right"
-                        style="margin-right:10px;margin-bottom:10px;">Tambah Data</a>
+                <div class="row justify-content-end">
+                    <div class="col-md-6"></div>
+                    <div class="col col-md-6 bg-danger">
+                        <a href="{{ route('pic-kelompok-masyarakat.create') }}"
+                            class="btn btn-inverse waves-effect waves-light">Tambah Data</a>
+                        <button class="btn btn-success waves-effect waves-light">Import Data</button>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">

@@ -9,7 +9,6 @@
 </script>
 @endif
 
-
 @if (Session::has('error'))
 <script>
     Swal.fire({

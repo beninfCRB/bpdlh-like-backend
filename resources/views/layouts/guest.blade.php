@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8" />
@@ -68,6 +68,8 @@
     <script src="{{asset('assets/jquery-blockui/jquery.blockUI.js')}}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- CUSTOM JS -->
     <script src="{{asset('js/jquery.app.js')}}"></script>
