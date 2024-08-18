@@ -37,26 +37,26 @@ var data_master_data_bank = (function () {
                     orderable: false,
                 },
                 {
-                    targets: 3,
+                    targets: -3,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.end_date === null) {
+                        if (full.created_at === null) {
                             return null;
                         } else {
-                            return dayjs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.created_at).format("DD MMM YYYY");
                         }
                     },
                 },
                 {
-                    targets: 4,
+                    targets: -2,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.end_date === null) {
+                        if (full.updated_at === null) {
                             return null;
                         } else {
-                            return dayjs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.updated_at).format("DD MMM YYYY");
                         }
                     },
                 },

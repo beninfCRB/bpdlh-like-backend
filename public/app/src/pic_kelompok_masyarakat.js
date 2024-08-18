@@ -32,6 +32,7 @@ var data_pic_kelompok_masyarakat = (function () {
                 { data: "nomor_identitas_pic" },
                 { data: "email_pic" },
                 { data: "nohp_pic" },
+                {},
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -68,14 +69,22 @@ var data_pic_kelompok_masyarakat = (function () {
                     },
                 },
                 {
+                    targets: -4,
+                    searchable: true,
+                    orderable: true,
+                    render: function (data, type, full, meta) {
+                        return full.user_akseslh.status_user;
+                    },
+                },
+                {
                     targets: -3,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.end_date === null) {
+                        if (full.created_at === null) {
                             return null;
                         } else {
-                            return dayjs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.created_at).format("DD MMM YYYY");
                         }
                     },
                 },
@@ -84,10 +93,10 @@ var data_pic_kelompok_masyarakat = (function () {
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.end_date === null) {
+                        if (full.updated_at === null) {
                             return null;
                         } else {
-                            return dayjs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.updated_at).format("DD MMM YYYY");
                         }
                     },
                 },
