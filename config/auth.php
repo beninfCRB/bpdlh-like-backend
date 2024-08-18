@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'akseslh',
     ],
 
     /*
@@ -105,6 +105,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'akseslh' => [
+            'provider' => 'akseslh',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
