@@ -27,7 +27,7 @@ class VerifyReCaptcha
             $responseBody = json_decode($response->getBody());
 
             if (!$responseBody->success || $responseBody->score < 0.5) {
-                return redirect()->back()->withErrors(['recaptcha' => 'Invalid reCAPTCHA']);
+                return redirect()->back()->with(['error' => 'Invalid reCAPTCHA']);
             }
         }
 

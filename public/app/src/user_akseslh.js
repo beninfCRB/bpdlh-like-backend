@@ -7,12 +7,12 @@ import {
     deleteData,
     showData,
 } from "../api";
-var route = $("#satuan-route").val();
+var route = $("#user-akseslh-route").val();
 
-var data_satuan = (function () {
+var data_user_akseslh = (function () {
     var initTable1 = function () {
-        var table = $("#dt_satuan");
-        var url_table = $("#data-table-satuan").val();
+        var table = $("#dt_user_akseslh");
+        var url_table = $("#data-table-user-akseslh").val();
 
         // begin first table
         table.DataTable({
@@ -25,7 +25,10 @@ var data_satuan = (function () {
             ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
-                { data: "satuan" },
+                { data: "nama_pic" },
+                { data: "email" },
+                { data: "role_user" },
+                { data: "status_user" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -68,14 +71,14 @@ var data_satuan = (function () {
 
                         return (
                             `
-                         <a href="` +
+                        <a href="` +
                             editRoute +
                             `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
                             full.id +
-                            ` href="#" onclick="deleteSatuan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                            ` href="#" onclick="deletePICKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
                           <i class="fa fa-trash"></i>
                         </a>`
                         );
@@ -94,10 +97,10 @@ var data_satuan = (function () {
 })();
 
 jQuery(document).ready(function () {
-    data_satuan.init();
+    data_user_akseslh.init();
 });
 
-window.deleteSatuan = (input) => {
+window.deletePICKelompokMasyarakat = (input) => {
     var deleteRoute = route + "/" + $(input).attr("data-id");
     Swal.fire({
         title: "Konfirmasi Hapus",

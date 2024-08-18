@@ -17,6 +17,7 @@ class UserAkseslh extends AppAuthenticatable
 
     protected $fillable = [
         'data_pic_kelompok_masyarakat_id',
+        'nama_pic',
         'email',
         'password',
         'status_user',

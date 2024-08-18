@@ -43,10 +43,10 @@ var data_jenis_kegiatan = (function () {
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.end_date === null) {
+                        if (full.created_at === null) {
                             return null;
                         } else {
-                            return dayjs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.created_at).format("DD MMM YYYY");
                         }
                     },
                 },
@@ -55,10 +55,10 @@ var data_jenis_kegiatan = (function () {
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.end_date === null) {
+                        if (full.updated_at === null) {
                             return null;
                         } else {
-                            return dayjs(full.end_date).format("DD MMM YYYY");
+                            return dayjs(full.updated_at).format("DD MMM YYYY");
                         }
                     },
                 },

@@ -1,8 +1,10 @@
 <?php
 
+use App\Exports\DataPicKelompokMasyarakatExport;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-
+use Maatwebsite\Excel\Facades\Excel;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,7 +29,6 @@ Route::view('/pdf', 'pdf.template-small-grant');
 
 Route::middleware(['auth'])->group(function () {
 
-
     Route::view('/home', 'pages.home.index')->name('home');
 
     Route::prefix('akseslh')->group(function () {
@@ -36,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\KelompokMasyarakatController::class);
         Route::resource('paket-kegiatan', App\Http\Controllers\Cms\Akseslh\PaketKegiatanController::class);
         Route::resource('pic-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class);
+        Route::resource('user-akseslh', App\Http\Controllers\Cms\Akseslh\UserAkseslhController::class);
         Route::resource('tahapan-pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\TahapanPengajuanKegiatanController::class);
         Route::resource('tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class);
         Route::resource('sub-tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class);
@@ -47,6 +49,12 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('master-data-bank', App\Http\Controllers\Cms\Akseslh\MasterDataBankController::class);
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
+        Route::post('import-excel-pic-kelompok-masyarakat', function (Request $request) {
+            dd($request->all());
+        })->name('import-excel-pic-kelompok-masyarakat');
+        Route::get('export-excel', function () {
+            return Excel::download(new DataPicKelompokMasyarakatExport, 'uhuy.xlsx');
+        });
 
         // Datatable
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
@@ -55,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll'])->name('data-kelompok-masyarakat');
         Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
         Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\DataPicKelompokMasyarakatController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
+        Route::get('/data-user-akseslh', [App\Http\Controllers\Datatable\Akseslh\UserAkseslhController::class, 'getAll'])->name('data-user-akseslh');
         Route::get('/data-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TematikKegiatanController::class, 'getAll'])->name('data-tematik-kegiatan');
         Route::get('/data-sub-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\SubTematikKegiatanController::class, 'getAll'])->name('data-sub-tematik-kegiatan');
         Route::get('/data-master-sub-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\MasterSubTematikKegiatanController::class, 'getAll'])->name('data-master-sub-tematik-kegiatan');
