@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Cms\Akseslh;
 
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\ApiController;
-use App\Services\Akseslh\DataPicKelompokMasyarakatService;
-use App\Services\Akseslh\KelompokMasyarakatService;
 use App\Services\Akseslh\ProvinsiService;
+use Illuminate\Support\Facades\Validator;
+use App\Imports\DataPicKelompokMasyarakatImport;
+use App\Services\Akseslh\KelompokMasyarakatService;
+use App\Services\Akseslh\DataPicKelompokMasyarakatService;
 
 class DataPicKelompokMasyarakatController extends ApiController
 {
@@ -107,7 +110,7 @@ class DataPicKelompokMasyarakatController extends ApiController
                 session()->flash('success', $result->message);
                 return redirect()->route('pic-kelompok-masyarakat.index');
             }
-            dd($result->message);
+
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
@@ -127,5 +130,23 @@ class DataPicKelompokMasyarakatController extends ApiController
         } catch (\Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
         }
+    }
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'fileExcel'         => 'required|file|mimes:xlsx,csv',
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return back()->with('error', $validator->errors()->first('fileExcel'));
+        }
+
+        $input = $validator->validated();
+
+        Excel::import(new DataPicKelompokMasyarakatImport, $input['fileExcel']);
+
+        return back()->with('success', 'Success Import Data');
     }
 }
