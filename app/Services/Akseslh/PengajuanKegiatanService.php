@@ -17,6 +17,8 @@ use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\RabPengajuanPaketKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\UserAkseslh;
+use App\Services\EmailPhpService;
 use Carbon\Carbon;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
@@ -25,7 +27,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     protected $modelLogTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
-    protected $pdfService;
+    protected $pdfService, $emailPhpService;
 
     public function __construct(
         FileUploadService $fileUploadService,
@@ -33,7 +35,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
-        PdfService $pdfService
+        PdfService $pdfService,
+        EmailPhpService $emailPhpService
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
@@ -41,6 +44,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
         $this->pdfService           =   $pdfService;
+        $this->emailPhpService      =   $emailPhpService;
     }
 
     public function getAll()
@@ -357,6 +361,14 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             $model->flag = 1;
             $model->save();
+
+            // Get data verifikator
+            $verifikator = UserAkseslh::where('role_user', 'verifikator')->get();
+            // Kirim Email ke verifikator
+            foreach ($verifikator as $user) {
+                # code...
+                $this->emailPhpService->verifikasiPengajuanKegiatan($user, 'Verifikasi Pengajuan Kegiatan', $model, null, 'mail.verifikasi-pengajuan-kegiatan');
+            }
 
             \DB::commit();
             return $this->sendSuccess($result);
