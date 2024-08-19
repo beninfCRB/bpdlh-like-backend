@@ -154,9 +154,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         try {
             $cekData = PengajuanKegiatan::where(['user_akseslh_id' => $data['user_akseslh_id']])->latest()->first();
 
-            if ($cekData->rab_pengajuan_paket_kegiatans->count() <= 0 || $cekData->flag == 0) {
+            if ($cekData) {
                 # code...
-                $cekData->forceDelete();
+                if ($cekData->rab_pengajuan_paket_kegiatans->count() <= 0 || $cekData->flag == 0) {
+                    # code...
+                    $cekData->forceDelete();
+                }
             }
             // Menghasilkan nomor pengajuan otomatis
             $data['nomor_pengajuan'] = PengajuanKegiatan::generateNomorPengajuan($data['paket_kegiatan_id'], $data['user']);
