@@ -17,10 +17,6 @@ use Maatwebsite\Excel\Facades\Excel;
 |
 */
 
-Route::get('/test-uhuy', function () {
-    $verifikator = UserAkseslh::where('role_user', 'verifikator')->pluck('email');
-    dd($verifikator);
-});
 Route::view('/login', 'auth.login')->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'authenticate'])->name('login.auth')->middleware('recaptcha');
 
