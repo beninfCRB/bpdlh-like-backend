@@ -82,9 +82,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->latest()->first();
 
-        $data = null;
+        $data = [];
 
-        if (!$result) return $this->sendSuccess($data, 'Success');
+        if (!$result) return $this->sendSuccess(collect($data));
 
         if ($result) {
             # code...
@@ -110,7 +110,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan'])->where(['user_akseslh_id' => $user_akseslh_id])->get();
 
-        if (!$result)  return $this->sendError(null);
+        if (!$result)  return $this->sendSuccess(null);
 
         $result->transform(function ($items, $key) {
 
