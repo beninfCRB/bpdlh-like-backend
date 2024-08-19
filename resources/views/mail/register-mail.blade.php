@@ -77,9 +77,7 @@
         </p>
         <div class="footer">
             Hormat kami,<br>
-            Tim Dukungan Pelanggan<br>
-            IT BPDLH<br>
-            <a href="https://bpdlh.id">bpdlh.id</a>
+            Badan Pengelola Dana Lingkungan Hidup (BPDLH)<br>
         </div>
     </div>
 </body>
