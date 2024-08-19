@@ -1,6 +1,7 @@
 <?php
 
 use App\Exports\DataPicKelompokMasyarakatExport;
+use App\Models\UserAkseslh;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,10 @@ use Maatwebsite\Excel\Facades\Excel;
 |
 */
 
+Route::get('/test-uhuy', function () {
+    $verifikator = UserAkseslh::where('role_user', 'verifikator')->pluck('email');
+    dd($verifikator);
+});
 Route::view('/login', 'auth.login')->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'authenticate'])->name('login.auth')->middleware('recaptcha');
 
