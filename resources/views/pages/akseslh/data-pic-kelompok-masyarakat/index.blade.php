@@ -73,7 +73,8 @@
                         <h4 class="modal-title" id="mySmallModalLabel">Import Data PIC</h4>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('import-excel-pic-kelompok-masyarakat') }}" method="post">
+                        <form action="{{ route('pic-kelompok-masyarakat.import') }}" method="post"
+                            enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label for="fileExcel">File Excel</label>
