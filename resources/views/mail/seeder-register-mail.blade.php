@@ -61,7 +61,7 @@
             Halo {{ $data->nama_pic }},
         </p>
         <p>
-            Terima kasih telah mendaftar di Layanan Akses Dana Lingkungan Hidup. Berikut adalah detail akun Anda:
+            Terima kasih telah mendaftar di Layanan Dana Masyarakat Untuk Lingkungan. Berikut adalah detail akun Anda:
         </p>
         <div class="info">
             <p><strong>Email:</strong> {{ $data->email }}</p>
