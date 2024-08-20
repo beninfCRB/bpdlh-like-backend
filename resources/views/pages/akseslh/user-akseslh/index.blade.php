@@ -69,7 +69,7 @@
                         <h4 class="modal-title" id="mySmallModalLabel">Import Data PIC</h4>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('import-excel-pic-kelompok-masyarakat') }}" method="post">
+                        <form action="#" method="post">
                             @csrf
                             <div class="form-group">
                                 <label for="fileExcel">File Excel</label>
