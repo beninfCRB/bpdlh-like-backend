@@ -237,12 +237,14 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
                 ]);
             })
             ->with(['paket_kegiatan' => function ($q) use ($data) {
-                $q->select('jenis_kegiatan_id', 'id', 'jumlah_peserta')->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
-                    $q->where([
-                        'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
-                        'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
-                    ]);
-                });
+                $q->select('jenis_kegiatan_id', 'id', 'jumlah_peserta')
+                    ->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
+                        $q->where([
+                            'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
+                            'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
+                        ]);
+                    })
+                    ->with(['standar_rab_paket_kegiatan']);
             }])->get();
 
         //         $query = "
