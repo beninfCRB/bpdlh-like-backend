@@ -229,14 +229,21 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
         //     ->get();
         $result = null;
 
-        $result = $this->modelJenisKegiatan->select(['id', 'jenis_kegiatan'])->with(['paket_kegiatan' => function ($q) use ($data) {
-            $q->select('jenis_kegiatan_id', 'id', 'jumlah_peserta')->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
+        $result = $this->modelJenisKegiatan->select(['id', 'jenis_kegiatan'])
+            ->whereHas('paket_kegiatan.master_sub_tematik_kegiatan', function ($q) use ($data) {
                 $q->where([
                     'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
                     'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
                 ]);
-            });
-        }])->get();
+            })
+            ->with(['paket_kegiatan' => function ($q) use ($data) {
+                $q->select('jenis_kegiatan_id', 'id', 'jumlah_peserta')->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
+                    $q->where([
+                        'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
+                        'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
+                    ]);
+                });
+            }])->get();
 
         //         $query = "
         //             SELECT 
