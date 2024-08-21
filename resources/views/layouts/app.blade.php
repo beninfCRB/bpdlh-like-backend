@@ -37,6 +37,8 @@
     <link href="{{asset('css/helper.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{asset('css/style.css')}}" rel="stylesheet" type="text/css" />
 
+    <link href="{{ asset('assets/select2/select2.css') }}" rel="stylesheet" type="text/css" />
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -114,6 +116,9 @@
 
     {{-- Axios --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.3/axios.min.js"></script>
+
+    {{-- Select 2 --}}
+    <script src="{{ asset('assets/select2/select2.min.js') }}" type="text/javascript"></script>
 
     {{-- Mix --}}
     <script src="{{ mix('app/build/app.js') }}"></script>

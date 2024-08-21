@@ -1,5 +1,6 @@
 "use strict";
 
+import axios from "axios";
 import {
     createData,
     updateData,
@@ -158,3 +159,5 @@ window.deletePICKelompokMasyarakat = (input) => {
         }
     });
 };
+
+window.getProvinsi = () => {};

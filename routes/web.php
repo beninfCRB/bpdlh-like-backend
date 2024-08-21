@@ -26,6 +26,14 @@ Route::get('/', function () {
 Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout')->middleware('auth');
 Route::view('/blank', 'pages.blank.index')->name('blank');
 
+Route::get('provinsi/{id}', [App\Http\Controllers\Api\Akseslh\ProvinsiController::class, 'show']);
+Route::get('kota', [App\Http\Controllers\Api\Akseslh\KotaController::class, 'index']);
+Route::get('kota/{id}', [App\Http\Controllers\Api\Akseslh\KotaController::class, 'show']);
+Route::get('kecamatan', [App\Http\Controllers\Api\Akseslh\KecamatanController::class, 'index']);
+Route::get('kecamatan/{id}', [App\Http\Controllers\Api\Akseslh\KecamatanController::class, 'show']);
+Route::get('kelurahan', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'index']);
+Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'show']);
+
 Route::view('/pdf', 'pdf.template-small-grant');
 
 Route::middleware(['auth'])->group(function () {
