@@ -50,10 +50,7 @@ class DataPicKelompokMasyarakatController extends ApiController
     {
         $kelompokMasyarakat = $this->kelompokMasyarakatService->apiGetAll()->data;
         $provinsi           = $this->provinsiService->apiGetAll()->data;
-        $kotaKabupaten      = $this->kotaService->apiGetAll()->data;
-        $kecamatan          = $this->kecamatanService->apiGetAll()->data;
-        $kelurahanDesa      = $this->kelurahanService->apiGetAll()->data;
-        return view("pages.akseslh.data-pic-kelompok-masyarakat.create", compact('kelompokMasyarakat', 'provinsi', 'kotaKabupaten', 'kecamatan', 'kelurahanDesa'));
+        return view("pages.akseslh.data-pic-kelompok-masyarakat.create", compact('kelompokMasyarakat', 'provinsi'));
     }
 
     public function edit($id)
@@ -61,10 +58,7 @@ class DataPicKelompokMasyarakatController extends ApiController
         $kelompokMasyarakat = $this->kelompokMasyarakatService->apiGetAll()->data;
         $data               =   $this->dataPicKelompokMasyarakatService->getById($id)->data;
         $provinsi           = $this->provinsiService->apiGetAll()->data;
-        $kotaKabupaten      = $this->kotaService->apiGetAll()->data;
-        $kecamatan          = $this->kecamatanService->apiGetAll()->data;
-        $kelurahanDesa      = $this->kelurahanService->apiGetAll()->data;
-        return view("pages.akseslh.data-pic-kelompok-masyarakat.edit", compact('data', 'kelompokMasyarakat', 'provinsi', 'kotaKabupaten', 'kecamatan', 'kelurahanDesa'));
+        return view("pages.akseslh.data-pic-kelompok-masyarakat.edit", compact('data', 'kelompokMasyarakat', 'provinsi'));
     }
 
     public function show($id)

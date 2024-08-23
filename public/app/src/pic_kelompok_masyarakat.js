@@ -160,4 +160,78 @@ window.deletePICKelompokMasyarakat = (input) => {
     });
 };
 
-window.getProvinsi = () => {};
+window.getKotaKabupaten = () => {
+    const provinsi = $("#provinsi_pic").val();
+    const app_url = $("#app_url").val();
+    const old_kabupaten = $("#kabupaten_pic_old");
+    $("#kabupaten_pic")
+        .empty()
+        .append("<option class='form-control' value=''>- Pilih Data -</option>")
+        .trigger("change");
+
+    if (provinsi) {
+        const url = app_url + "/provinsi/" + provinsi;
+        axios.get(url).then((response) => {
+            const d = response.data.data.kota;
+            for (const key in d) {
+                const append =
+                    "<option class='form-control' value='" +
+                    d[key].id +
+                    "'>" +
+                    d[key].name +
+                    "</option>";
+                $("#kabupaten_pic").append(append).trigger("change");
+            }
+        });
+    }
+};
+
+window.getKecamatan = () => {
+    const kabupaten = $("#kabupaten_pic").val();
+    const app_url = $("#app_url").val();
+    $("#kecamatan_pic")
+        .empty()
+        .append("<option class='form-control' value=''>- Pilih Data -</option>")
+        .trigger("change");
+
+    if (kabupaten) {
+        const url = app_url + "/kota/" + kabupaten;
+        axios.get(url).then((response) => {
+            const d = response.data.data.kecamatan;
+            for (const key in d) {
+                const append =
+                    "<option class='form-control' value='" +
+                    d[key].id +
+                    "'>" +
+                    d[key].name +
+                    "</option>";
+                $("#kecamatan_pic").append(append).trigger("change");
+            }
+        });
+    }
+};
+
+window.getKelurahan = () => {
+    const kecamatan = $("#kecamatan_pic").val();
+    const app_url = $("#app_url").val();
+    $("#kelurahan_pic")
+        .empty()
+        .append("<option class='form-control' value=''>- Pilih Data -</option>")
+        .trigger("change");
+
+    if (kecamatan) {
+        const url = app_url + "/kecamatan/" + kecamatan;
+        axios.get(url).then((response) => {
+            const d = response.data.data.kelurahan;
+            for (const key in d) {
+                const append =
+                    "<option class='form-control' value='" +
+                    d[key].id +
+                    "'>" +
+                    d[key].name +
+                    "</option>";
+                $("#kelurahan_pic").append(append).trigger("change");
+            }
+        });
+    }
+};

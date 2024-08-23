@@ -40,6 +40,7 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Pengelolaan Data PIC Kelompok Masyaakat</h3>
+                <input type="hidden" name="app_url" id="app_url" value="{{ env('APP_URL') }}">
             </div>
             <div class="panel-body">
                 <form role="form" action="{{ route('pic-kelompok-masyarakat.update', $data->id) }}" method="POST">
@@ -135,7 +136,8 @@
                         </div>
                         <div class=" form-group @error('provinsi_pic') has-error @enderror col-md-3">
                             <label for="provinsi_pic">Provinsi PIC <span class="text-danger">*</span></label>
-                            <select class="" id="provinsi_pic" name="provinsi_pic" required onchange="getProvinsi()">
+                            <select class="" id="provinsi_pic" name="provinsi_pic" required
+                                onchange="getKotaKabupaten()">
                                 <option class='form-control' value=''>- Pilih Data -</option>
                                 @isset($provinsi)
                                 @foreach ($provinsi as $item)
@@ -155,19 +157,8 @@
                         </div>
                         <div class=" form-group @error('kabupaten_pic') has-error @enderror col-md-3">
                             <label for="kabupaten_pic">Kabupaten PIC <span class="text-danger">*</span></label>
-                            <select class="" id="kabupaten_pic" name="kabupaten_pic" required>
+                            <select class="" id="kabupaten_pic" name="kabupaten_pic" required onchange="getKecamatan()">
                                 <option class='form-control' value=''>- Pilih Data -</option>
-                                @isset($kotaKabupaten)
-                                @foreach ($kotaKabupaten as $item)
-                                @if (old('kabupaten_pic', $data->kabupaten_pic) == $item['id'])
-                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
-                                    $item['name'] }}</option>
-                                @else
-                                <option class='form-control' value="{{ $item['id'] }}">{{ $item['name']
-                                    }}</option>
-                                @endif
-                                @endforeach
-                                @endisset
                             </select>
                             @error('kabupaten_pic')
                             {{ $message }}
@@ -175,19 +166,8 @@
                         </div>
                         <div class=" form-group @error('kecamatan_pic') has-error @enderror col-md-3">
                             <label for="kecamatan_pic">Kecamatan PIC <span class="text-danger">*</span></label>
-                            <select class="" id="kecamatan_pic" name="kecamatan_pic" required>
+                            <select class="" id="kecamatan_pic" name="kecamatan_pic" required onchange="getKelurahan()">
                                 <option class='form-control' value=''>- Pilih Data -</option>
-                                @isset($kecamatan)
-                                @foreach ($kecamatan as $item)
-                                @if (old('kecamatan_pic', $data->kecamatan_pic) == $item['id'])
-                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
-                                    $item['name'] }}</option>
-                                @else
-                                <option class='form-control' value="{{ $item['id'] }}">{{ $item['name']
-                                    }}</option>
-                                @endif
-                                @endforeach
-                                @endisset
                             </select>
                             @error('kecamatan_pic')
                             {{ $message }}
@@ -197,17 +177,6 @@
                             <label for="kelurahan_pic">Kelurahan PIC <span class="text-danger">*</span></label>
                             <select class="" id="kelurahan_pic" name="kelurahan_pic" required>
                                 <option class='form-control' value=''>- Pilih Data -</option>
-                                @isset($kelurahanDesa)
-                                @foreach ($kelurahanDesa as $item)
-                                @if (old('kelurahan_pic', $data->kelurahan_pic) == $item['id'])
-                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
-                                    $item['name'] }}</option>
-                                @else
-                                <option class='form-control' value="{{ $item['id'] }}">{{ $item['name']
-                                    }}</option>
-                                @endif
-                                @endforeach
-                                @endisset
                             </select>
                             @error('kelurahan_pic')
                             {{ $message }}
