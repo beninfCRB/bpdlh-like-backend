@@ -78,6 +78,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
+    public function apiGetAll()
+    {
+        $result = $this->model->newQuery()->get();
+
+        return $this->sendSuccess($result);
+    }
+
     public function getDataProsesKegiatan($user_akseslh_id)
     {
         $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->latest()->first();
@@ -95,7 +102,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                 'jumlah'                    => $result->paket_kegiatan->jumlah_peserta . " " . ($result->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
                 'lokasi'                    => $result->alamat_kegiatan ?? 'Alamat',
-                'tahapan_pengajuan'         => "Dalam Proses " . $this->checkStatusPengajuan($result->flag, $result->log_tahapan_pengajuan),
+                'tahapan_pengajuan'         => $result->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->flag, $result->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => 0,
                 'dana_yang_dicairkan'       => 0,
@@ -122,7 +129,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                 'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
                 'lokasi'                    => $items->alamat_kegiatan ?? 'Alamat',
-                'tahapan_pengajuan'         => "Dalam Proses " . $this->checkStatusPengajuan($items->flag, $items->log_tahapan_pengajuan),
+                'tahapan_pengajuan'         => $items->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->flag, $items->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => 0,
                 'dana_yang_dicairkan'       => 0,
@@ -298,7 +305,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             switch ($angka) {
                 case 1:
                     # code...
-                    return 'Verifikasi';
+                    return 'Dalam Proses Verifikasi';
+                    break;
+
+                case 20:
+                    return 'Ditolak';
                     break;
 
                 default:
