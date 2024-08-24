@@ -8,9 +8,11 @@ use App\Models\PengajuanKegiatan;
 use App\Models\TahapanPengajuanKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
+use App\Notifications\VerifikasiValidasiDitolakNotification;
 use App\Notifications\VerifikasiValidasiNotification;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use App\Services\EmailPhpService;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -19,16 +21,20 @@ class VerifikasiService extends AppService implements AppServiceInterface
     protected $modelTahapanPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
     protected $modelCatatanLogTahapanPengajuanKegiatan;
+    protected $emailService;
+
     public function __construct(
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
-        CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan
+        CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan,
+        EmailPhpService $emailPhpService
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
         $this->modelCatatanLogTahapanPengajuanKegiatan = $modelCatatanLogTahapanPengajuanKegiatan;
+        $this->emailService = $emailPhpService;
     }
 
     public function getAll()
@@ -131,9 +137,13 @@ class VerifikasiService extends AppService implements AppServiceInterface
 
                 $dataSend = array(
                     'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'catatan_log'       => $data['catatan_log'],
                     'keterangan'      => 'Ditolak',
                     'status'          => '20'
                 );
+                $read->user_akseslh->notify(new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+
+                $this->emailService->verifikasiValidasiDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'verifikasi-pengajuan-kegiatan-ditolak');
             } else {
 
                 // Update data langsung berdasarkan pengajuan_kegiatan_id
@@ -159,9 +169,10 @@ class VerifikasiService extends AppService implements AppServiceInterface
                     'keterangan'      => 'Disetujui',
                     'status'          => '2'
                 );
+
+                $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
             }
 
-            $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
