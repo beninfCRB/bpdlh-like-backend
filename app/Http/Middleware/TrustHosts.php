@@ -14,6 +14,8 @@ class TrustHosts extends Middleware
     public function hosts()
     {
         return [
+            'uat.bpdlh.id',
+            'bpdlh.id',
             $this->allSubdomainsOfApplicationUrl(),
         ];
     }

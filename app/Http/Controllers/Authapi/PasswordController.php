@@ -47,7 +47,7 @@ class PasswordController extends ApiController
         $input = $validator->validated();
 
         $status = Password::sendResetLink($request->only('email'));
-        dd($status);
+
         if ($status === Password::RESET_LINK_SENT) {
             # code...
             return $this->sendSuccess(null, 'Success send link');
