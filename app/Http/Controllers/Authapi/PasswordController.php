@@ -46,13 +46,19 @@ class PasswordController extends ApiController
         // Get all input
         $input = $validator->validated();
 
-        $status = Password::sendResetLink($request->only('email'));
-        dd($status);
-        if ($status === Password::RESET_LINK_SENT) {
-            # code...
-            return $this->sendSuccess(null, 'Success send link');
-        } else {
-            return $this->sendError(null, 'Error send link', 422);
+        try {
+            //code...
+            $status = Password::sendResetLink($request->only('email'));
+
+            if ($status === Password::RESET_LINK_SENT) {
+                # code...
+                return $this->sendSuccess(null, 'Success send link');
+            } else {
+                return $this->sendError(null, 'Error send link', 422);
+            }
+        } catch (\Exception $th) {
+            //throw $th;
+            return $this->sendError(null, $th->getMessage(), 500);
         }
     }
 
