@@ -18,18 +18,6 @@ use Illuminate\Http\Request;
 |
 */
 
-
-Route::get('generate-pdf', function () {
-    // Generate the PDF from a view
-    $pdf = Pdf::loadView('pdf.template-small-grant', []);
-
-    // Path to save the PDF
-    $filePath = 'public/uploads/' . '123' . '.pdf';
-
-    // Save the PDF to the storage folder
-    Storage::put($filePath, $pdf->output());
-});
-
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
 Route::post('changePassword', [App\Http\Controllers\Authapi\PasswordController::class, 'changePassword']);
