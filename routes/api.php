@@ -21,9 +21,7 @@ use Illuminate\Http\Request;
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
 Route::post('changePassword', [App\Http\Controllers\Authapi\PasswordController::class, 'changePassword']);
-Route::get('/reset-password/{token}', function (string $token) {
-    return view('auth.reset-password', ['token' => $token]);
-})->middleware('guest')->name('password.reset');
+
 Route::post('/resetPassword', [App\Http\Controllers\Authapi\PasswordController::class, 'resetPassword'])->name('password.update');
 
 Route::get('jenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\JenisKelompokMasyarakatController::class, 'index']);
