@@ -143,7 +143,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
                 );
                 $read->user_akseslh->notify(new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
 
-                $this->emailService->verifikasiValidasiDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'verifikasi-pengajuan-kegiatan-ditolak');
+                $this->emailService->verifikasiValidasiDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-pengajuan-kegiatan-ditolak');
             } else {
 
                 // Update data langsung berdasarkan pengajuan_kegiatan_id
