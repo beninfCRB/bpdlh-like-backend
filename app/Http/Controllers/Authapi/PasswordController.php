@@ -52,7 +52,7 @@ class PasswordController extends ApiController
             # code...
             return $this->sendSuccess(null, 'Success send link');
         } else {
-            return $this->sendError(null, 'Error send link');
+            return $this->sendError(null, 'Error send link', 422);
         }
     }
 
