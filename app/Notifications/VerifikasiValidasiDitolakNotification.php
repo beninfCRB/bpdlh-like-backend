@@ -61,7 +61,7 @@ class VerifikasiValidasiDitolakNotification extends Notification
     {
         return [
             //
-            'message_header'    => 'Mohon Maaf, Nomor permohonan: #' . $this->nomor_pengajuan . ' atas nama ' . $this->atas_nama . ' sebesar nilai Rp. ' . number_format($this->sebesar) . ' telah ditolak.',
+            'message_header'    => 'Mohon Maaf, Nomor permohonan: #' . $this->nomor_pengajuan . ' atas nama ' . $this->atas_nama . ' sebesar nilai Rp. ' . number_format($this->sebesar) . ' belum dapat disetujui.',
             'message_body'      => $this->catatan
         ];
     }
