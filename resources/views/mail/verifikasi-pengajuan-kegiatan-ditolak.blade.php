@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Email Pengajuan Kegiatan Ditolak</title>
+    <title>Email Pengajuan Kegiatan Belum Dapat Disetujui</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,12 +56,12 @@
 
 <body>
     <div class="container">
-        <h1>Pengajuan Kegiatan Ditolak</h1>
+        <h1>Pengajuan Kegiatan Belum Dapat Disetujui</h1>
         <p>
             Halo {{ $to->nama_pic }},
         </p>
         <p>
-            Mohon maaf pengajuan anda dengan nomor pengajuan {{ $data['nomor_pengajuan'] }} telah ditolak,
+            Mohon maaf pengajuan anda dengan nomor pengajuan {{ $data['nomor_pengajuan'] }} belum dapat disetujui,
             dengan catatan sebagai berikut:
         </p>
         <div class="info">
