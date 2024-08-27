@@ -41,11 +41,9 @@ class PengajuanKegiatanController extends ApiController
         }
     }
 
-    public function show($id, Request $request)
+    public function show($id)
     {
-        $lang           = $request->input('lang')  ?: 'ID';
-
-        $result = $this->pengajuanKegiatanService->apiLang($id, $lang);
+        $result = $this->pengajuanKegiatanService->getById($id);
 
         try {
             if ($result->success) {
