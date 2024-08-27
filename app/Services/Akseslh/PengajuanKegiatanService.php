@@ -149,7 +149,24 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->with(['paket_kegiatan'])->find($id);
+        $items =   $this->model->newQuery()->with(['document'])->find($id);
+
+        $result = [
+            'id'    => $items->id,
+            'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
+            'provinsi_kegiatan' => $items->provinsi_kegiatan,
+            'kabupaten_kegiatan'    => $items->kabupaten_kegiatan,
+            'kecamatan_kegiatan'    => $items->kecamatan_kegiatan,
+            'kelurahan_kegiatan'    => $items->kelurahan_kegiatan,
+            'alamat_kegiatan'   => $items->alamat_kegiatan,
+            'tanggal_kegiatan' => $items->tanggal_mulai_kegiatan . ' - ' . $items->tanggal_akhir_kegiatan,
+            'waktu_kegiatan'    => $items->time_mulai_kegiatan . ' - ' . $items->time_akhir_kegiatan,
+            'proposal_kegiatan' => $items->proposal_kegiatan,
+            'tujuan_kegiatan'   => $items->tujuan_kegiatan,
+            'ruang_lingkup_kegiatan' => $items->ruang_lingkup_kegiatan,
+            'paket_kegiatan_id' => $items->paket_kegiatan_id,
+            'fileDocument'  => $items->document,
+        ];
 
         return $this->sendSuccess($result);
     }
