@@ -408,4 +408,33 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
         }
     }
+
+    public function getDraftPengajuan($user_id)
+    {
+        $model = $this->model->newQuery()->where([
+            'user_akseslh_id' => $user_id,
+            'flag' => 0
+        ])->latest()->first();
+
+        if (!$model) return $this->sendSuccess(collect([]));
+
+        $result = [
+            'id'                        => $model->id,
+            'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
+            'provinsi_kegiatan'         => $model->provinsi_kegiatan,
+            'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
+            'kecamatan_kegiatan'        => $model->kecamatan_kegiatan,
+            'kelurahan_kegiatan'        => $model->kelurahan_kegiatan,
+            'alamat_kegiatan'           => $model->alamat_kegiatan,
+            'tanggal_kegiatan'          => $model->tanggal_mulai_kegiatan . ' - ' . $model->tanggal_akhir_kegiatan,
+            'waktu_kegiatan'            => $model->time_mulai_kegiatan . ' - ' . $model->time_akhir_kegiatan,
+            'proposal_kegiatan'         => $model->proposal_kegiatan,
+            'tujuan_kegiatan'           => $model->tujuan_kegiatan,
+            'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
+            'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+            'fileDocument'              => $model->document,
+        ];
+
+        return $this->sendSuccess($result);
+    }
 }

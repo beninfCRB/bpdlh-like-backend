@@ -41,9 +41,9 @@ class PengajuanKegiatanController extends ApiController
         }
     }
 
-    public function show($id)
+    public function show(Request $request)
     {
-        $result = $this->pengajuanKegiatanService->getById($id);
+        $result = $this->pengajuanKegiatanService->getDraftPengajuan($request->user()->id);
 
         try {
             if ($result->success) {
