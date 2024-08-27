@@ -159,6 +159,17 @@
                             <label for="kabupaten_pic">Kabupaten PIC <span class="text-danger">*</span></label>
                             <select class="" id="kabupaten_pic" name="kabupaten_pic" required onchange="getKecamatan()">
                                 <option class='form-control' value=''>- Pilih Data -</option>
+                                @isset($kota)
+                                @foreach ($kota as $item)
+                                @if (old('kabupaten_pic', $data->kabupaten_pic) == $item['id'])
+                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                    $item['name'] }}</option>
+                                @else
+                                <option class='form-control' value="{{ $item['id'] }}">{{ $item['name']
+                                    }}</option>
+                                @endif
+                                @endforeach
+                                @endisset
                             </select>
                             @error('kabupaten_pic')
                             {{ $message }}
@@ -168,6 +179,17 @@
                             <label for="kecamatan_pic">Kecamatan PIC <span class="text-danger">*</span></label>
                             <select class="" id="kecamatan_pic" name="kecamatan_pic" required onchange="getKelurahan()">
                                 <option class='form-control' value=''>- Pilih Data -</option>
+                                @isset($kecamatan)
+                                @foreach ($kecamatan as $item)
+                                @if (old('kecamatan_pic', $data->kecamatan_pic) == $item['id'])
+                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                    $item['name'] }}</option>
+                                @else
+                                <option class='form-control' value="{{ $item['id'] }}">{{ $item['name']
+                                    }}</option>
+                                @endif
+                                @endforeach
+                                @endisset
                             </select>
                             @error('kecamatan_pic')
                             {{ $message }}
@@ -177,6 +199,17 @@
                             <label for="kelurahan_pic">Kelurahan PIC <span class="text-danger">*</span></label>
                             <select class="" id="kelurahan_pic" name="kelurahan_pic" required>
                                 <option class='form-control' value=''>- Pilih Data -</option>
+                                @isset($kelurahan)
+                                @foreach ($kelurahan as $item)
+                                @if (old('kelurahan_pic', $data->kelurahan_pic) == $item['id'])
+                                <option class='form-control' value="{{ $item['id'] }}" selected>{{
+                                    $item['name'] }}</option>
+                                @else
+                                <option class='form-control' value="{{ $item['id'] }}">{{ $item['name']
+                                    }}</option>
+                                @endif
+                                @endforeach
+                                @endisset
                             </select>
                             @error('kelurahan_pic')
                             {{ $message }}

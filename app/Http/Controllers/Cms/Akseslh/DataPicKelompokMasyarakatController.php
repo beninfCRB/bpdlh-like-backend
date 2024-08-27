@@ -58,7 +58,10 @@ class DataPicKelompokMasyarakatController extends ApiController
         $kelompokMasyarakat = $this->kelompokMasyarakatService->apiGetAll()->data;
         $data               =   $this->dataPicKelompokMasyarakatService->getById($id)->data;
         $provinsi           = $this->provinsiService->apiGetAll()->data;
-        return view("pages.akseslh.data-pic-kelompok-masyarakat.edit", compact('data', 'kelompokMasyarakat', 'provinsi'));
+        $kota               = $this->provinsiService->getById($data->provinsi_pic)->data->kota;
+        $kecamatan          = $this->kotaService->getById($data->kabupaten_pic)->data->kecamatan;
+        $kelurahan          = $this->kecamatanService->getById($data->kecamatan_pic)->data->kelurahan;
+        return view("pages.akseslh.data-pic-kelompok-masyarakat.edit", compact('data', 'kelompokMasyarakat', 'provinsi', 'kota', 'kecamatan', 'kelurahan'));
     }
 
     public function show($id)
