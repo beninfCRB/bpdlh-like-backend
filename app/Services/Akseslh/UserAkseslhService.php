@@ -72,7 +72,7 @@ class UserAkseslhService extends AppService implements AppServiceInterface
         try {
 
             // Insert data to database
-            $data = $this->model->newQuery()->create([
+            $newData = $this->model->newQuery()->create([
                 'email'                             => $data['email'],
                 'password'                          => Hash::make($default_password),
                 'nama_pic'                          => $data['nama_pic'],
@@ -83,10 +83,10 @@ class UserAkseslhService extends AppService implements AppServiceInterface
 
             // Send password default to email
             // Notification::route('mail', $data['email'])->notify(new RegisterNotification($default_password));
-            $this->emailPhpService->sendEmail($data['email'], 'Register Notification', $data, $default_password, null, 'mail.seeder-register-mail');
+            $this->emailPhpService->sendEmail($data['email'], 'Register Notification', $newData, $default_password, null, 'mail.seeder-register-mail');
 
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($data);
+            return $this->sendSuccess($newData);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);

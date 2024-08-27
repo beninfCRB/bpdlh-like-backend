@@ -28,7 +28,7 @@
                     @csrf
                     <div class="row">
                         <div class="form-group @error('nama_pic') has-error @enderror col-md-4">
-                            <label for="nama_pic">Nama Lengkap PIC<span class="text-danger">*</span></label>
+                            <label for="nama_pic">Nama Lengkap PIC <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nama_pic" name="nama_pic"
                                 placeholder="Nama Lengkap Tanpa Gelar" value="{{ old('nama_pic') }}">
                             @error('nama_pic')
@@ -36,7 +36,7 @@
                             @enderror
                         </div>
                         <div class="form-group @error('email') has-error @enderror col-md-4">
-                            <label for="email">Alamat E-Mail PIC </label>
+                            <label for="email">Alamat E-Mail PIC <span class="text-danger">*</span></label>
                             <input type="email" class="form-control" id="email" name="email" placeholder="Alamat E-Mail"
                                 value="{{ old('email') }}">
                             @error('email')

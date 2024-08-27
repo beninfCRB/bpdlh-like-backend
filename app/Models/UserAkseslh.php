@@ -20,6 +20,7 @@ class UserAkseslh extends AppAuthenticatable
         'nama_pic',
         'email',
         'password',
+        'role_user',
         'status_user',
         'flag',
         'username',
