@@ -163,6 +163,7 @@ window.deletePICKelompokMasyarakat = (input) => {
 window.getKotaKabupaten = () => {
     const provinsi = $("#provinsi_pic").val();
     const app_url = $("#app_url").val();
+    alert(app_url);
     const old_kabupaten = $("#kabupaten_pic_old");
     $("#kabupaten_pic")
         .empty()
