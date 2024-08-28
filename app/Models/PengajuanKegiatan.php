@@ -100,4 +100,44 @@ class PengajuanKegiatan extends AppModel
     {
         return $this->hasMany(RabPengajuanPaketKegiatan::class, 'pengajuan_kegiatan_id');
     }
+
+    /**
+     * Get the provinsi that owns the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function provinsi(): BelongsTo
+    {
+        return $this->belongsTo(Province::class, 'provinsi_kegiatan');
+    }
+
+    /**
+     * Get the kabupaten that owns the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function kabupaten(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'kabupaten_kegiatan');
+    }
+
+    /**
+     * Get the kecamatan that owns the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function kecamatan(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'kecamatan_kegiatan');
+    }
+
+    /**
+     * Get the kelurahan that owns the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function kelurahan(): BelongsTo
+    {
+        return $this->belongsTo(Village::class, 'kelurahan_kegiatan');
+    }
 }
