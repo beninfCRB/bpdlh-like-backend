@@ -49,7 +49,21 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with([
+            'provinsi',
+            'kabupaten',
+            'kecamatan',
+            'kelurahan',
+            'rab_pengajuan_paket_kegiatans',
+            'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis',
+            'user_akseslh.data_pic_kelompok_masyarakat.provinsi',
+            'user_akseslh.data_pic_kelompok_masyarakat.kabupaten',
+            'user_akseslh.data_pic_kelompok_masyarakat.kecamatan',
+            'user_akseslh.data_pic_kelompok_masyarakat.kelurahan',
+            'paket_kegiatan.jenis_kegiatan',
+            'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan',
+            'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan'
+        ])->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }

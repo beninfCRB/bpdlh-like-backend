@@ -39,6 +39,9 @@
 
     <link href="{{ asset('assets/select2/select2.css') }}" rel="stylesheet" type="text/css" />
 
+    <link href="{{ asset('assets/responsive-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css"
+        media="screen" />
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -122,6 +125,8 @@
 
     {{-- Mix --}}
     <script src="{{ mix('app/build/app.js') }}"></script>
+
+    <script src="{{asset('assets/responsive-table/rwd-table.min.js')}}" type="text/javascript"></script>
 
     @include('layouts._partials._message')
 

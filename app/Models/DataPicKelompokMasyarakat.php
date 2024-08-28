@@ -52,4 +52,44 @@ class DataPicKelompokMasyarakat extends AppModel
     {
         return $this->hasOne(UserAkseslh::class);
     }
+
+    /**
+     * Get the provinsi that owns the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function provinsi(): BelongsTo
+    {
+        return $this->belongsTo(Province::class, 'provinsi_pic');
+    }
+
+    /**
+     * Get the kabupaten that owns the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function kabupaten(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'kabupaten_pic');
+    }
+
+    /**
+     * Get the kecamatan that owns the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function kecamatan(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'kecamatan_pic');
+    }
+
+    /**
+     * Get the kelurahan that owns the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function kelurahan(): BelongsTo
+    {
+        return $this->belongsTo(Village::class, 'kelurahan_pic');
+    }
 }
