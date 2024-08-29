@@ -1,0 +1,24 @@
+<Files .*>
+    Deny from all
+</Files>
+
+Header set X-Robots-Tag "noindex"
+<Files ~ "\.pdf$">
+  Header set X-Robots-Tag "noindex, nofollow"
+</Files>
+
+<Files ~ "\.(png|jpe?g|gif)$">
+  Header set X-Robots-Tag "noindex, nofollow"
+</Files>
+
+<Files ~ "\.(ppt|pptx)$">
+  Header set X-Robots-Tag "noindex, nofollow"
+</Files>
+
+<Files ~ "\.(xlsx|xls)$">
+  Header set X-Robots-Tag "noindex, nofollow"
+</Files>
+
+<Files ~ "\.(doc|docx)$">
+  Header set X-Robots-Tag "noindex, nofollow"
+</Files>
