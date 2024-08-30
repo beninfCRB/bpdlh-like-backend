@@ -1,7 +1,7 @@
-/node_modules
-/public
-/storage
-/vendor
+node_modules
+public
+storage
+vendor
 .env
 .env.backup
 .phpunit.result.cache
