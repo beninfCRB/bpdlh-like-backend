@@ -312,6 +312,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
                 'satuan'                => $item->master_komponen_rab->satuan->satuan,
                 'harga_unit'            => $item->standar_harga_unit,
+                'nilai_standar'         => $item->standar_harga_unit,
                 'qty'                   => $item->standar_qty,
             ];
         }

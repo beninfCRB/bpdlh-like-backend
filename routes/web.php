@@ -36,6 +36,8 @@ Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanControll
 
 Route::view('/pdf', 'pdf.template-small-grant');
 
+Route::get('/export', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export']);
+
 Route::middleware(['auth'])->group(function () {
 
     Route::view('/home', 'pages.home.index')->name('home');
