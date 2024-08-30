@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
+use App\Exports\PengajuanKegiatanExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
@@ -9,6 +10,7 @@ use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
 use App\Services\Akseslh\UserEksternalService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PengajuanKegiatanController extends ApiController
 {
@@ -122,5 +124,10 @@ class PengajuanKegiatanController extends ApiController
         } catch (\Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
         }
+    }
+
+    public function export()
+    {
+        return Excel::download(new PengajuanKegiatanExport, 'pengajuan_kegiatan.xlsx');
     }
 }

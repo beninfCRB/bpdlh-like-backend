@@ -21,9 +21,7 @@ var data_pengajuan_kegiatan = (function () {
             responsive: true,
             searchDelay: 500,
             processing: true,
-            // fixedColumns: true,
             paging: true,
-            // scrollCollapse: true,
             scrollX: true,
             ajax: url_table,
             columns: [

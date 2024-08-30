@@ -244,7 +244,8 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
                             'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
                         ]);
                     })
-                    ->with(['standar_rab_paket_kegiatan']);
+                    // ->with(['standar_rab_paket_kegiatan'])
+                ;
             }])->get();
 
         //         $query = "
