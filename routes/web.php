@@ -2,6 +2,7 @@
 
 use App\Exports\DataPicKelompokMasyarakatExport;
 use App\Models\UserAkseslh;
+use FontLib\Table\Type\name;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -47,9 +48,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('pic-kelompok-masyarakat/import', [App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class, 'import'])
             ->name('pic-kelompok-masyarakat.import');
 
-        Route::get('export-excel', function () {
-            return Excel::download(new DataPicKelompokMasyarakatExport, 'uhuy.xlsx');
-        });
+        Route::post('export-excel-pengajuan', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export'])->name('export-excel-pengajuan');
 
         Route::resource('jenis-kegiatan', App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class);
         Route::resource('jenis-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class);
