@@ -33,6 +33,7 @@ mix.js("resources/js/app.js", "public/js")
     .js(source + "master_komponen_rab.js", build)
     .js(source + "master_data_bank.js", build)
     .js(source + "user_akseslh.js", build)
+    .js(source + "log_jadwal_pembukaan.js", build)
     .version();
 
 mix.disableNotifications();

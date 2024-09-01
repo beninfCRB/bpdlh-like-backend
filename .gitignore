@@ -1,5 +1,6 @@
 node_modules
-public
+public/app/build
+public/js/app.js
 storage
 vendor
 .env
