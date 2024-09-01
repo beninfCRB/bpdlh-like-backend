@@ -40,15 +40,19 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
 
     public function map($pengajuanKegiatan): array
     {
-        $total_sum = $pengajuanKegiatan->rab_pengajuan_paket_kegiatans->reduce(function ($carry, $rab) {
+        $total_sum = number_format($pengajuanKegiatan->rab_pengajuan_paket_kegiatans->reduce(function ($carry, $rab) {
             return $carry + ($rab->harga_unit * $rab->qty);
-        }, 0);
+        }, 0));
+
+        $nomor_identitas_pic = '`' . $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->nomor_identitas_pic;
+
+        $jumlah = $pengajuanKegiatan->paket_kegiatan->jumlah_peserta < 50 ? $pengajuanKegiatan->paket_kegiatan->jumlah_peserta . ' Hectare' : $pengajuanKegiatan->paket_kegiatan->jumlah_peserta . ' Orang';
         return [
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->jenis_identitas_pic,
-            $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->nomor_identitas_pic,
+            $nomor_identitas_pic,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->kelurahan->name,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->kecamatan->name,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->kabupaten->name,
@@ -57,6 +61,7 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->nohp_pic,
             $pengajuanKegiatan->user_akseslh->status_user,
             $pengajuanKegiatan->user_akseslh->role_user,
+            $pengajuanKegiatan->nomor_pengajuan,
             $pengajuanKegiatan->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
             $pengajuanKegiatan->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
             $pengajuanKegiatan->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
@@ -64,7 +69,7 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             $pengajuanKegiatan->kecamatan->name,
             $pengajuanKegiatan->kabupaten->name,
             $pengajuanKegiatan->provinsi->name,
-            $pengajuanKegiatan->paket_kegiatan->jumlah_peserta,
+            $jumlah,
             $pengajuanKegiatan->tanggal_mulai_kegiatan,
             $pengajuanKegiatan->tanggal_akhir_kegiatan,
             $pengajuanKegiatan->time_mulai_kegiatan,
@@ -73,7 +78,6 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             $pengajuanKegiatan->alamat_kegiatan,
             $pengajuanKegiatan->proposal_kegiatan,
             $pengajuanKegiatan->ruang_lingkup_kegiatan,
-            $pengajuanKegiatan->nomor_pengajuan,
             $total_sum,
         ];
     }
@@ -94,6 +98,7 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'No. HP PIC',
             'Status PIC',
             'Role PIC',
+            'Nomor Pengajuan',
             'Tematik Kegiatan',
             'Sub Tematik Kegiatan',
             'Jenis Kegiatan',
@@ -110,7 +115,6 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'Alamat Kegiatan',
             'Proposal Kegiatan',
             'Ruang Lingkup Kegiatan',
-            'Nomor Pengajuan',
             'Total RAB'
         ];
     }
