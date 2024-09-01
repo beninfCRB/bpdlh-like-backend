@@ -264,6 +264,7 @@ var data_pengajuan_kegiatan = (function () {
                     orderable: false,
                     render: function (data, type, full, meta) {
                         if (
+                            full.paket_kegiatan === null ||
                             full.paket_kegiatan.master_sub_tematik_kegiatan
                                 .tematik_kegiatan === null
                         ) {
@@ -280,6 +281,7 @@ var data_pengajuan_kegiatan = (function () {
                     orderable: false,
                     render: function (data, type, full, meta) {
                         if (
+                            full.paket_kegiatan === null ||
                             full.paket_kegiatan.master_sub_tematik_kegiatan
                                 .sub_tematik_kegiatan === null
                         ) {
