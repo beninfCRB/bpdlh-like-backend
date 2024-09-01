@@ -251,7 +251,25 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 }
             }
 
-            $dataSend = $this->getDataRab($newData->id, true);
+            // $dataSend = $this->getDataRab($newData->id, true);
+            foreach ($newData->paket_kegiatan->standar_rab_paket_kegiatan as $item) {
+                # code...
+                $rab[] = [
+                    'id_komponen'           => $item->master_komponen_rab_id,
+                    'jenis_komponen_rab'    => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                    'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
+                    'satuan'                => $item->master_komponen_rab->satuan->satuan,
+                    'harga_unit'            => $item->standar_harga_unit,
+                    'nilai_standar'         => $item->standar_harga_unit,
+                    'qty'                   => $item->standar_qty,
+                ];
+            }
+
+            $dataSend = [
+                'id_pengajuan'  => $newData->id,
+                'komponen_rab'  => collect($rab)->groupBy('jenis_komponen_rab'),
+            ];
+
 
             // Save the PDF to the storage folder
             // Dicomment dulu,
@@ -301,19 +319,19 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $result = $this->model->find($id);
 
-        if (!$result)  return $this->sendError(null, 'Not Found');
+        if (!$result || count($result->rab_pengajuan_paket_kegiatans) <= 0)  return $this->sendError(null, 'Not Found');
 
         $rab = null;
-        foreach ($result->paket_kegiatan->standar_rab_paket_kegiatan as $item) {
+        foreach ($result->rab_pengajuan_paket_kegiatans as $item) {
             # code...
             $rab[] = [
-                'id_komponen'           => $item->master_komponen_rab_id,
+                'id_komponen'           => $item->master_komponen_rab->id,
                 'jenis_komponen_rab'    => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
                 'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
                 'satuan'                => $item->master_komponen_rab->satuan->satuan,
-                'harga_unit'            => $item->standar_harga_unit,
-                'nilai_standar'         => $item->standar_harga_unit,
-                'qty'                   => $item->standar_qty,
+                'harga_unit'            => $item->harga_unit,
+                'nilai_standar'         => $item->harga_unit,
+                'qty'                   => $item->qty,
             ];
         }
         $collectRab = collect($rab);
