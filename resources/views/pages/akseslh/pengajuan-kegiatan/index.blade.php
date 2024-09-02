@@ -28,11 +28,12 @@
       </div>
       <div class="panel-body">
         <div class="row m-b-10">
-          <div class="col-md-12">
+          <div class="col-md-4"></div>
+          <div class="col-md-8 text-right">
             <form class="form-inline" role="form" action="{{ route('export-excel-pengajuan') }}" method="POST">
               @csrf
-              <div class="form-group">
-                <label class="sr-only" for="tanggal_awal">Tanggal Awal</label>
+              <div class="form-group m-l-10">
+                <label for="tanggal_awal">Tanggal Awal</label>
                 <input type="date" class="form-control" id="tanggal_awal" name="tanggal_awal"
                   value="{{ old('tanggal_awal') }}" />
                 @error('tanggal_awal')
@@ -42,7 +43,7 @@
                 @enderror
               </div>
               <div class="form-group m-l-10">
-                <label class="sr-only" for="tanggal_akhir">Tanggal Akhir</label>
+                <label for="tanggal_akhir">Tanggal Akhir</label>
                 <input type="date" class="form-control" id="tanggal_akhir" name="tanggal_akhir"
                   value="{{ old('tanggal_akhir') }}" />
                 @error('tanggal_akhir')
@@ -59,7 +60,7 @@
         </div>
         <div class="row">
           <div class="col-md-12 col-sm-12 col-xs-12">
-            <table id="dt_pengajuan_kegiatan" class="table table-small-font table-bordered table-striped">
+            <table id="dt_pengajuan_kegiatan" class="table table-striped table-bordered">
               <thead>
                 <tr>
                   <th>No</th>

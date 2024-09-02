@@ -1,5 +1,7 @@
 "use strict";
 
+const numberFormat = new Intl.NumberFormat("id-ID");
+
 import {
     createData,
     updateData,
@@ -18,7 +20,7 @@ var data_pengajuan_kegiatan = (function () {
             language: {
                 url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
             },
-            responsive: true,
+            // responsive: true,
             searchDelay: 500,
             processing: true,
             paging: true,
@@ -395,12 +397,12 @@ var data_pengajuan_kegiatan = (function () {
                 {
                     targets: 27,
                     orderable: false,
-                    width: "30%",
+                    width: "40rem",
                 },
                 {
                     targets: 28,
                     orderable: false,
-                    width: "30%",
+                    width: "40rem",
                 },
                 {
                     targets: 29,
@@ -422,7 +424,7 @@ var data_pengajuan_kegiatan = (function () {
                                     full.rab_pengajuan_paket_kegiatans[index]
                                         .qty;
                             }
-                            return total;
+                            return numberFormat.format(total);
                         }
                     },
                 },
