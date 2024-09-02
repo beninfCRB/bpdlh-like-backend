@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc." />
-    <meta name="author" content="Coderthemes" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
     <meta name="application-name" content="{{ config('app.name') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -74,7 +74,7 @@
                     @yield('content')
 
                     <!-- Pls Remove -->
-                    <div style="height: 600px"></div>
+                    <div style=""></div>
                 </div>
                 <!-- container -->
             </div>
@@ -125,8 +125,6 @@
 
     {{-- Mix --}}
     <script src="{{ mix('app/build/app.js') }}"></script>
-
-    <script src="{{asset('assets/responsive-table/rwd-table.min.js')}}" type="text/javascript"></script>
 
     @include('layouts._partials._message')
 
