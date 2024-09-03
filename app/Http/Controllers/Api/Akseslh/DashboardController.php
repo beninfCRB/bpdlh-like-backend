@@ -39,9 +39,9 @@ class DashboardController extends ApiController
                     'jumlahPengajuanSelesaiBulanIni'    => $pengajuanSelesaiBulanIni,
                     'jumlahPengajuanDibatalkanSdhi'     => $data->where('flag', 20)->count(),
                     'jumlahPengajuanDibatalkanBulanIni' => $pengajuanDibatalkanBulanIni,
-                    'persentasiPengajuan'               => (($pengajuanBulanIni - $pengajuanBulanSebelumnya) / $pengajuanBulanSebelumnya) * 100,
-                    'persentasiPengajuanSelesai'        => (($pengajuanSelesaiBulanIni - $pengajuanSelesaiBulanSebelumnya) / $pengajuanSelesaiBulanSebelumnya) * 100,
-                    'persentasiDibatalkan'              => (($pengajuanDibatalkanBulanIni - $pengajuanDibatalkanBulanSebelumnya) / $pengajuanDibatalkanBulanSebelumnya) * 100,
+                    // 'persentasiPengajuan'               => (($pengajuanBulanIni - $pengajuanBulanSebelumnya) / $pengajuanBulanSebelumnya) * 100,
+                    // 'persentasiPengajuanSelesai'        => (($pengajuanSelesaiBulanIni - $pengajuanSelesaiBulanSebelumnya) / $pengajuanSelesaiBulanSebelumnya) * 100,
+                    // 'persentasiDibatalkan'              => (($pengajuanDibatalkanBulanIni - $pengajuanDibatalkanBulanSebelumnya) / $pengajuanDibatalkanBulanSebelumnya) * 100,
 
                 ];
                 return $this->sendSuccess($response, $result->message, $result->code);
