@@ -35,10 +35,13 @@ class DashboardController extends ApiController
                 $response = [
                     'jumlahPengajuanSdhi'               => $data->where('flag', 0)->count(),
                     'jumlahPengajuanBulanIni'           => $pengajuanBulanIni,
+                    'jumlahPengajuanBulanSebelumnya'    => $pengajuanBulanSebelumnya,
                     'jumlahPengajuanSelesaiSdhi'        => $data->where('flag', 9)->count(),
                     'jumlahPengajuanSelesaiBulanIni'    => $pengajuanSelesaiBulanIni,
+                    'jumlahPengajuanSelesaiBulanSebelumnya'    => $pengajuanSelesaiBulanSebelumnya,
                     'jumlahPengajuanDibatalkanSdhi'     => $data->where('flag', 20)->count(),
                     'jumlahPengajuanDibatalkanBulanIni' => $pengajuanDibatalkanBulanIni,
+                    'jumlahPengajuanDibatalkanBulanSebelumnya' => $pengajuanDibatalkanBulanSebelumnya,
                     // 'persentasiPengajuan'               => (($pengajuanBulanIni - $pengajuanBulanSebelumnya) / $pengajuanBulanSebelumnya) * 100,
                     // 'persentasiPengajuanSelesai'        => (($pengajuanSelesaiBulanIni - $pengajuanSelesaiBulanSebelumnya) / $pengajuanSelesaiBulanSebelumnya) * 100,
                     // 'persentasiDibatalkan'              => (($pengajuanDibatalkanBulanIni - $pengajuanDibatalkanBulanSebelumnya) / $pengajuanDibatalkanBulanSebelumnya) * 100,
