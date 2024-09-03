@@ -73,6 +73,7 @@ class PengajuanKegiatanController extends ApiController
             'tujuan_kegiatan'           => 'required',
             'ruang_lingkup_kegiatan'    => 'required',
             'fileDocument'              => 'nullable',
+            'id'                        => 'nullable',
         ]);
 
         if (isset($request->fileDocument)) {
@@ -105,7 +106,12 @@ class PengajuanKegiatanController extends ApiController
         $input["user_akseslh_id"]           = $request->user()->id;
         $input['user']                      = $request->user();
 
-        $result = $this->pengajuanKegiatanService->create($input);
+        if (isset($input['id'])) {
+            # code...
+            $result = $this->pengajuanKegiatanService->update($input['id'], $input);
+        } else {
+            $result = $this->pengajuanKegiatanService->create($input);
+        }
 
         try {
             if ($result->success) {
