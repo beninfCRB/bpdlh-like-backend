@@ -287,15 +287,62 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
 
+        if (!$read) return $this->sendError('Not Found');
+
         \DB::beginTransaction();
 
         try {
-
-            $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
+            $read->paket_kegiatan_id         = $data['paket_kegiatan_id'];
+            $read->user_akseslh_id           = $data['user_akseslh_id'];
+            $read->judul_pengajuan_kegiatan  = $data['judul_pengajuan_kegiatan'] ?? null;
+            $read->provinsi_kegiatan         = $data['provinsi_kegiatan'] ?? null;
+            $read->kabupaten_kegiatan        = $data['kabupaten_kegiatan'] ?? null;
+            $read->kecamatan_kegiatan        = $data['kecamatan_kegiatan'] ?? null;
+            $read->kelurahan_kegiatan        = $data['kelurahan_kegiatan'] ?? null;
+            $read->alamat_kegiatan           = $data['alamat_kegiatan'] ?? null;
+            $read->proposal_kegiatan         = $data['proposal_kegiatan'] ?? null;
+            $read->tujuan_kegiatan           = $data['tujuan_kegiatan'] ?? null;
+            $read->ruang_lingkup_kegiatan    = $data['ruang_lingkup_kegiatan'] ?? null;
+            $read->tanggal_mulai_kegiatan    = isset($data['tanggal_mulai_kegiatan']) ? date_create($data['tanggal_mulai_kegiatan']) : Carbon::now()->format('Y-m-d');
+            $read->tanggal_akhir_kegiatan    = isset($data['tanggal_akhir_kegiatan']) ? date_create($data['tanggal_akhir_kegiatan']) : Carbon::now()->format('Y-m-d');
+            $read->time_mulai_kegiatan       = isset($data['time_mulai_kegiatan']) ? $data['time_mulai_kegiatan'] : '08:00';
+            $read->time_akhir_kegiatan       = isset($data['time_akhir_kegiatan']) ? $data['time_akhir_kegiatan'] : '16:00';
             $read->save();
 
+            if (isset($data['fileDocument'])) {
+                // Save document 
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+
+                if (!empty($upload)) {
+                    $image = $this->fileTable->newQuery()->find($upload->id);
+                    $image->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+            }
+
+            foreach ($read->paket_kegiatan->standar_rab_paket_kegiatan as $item) {
+                # code...
+                $rab[] = [
+                    'id_komponen'           => $item->master_komponen_rab_id,
+                    'jenis_komponen_rab'    => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                    'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
+                    'satuan'                => $item->master_komponen_rab->satuan->satuan,
+                    'harga_unit'            => $item->standar_harga_unit,
+                    'nilai_standar'         => $item->standar_harga_unit,
+                    'qty'                   => $item->standar_qty,
+                ];
+            }
+
+            $dataSend = [
+                'id_pengajuan'  => $read->id,
+                'komponen_rab'  => collect($rab)->groupBy('jenis_komponen_rab'),
+            ];
+
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($read);
+            return $this->sendSuccess($dataSend);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
