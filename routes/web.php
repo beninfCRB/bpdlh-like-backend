@@ -24,6 +24,7 @@ Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'authent
 Route::get('/', function () {
     return redirect()->route('home');
 });
+
 Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout')->middleware('auth');
 Route::view('/blank', 'pages.blank.index')->name('blank');
 

@@ -48,7 +48,7 @@ class LogJadwalPembukaanController extends ApiController
         $input  =   $request->validate([
             'tanggal_awal'      => 'required',
             'jam_awal'          => 'required',
-            'tanggal_akhir'     => 'required|after:tanggal_awal',
+            'tanggal_akhir'     => 'required|after_or_equal:tanggal_awal',
             'jam_akhir'         => 'required',
         ]);
 
