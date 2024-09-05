@@ -83,6 +83,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
                 'tanggal_akhir'     =>  $data['tanggal_akhir'],
                 'jam_awal'          =>  $data['jam_awal'],
                 'jam_akhir'         =>  $data['jam_akhir'],
+                'username'          =>  auth()->user()->username ?? auth()->user()->email
             ]);
 
             \DB::commit(); // commit the changes
