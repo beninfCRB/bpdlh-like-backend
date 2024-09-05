@@ -27,14 +27,40 @@
           value="{{ route('data-pengajuan-kegiatan') }}">
       </div>
       <div class="panel-body">
-        <div class="row pb-3">
-          <div class="col-md-12">
-            <button class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Modal</button>
+        <div class="row m-b-10">
+          <div class="col-md-4"></div>
+          <div class="col-md-8 text-right">
+            <form class="form-inline" role="form" action="{{ route('export-excel-pengajuan') }}" method="POST">
+              @csrf
+              <div class="form-group m-l-10">
+                <label for="tanggal_awal">Tanggal Awal</label>
+                <input type="date" class="form-control" id="tanggal_awal" name="tanggal_awal"
+                  value="{{ old('tanggal_awal') }}" />
+                @error('tanggal_awal')
+                <span class="error">
+                  {{ $message }}
+                </span>
+                @enderror
+              </div>
+              <div class="form-group m-l-10">
+                <label for="tanggal_akhir">Tanggal Akhir</label>
+                <input type="date" class="form-control" id="tanggal_akhir" name="tanggal_akhir"
+                  value="{{ old('tanggal_akhir') }}" />
+                @error('tanggal_akhir')
+                <span class="error">
+                  {{ $message }}
+                </span>
+                @enderror
+              </div>
+              <button type="submit" class="btn btn-success waves-effect waves-light m-l-10">
+                Export Excel
+              </button>
+            </form>
           </div>
         </div>
         <div class="row">
           <div class="col-md-12 col-sm-12 col-xs-12">
-            <table id="dt_pengajuan_kegiatan" class="table table-small-font table-bordered table-striped">
+            <table id="dt_pengajuan_kegiatan" class="table table-striped table-bordered">
               <thead>
                 <tr>
                   <th>No</th>

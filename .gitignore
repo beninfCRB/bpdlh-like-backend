@@ -1,5 +1,7 @@
 node_modules
-public
+public/app/build
+public/js/app.js
+public/mix-manifest.json
 storage
 vendor
 .env

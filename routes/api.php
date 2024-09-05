@@ -35,13 +35,10 @@ Route::get('kecamatan/{id}', [App\Http\Controllers\Api\Akseslh\KecamatanControll
 Route::get('kelurahan', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'index']);
 Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'show']);
 Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
+Route::get('getRangeOpening', [App\Http\Controllers\Api\Akseslh\LogJadwalPembukaanController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    // Route::get('test-notification', function (Request $request) {
-    //     $request->user()->notify(new PengajuanKegiatanNotification('123123123'));
-    //     return $request->user()->notifications;
-    // });
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
 
     Route::post('logout', [App\Http\Controllers\Authapi\LogoutController::class, 'logout']);

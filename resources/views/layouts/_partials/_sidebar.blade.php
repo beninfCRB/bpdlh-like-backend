@@ -106,6 +106,11 @@
               <a href="{{ route('user-akseslh.index') }}" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
                 <span>User Akseslh</span></a>
             </li>
+            <li>
+              <a href="{{ route('log-jadwal-pembukaan.index') }}" class="waves-effect"
+                style="padding: 10px 25px 10px 30px;">>
+                <span>Log Jadwal Pembukaan</span></a>
+            </li>
           </ul>
         </li>
 

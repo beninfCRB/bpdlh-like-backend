@@ -14,9 +14,9 @@ let build = "public/app/build/";
  |
  */
 
-mix.js("resources/js/app.js", "public/js")
-    .js("public/app/app.js", build)
+mix.js("public/app/app.js", build)
     .js("public/app/api.js", build)
+    // js("resources/js/app.js", "public/js")
     .js(source + "home.js", build)
     .js(source + "jenis_kegiatan.js", build)
     .js(source + "jenis_kelompok_masyarakat.js", build)
@@ -33,6 +33,7 @@ mix.js("resources/js/app.js", "public/js")
     .js(source + "master_komponen_rab.js", build)
     .js(source + "master_data_bank.js", build)
     .js(source + "user_akseslh.js", build)
+    .js(source + "log_jadwal_pembukaan.js", build)
     .version();
 
 mix.disableNotifications();
