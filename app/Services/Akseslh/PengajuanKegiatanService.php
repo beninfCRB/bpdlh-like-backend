@@ -194,11 +194,17 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             if ($cekData) {
                 # code...
-                if ($cekData->rab_pengajuan_paket_kegiatans->count() <= 0 || $cekData->flag == 0) {
+                if ($cekData->flag < 9) {
                     # code...
-                    $cekData->forceDelete();
+                    return $this->sendError(null, 'Masih ada pengajuan yang berlangsung', 422);
                 }
+
+                // if ($cekData->rab_pengajuan_paket_kegiatans->count() <= 0 || $cekData->flag == 0) {
+                //     # code...
+                //     $cekData->forceDelete();
+                // }
             }
+
             // Menghasilkan nomor pengajuan otomatis
             $data['nomor_pengajuan'] = PengajuanKegiatan::generateNomorPengajuan($data['paket_kegiatan_id'], $data['user']);
 
@@ -277,6 +283,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $read   =   $this->model->newQuery()->where(['nomor_pengajuan' => $id, 'user_akseslh_id' => $data['user_akseslh_id']])->first();
 
         if (!$read) return $this->sendError('Not Found');
+
+        if ($read->flag > 0) {
+            # code...
+            return $this->sendError(null, 'Data bukan draft', 422);
+        }
 
         \DB::beginTransaction();
 
@@ -430,6 +441,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $model = $this->model->newQuery()->where(['nomor_pengajuan' => $id])->first();
 
         if (!$model) return $this->sendError(null, 'Not found');
+
+        if ($model->rab_pengajuan_paket_kegiatans->count() > 0) return $this->sendError(null, 'Rab sudah ada', 422);
 
         \DB::beginTransaction();
 
