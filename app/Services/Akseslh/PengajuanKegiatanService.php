@@ -202,9 +202,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             // Menghasilkan nomor pengajuan otomatis
             $data['nomor_pengajuan'] = PengajuanKegiatan::generateNomorPengajuan($data['paket_kegiatan_id'], $data['user']);
 
-            $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
-                ->orderBy('created_at', 'DESC')->get();
-
             $newData = $this->model->newQuery()->create([
                 'nomor_pengajuan'               => $data['nomor_pengajuan'],
                 'paket_kegiatan_id'             => $data['paket_kegiatan_id'],
@@ -225,15 +222,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'lokasi_bidang_folu_id'         => $data['lokasi_bidang_folu_id'] ?? null,
                 'flag'                          => 0
             ]);
-
-            foreach ($dataTahapanPengajuanKegiatan as $dt) {
-                $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
-                    'pengajuan_kegiatan_id'         => $newData->id,
-                    'tahapan_pengajuan_kegiatan_id' => $dt->id,
-                    'tanggal_masuk'                 => ($dt->deskripsi_kegiatan == "Pengajuan" || $dt->deskripsi_kegiatan == "Verifikasi"  ? date("Y-m-d") : NULL),
-                    'tanggal_selesai'               => ($dt->deskripsi_kegiatan == "Pengajuan" ? date("Y-m-d") : NULL)
-                ]);
-            }
 
             $dataSend = array('nomor_pengajuan' => $data['nomor_pengajuan']);
 
@@ -266,8 +254,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             }
 
             $dataSend = [
-                'id_pengajuan'  => $newData->id,
-                'komponen_rab'  => collect($rab)->groupBy('jenis_komponen_rab'),
+                'id_pengajuan'      => $newData->id,
+                'nomor_pengajuan'   => $data['nomor_pengajuan'],
+                'komponen_rab'      => collect($rab)->groupBy('jenis_komponen_rab'),
             ];
 
 
@@ -285,7 +274,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function update($id, $data)
     {
-        $read   =   $this->model->newQuery()->find($id);
+        $read   =   $this->model->newQuery()->where(['nomor_pengajuan' => $id, 'user_akseslh_id' => $data['user_akseslh_id']])->first();
 
         if (!$read) return $this->sendError('Not Found');
 
@@ -338,6 +327,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             $dataSend = [
                 'id_pengajuan'  => $read->id,
+                'nomor_pengajuan'   => $read->nomor_pengajuan,
                 'komponen_rab'  => collect($rab)->groupBy('jenis_komponen_rab'),
             ];
 
@@ -437,7 +427,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function updateRab($id, $dataKomponenRab)
     {
-        $model = $this->model->find($id);
+        $model = $this->model->newQuery()->where(['nomor_pengajuan' => $id])->first();
 
         if (!$model) return $this->sendError(null, 'Not found');
 
@@ -445,12 +435,25 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
             //code...
+
+            $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
+                ->orderBy('created_at', 'DESC')->get();
+
+            foreach ($dataTahapanPengajuanKegiatan as $dt) {
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id'         => $model->id,
+                    'tahapan_pengajuan_kegiatan_id' => $dt->id,
+                    'tanggal_masuk'                 => ($dt->deskripsi_kegiatan == "Pengajuan" || $dt->deskripsi_kegiatan == "Verifikasi"  ? date("Y-m-d") : NULL),
+                    'tanggal_selesai'               => ($dt->deskripsi_kegiatan == "Pengajuan" ? date("Y-m-d") : NULL)
+                ]);
+            }
+
             $total = 0;
             $dataKomponenRabInput = null;
             foreach ($dataKomponenRab as $item) {
                 # code...
                 $dataKomponenRabInput[] = [
-                    'pengajuan_kegiatan_id' => $id,
+                    'pengajuan_kegiatan_id' => $model->id,
                     'komponen_rab_id'       => $item['id_komponen'],
                     'harga_unit'            => $item['harga_unit'],
                     'qty'                   => $item['qty'],
@@ -513,6 +516,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
             'paket_kegiatan_id'         => $model->paket_kegiatan_id,
             'fileDocument'              => $model->document,
+            'nomor_pengajuan'           => $model->nomor_pengajuan,
         ];
 
         return $this->sendSuccess($result);
