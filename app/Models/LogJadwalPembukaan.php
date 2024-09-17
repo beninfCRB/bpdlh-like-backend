@@ -17,6 +17,7 @@ class LogJadwalPembukaan extends AppModel
         'tanggal_akhir',
         'jam_awal',
         'jam_akhir',
+        'batas_pengajuan',
         'flag',
         'username',
     ];

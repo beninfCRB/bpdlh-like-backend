@@ -61,20 +61,19 @@
             Halo {{ $to->nama_pic }},
         </p>
         <p>
-            Mohon maaf pengajuan anda dengan nomor pengajuan {{ $data['nomor_pengajuan'] }} belum dapat disetujui,
+            Mohon maaf pengajuan anda dengan nomor {{ $data['nomor_pengajuan'] }} belum disetujui,
             dengan catatan sebagai berikut:
         </p>
         <div class="info">
             <p>{{ $data['catatan_log'] }}</p>
         </div>
-        {{-- <p>
-            Silahkan cek pengajuan pada link berikut <a
-                href="{{ env('URL_FE') ?? 'https://bpdlh.id/layanan-masyarakat/#/layanan-masyarakat/sign-in' }}">"KLIK
-                DI SINI"</a>.
-        </p> --}}
+        <p>
+            Informasi lebih lanjut dapat menghubungi kami melalui email <a
+                href="mailto:layanandanamasyarakat@bpdlh.id">layanandanamasyarakat@bpdlh.id</a>.
+        </p>
         <div class="footer">
-            Hormat kami,<br>
-            Badan Pengelola Dana Lingkungan Hidup (BPDLH)<br>
+            Salam,<br>
+            Tim Pengelola Layanan Dana Masyarakat untuk Lingkungan<br>
         </div>
     </div>
 </body>
