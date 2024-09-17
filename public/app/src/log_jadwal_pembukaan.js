@@ -1,5 +1,7 @@
 "use strict";
 
+const numberFormat = new Intl.NumberFormat("id-ID");
+
 import {
     createData,
     updateData,
@@ -29,6 +31,7 @@ var data_log_jadwal_pembukaan = (function () {
                 { data: "jam_awal" },
                 { data: "tanggal_akhir" },
                 { data: "jam_akhir" },
+                { data: "batas_pengajuan" },
                 { data: "deleted_at" },
                 { data: "created_at" },
                 { data: "updated_at" },
@@ -38,6 +41,13 @@ var data_log_jadwal_pembukaan = (function () {
                     targets: 0,
                     searchable: false,
                     orderable: false,
+                },
+                {
+                    targets: -4,
+                    render: function (data, type, full, meta) {
+                        return numberFormat.format(full.batas_pengajuan);
+                        // return full.batas_pengajuan;
+                    },
                 },
                 {
                     targets: -3,
@@ -111,4 +121,22 @@ window.deleteJenisKegiatan = (input) => {
             });
         }
     });
+};
+
+window.formatMoney = (input) => {
+    const formatter = new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+    });
+
+    // Hapus semua karakter yang bukan angka
+    let value = input.value.replace(/[^0-9]/g, "");
+
+    // Format angka dengan `Intl.NumberFormat`
+    if (value) {
+        input.value = formatter.format(value);
+    } else {
+        input.value = "";
+    }
 };
