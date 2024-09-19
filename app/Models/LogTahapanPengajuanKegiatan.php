@@ -11,7 +11,7 @@ class LogTahapanPengajuanKegiatan extends AppModel
 {
     use HasFactory;
 
-    protected $table = 'log_tahapan_pengajuan_kegiatans', $with = ['tahapan_pengajuan_kegiatan', 'user_akseslh'];
+    protected $table = 'log_tahapan_pengajuan_kegiatans', $with = ['tahapan_pengajuan_kegiatan', 'user_akseslh_admin'];
 
     protected $fillable = [
         'pengajuan_kegiatan_id',
@@ -38,7 +38,7 @@ class LogTahapanPengajuanKegiatan extends AppModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user_akseslh(): BelongsTo
+    public function user_akseslh_admin(): BelongsTo
     {
         return $this->belongsTo(UserAkseslh::class, 'user_akseslh_id');
     }

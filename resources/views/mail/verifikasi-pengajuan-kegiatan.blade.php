@@ -58,27 +58,29 @@
     <div class="container">
         <h1>Verifikasi Pengajuan Kegiatan</h1>
         <p>
-            Halo {{ $to->nama_pic }},
+            Yth. Tim Verifikasi,
         </p>
         <p>
-            Anda mendapatkan pengajuan baru dari:
+            Sistem telah menerima pengajuan baru pada Layanan Dana Masyrakat untuk Lingkungan, dengan detail pengajuan
+            sebagai berikut:
         </p>
         <div class="info">
-            <p><strong>Kelompok Masyarakat:</strong> {{
-                $data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}</p>
+            <p><strong>Kelompok Masyarakat:</strong>
+                {{ $data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}</p>
             <p><strong>Nomor Pengajuan:</strong> {{ $data->nomor_pengajuan }}</p>
-            <p><strong>Paket Kegiatan:</strong> {{ $data->paket_kegiatan->nama_paket_kegiatan . ' ' .
-                $data->paket_kegiatan->jumlah_peserta }}</p>
+            <p><strong>Paket Kegiatan:</strong>
+                {{ $data->paket_kegiatan->nama_paket_kegiatan . ' ' . $data->paket_kegiatan->jumlah_peserta }}
+            </p>
         </div>
         <p>
             Silahkan cek pengajuan pada link berikut <a
                 href="{{ env('URL_FE') ?? 'https://bpdlh.id/layanan-masyarakat/#/layanan-masyarakat/sign-in' }}">"KLIK
                 DI SINI"</a>.
         </p>
-        <div class="footer">
+        {{-- <div class="footer">
             Hormat kami,<br>
             Badan Pengelola Dana Lingkungan Hidup (BPDLH)<br>
-        </div>
+        </div> --}}
     </div>
 </body>
 

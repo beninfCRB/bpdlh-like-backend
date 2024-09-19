@@ -50,6 +50,7 @@ class LogJadwalPembukaanController extends ApiController
             'jam_awal'          => 'required',
             'tanggal_akhir'     => 'required|after_or_equal:tanggal_awal',
             'jam_akhir'         => 'required',
+            'batas_pengajuan'   => 'required',
         ]);
 
         $result =   $this->logJadwalPembukaan->create($input);

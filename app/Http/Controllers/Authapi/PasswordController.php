@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers\Authapi;
 
-use Carbon\Carbon;
-use App\Models\UserAkseslh;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\UserEksternal;
-use App\Services\EmailPhpService;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\ApiController;
-use Illuminate\Support\Facades\Password;
 use App\Models\DataPicKelompokMasyarakat;
+use App\Models\UserAkseslh;
+use App\Http\Controllers\ApiController;
+use App\Services\EmailPhpService;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\RegisterNotification;
-use Illuminate\Support\Facades\Notification;
-use App\Http\Requests\Authapi\RegisterRequest;
 
 class PasswordController extends ApiController
 {

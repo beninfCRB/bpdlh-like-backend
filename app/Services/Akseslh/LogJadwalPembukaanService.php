@@ -34,6 +34,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
             'jam_awal'          => $model->jam_awal,
             'tanggal_akhir'     => $model->tanggal_akhir,
             'jam_akhir'         => $model->jam_akhir,
+            'batas_pengajuan'         => $model->batas_pengajuan,
         ];
 
         return $this->sendSuccess($result);
@@ -78,11 +79,14 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
 
             if ($oldData) $oldData->delete();
 
+            $amount = preg_replace('/[^\d]/', '', $data['batas_pengajuan']);
+
             $data = $this->model->newQuery()->create([
                 'tanggal_awal'      =>  $data['tanggal_awal'],
                 'tanggal_akhir'     =>  $data['tanggal_akhir'],
                 'jam_awal'          =>  $data['jam_awal'],
                 'jam_akhir'         =>  $data['jam_akhir'],
+                'batas_pengajuan'   =>  $amount,
                 'username'          =>  auth()->user()->username ?? auth()->user()->email
             ]);
 
