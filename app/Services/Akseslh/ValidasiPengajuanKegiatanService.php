@@ -10,25 +10,33 @@ use App\Models\CatatanLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\File as FileTable;
+use App\Services\FileUploadService;
+
 
 class ValidasiPengajuanKegiatanService extends AppService implements AppServiceInterface
 {
     private $modelTahapanPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
     protected $modelCatatanLogTahapanPengajuanKegiatan;
+    protected $fileUploadService;
+    protected $fileTable;
 
     public function __construct(
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
-        CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan
+        CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan,
+        FileUploadService $fileUploadService,
+        FileTable $fileTable
     ) {
         parent::__construct($model);
-        $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
-        $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
-        $this->modelCatatanLogTahapanPengajuanKegiatan = $modelCatatanLogTahapanPengajuanKegiatan;
+        $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
+        $this->modelLogTahapanPengajuanKegiatan         = $modelLogTahapanPengajuanKegiatan;
+        $this->modelCatatanLogTahapanPengajuanKegiatan  = $modelCatatanLogTahapanPengajuanKegiatan;
+        $this->fileUploadService                        =   $fileUploadService;
+        $this->fileTable                                =   $fileTable;
     }
 
     public function getAll()
@@ -68,6 +76,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             ->get();
 
         $result->transform(function ($items, $key) {
+
             return [
                 'id'                        => $items->id,
                 'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
@@ -84,7 +93,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
                 'lokasi'                    => $items->alamat_kegiatan,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
-                'nama_verifikator'          => $items->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh->email,
+                'nama_verifikator'          => $items->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh_admin->email,
                 'tanggal_verifikasi'        => $items->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->tanggal_selesai,
                 'document'                  => $items->document
             ];
@@ -167,9 +176,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
             $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
                 ->create([
-                    'log_tahapan_pengajuan_kegiatan_id' => $id,
+                    'log_tahapan_pengajuan_kegiatan_id' => $idLog,
                     'catatan_log'           => $data['catatan_log'],
-                    'flag'                  => "2"
+                    'flag'                  => "3"
                 ]);
 
             // $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
@@ -206,6 +215,18 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
                 $read->flag = '3';
                 $read->save();
+
+                // Save document 
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['file_sk'])->saveToDb('document_sk');
+
+                if (!empty($upload)) {
+                    $image = $this->fileTable->newQuery()->find($upload->id);
+                    $image->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
 
                 $dataSend = array(
                     'nomor_pengajuan' => $read->nomor_pengajuan,
