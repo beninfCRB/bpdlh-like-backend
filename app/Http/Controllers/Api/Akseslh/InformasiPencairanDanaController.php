@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Akseslh;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
 use App\Services\Akseslh\InformasiPencairanDanaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;

@@ -22,6 +22,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
     protected $modelCatatanLogTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
+    protected $emailService;
 
     public function __construct(
         PengajuanKegiatan $model,
@@ -29,7 +30,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
         CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan,
         FileUploadService $fileUploadService,
-        FileTable $fileTable
+        FileTable $fileTable,
+        EmailPhpService $emailPhpService
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
@@ -37,6 +39,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         $this->modelCatatanLogTahapanPengajuanKegiatan  = $modelCatatanLogTahapanPengajuanKegiatan;
         $this->fileUploadService                        =   $fileUploadService;
         $this->fileTable                                =   $fileTable;
+        $this->emailService = $emailPhpService;
     }
 
     public function getAll()
@@ -165,6 +168,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
         if (!$read) return $this->sendError(null, 'Not Found');
 
+        $total = 0;
+
+        foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
+            # code...
+            $total += ($items->qty * $items->harga_unit);
+        }
+
         \DB::beginTransaction();
 
         try {
@@ -205,6 +215,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'keterangan'      => 'Ditolak',
                     'status'          => '20'
                 );
+
+                $this->emailService->verifikasiValidasiDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-pengajuan-kegiatan-ditolak');
             } else {
 
                 // Update data langsung berdasarkan pengajuan_kegiatan_id
@@ -214,6 +226,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
                     ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
+
+
                 $read->flag = '3';
                 $read->save();
 
@@ -234,6 +248,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'keterangan'      => 'Disetujui',
                     'status'          => '3'
                 );
+
+                $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
             }
 
             \DB::commit(); // commit the changes

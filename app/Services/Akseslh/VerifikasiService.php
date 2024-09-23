@@ -91,15 +91,14 @@ class VerifikasiService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
 
-        // dd($read->rab_pengajuan_paket_kegiatans);
+        if (!$read) return $this->sendError(null, 'Not Found');
 
         $total = 0;
+
         foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
             # code...
             $total += ($items->qty * $items->harga_unit);
         }
-
-        if (!$read) return $this->sendError(null, 'Not Found');
 
         \DB::beginTransaction();
 
