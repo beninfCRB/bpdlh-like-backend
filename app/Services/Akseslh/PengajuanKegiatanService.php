@@ -534,4 +534,52 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         return $this->sendSuccess($result);
     }
+
+    public function updateInformasiPencairanDana($id, $data)
+    {
+        $model = $this->model->newQuery()->where(['id' => $id])->first();
+
+        if (!$model) return $this->sendError(null, 'Not found');
+
+        \DB::beginTransaction();
+
+        try {
+            //code...
+
+            if (isset($data['perjanjian_kerjasama'])) {
+                // Save document 
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+
+                if (!empty($upload)) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($model),
+                        'fileable_id'   => $model->id,
+                    ]);
+                }
+            }
+
+            if (
+                isset($data['tanggal_mulai_kegiatan']) &&
+                isset($data['tanggal_akhir_kegiatan']) &&
+                isset($data['time_mulai_kegiatan']) &&
+                isset($data['time_akhir_kegiatan'])
+            ) {
+                # code...
+                $model->tanggal_mulai_kegiatan  = $data["tanggal_mulai_kegiatan"];
+                $model->tanggal_akhir_kegiatan  = $data["tanggal_akhir_kegiatan"];
+                $model->time_mulai_kegiatan     = $data["time_mulai_kegiatan"];
+                $model->time_akhir_kegiatan     = $data["time_akhir_kegiatan"];
+
+                $model->save();
+            }
+
+            \DB::commit();
+            return $this->sendSuccess();
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+        }
+    }
 }

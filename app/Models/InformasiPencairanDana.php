@@ -5,8 +5,8 @@ namespace App\Models;
 use App\Models\AppModel;
 use App\Models\MasterDataBank;
 use App\Models\LogTahapanPengajuanKegiatan;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class InformasiPencairanDana extends AppModel
 {

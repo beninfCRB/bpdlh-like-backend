@@ -4,18 +4,22 @@ namespace App\Http\Controllers\Api\Akseslh;
 
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\InformasiPencairanDanaService;
+use App\Services\Akseslh\PengajuanKegiatanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class InformasiPencairanDanaController extends ApiController
 {
     protected $InformasiPencairanDanaService;
+    protected $pengajuanKegiatanService;
 
     public function __construct(
         InformasiPencairanDanaService $InformasiPencairanDanaService,
+        PengajuanKegiatanService $pengajuanKegiatanService,
         Request $request
     ) {
         $this->InformasiPencairanDanaService    =   $InformasiPencairanDanaService;
+        $this->pengajuanKegiatanService         =   $pengajuanKegiatanService;
         parent::__construct($request);
     }
 
@@ -82,14 +86,19 @@ class InformasiPencairanDanaController extends ApiController
     }
     public function update($id, Request $request): \Illuminate\Http\JsonResponse
     {
+        // dd($id, $request->all());
         $validator = Validator::make($request->all(), [
-            'master_data_bank_id'               => 'required|exists:master_data_banks,id',
-            'log_tahapan_pengajuan_kegiatan_id' => 'required|exists:log_tahapan_pengajuan_kegiatans,id',
-            'nama_cabang'                       => 'required',
-            'jenis_rekening'                    => 'required',
-            'nama_pemilik_rekening'             => 'required',
-            'nomor_rekening'                    => 'required'
+            // 'master_data_bank_id'               => 'required|exists:master_data_banks,id',
+            // 'log_tahapan_pengajuan_kegiatan_id' => 'required|exists:log_tahapan_pengajuan_kegiatans,id',
+            // 'nama_cabang'                       => 'required',
+            // 'jenis_rekening'                    => 'required',
+            // 'nama_pemilik_rekening'             => 'required',
+            // 'nomor_rekening'                    => 'required'
+            'perjanjian_kerjasama'                  => 'required|file|mimes:pdf',
+            'tanggal_kegiatan'                      => 'nullable',
+            'waktu_kegiatan'                        => 'nullable',
         ]);
+
 
         if ($validator->fails()) {
             # code...
@@ -98,7 +107,21 @@ class InformasiPencairanDanaController extends ApiController
 
         $input          = $validator->validated();
 
-        $result = $this->InformasiPencairanDanaService->update($id, $input);
+        if (isset($request->tanggal_kegiatan) && isset($request->waktu_kegiatan)) {
+            # code...
+            $tanggalArray   = explode(" - ", $input["tanggal_kegiatan"]);
+            $waktuArray     = explode(" - ", $input["waktu_kegiatan"]);
+            $input["tanggal_mulai_kegiatan"]    = $tanggalArray[0];
+            $input["tanggal_akhir_kegiatan"]    = $tanggalArray[1];
+            $input["time_mulai_kegiatan"]       = $waktuArray[0];
+            $input["time_akhir_kegiatan"]       = $waktuArray[1];
+
+            //eliminate unnecessary key 
+            unset($input["tanggal_kegiatan"]);
+            unset($input["waktu_kegiatan"]);
+        }
+
+        $result = $this->pengajuanKegiatanService->updateInformasiPencairanDana($id, $input);
 
         try {
             if ($result->success) {
