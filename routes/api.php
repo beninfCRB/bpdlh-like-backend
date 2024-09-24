@@ -74,8 +74,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     Route::middleware(['ensurerole:approver'])->group(function () {
         Route::get('getDataValidasiPengajuan', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'index']);
-        Route::get('getDataValidasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'show']);
         Route::put('validasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update']);
         Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
     });
+
+    Route::get('getDataValidasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'show']);
 });

@@ -116,15 +116,23 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         $result = [
             'id'                        => $model->id,
             'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
-            'nama_pic'                  => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
-            'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
             'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
             'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+            'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
+            'kegiatan'                  => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
             'jenis_kegiatan'            => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+            'rencana_kegiatan'          => $model->tanggal_mulai_kegiatan,
             'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+            'tanggal_pengajuan'         => $model->created_at->format('d M Y H:i'),
+            'tanggal_akhir_validasi'    => Carbon::parse($model->created_at)->locale('id')->addDays(7)->format('d M Y'),
+            'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+            'nama_pic'                  => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+            'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
             'lokasi'                    => $model->alamat_kegiatan,
             'nomor_pengajuan'           => $model->nomor_pengajuan,
-            'paket_kegiatan_id'         => $model->paket_kegiatan->id,
+            'nama_verifikator'          => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh_admin->email,
+            'tanggal_verifikasi'        => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->tanggal_selesai,
+            'document'                  => $model->document
         ];
 
         return $this->sendSuccess($result);
