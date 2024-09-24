@@ -14,6 +14,7 @@ use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
+use App\Notifications\VerifikasiValidasiNotification;
 
 
 class ValidasiPengajuanKegiatanService extends AppService implements AppServiceInterface
@@ -221,6 +222,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
                 $dataSend = array(
                     'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'catatan_log'     => $data['catatan_log'],
                     'keterangan'      => 'Ditolak',
                     'status'          => '20'
                 );
