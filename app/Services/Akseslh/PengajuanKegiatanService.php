@@ -101,7 +101,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataProsesKegiatan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->latest()->first();
+        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->where('flag', '<', 20)->latest()->first();
 
         $data = [];
 
