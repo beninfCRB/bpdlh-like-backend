@@ -253,6 +253,26 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             $total += ($items->qty * $items->harga_unit);
         }
 
+        $dataSend = array(
+            'nomor_pengajuan'           => $read->nomor_pengajuan,
+            'keterangan'                => 'Disetujui',
+            'status'                    => '3',
+            'judul_pengajuan_kegiatan'  => $read->judul_pengajuan_kegiatan,
+            'total'                     => $total,
+            'nama_pic'                  => $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+            'kelompok_masyarakat'       => $read->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+        );
+
+        $this->emailService->pengajuanKegiatanDiterima(
+            $read->user_akseslh,
+            'Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan',
+            $dataSend,
+            null,
+            'mail.pengajuan-kegiatan-diterima'
+        );
+
+        dd($read->judul_pengajuan_kegiatan);
+
         \DB::beginTransaction();
 
         try {
@@ -323,9 +343,21 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 }
 
                 $dataSend = array(
-                    'nomor_pengajuan' => $read->nomor_pengajuan,
-                    'keterangan'      => 'Disetujui',
-                    'status'          => '3'
+                    'nomor_pengajuan'           => $read->nomor_pengajuan,
+                    'keterangan'                => 'Disetujui',
+                    'status'                    => '3',
+                    'judul_pengajuan_kegiatan'  => $read->judul_pengajuan_kegiatan,
+                    'total'                     => $total,
+                    'nama_pic'                  => $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                    'kelompok_masyarakat'       => $read->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                );
+
+                $this->emailService->pengajuanKegiatanDiterima(
+                    $read->user_akseslh,
+                    'Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan',
+                    $dataSend,
+                    null,
+                    'mail.pengajuan-kegiatan-diterima'
                 );
 
                 $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
