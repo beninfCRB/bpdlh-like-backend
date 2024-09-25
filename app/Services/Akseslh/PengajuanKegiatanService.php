@@ -110,7 +110,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         if ($result) {
             # code...
             $data[] = [
-                'nomor_pengajuan'   => $result->nomor_pengajuan,
+                'id'                        => $result->id,
+                'nomor_pengajuan'           => $result->nomor_pengajuan,
                 'tematik_kegiatan'          => $result->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $result->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
                 'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
