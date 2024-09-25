@@ -191,10 +191,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
             $cekData = PengajuanKegiatan::where(['user_akseslh_id' => $data['user_akseslh_id']])->latest()->first();
-
             if ($cekData) {
                 # code...
-                if ($cekData->flag < 9) {
+                if ($cekData->flag < 9 || $cekData->flag != '20' || $cekData->flag != 20) {
                     # code...
                     return $this->sendError(null, 'Masih ada pengajuan yang berlangsung', 422);
                 }
