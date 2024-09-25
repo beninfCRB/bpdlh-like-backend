@@ -584,4 +584,17 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
         }
     }
+
+    public function getSk($id, $data)
+    {
+        $items =   $this->model->newQuery()->with(['document'])->find($id);
+
+        if (!$items) return $this->sendError(null, 'Not found', 422);
+
+        $result = [
+            'url'   => env('APP_URL') . '/storage/' . $items->document->where('group', 'document_sk')->first()->file_path
+        ];
+
+        return $this->sendSuccess($result);
+    }
 }

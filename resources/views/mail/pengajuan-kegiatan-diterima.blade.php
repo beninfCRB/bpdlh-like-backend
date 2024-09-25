@@ -74,7 +74,7 @@
             <b>{{ number_format($data['total']) }}</b>
             telah disetujui melalui Surat
             Keputusan yang dapat diunduh melalui tautan berikut: <a
-                href="{{ env('URL_FE') ?? 'https://bpdlh.id/layanan-masyarakat/' }}">LINK_SK_PENERIMA_DANA</a>.
+                href="{{ $data['document_sk'] }}">LINK_SK_PENERIMA_DANA</a>.
             Proses
             pencairan dana hibah
             dapat diakses melalui rekening Bank yang telah kami siapkan.

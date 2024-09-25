@@ -133,4 +133,21 @@ class InformasiPencairanDanaController extends ApiController
             $this->sendError($exception->getMessage(), "", 500);
         }
     }
+
+    public function showSk($id, Request $request)
+    {
+        $input['user_akseslh'] = $request->user();
+
+        $result = $this->pengajuanKegiatanService->getSk($id, $input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
 }
