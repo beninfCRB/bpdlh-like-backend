@@ -330,6 +330,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'total'                     => $total,
                     'nama_pic'                  => $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
                     'kelompok_masyarakat'       => $read->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                    'document_sk'               => env('APP_URL') . '/storage/' . $read->document->where('group', 'document_sk')->first()->file_path
                 );
 
                 $this->emailService->pengajuanKegiatanDiterima(
