@@ -539,7 +539,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $model = $this->model->newQuery()->where(['id' => $id])->first();
 
-        if (!$model) return $this->sendError(null, 'Not found');
+        if (!$model) return $this->sendError(null, 'Not found', 422);
+
+        if ($model->flag != 3 || $model != '3') return $this->sendError(null, 'Tidak dapat melanjutkan');
 
         \DB::beginTransaction();
 
