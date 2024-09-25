@@ -137,7 +137,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     break;
             }
         } else {
-
             $result  = $this->model->newQuery()
                 ->whereHas('log_tahapan_pengajuan', function ($q) {
                     $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
@@ -286,7 +285,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     })
                     ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
 
-                $read->flag = '20';
+                $read->flag = 20;
                 $read->save();
 
                 $dataSend = array(
@@ -308,7 +307,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
 
 
-                $read->flag = '3';
+                $read->flag = 3;
                 $read->save();
 
                 // Save document 

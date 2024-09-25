@@ -131,7 +131,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
                     'nomor_pengajuan' => $read->nomor_pengajuan,
                     'catatan_log'       => $data['catatan_log'],
                     'keterangan'      => 'Ditolak',
-                    'status'          => '20'
+                    'status'          => 20
                 );
                 $read->user_akseslh->notify(new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
 
@@ -159,7 +159,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
                 $dataSend = array(
                     'nomor_pengajuan' => $read->nomor_pengajuan,
                     'keterangan'      => 'Disetujui',
-                    'status'          => '2'
+                    'status'          => 2
                 );
 
                 $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
