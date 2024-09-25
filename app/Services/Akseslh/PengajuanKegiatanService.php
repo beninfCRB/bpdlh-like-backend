@@ -571,7 +571,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $model->tanggal_akhir_kegiatan  = $data["tanggal_akhir_kegiatan"];
                 $model->time_mulai_kegiatan     = $data["time_mulai_kegiatan"];
                 $model->time_akhir_kegiatan     = $data["time_akhir_kegiatan"];
-
+                $model->flag                    = 4;
                 $model->save();
             }
 
