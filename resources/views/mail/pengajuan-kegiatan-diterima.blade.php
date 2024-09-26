@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan</title>
+    <title>Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,7 +56,7 @@
 
 <body>
     <div class="container">
-        <h1>Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan</h1>
+        <h1>Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan</h1>
         <p>
             Yth.
         </p>
@@ -70,7 +70,7 @@
             Berdasarkan hasil penilaian secara menyeluruh atas permohonan Saudara/i pada layanan dana masyarakat untuk
             lingkungan, dengan ini kami sampaikan bahwa proposal Saudara/i dengan nomor pengajuan
             <b>{{ $data['nomor_pengajuan'] }}</b>
-            berjudul <b>“{{ $data['judul_pengajuan_kegiatan'] }}”</b> dengan jumlah dana Rp.
+            berjudul <b>"{{ $data['judul_pengajuan_kegiatan'] }}"</b> dengan jumlah dana Rp.
             <b>{{ number_format($data['total']) }}</b>
             telah disetujui melalui Surat
             Keputusan yang dapat diunduh melalui tautan berikut: <a
