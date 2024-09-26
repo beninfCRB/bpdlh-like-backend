@@ -350,7 +350,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'mail.pengajuan-kegiatan-diterima'
                 );
 
-                $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
+                // $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
             }
 
             \DB::commit(); // commit the changes
