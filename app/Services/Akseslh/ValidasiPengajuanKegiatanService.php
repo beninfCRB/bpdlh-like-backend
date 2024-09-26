@@ -342,15 +342,15 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'document_sk'               => env('APP_URL') . '/storage/' . $read->document->where('group', 'document_sk')->first()->file_path
                 );
 
-                $this->emailService->pengajuanKegiatanDiterima(
-                    $read->user_akseslh,
-                    'Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan',
-                    $dataSend,
-                    null,
-                    'mail.pengajuan-kegiatan-diterima'
-                );
+                // $this->emailService->pengajuanKegiatanDiterima(
+                //     $read->user_akseslh,
+                //     'Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan',
+                //     $dataSend,
+                //     null,
+                //     'mail.pengajuan-kegiatan-diterima'
+                // );
 
-                // $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
+                $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
             }
 
             \DB::commit(); // commit the changes

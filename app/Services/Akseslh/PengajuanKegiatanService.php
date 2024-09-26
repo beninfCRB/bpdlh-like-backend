@@ -108,6 +108,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         if (!$result) return $this->sendSuccess(collect($data));
 
         if ($result) {
+            $total = 0;
+
+            foreach ($result->rab_pengajuan_paket_kegiatans as $items) {
+                # code...
+                $total += ($items->qty * $items->harga_unit);
+            }
+
             # code...
             $data[] = [
                 'id'                        => $result->id,
@@ -119,7 +126,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'lokasi'                    => $result->alamat_kegiatan ?? 'Alamat',
                 'tahapan_pengajuan'         => $result->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->flag, $result->log_tahapan_pengajuan),
-                'dana_yang_disetujui'       => 0,
+                'dana_yang_disetujui'       => $result->flag >= 3 ? $total : 0,
                 'dana_yang_dicairkan'       => 0,
                 'tanggal_kegiatan'          => $result->tanggal_mulai_kegiatan,
             ];
@@ -130,7 +137,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan'])->where(['user_akseslh_id' => $user_akseslh_id])->get();
+        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan'])->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
 
         if (!$result)  return $this->sendSuccess(null);
 
