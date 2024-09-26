@@ -127,6 +127,9 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                 'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
                 'lokasi'                    => $items->alamat_kegiatan,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
+                'proposal_kegiatan'         => $items->proposal_kegiatan,
+                'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
                 'document'                  => $items->document
             ];
         });

@@ -597,4 +597,17 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         return $this->sendSuccess($result);
     }
+
+    public function getProposal($id, $data)
+    {
+        $items =   $this->model->newQuery()->with(['document'])->find($id);
+
+        if (!$items) return $this->sendError(null, 'Not found', 422);
+
+        $result = [
+            'url'   => $items->document->where('group', 'document')->first() ? env('APP_URL') . '/storage/' . $items->document->where('group', 'document')->first()->file_path : ''
+        ];
+
+        return $this->sendSuccess($result);
+    }
 }
