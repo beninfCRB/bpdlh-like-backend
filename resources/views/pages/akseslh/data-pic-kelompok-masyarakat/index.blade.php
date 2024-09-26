@@ -36,7 +36,8 @@
                                     class="btn btn-inverse waves-effect waves-light">Tambah Data</a>
                                 {{-- <button class="btn btn-success waves-effect waves-light" data-toggle="modal"
                                     data-target=".bs-example-modal-sm">Import Excel</button> --}}
-                                <button class="btn btn-success waves-effect waves-light">Export Excel</button>
+                                <a href="{{ route('pic-kelompok-masyarakat.export') }}"
+                                    class="btn btn-success waves-effect waves-light">Export Excel</a>
                             </div>
                         </div>
                     </div>
