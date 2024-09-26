@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
+use App\Exports\DataPicKelompokMasyarakatExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\ApiController;
@@ -164,5 +165,10 @@ class DataPicKelompokMasyarakatController extends ApiController
         Excel::import(new DataPicKelompokMasyarakatImport, $input['fileExcel']);
 
         return back()->with('success', 'Success Import Data');
+    }
+
+    public function export()
+    {
+        return Excel::download(new DataPicKelompokMasyarakatExport(), 'pic_kelompok_masyarakat.xlsx');
     }
 }

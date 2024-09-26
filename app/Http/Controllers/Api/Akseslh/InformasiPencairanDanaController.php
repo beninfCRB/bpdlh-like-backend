@@ -86,7 +86,6 @@ class InformasiPencairanDanaController extends ApiController
     }
     public function update($id, Request $request): \Illuminate\Http\JsonResponse
     {
-
         $validator = Validator::make($request->all(), [
             // 'master_data_bank_id'               => 'required|exists:master_data_banks,id',
             // 'log_tahapan_pengajuan_kegiatan_id' => 'required|exists:log_tahapan_pengajuan_kegiatans,id',
