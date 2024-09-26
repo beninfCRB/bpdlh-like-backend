@@ -149,7 +149,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         }
 
         $result->transform(function ($items, $key) {
-
             return [
                 'id'                        => $items->id,
                 'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
@@ -202,6 +201,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
             'lokasi'                    => $model->alamat_kegiatan,
             'nomor_pengajuan'           => $model->nomor_pengajuan,
+            'proposal_kegiatan'         => $model->proposal_kegiatan,
+            'tujuan_kegiatan'           => $model->tujuan_kegiatan,
+            'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
             'nama_verifikator'          => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh_admin->email,
             'tanggal_verifikasi'        => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->tanggal_selesai,
             'document'                  => $model->document
