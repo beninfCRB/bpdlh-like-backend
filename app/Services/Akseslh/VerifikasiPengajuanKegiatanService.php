@@ -29,17 +29,85 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
 
-    public function getAllAttr()
+    public function getAllAttr($data = null)
     {
-        $result  = $this->model->newQuery()
-            ->whereHas('log_tahapan_pengajuan', function ($q) {
-                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where(['deskripsi_kegiatan' => 'Verifikasi',]);
-                })->whereNotNull('tanggal_masuk')
-                    ->whereNull('tanggal_selesai');
-            })
-            ->orderBy('created_at', 'ASC')
-            ->get();
+        if ($data) {
+            # code...
+            switch ($data) {
+                case 4:
+                    # code...
+                    $result  = $this->model->newQuery()
+                        ->whereHas(
+                            'log_tahapan_pengajuan',
+                            function ($q) {
+                                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                    $q->where(['deskripsi_kegiatan' => 'Informasi Pencairan Dana']);
+                                })->whereNotNull('tanggal_masuk')
+                                    ->whereNull('tanggal_selesai');
+                            }
+                        )
+                        ->orderBy('created_at', 'ASC')
+                        ->get();
+                    break;
+                case 6:
+                    # code...
+                    $result  = $this->model->newQuery()
+                        ->whereHas(
+                            'log_tahapan_pengajuan',
+                            function ($q) {
+                                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                    $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan']);
+                                })->whereNotNull('tanggal_masuk')
+                                    ->whereNull('tanggal_selesai');
+                            }
+                        )
+                        ->orderBy('created_at', 'ASC')
+                        ->get();
+                    break;
+
+                case 8:
+                    # code...
+                    $result  = $this->model->newQuery()
+                        ->whereHas(
+                            'log_tahapan_pengajuan',
+                            function ($q) {
+                                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                    $q->where(['deskripsi_kegiatan' => 'Laporan Pasca Kegiatan']);
+                                })->whereNotNull('tanggal_masuk')
+                                    ->whereNull('tanggal_selesai');
+                            }
+                        )
+                        ->orderBy('created_at', 'ASC')
+                        ->get();
+                    break;
+
+                default:
+                    # code...
+                    $result  = $this->model->newQuery()
+                        ->whereHas(
+                            'log_tahapan_pengajuan',
+                            function ($q) {
+                                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                                })->whereNotNull('tanggal_masuk')
+                                    ->whereNull('tanggal_selesai');
+                            }
+                        )
+                        ->orderBy('created_at', 'ASC')
+                        ->get();
+                    break;
+            }
+        } else {
+            $result  = $this->model->newQuery()
+                ->whereHas('log_tahapan_pengajuan', function ($q) {
+                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                    })->whereNotNull('tanggal_masuk')
+                        ->whereNull('tanggal_selesai');
+                })
+                ->orderBy('created_at', 'ASC')
+                ->get();
+        }
 
         $result->transform(function ($items, $key) {
             return [
@@ -59,6 +127,9 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                 'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
                 'lokasi'                    => $items->alamat_kegiatan,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
+                'proposal_kegiatan'         => $items->proposal_kegiatan,
+                'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
                 'document'                  => $items->document
             ];
         });

@@ -38,7 +38,7 @@ Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanControll
 
 Route::view('/pdf', 'pdf.template-small-grant');
 
-Route::get('/export', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export']);
+// Route::get('/export', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export']);
 
 Route::middleware(['auth'])->group(function () {
 
@@ -50,6 +50,8 @@ Route::middleware(['auth'])->group(function () {
             ->name('pic-kelompok-masyarakat.import');
 
         Route::post('export-excel-pengajuan', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export'])->name('export-excel-pengajuan');
+
+        Route::get('/export-pic', [App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class, 'export'])->name('pic-kelompok-masyarakat.export');
 
         Route::resource('jenis-kegiatan', App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class);
         Route::resource('jenis-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class);

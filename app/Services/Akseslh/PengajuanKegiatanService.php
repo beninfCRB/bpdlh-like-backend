@@ -101,16 +101,24 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataProsesKegiatan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->latest()->first();
+        $result =   $this->model->newQuery()->where(['user_akseslh_id' => $user_akseslh_id])->where('flag', '<', 20)->latest()->first();
 
         $data = [];
 
         if (!$result) return $this->sendSuccess(collect($data));
 
         if ($result) {
+            $total = 0;
+
+            foreach ($result->rab_pengajuan_paket_kegiatans as $items) {
+                # code...
+                $total += ($items->qty * $items->harga_unit);
+            }
+
             # code...
             $data[] = [
-                'nomor_pengajuan'   => $result->nomor_pengajuan,
+                'id'                        => $result->id,
+                'nomor_pengajuan'           => $result->nomor_pengajuan,
                 'tematik_kegiatan'          => $result->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $result->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
                 'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
@@ -118,7 +126,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'lokasi'                    => $result->alamat_kegiatan ?? 'Alamat',
                 'tahapan_pengajuan'         => $result->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->flag, $result->log_tahapan_pengajuan),
-                'dana_yang_disetujui'       => 0,
+                'dana_yang_disetujui'       => $result->flag >= 3 ? $total : 0,
                 'dana_yang_dicairkan'       => 0,
                 'tanggal_kegiatan'          => $result->tanggal_mulai_kegiatan,
             ];
@@ -129,7 +137,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan'])->where(['user_akseslh_id' => $user_akseslh_id])->get();
+        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan'])->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
 
         if (!$result)  return $this->sendSuccess(null);
 
@@ -191,10 +199,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
             $cekData = PengajuanKegiatan::where(['user_akseslh_id' => $data['user_akseslh_id']])->latest()->first();
-
             if ($cekData) {
                 # code...
-                if ($cekData->flag < 9) {
+                if ($cekData->flag < 9 || $cekData->flag != '20' || $cekData->flag != 20) {
                     # code...
                     return $this->sendError(null, 'Masih ada pengajuan yang berlangsung', 422);
                 }
@@ -530,6 +537,82 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'paket_kegiatan_id'         => $model->paket_kegiatan_id,
             'fileDocument'              => $model->document,
             'nomor_pengajuan'           => $model->nomor_pengajuan,
+        ];
+
+        return $this->sendSuccess($result);
+    }
+
+    public function updateInformasiPencairanDana($id, $data)
+    {
+        $model = $this->model->newQuery()->where(['id' => $id])->first();
+
+        if (!$model) return $this->sendError(null, 'Not found', 422);
+
+        if ($model->flag != 3) return $this->sendError(null, 'Tidak dapat melanjutkan', 422);
+
+        \DB::beginTransaction();
+
+        try {
+            //code...
+
+            if (isset($data['perjanjian_kerjasama'])) {
+                // Save document 
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+
+                if (!empty($upload)) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($model),
+                        'fileable_id'   => $model->id,
+                    ]);
+                }
+            }
+
+            if (
+                isset($data['tanggal_mulai_kegiatan']) &&
+                isset($data['tanggal_akhir_kegiatan']) &&
+                isset($data['time_mulai_kegiatan']) &&
+                isset($data['time_akhir_kegiatan'])
+            ) {
+                # code...
+                $model->tanggal_mulai_kegiatan  = $data["tanggal_mulai_kegiatan"];
+                $model->tanggal_akhir_kegiatan  = $data["tanggal_akhir_kegiatan"];
+                $model->time_mulai_kegiatan     = $data["time_mulai_kegiatan"];
+                $model->time_akhir_kegiatan     = $data["time_akhir_kegiatan"];
+                $model->flag                    = 4;
+                $model->save();
+            }
+
+            \DB::commit();
+            return $this->sendSuccess();
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+        }
+    }
+
+    public function getSk($id, $data)
+    {
+        $items =   $this->model->newQuery()->with(['document'])->find($id);
+
+        if (!$items) return $this->sendError(null, 'Not found', 422);
+
+        $result = [
+            'url'   => env('APP_URL') . '/storage/' . $items->document->where('group', 'document_sk')->first()->file_path
+        ];
+
+        return $this->sendSuccess($result);
+    }
+
+    public function getProposal($id, $data)
+    {
+        $items =   $this->model->newQuery()->with(['document'])->find($id);
+
+        if (!$items) return $this->sendError(null, 'Not found', 422);
+
+        $result = [
+            'url'   => $items->document->where('group', 'document')->first() ? env('APP_URL') . '/storage/' . $items->document->where('group', 'document')->first()->file_path : ''
         ];
 
         return $this->sendSuccess($result);

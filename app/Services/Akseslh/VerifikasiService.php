@@ -91,15 +91,14 @@ class VerifikasiService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
 
-        // dd($read->rab_pengajuan_paket_kegiatans);
+        if (!$read) return $this->sendError(null, 'Not Found');
 
         $total = 0;
+
         foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
             # code...
             $total += ($items->qty * $items->harga_unit);
         }
-
-        if (!$read) return $this->sendError(null, 'Not Found');
 
         \DB::beginTransaction();
 
@@ -117,13 +116,6 @@ class VerifikasiService extends AppService implements AppServiceInterface
                     'catatan_log'                       => $data['catatan_log']
                 ]);
 
-            // $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
-            //     ->orderBy('created_at', 'DESC')->get();
-
-            // $dataLogTahapanPengajuanKegiatan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
-            //     ->with(['tahapan_pengajuan_kegiatan'])
-            //     ->where('pengajuan_kegiatan_id', $id)
-            //     ->orderBy('created_at', 'DESC')->get();
             if ($data['status'] == 0) {
                 // $read->user_akseslh = $data['user_akselh_id'];
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
@@ -139,9 +131,9 @@ class VerifikasiService extends AppService implements AppServiceInterface
                     'nomor_pengajuan' => $read->nomor_pengajuan,
                     'catatan_log'       => $data['catatan_log'],
                     'keterangan'      => 'Ditolak',
-                    'status'          => '20'
+                    'status'          => 20
                 );
-                // $read->user_akseslh->notify(new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+                $read->user_akseslh->notify(new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
 
                 $this->emailService->verifikasiValidasiDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-pengajuan-kegiatan-ditolak');
             } else {
@@ -167,7 +159,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
                 $dataSend = array(
                     'nomor_pengajuan' => $read->nomor_pengajuan,
                     'keterangan'      => 'Disetujui',
-                    'status'          => '2'
+                    'status'          => 2
                 );
 
                 $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));

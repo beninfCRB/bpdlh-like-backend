@@ -26,7 +26,8 @@ class VerifikasiPengajuanKegiatanController extends ApiController
 
     public function index(): \Illuminate\Http\JsonResponse
     {
-        $result = $this->verifikasiPengajuanKegiatanService->getAllAttr();
+        $input = request()->query('flag');
+        $result = $this->verifikasiPengajuanKegiatanService->getAllAttr($input);
 
         try {
             if ($result->success) {

@@ -65,7 +65,7 @@ class LoginController extends ApiController
                             'token'                     => $token,
                             'jenis_kelompok_masyarakat' => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator',
                             'kelompok_masyarakat_id'    => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator',
-                            'kelompok_masyarakat'       => 'Verifikator',
+                            'kelompok_masyarakat'       => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator',
                             'role_user'                 => $user->role_user,
                             'nama'                      => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator'
 

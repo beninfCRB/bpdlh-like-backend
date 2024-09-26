@@ -69,9 +69,9 @@ class PengajuanKegiatanController extends ApiController
             'alamat_kegiatan'           => 'required',
             'tanggal_kegiatan'          => 'required',
             'waktu_kegiatan'            => 'required',
-            'proposal_kegiatan'         => 'required',
-            'tujuan_kegiatan'           => 'required',
-            'ruang_lingkup_kegiatan'    => 'required',
+            'proposal_kegiatan'         => 'required|max:255',
+            'tujuan_kegiatan'           => 'required|max:255',
+            'ruang_lingkup_kegiatan'    => 'required|max:255',
             'fileDocument'              => 'nullable',
             'nomor_pengajuan'           => 'nullable',
         ]);
