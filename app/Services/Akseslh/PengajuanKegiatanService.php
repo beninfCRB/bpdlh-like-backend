@@ -463,7 +463,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
                     'pengajuan_kegiatan_id'         => $model->id,
                     'tahapan_pengajuan_kegiatan_id' => $dt->id,
-                    'tanggal_masuk'                 => ($dt->deskripsi_kegiatan == "Pengajuan" || $dt->deskripsi_kegiatan == "Verifikasi"  ? date("Y-m-d") : NULL),
+                    'tanggal_masuk'                 => ($dt->deskripsi_kegiatan == "Pengajuan" || $dt->deskripsi_kegiatan == "Verifikasi" ? date("Y-m-d") : NULL),
                     'tanggal_selesai'               => ($dt->deskripsi_kegiatan == "Pengajuan" ? date("Y-m-d") : NULL)
                 ]);
             }

@@ -105,6 +105,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                     })->whereNotNull('tanggal_masuk')
                         ->whereNull('tanggal_selesai');
                 })
+                ->where('flag', 1)
                 ->orderBy('created_at', 'ASC')
                 ->get();
         }
