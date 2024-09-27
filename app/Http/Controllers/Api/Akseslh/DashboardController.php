@@ -26,14 +26,14 @@ class DashboardController extends ApiController
         try {
             if ($result->success) {
                 $data = $result->data;
-                $pengajuanBulanIni                  = $data->where('flag', '<', 9)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
-                $pengajuanBulanSebelumnya           = $data->where('flag', '<', 9)->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
+                $pengajuanBulanIni                  = $data->where('flag', '>=', 1)->where('flag', '<', 9)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
+                $pengajuanBulanSebelumnya           = $data->where('flag', '>=', 1)->where('flag', '<', 9)->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
                 $pengajuanSelesaiBulanIni           = $data->where('flag', 9)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
                 $pengajuanSelesaiBulanSebelumnya    = $data->where('flag', 9)->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
                 $pengajuanDibatalkanBulanIni        = $data->where('flag', 20)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
                 $pengajuanDibatalkanBulanSebelumnya = $data->where('flag', 20)->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
                 $response = [
-                    'jumlahPengajuanSdhi'                       => $data->where('flag', '<', 9)->count(),
+                    'jumlahPengajuanSdhi'                       => $data->where('flag', '>=', 1)->where('flag', '<', 9)->count(),
                     'jumlahPengajuanBulanIni'                   => $pengajuanBulanIni,
                     'jumlahPengajuanBulanSebelumnya'            => $pengajuanBulanSebelumnya,
                     'jumlahPengajuanSelesaiSdhi'                => $data->where('flag', 9)->count(),
