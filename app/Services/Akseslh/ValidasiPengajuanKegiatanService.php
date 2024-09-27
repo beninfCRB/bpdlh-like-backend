@@ -144,6 +144,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     })->whereNotNull('tanggal_masuk')
                         ->whereNull('tanggal_selesai');
                 })
+                ->where('flag', 2)
                 ->orderBy('created_at', 'ASC')
                 ->get();
         }
