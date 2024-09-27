@@ -33,7 +33,7 @@ class DashboardController extends ApiController
                 $pengajuanDibatalkanBulanIni        = $data->where('flag', 20)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
                 $pengajuanDibatalkanBulanSebelumnya = $data->where('flag', 20)->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
                 $response = [
-                    'jumlahPengajuanSdhi'                       => $data->where('flag', 0)->count(),
+                    'jumlahPengajuanSdhi'                       => $data->where('flag', '<', 9)->count(),
                     'jumlahPengajuanBulanIni'                   => $pengajuanBulanIni,
                     'jumlahPengajuanBulanSebelumnya'            => $pengajuanBulanSebelumnya,
                     'jumlahPengajuanSelesaiSdhi'                => $data->where('flag', 9)->count(),
