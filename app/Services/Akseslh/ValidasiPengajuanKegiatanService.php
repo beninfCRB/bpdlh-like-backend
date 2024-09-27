@@ -316,6 +316,12 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     })
                     ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
 
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
 
                 $read->flag = 3;
                 $read->save();
