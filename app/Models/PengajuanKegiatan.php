@@ -38,6 +38,15 @@ class PengajuanKegiatan extends AppModel
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'flag' => 'string',
+    ];
+
+    /**
      * Get the jenis_kegiatan that owns the AkseslhPaketKegiatan
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
