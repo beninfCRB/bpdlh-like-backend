@@ -143,6 +143,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $result->transform(function ($items, $key) {
 
+            $total = 0;
+
+            foreach ($items->rab_pengajuan_paket_kegiatans as $i) {
+                # code...
+                $total += ($i->qty * $i->harga_unit);
+            }
+
             return [
                 'id'                        => $items->id,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
@@ -153,7 +160,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'lokasi'                    => $items->alamat_kegiatan ?? 'Alamat',
                 'tahapan_pengajuan'         => $items->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->flag, $items->log_tahapan_pengajuan),
-                'dana_yang_disetujui'       => 0,
+                'dana_yang_disetujui'       => $items->flag >= 3 ? $total : 0,
                 'dana_yang_dicairkan'       => 0,
                 'tanggal_kegiatan'          => $items->tanggal_mulai_kegiatan,
             ];
