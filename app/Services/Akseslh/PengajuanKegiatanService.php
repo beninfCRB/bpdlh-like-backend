@@ -555,7 +555,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found', 422);
 
-        if ($model->flag != 3) return $this->sendError(null, 'Tidak dapat melanjutkan', 422);
+        // if ($model->flag != 3) return $this->sendError(null, 'Tidak dapat melanjutkan', 422);
 
         \DB::beginTransaction();
 
