@@ -555,7 +555,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found', 422);
 
-        if ($model->flag != 3) return $this->sendError(null, 'Tidak dapat melanjutkan', 422);
+        // if ($model->flag != 3) return $this->sendError(null, 'Tidak dapat melanjutkan', 422);
 
         \DB::beginTransaction();
 
@@ -587,9 +587,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $model->tanggal_akhir_kegiatan  = $data["tanggal_akhir_kegiatan"];
                 $model->time_mulai_kegiatan     = $data["time_mulai_kegiatan"];
                 $model->time_akhir_kegiatan     = $data["time_akhir_kegiatan"];
-                $model->flag                    = 4;
-                $model->save();
             }
+            $model->flag                    = 4;
+            $model->save();
 
             \DB::commit();
             return $this->sendSuccess();
