@@ -9,23 +9,22 @@ use App\Services\AppService;
 use App\Models\PengajuanKegiatan;
 use App\Models\TransaksiPenyaluran;
 use App\Services\AppServiceInterface;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\LogTahapanPengajuanKegiatan;
 
 class TransaksiPenyaluranService extends AppService implements AppServiceInterface
 {
     protected $pengajuanKegiatan;
-    protected $modelTahapanPengajuanKegiatan;
+    protected $modelLogTahapanPengajuanKegiatan;
 
     public function __construct(
         TransaksiPenyaluran $model,
         PengajuanKegiatan $pengajuanKegiatan,
-        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->pengajuanKegiatan = $pengajuanKegiatan;
-        $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
+        $this->modelLogTahapanPengajuanKegiatan         = $modelLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -95,12 +94,6 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
     public function apiGetPengajuanKegiatan()
     {
         $result  = $this->pengajuanKegiatan->newQuery()
-            // ->whereHas('log_tahapan_pengajuan', function ($q) {
-            //     $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-            //         $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-            //     })->whereNotNull('tanggal_masuk')
-            //         ->whereNull('tanggal_selesai');
-            // })
             ->where('flag', 4)
             ->orderBy('created_at', 'ASC')
             ->get();
@@ -165,7 +158,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
 
         try {
 
-            $data = $this->model->newQuery()->create([
+            $newData = $this->model->newQuery()->create([
                 'master_data_bank_id'   =>  $data['master_data_bank_id'],
                 'pengajuan_kegiatan_id' =>  $data['pengajuan_kegiatan_id'],
                 'nomor_rekening'        =>  $data['nomor_rekening'],
@@ -176,12 +169,32 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 'username'              =>  $data['username'],
             ]);
 
+            $informasiPencairanDana = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
+                })
+                ->first();
+
+            if (!$informasiPencairanDana->tanggal_selesai) {
+                # code...
+                $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
+                $informasiPencairanDana->save();
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
+            }
+
             $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
                 })
-                ->update(['tanggal_selesai' => date("Y-m-d")]);
+                ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['username']]);
 
             $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
@@ -190,7 +203,8 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
-
+            $newData->pengajuan_kegiatan->flag = 5;
+            $newData->pengajuan_kegiatan->save();
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($data);
