@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-pic', [App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class, 'export'])->name('pic-kelompok-masyarakat.export');
 
         Route::resource('jenis-kegiatan', App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class);
+        Route::resource('jenis-dokumen', App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class);
         Route::resource('jenis-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class);
         Route::resource('kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\KelompokMasyarakatController::class);
         Route::resource('paket-kegiatan', App\Http\Controllers\Cms\Akseslh\PaketKegiatanController::class);
@@ -75,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Datatable
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
+        Route::get('/data-jenis-dokumen', [App\Http\Controllers\Datatable\Akseslh\JenisDokumenCOntroller::class, 'getAll'])->name('data-jenis-dokumen');
         Route::get('/data-tahapan-pengajuan-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TahapanPengajuanKegiatanController::class, 'getAll'])->name('data-tahapan-pengajuan-kegiatan');
         Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKelompokMasyarakatController::class, 'getAll'])->name('data-jenis-kelompok-masyarakat');
         Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll'])->name('data-kelompok-masyarakat');
