@@ -63,11 +63,11 @@ class LoginController extends ApiController
                     } else {
                         return $this->sendSuccess([
                             'token'                     => $token,
-                            'jenis_kelompok_masyarakat' => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator',
-                            'kelompok_masyarakat_id'    => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator',
-                            'kelompok_masyarakat'       => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator',
+                            'jenis_kelompok_masyarakat' => $user->role_user == 'approver' ? 'Validator' : $user->role_user,
+                            'kelompok_masyarakat_id'    => $user->role_user == 'approver' ? 'Validator' : $user->role_user,
+                            'kelompok_masyarakat'       => $user->role_user == 'approver' ? 'Validator' : $user->role_user,
                             'role_user'                 => $user->role_user,
-                            'nama'                      => $user->role_user == 'verifikator' ? 'Verifikator' : 'Validator'
+                            'nama'                      => $user->nama_pic ? $user->nama_pic : ($user->role_user == 'approver' ? 'Validator' : $user->role_user)
 
                         ]);
                     }

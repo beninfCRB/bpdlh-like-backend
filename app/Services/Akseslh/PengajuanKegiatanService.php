@@ -564,8 +564,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             if (isset($data['perjanjian_kerjasama'])) {
                 // Save document 
-                // upload document
-                $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+
+                if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
+                    // upload document
+                    $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+                }
 
                 if (!empty($upload)) {
                     $document = $this->fileTable->newQuery()->find($upload->id);
@@ -588,6 +593,22 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $model->time_mulai_kegiatan     = $data["time_mulai_kegiatan"];
                 $model->time_akhir_kegiatan     = $data["time_akhir_kegiatan"];
             }
+
+            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
+                })
+                ->update(['tanggal_selesai' => date("Y-m-d")]);
+
+            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+                })
+                ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+
             $model->flag                    = 4;
             $model->save();
 
