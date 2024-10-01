@@ -608,8 +608,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
-
-            $model->flag                    = 4;
+            $model->flag = 4;
             $model->save();
 
             \DB::commit();
