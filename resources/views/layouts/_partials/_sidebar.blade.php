@@ -1,120 +1,130 @@
 <div class="left side-menu">
-  <div class="sidebar-inner slimscrollleft">
-    <div class="user-details">
-      <div class="pull-left">
-        <img src="{{ asset('images/users/avatar-1.jpg') }}" alt="" class="thumb-md img-circle" />
-      </div>
-      <div class="user-info">
-        <div class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{
-            auth()->user()->nama_lengkap }}
-            <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="javascript:void(0)"><i class="md md-face-unlock"></i> Profile
-                <div class="ripple-wrapper"></div>
-              </a>
-            </li>
-            <li>
-              <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
-            </li>
-            <li>
-              <form action="{{ route('logout') }}" method="post" id="logout-form-sidebar">
-                @csrf
-              </form>
-              <a href="javascript:void(0)"><i class="md md-settings-power" onclick="alert('uhuy')"></i>
-                Logout</a>
-            </li>
-          </ul>
+    <div class="sidebar-inner slimscrollleft">
+        <div class="user-details">
+            <div class="pull-left">
+                <img src="{{ asset('images/users/avatar-1.jpg') }}" alt="" class="thumb-md img-circle" />
+            </div>
+            <div class="user-info">
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                        aria-expanded="false">{{ auth()->user()->nama_lengkap }}
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="javascript:void(0)"><i class="md md-face-unlock"></i> Profile
+                                <div class="ripple-wrapper"></div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
+                        </li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="post" id="logout-form-sidebar">
+                                @csrf
+                            </form>
+                            <a href="javascript:void(0)"><i class="md md-settings-power" onclick="alert('uhuy')"></i>
+                                Logout</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <p class="text-muted m-0">{{ auth()->user()->username }}</p>
+            </div>
         </div>
+        <!--- Divider -->
+        <div id="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="{{ route('home') }}" class="waves-effect" style="padding-left: 20px;"><i class="md md-home"
+                            style="margin-right: 5px;"></i><span> Dashboard</span></a>
+                </li>
+                <li class="has_sub">
+                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-apps"
+                            style="margin-right: 5px;"></i><span> Data Master<i
+                                class="md md-add pull-right"></i></span></a>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="{{ route('jenis-kelompok-masyarakat.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('kelompok-masyarakat.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Kelompok Masyarakat</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('jenis-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Jenis Kegiatan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('tematik-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Tematik Kegiatan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('sub-tematik-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Sub Tematik Kegiatan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('master-sub-tematik-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Master Sub Tematik Kegiatan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Paket Kegiatan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('pic-kelompok-masyarakat.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('tahapan-pengajuan-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Tahapan Pengajuan Kegiatan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('satuan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Satuan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('jenis-komponen-rab.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Jenis Komponen RAB</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('master-komponen-rab.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Master Komponen RAB</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Pengajuan Kegiatan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('master-data-bank.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Master Data Bank</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('user-akseslh.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>User Akseslh</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('log-jadwal-pembukaan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Log Jadwal Pembukaan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('jenis-dokumen.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Jenis Dokumen</span></a>
+                        </li>
+                    </ul>
+                </li>
 
-        <p class="text-muted m-0">{{ auth()->user()->username }}</p>
-      </div>
-    </div>
-    <!--- Divider -->
-    <div id="sidebar-menu">
-      <ul>
-        <li>
-          <a href="{{ route('home') }}" class="waves-effect" style="padding-left: 20px;"><i class="md md-home"
-              style="margin-right: 5px;"></i><span> Dashboard</span></a>
-        </li>
-        <li class="has_sub">
-          <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-apps"
-              style="margin-right: 5px;"></i><span> Data Master<i class="md md-add pull-right"></i></span></a>
-          <ul class="list-unstyled">
-            <li>
-              <a href="{{ route('jenis-kelompok-masyarakat.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">> <span>Jenis Kelompok Masyarakat</span></a>
-            </li>
-            <li>
-              <a href="{{ route('kelompok-masyarakat.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">> <span>Kelompok Masyarakat</span></a>
-            </li>
-            <li>
-              <a href="{{ route('jenis-kegiatan.index') }}" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
-                <span>Jenis Kegiatan</span></a>
-            </li>
-            <li>
-              <a href="{{ route('tematik-kegiatan.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">> <span>Tematik Kegiatan</span></a>
-            </li>
-            <li>
-              <a href="{{ route('sub-tematik-kegiatan.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">> <span>Sub Tematik Kegiatan</span></a>
-            </li>
-            <li>
-              <a href="{{ route('master-sub-tematik-kegiatan.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">> <span>Master Sub Tematik Kegiatan</span></a>
-            </li>
-            <li>
-              <a href="{{ route('paket-kegiatan.index') }}" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
-                <span>Paket Kegiatan</span></a>
-            </li>
-            <li>
-              <a href="{{ route('pic-kelompok-masyarakat.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
-            </li>
-            <li>
-              <a href="{{ route('tahapan-pengajuan-kegiatan.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">> <span>Tahapan Pengajuan Kegiatan</span></a>
-            </li>
-            <li>
-              <a href="{{ route('satuan.index') }}" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
-                <span>Satuan</span></a>
-            </li>
-            <li>
-              <a href="{{ route('jenis-komponen-rab.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">>
-                <span>Jenis Komponen RAB</span></a>
-            </li>
-            <li>
-              <a href="{{ route('master-komponen-rab.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">>
-                <span>Master Komponen RAB</span></a>
-            </li>
-            <li>
-              <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">>
-                <span>Pengajuan Kegiatan</span></a>
-            </li>
-            <li>
-              <a href="{{ route('master-data-bank.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">>
-                <span>Master Data Bank</span></a>
-            </li>
-            <li>
-              <a href="{{ route('user-akseslh.index') }}" class="waves-effect" style="padding: 10px 25px 10px 30px;">>
-                <span>User Akseslh</span></a>
-            </li>
-            <li>
-              <a href="{{ route('log-jadwal-pembukaan.index') }}" class="waves-effect"
-                style="padding: 10px 25px 10px 30px;">>
-                <span>Log Jadwal Pembukaan</span></a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- <li class="has_sub">
+                <!-- <li class="has_sub">
                     <a href="#" class="waves-effect"><i class="md md-mail"></i><span> Mail </span><span
                             class="pull-right"><i class="md md-add"></i></span></a>
                     <ul class="list-unstyled">
@@ -267,9 +277,9 @@
                         </li>
                     </ul>
                 </li> -->
-      </ul>
-      <div class="clearfix"></div>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
     </div>
-    <div class="clearfix"></div>
-  </div>
 </div>

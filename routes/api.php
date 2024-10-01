@@ -1,11 +1,6 @@
 <?php
 
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Middleware\EnsureHeaderIsValid;
-use App\Notifications\PengajuanKegiatanNotification;
-use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
