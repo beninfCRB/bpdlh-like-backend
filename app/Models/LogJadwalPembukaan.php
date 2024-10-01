@@ -21,4 +21,13 @@ class LogJadwalPembukaan extends AppModel
         'flag',
         'username',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'batas_pengajuan' => 'string',
+    ];
 }
