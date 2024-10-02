@@ -33,6 +33,26 @@ class JenisDokumenService extends AppService implements AppServiceInterface
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
 
+    public function apiGetAll()
+    {
+        $result  = $this->model->newQuery()
+            ->with(['tahapan_pengajuan_kegiatan', 'document_file'])
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
+        $result->transform(function ($items, $key) {
+            return [
+                'id'                            => $items->id,
+                'tahapan_pengajuan_kegiatan'    => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
+                'jenis_dokumen'                 => $items->jenis_dokumen,
+                'dokumen_url'                   => env('APP_URL') . '/storage/' . $items->document_file()->first()->file_path,
+                'dokumen'                       => $items->document_file()->first(),
+            ];
+        });
+
+        return $this->sendSuccess($result);
+    }
+
     public function getAllAttr()
     {
         $result  = $this->model->newQuery()
