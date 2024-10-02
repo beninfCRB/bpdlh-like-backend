@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Akseslh;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use Illuminate\Support\Facades\Validator;
@@ -75,7 +74,7 @@ class TransaksiPenyaluranController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'master_data_bank_id'       => 'required|exists:master_data_banks,id',
-            'pengajuan_kegiatan_id'     => 'nullable|exists:pengajuan_kegiatans,id',
+            'pengajuan_kegiatan_id'     => 'required|exists:pengajuan_kegiatans,id',
             'nomor_rekening'            => 'required',
             'nama_pemilik_rekening'     => 'required',
             'nilai_penyaluran'          => 'required',
@@ -100,7 +99,7 @@ class TransaksiPenyaluranController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 }
