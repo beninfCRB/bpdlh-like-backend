@@ -105,6 +105,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 # code...
                 $total += ($i->qty * $i->harga_unit);
             }
+
             return [
                 'id'                        => $items->id,
                 'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
