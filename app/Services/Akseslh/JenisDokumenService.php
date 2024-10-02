@@ -94,23 +94,25 @@ class JenisDokumenService extends AppService implements AppServiceInterface
                 'tahapan_pengajuan_kegiatan_id' =>  $data['tahapan_pengajuan_kegiatan_id'],
             ]);
 
-            // upload dokumen
-            if (
-                $data['dokumen']->getClientOriginalExtension() == 'pdf' ||
-                $data['dokumen']->getClientOriginalExtension() == 'docx' ||
-                $data['dokumen']->getClientOriginalExtension() == 'xlsx'
-            ) {
-                $upload = $this->fileUploadService->handleFile($data['dokumen'])->saveToDb($newData->jenis_dokumen);
-            } else {
-                $upload = $this->fileUploadService->handleImage($data['dokumen'])->saveToDb($newData->jenis_dokumen);
-            }
+            if (isset($data['dokumen'])) {
+                // upload dokumen
+                if (
+                    $data['dokumen']->getClientOriginalExtension() == 'pdf' ||
+                    $data['dokumen']->getClientOriginalExtension() == 'docx' ||
+                    $data['dokumen']->getClientOriginalExtension() == 'xlsx'
+                ) {
+                    $upload = $this->fileUploadService->handleFile($data['dokumen'])->saveToDb($newData->jenis_dokumen);
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['dokumen'])->saveToDb($newData->jenis_dokumen);
+                }
 
-            if (!empty($upload)) {
-                $image = $this->fileTable->newQuery()->find($upload->id);
-                $image->update([
-                    'fileable_type' => get_class($newData),
-                    'fileable_id'   => $newData->id,
-                ]);
+                if (!empty($upload)) {
+                    $image = $this->fileTable->newQuery()->find($upload->id);
+                    $image->update([
+                        'fileable_type' => get_class($newData),
+                        'fileable_id'   => $newData->id,
+                    ]);
+                }
             }
 
             \DB::commit(); // commit the changes
@@ -135,8 +137,11 @@ class JenisDokumenService extends AppService implements AppServiceInterface
 
             if ($read->save()) {
                 if (isset($data['dokumen'])) {
-                    $this->fileUploadService->deleteFiles($oldDocument->file_path);
-                    $oldDocument->delete();
+
+                    if (isset($oldDocument)) {
+                        $this->fileUploadService->deleteFiles($oldDocument->file_path);
+                        $oldDocument->delete();
+                    }
 
                     // upload dokumen
                     if (
@@ -176,6 +181,23 @@ class JenisDokumenService extends AppService implements AppServiceInterface
             $this->fileUploadService->deleteFiles($oldDocument->file_path);
             $oldDocument->delete();
             $read->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+        }
+    }
+
+    public function deleteDokumen($id)
+    {
+        $read   =   $this->model->newQuery()->find($id);
+        $oldDocument    = $read->document_file()->first();
+
+        try {
+            $this->fileUploadService->deleteFiles($oldDocument->file_path);
+            $oldDocument->delete();
+
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {

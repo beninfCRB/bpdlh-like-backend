@@ -38,6 +38,8 @@ Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanControll
 
 Route::view('/pdf', 'pdf.template-small-grant');
 
+Route::delete('/dokumen-delete/{id}', [App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class, 'delete_dokumen']);
+
 // Route::get('/export', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export']);
 
 Route::middleware(['auth'])->group(function () {

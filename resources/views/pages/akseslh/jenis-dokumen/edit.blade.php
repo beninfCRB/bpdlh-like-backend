@@ -62,15 +62,17 @@
                                 {{ $message }}
                             @enderror
                         </div>
-                        <div class="form-group @error('jenis_dokumen') has-error @enderror">
-                            <label for="jenis_dokumen">Link Dokumen <span class="text-danger">*</span></label>
-                            <p>
-                                <a href="{{ env('APP_URL') . '/storage/' . $data->document_file->file_path }}"
-                                    target="_BLANK">
-                                    {{ env('APP_URL') . '/storage/' . $data->document_file->file_path }}
-                                </a>
-                            </p>
-                        </div>
+                        @isset($data->document_file)
+                            <div class="form-group @error('jenis_dokumen') has-error @enderror">
+                                <label for="jenis_dokumen">Link Dokumen <span class="text-danger">*</span></label>
+                                <p>
+                                    <a href="{{ env('APP_URL') . '/storage/' . $data->document_file->file_path }}"
+                                        target="_BLANK">
+                                        {{ env('APP_URL') . '/storage/' . $data->document_file->file_path }}
+                                    </a>
+                                </p>
+                            </div>
+                        @endisset
                         <div class="form-group @error('dokumen') has-error @enderror">
                             <label for="dokumen">Dokumen</label>
                             <input type="file" class="form-control" id="dokumen" name="dokumen">

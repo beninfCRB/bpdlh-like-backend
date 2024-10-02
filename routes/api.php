@@ -38,6 +38,8 @@ Route::get('getDataBank', [App\Http\Controllers\Api\Akseslh\MasterDataBankContro
 
 Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
 
+Route::get('getRiwayatPengajuan', [App\Http\Controllers\Api\Akseslh\RiwayatPengajuanController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
