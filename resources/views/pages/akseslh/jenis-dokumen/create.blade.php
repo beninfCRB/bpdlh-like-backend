@@ -62,7 +62,7 @@
                             @enderror
                         </div>
                         <div class="form-group @error('dokumen') has-error @enderror">
-                            <label for="dokumen">Dokumen <span class="text-danger">*</span></label>
+                            <label for="dokumen">Dokumen</label>
                             <input type="file" class="form-control" id="dokumen" name="dokumen">
                             @error('dokumen')
                                 {{ $message }}

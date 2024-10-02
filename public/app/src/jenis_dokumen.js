@@ -116,9 +116,15 @@ var data_jenis_dokumen = (function () {
                         </a>
                         <a data-id=` +
                             full.id +
+                            ` href="#" onclick="deleteDokumen(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus File">
+                          <i class="fa fa-file"></i>
+                        </a>
+                        <a data-id=` +
+                            full.id +
                             ` href="#" onclick="deleteJenisDokumen(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
                           <i class="fa fa-trash"></i>
-                        </a>`
+                        </a>
+                        `
                         );
                     },
                 },
@@ -143,6 +149,29 @@ window.deleteJenisDokumen = (input) => {
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus",
+        cancelButtonText: "Tidak",
+        reverseButtons: false,
+    }).then((result) => {
+        if (result.value) {
+            deleteData(deleteRoute).then((res) => {
+                Swal.fire("Sukses", "Data berhasil dihapus", "success");
+                window.location.reload();
+            });
+        }
+    });
+};
+
+window.deleteDokumen = (input) => {
+    var deleteRoute = app_url + "/dokumen-delete/" + $(input).attr("data-id");
+
+    Swal.fire({
+        title: "Konfirmasi Hapus Dokumen",
+        text: "Anda yakin akan menghapus dokumen dari data ini ?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
