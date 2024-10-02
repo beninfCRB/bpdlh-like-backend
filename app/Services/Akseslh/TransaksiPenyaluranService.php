@@ -99,6 +99,12 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             ->get();
 
         $result->transform(function ($items, $key) {
+            $total = 0;
+
+            foreach ($items->rab_pengajuan_paket_kegiatans as $i) {
+                # code...
+                $total += ($i->qty * $i->harga_unit);
+            }
             return [
                 'id'                        => $items->id,
                 'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
@@ -119,6 +125,8 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 'proposal_kegiatan'         => $items->proposal_kegiatan,
                 'tujuan_kegiatan'           => $items->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                'dana_yang_disetujui'       => $total,
+                'dana_yang_dicairkan'       => 0,
                 'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                 })->first()->user_akseslh_admin->email,
