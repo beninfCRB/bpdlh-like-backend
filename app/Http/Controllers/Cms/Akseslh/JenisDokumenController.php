@@ -51,7 +51,7 @@ class JenisDokumenController extends ApiController
         $input  =   $request->validate([
             'tahapan_pengajuan_kegiatan_id' => 'required|exists:tahapan_pengajuan_kegiatans,id',
             'jenis_dokumen'                 => 'required',
-            'dokumen'                       => 'required|file|mimes:pdf,docx,xlsx,jpg,png|max:2048'
+            'dokumen'                       => 'nullable|file|mimes:pdf,docx,xlsx,jpg,png|max:2048'
         ]);
 
         $result =   $this->jenisDokumenService->create($input);
@@ -94,6 +94,21 @@ class JenisDokumenController extends ApiController
     public function destroy($id): \Illuminate\Http\JsonResponse
     {
         $result =   $this->jenisDokumenService->delete($id);
+        try {
+            if ($result->success) {
+                $response = $result->data;
+                return $this->sendSuccess($response, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (\Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function delete_dokumen($id)
+    {
+        $result = $this->jenisDokumenService->deleteDokumen($id);
         try {
             if ($result->success) {
                 $response = $result->data;
