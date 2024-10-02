@@ -130,16 +130,16 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 'dana_yang_dicairkan'       => 0,
                 'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                })->first()->user_akseslh_admin->email,
+                })->first()->user_akseslh_admin->email ?? null,
                 'tanggal_verifikasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                })->first()->tanggal_selesai,
+                })->first()->tanggal_selesai ?? null,
                 'nama_validator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Validasi']);
-                })->first()->user_akseslh_admin->email,
+                })->first()->user_akseslh_admin->email ?? null,
                 'tanggal_validasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Validasi']);
-                })->first()->tanggal_selesai,
+                })->first()->tanggal_selesai ?? null,
                 'document'                  => $items->document
             ];
         });
