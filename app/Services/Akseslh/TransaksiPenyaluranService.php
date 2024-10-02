@@ -216,7 +216,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             $newData->pengajuan_kegiatan->save();
 
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($data);
+            return $this->sendSuccess($newData);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
