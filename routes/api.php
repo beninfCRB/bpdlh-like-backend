@@ -36,6 +36,8 @@ Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\Dash
 
 Route::get('getDataBank', [App\Http\Controllers\Api\Akseslh\MasterDataBankController::class, 'index']);
 
+Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
