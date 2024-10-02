@@ -33,8 +33,8 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
 
         $result->transform(function ($items, $key) {
             return [
-                'id'                 => $items->id,
-                'jenis_kegiatan'     => $items->jenis_kegiatan,
+                'id'                        => $items->id,
+                'deskripsi_kegiatan'        => $items->deskripsi_kegiatan,
             ];
         });
 

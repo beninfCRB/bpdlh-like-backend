@@ -1,11 +1,6 @@
 <?php
 
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Middleware\EnsureHeaderIsValid;
-use App\Notifications\PengajuanKegiatanNotification;
-use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +33,10 @@ Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Cont
 Route::get('getRangeOpening', [App\Http\Controllers\Api\Akseslh\LogJadwalPembukaanController::class, 'index']);
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
+
+Route::get('getDataBank', [App\Http\Controllers\Api\Akseslh\MasterDataBankController::class, 'index']);
+
+Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -76,9 +75,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'show']);
         Route::put('verifikasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiController::class, 'update']);
     });
+
     Route::middleware(['ensurerole:approver'])->group(function () {
         Route::get('getDataValidasiPengajuan', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'index']);
         Route::put('validasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update']);
+    });
+
+    Route::middleware(['ensurerole:pmu-bpdlh'])->group(function () {
+        Route::get('getDataPencairan', [App\Http\Controllers\Api\Akseslh\TransaksiPenyaluranController::class, 'getPengajuanKegiatan']);
+        Route::post('detailInformasiPencairan', [App\Http\Controllers\Api\Akseslh\TransaksiPenyaluranController::class, 'store']);
     });
 
     Route::get('getDataValidasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'show']);
