@@ -8,19 +8,24 @@ use Illuminate\Http\Request;
 
 class RiwayatPengajuanController extends ApiController
 {
-    protected $jenisDokumenService;
+    protected $riwayatPengajuanService;
 
     public function __construct(
-        RiwayatPengajuanService $jenisDokumenService,
+        RiwayatPengajuanService $riwayatPengajuanService,
         Request $request
     ) {
-        $this->jenisDokumenService    =   $jenisDokumenService;
+        $this->riwayatPengajuanService    =   $riwayatPengajuanService;
         parent::__construct($request);
     }
 
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $result = $this->jenisDokumenService->apiGetAll();
+        $flag       = $request->query('flag', null);
+        $search     = $request->query('search', null);
+        $page       = $request->query('page', null);
+        $perPage    = $request->query('perPage', 10);
+
+        $result = $this->riwayatPengajuanService->getPaginated($flag, $search, $page, $perPage);
 
         try {
             if ($result->success) {
@@ -37,7 +42,7 @@ class RiwayatPengajuanController extends ApiController
     {
         $lang           = $request->input('lang')  ?: 'ID';
 
-        $result = $this->jenisDokumenService->apiLang($id, $lang);
+        $result = $this->riwayatPengajuanService->apiLang($id, $lang);
 
         try {
             if ($result->success) {
