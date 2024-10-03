@@ -149,4 +149,14 @@ class PengajuanKegiatan extends AppModel
     {
         return $this->belongsTo(Village::class, 'kelurahan_kegiatan');
     }
+
+    /**
+     * Get all of the transaksi_penyaluran for the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function transaksi_penyaluran(): HasMany
+    {
+        return $this->hasMany(TransaksiPenyaluran::class, 'pengajuan_kegiatan_id');
+    }
 }
