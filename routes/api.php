@@ -40,6 +40,8 @@ Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenCont
 
 Route::get('getRiwayatPengajuan', [App\Http\Controllers\Api\Akseslh\RiwayatPengajuanController::class, 'index']);
 
+Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengajuanKegiatanController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
@@ -65,6 +67,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getDataProsesKegiatan', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getDataProsesKegiatan']);
     Route::get('getDataRiwayatPengajuan', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getDataRiwayatPengajuan']);
+    Route::get('getLogKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getLogKegiatan']);
 
     // Route::post('informasiPencairanDana', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'store']);
     Route::put('informasiPencairanDana/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'update']);
