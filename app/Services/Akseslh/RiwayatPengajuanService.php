@@ -62,20 +62,20 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
             ->when($flag, function ($query, $flag) {
                 switch ($flag) {
                     case 'Berjalan':
-                        return $query->where('flag', '>', 1)->where('flag', '<', 9);
+                        return $query->whereIn('flag', ['1', '2', '3', '4', '5', '6', '7', '8', '9']);
                         break;
 
                     case 'Selesai':
-                        return $query->where('flag', 10);
+                        return $query->where('flag', '10');
                         break;
 
                     case 'Ditolak':
-                        return $query->where('flag', 20);
+                        return $query->where('flag', '20');
                         break;
 
                     default:
                         # code...
-                        return $query->where('flag', '>', 0);
+                        return $query->whereIn('flag', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '20']);
                         break;
                 }
             })
