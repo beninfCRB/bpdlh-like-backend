@@ -42,7 +42,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
 
     public function getPaginated($flag = null, $search = null, $page = null, $perPage = null, $tahapanKegiatan = null)
     {
-        $tahpan = tahapanPengajuanFlag($tahapanKegiatan);
+        $tahapan = tahapanPengajuanFlag($tahapanKegiatan);
 
         $result  = $this->model->newQuery()
             ->when($search, function ($query) use ($search) {
