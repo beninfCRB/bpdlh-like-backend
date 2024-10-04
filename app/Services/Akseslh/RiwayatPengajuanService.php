@@ -40,10 +40,11 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function getPaginated($flag = null, $search = null, $page = null, $perPage = null)
+    public function getPaginated($flag = null, $search = null, $page = null, $perPage = null, $tahapanKegiatan = null)
     {
+        $tahpan = tahapanPengajuanFlag($tahapanKegiatan);
+        dd($tahpan);
         $result  = $this->model->newQuery()
-            // ->where('is_publish', true)
             ->when($search, function ($query) use ($search) {
                 return $query->where('nomor_pengajuan', 'like', '%' . $search . '%')
                     ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat', function ($query) use ($search) {
@@ -78,6 +79,9 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                         return $query->whereIn('flag', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '20']);
                         break;
                 }
+            })
+            ->when($tahapan, function ($query, $tahapan) {
+                return $query->where('flag', $tahapan);
             })
             ->orderBy('created_at', 'DESC')
             ->paginate((int)$perPage, ['*'], null, $page);

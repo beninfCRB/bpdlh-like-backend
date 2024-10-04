@@ -3,30 +3,24 @@
 namespace App\Http\Controllers\Api\Akseslh;
 
 use App\Http\Controllers\ApiController;
-use App\Services\Akseslh\RiwayatPengajuanService;
+use App\Services\Akseslh\TahapanPengajuanKegiatanService;
 use Illuminate\Http\Request;
 
-class RiwayatPengajuanController extends ApiController
+class TahapanPengajuanKegiatanController extends ApiController
 {
-    protected $riwayatPengajuanService;
+    protected $tahapanPengajuanKegiatanService;
 
     public function __construct(
-        RiwayatPengajuanService $riwayatPengajuanService,
+        TahapanPengajuanKegiatanService $tahapanPengajuanKegiatanService,
         Request $request
     ) {
-        $this->riwayatPengajuanService    =   $riwayatPengajuanService;
+        $this->tahapanPengajuanKegiatanService    =   $tahapanPengajuanKegiatanService;
         parent::__construct($request);
     }
 
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $flag               = $request->query('flag', null);
-        $search             = $request->query('search', null);
-        $page               = $request->query('page', null);
-        $perPage            = $request->query('perPage', 10);
-        $tahapanKegiatan    = $request->query('tahapanKegiatan', 10);
-
-        $result = $this->riwayatPengajuanService->getPaginated($flag, $search, $page, $perPage, $tahapanKegiatan);
+        $result = $this->tahapanPengajuanKegiatanService->getAllAttr();
 
         try {
             if ($result->success) {
@@ -43,7 +37,7 @@ class RiwayatPengajuanController extends ApiController
     {
         $lang           = $request->input('lang')  ?: 'ID';
 
-        $result = $this->riwayatPengajuanService->apiLang($id, $lang);
+        $result = $this->tahapanPengajuanKegiatanService->apiLang($id, $lang);
 
         try {
             if ($result->success) {

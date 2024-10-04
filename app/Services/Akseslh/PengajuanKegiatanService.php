@@ -141,6 +141,29 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($data);
     }
 
+    public function getLogKegiatan($id)
+    {
+        $model = $this->model->newQuery()->with(['log_tahapan_pengajuan'])->find($id);
+
+        if (!$model) return $this->sendError(null, 'Not found');
+
+        $result = $model->log_tahapan_pengajuan;
+
+        $result->transform(function ($items, $key) {
+
+            return [
+                'id'    => $items->id,
+                'tahapan_kegiatan'  => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
+                'tanggal_masuk' => $items->tanggal_masuk,
+                'tanggal_selesai' => $items->tanggal_selesai,
+                'user_akseslh'      => $items->user_akseslh_admin->nama_pic ?? null,
+            ];
+        });
+
+
+        return $this->sendSuccess($result);
+    }
+
     public function getDataRiwayatPengajuan($user_akseslh_id)
     {
         $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan'])->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
