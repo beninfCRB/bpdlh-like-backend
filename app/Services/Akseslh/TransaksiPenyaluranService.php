@@ -29,7 +29,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('short_id', 'ASC');
+        $model = $this->model->query()->with(['master_data_bank', 'pengajuan_kegiatan.user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis'])->orderBy('created_at', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }

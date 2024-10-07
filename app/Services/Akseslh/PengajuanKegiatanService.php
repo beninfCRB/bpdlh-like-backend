@@ -62,7 +62,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'user_akseslh.data_pic_kelompok_masyarakat.kelurahan',
             'paket_kegiatan.jenis_kegiatan',
             'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan',
-            'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan'
+            'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan',
+            'transaksi_penyaluran'
         ])->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
@@ -115,6 +116,15 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if ($result) {
             $total = 0;
+            $total_penyaluran = 0;
+
+            if (isset($result->transaksi_penyaluran)) {
+                # code...
+                foreach ($result->transaksi_penyaluran as $item) {
+                    # code...
+                    $total_penyaluran += $item->nilai_penyaluran;
+                }
+            }
 
             foreach ($result->rab_pengajuan_paket_kegiatans as $items) {
                 # code...
@@ -133,12 +143,36 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tahapan_pengajuan'         => $result->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->flag, $result->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => $result->flag >= 3 ? $total : 0,
-                'dana_yang_dicairkan'       => 0,
+                'dana_yang_dicairkan'       => $total_penyaluran,
+                'sisa_pencairan'            => $result->flag >= 3 ? ($total - $total_penyaluran) : 0,
                 'tanggal_kegiatan'          => $result->tanggal_mulai_kegiatan,
             ];
         }
 
         return $this->sendSuccess($data);
+    }
+
+    public function getLogKegiatan($id)
+    {
+        $model = $this->model->newQuery()->with(['log_tahapan_pengajuan'])->find($id);
+
+        if (!$model) return $this->sendError(null, 'Not found');
+
+        $result = $model->log_tahapan_pengajuan;
+
+        $result->transform(function ($items, $key) {
+
+            return [
+                'id'                => $items->id,
+                'tahapan_kegiatan'  => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
+                'tanggal_masuk'     => $items->tanggal_masuk,
+                'tanggal_selesai'   => $items->tanggal_selesai,
+                'user_akseslh'      => $items->user_akseslh_admin->email ?? null,
+            ];
+        });
+
+
+        return $this->sendSuccess($result);
     }
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
@@ -150,6 +184,15 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $result->transform(function ($items, $key) {
 
             $total = 0;
+            $total_penyaluran = 0;
+
+            if (isset($items->transaksi_penyaluran)) {
+                # code...
+                foreach ($items->transaksi_penyaluran as $item) {
+                    # code...
+                    $total_penyaluran += $item->nilai_penyaluran;
+                }
+            }
 
             foreach ($items->rab_pengajuan_paket_kegiatans as $i) {
                 # code...
@@ -167,7 +210,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tahapan_pengajuan'         => $items->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->flag, $items->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => $items->flag >= 3 ? $total : 0,
-                'dana_yang_dicairkan'       => 0,
+                'dana_yang_dicairkan'       => $total_penyaluran,
+                'sisa_pencairan'            => $items->flag >= 3 ? ($total - $total_penyaluran) : 0,
                 'tanggal_kegiatan'          => $items->tanggal_mulai_kegiatan,
             ];
         });

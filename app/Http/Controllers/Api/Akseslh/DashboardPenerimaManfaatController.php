@@ -44,7 +44,23 @@ class DashboardPenerimaManfaatController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function getLogKegiatan($id)
+    {
+        $result = $this->pengajuanKegiatanService->getLogKegiatan($id);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            //throw $th;
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
