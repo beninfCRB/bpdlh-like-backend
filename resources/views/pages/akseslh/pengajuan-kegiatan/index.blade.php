@@ -94,6 +94,7 @@
                                         <th>Proposal Kegiatan</th>
                                         <th>Ruang Lingkup Kegiatan</th>
                                         <th>Total RAB</th>
+                                        <th>Total Dana Dicairkan</th>
                                         <th>Flag</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
