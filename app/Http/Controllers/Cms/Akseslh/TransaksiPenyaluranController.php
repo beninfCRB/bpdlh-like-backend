@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
+use App\Exports\TransaksiPenyaluranExport;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\TransaksiPenyaluranService;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransaksiPenyaluranController extends ApiController
 {
@@ -16,6 +18,11 @@ class TransaksiPenyaluranController extends ApiController
     ) {
         $this->transaksiPenyaluranService   =   $transaksiPenyaluranService;
         parent::__construct($request);
+    }
+
+    public function export()
+    {
+        return Excel::download(new TransaksiPenyaluranExport(), 'transaksi_penyaluran.xlsx');
     }
 
     public function index()
