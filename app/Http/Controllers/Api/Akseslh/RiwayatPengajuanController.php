@@ -24,7 +24,7 @@ class RiwayatPengajuanController extends ApiController
         $search             = $request->query('search', null);
         $page               = $request->query('page', null);
         $perPage            = $request->query('perPage', 10);
-        $tahapanKegiatan    = $request->query('tahapanKegiatan', 10);
+        $tahapanKegiatan    = $request->query('tahapanKegiatan', null);
 
         $result = $this->riwayatPengajuanService->getPaginated($flag, $search, $page, $perPage, $tahapanKegiatan);
 
