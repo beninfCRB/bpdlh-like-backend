@@ -115,6 +115,15 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if ($result) {
             $total = 0;
+            $total_penyaluran = 0;
+
+            if (isset($result->transaksi_penyaluran)) {
+                # code...
+                foreach ($result->transaksi_penyaluran as $item) {
+                    # code...
+                    $total_penyaluran += $item->nilai_penyaluran;
+                }
+            }
 
             foreach ($result->rab_pengajuan_paket_kegiatans as $items) {
                 # code...
@@ -133,7 +142,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tahapan_pengajuan'         => $result->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($result->flag, $result->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => $result->flag >= 3 ? $total : 0,
-                'dana_yang_dicairkan'       => 0,
+                'dana_yang_dicairkan'       => $total_penyaluran,
+                'sisa_pencairan'            => $result->flag >= 3 ? ($total - $total_penyaluran) : 0,
                 'tanggal_kegiatan'          => $result->tanggal_mulai_kegiatan,
             ];
         }
@@ -173,6 +183,15 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $result->transform(function ($items, $key) {
 
             $total = 0;
+            $total_penyaluran = 0;
+
+            if (isset($items->transaksi_penyaluran)) {
+                # code...
+                foreach ($items->transaksi_penyaluran as $item) {
+                    # code...
+                    $total_penyaluran += $item->nilai_penyaluran;
+                }
+            }
 
             foreach ($items->rab_pengajuan_paket_kegiatans as $i) {
                 # code...
@@ -190,7 +209,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tahapan_pengajuan'         => $items->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->flag, $items->log_tahapan_pengajuan),
                 'dana_yang_disetujui'       => $items->flag >= 3 ? $total : 0,
-                'dana_yang_dicairkan'       => 0,
+                'dana_yang_dicairkan'       => $total_penyaluran,
+                'sisa_pencairan'            => $items->flag >= 3 ? ($total - $total_penyaluran) : 0,
                 'tanggal_kegiatan'          => $items->tanggal_mulai_kegiatan,
             ];
         });
