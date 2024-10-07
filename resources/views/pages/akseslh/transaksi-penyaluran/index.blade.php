@@ -30,7 +30,8 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <a href="#" class="btn btn-success waves-effect waves-light pull-right"
+                        <a href="{{ route('export-excel-transaksi-penyaluran') }}"
+                            class="btn btn-success waves-effect waves-light pull-right"
                             style="margin-right:10px;margin-bottom:10px;">Export Data</a>
                     </div>
                     <div class="row">
