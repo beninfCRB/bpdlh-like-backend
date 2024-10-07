@@ -152,11 +152,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $result->transform(function ($items, $key) {
 
             return [
-                'id'    => $items->id,
+                'id'                => $items->id,
                 'tahapan_kegiatan'  => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
-                'tanggal_masuk' => $items->tanggal_masuk,
-                'tanggal_selesai' => $items->tanggal_selesai,
-                'user_akseslh'      => $items->user_akseslh_admin->nama_pic ?? null,
+                'tanggal_masuk'     => $items->tanggal_masuk,
+                'tanggal_selesai'   => $items->tanggal_selesai,
+                'user_akseslh'      => $items->user_akseslh_admin->email ?? null,
             ];
         });
 

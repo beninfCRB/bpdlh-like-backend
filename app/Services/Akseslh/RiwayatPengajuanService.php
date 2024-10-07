@@ -89,6 +89,15 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
         $result->getCollection()->transform(function ($items, $key) {
 
             $total = 0;
+            $total_penyaluran = 0;
+
+            if (isset($items->transaksi_penyaluran)) {
+                # code...
+                foreach ($items->transaksi_penyaluran as $item) {
+                    # code...
+                    $total_penyaluran += $item->nilai_penyaluran;
+                }
+            }
 
             foreach ($items->rab_pengajuan_paket_kegiatans as $i) {
                 # code...
@@ -112,7 +121,8 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                 'update_terakhir'           => $items->updated_at->format('Y-m-d H:i:s'),
                 'lokasi'                    => $items->alamat_kegiatan ?? 'Alamat',
                 'dana_yang_disetujui'       => $items->flag >= 3 ? $total : 0,
-                'dana_yang_dicairkan'       => 0,
+                'dana_yang_dicairkan'       => $total_penyaluran,
+                'sisa_pencairan'            => ($total - $total_penyaluran)
             ];
         });
 

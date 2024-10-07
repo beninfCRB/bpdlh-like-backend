@@ -115,8 +115,9 @@ if (!function_exists('tahapanPengajuanFlag')) {
 
             default:
                 # code...
+                return null;
                 break;
         }
-        return 14;
+        return null;
     }
 }
