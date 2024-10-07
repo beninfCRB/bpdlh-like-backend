@@ -75,6 +75,15 @@
                                         <th>Nama Pemilik Rekening</th>
                                     </tr>
                                 </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="6">Total Transaksi Pencairan</th>
+                                        <th id="total-transaksi-pencairan"></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
 
                             </table>
 

@@ -57,6 +57,7 @@ var data_pengajuan_kegiatan = (function () {
                 { data: "proposal_kegiatan" },
                 { data: "ruang_lingkup_kegiatan" },
                 {},
+                {},
                 { data: "flag" },
                 { data: "created_at" },
                 { data: "updated_at" },
@@ -423,6 +424,27 @@ var data_pengajuan_kegiatan = (function () {
                                         .harga_unit *
                                     full.rab_pengajuan_paket_kegiatans[index]
                                         .qty;
+                            }
+                            return numberFormat.format(total);
+                        }
+                    },
+                },
+                {
+                    targets: 30,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        if (full.transaksi_penyaluran === null) {
+                            return 0;
+                        } else {
+                            let total = 0;
+                            for (
+                                let index = 0;
+                                index < full.transaksi_penyaluran.length;
+                                index++
+                            ) {
+                                total +=
+                                    full.transaksi_penyaluran[index]
+                                        .nilai_penyaluran;
                             }
                             return numberFormat.format(total);
                         }

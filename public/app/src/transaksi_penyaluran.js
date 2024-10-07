@@ -117,6 +117,18 @@ var data_transaksi_penyaluran = (function () {
                     },
                 },
             ],
+            initComplete: function () {
+                // Hitung total nilai_penyaluran
+                calculateTotal();
+            },
+            // Jika menggunakan ajax, tambahkan callback untuk menghitung total setelah data dimuat
+            ajax: {
+                url: url_table,
+                dataSrc: function (json) {
+                    calculateTotal(json.data); // Panggil fungsi menghitung total
+                    return json.data;
+                },
+            },
         });
     };
 
@@ -124,6 +136,7 @@ var data_transaksi_penyaluran = (function () {
         //main function to initiate the module
         init: function () {
             initTable1();
+            let total = $("#total-transaksi-pencairan").text("1000000");
         },
     };
 })();
@@ -131,3 +144,22 @@ var data_transaksi_penyaluran = (function () {
 jQuery(document).ready(function () {
     data_transaksi_penyaluran.init();
 });
+
+// Fungsi untuk menghitung total nilai_penyaluran
+function calculateTotal(data) {
+    var total = 0;
+    // Jika data diberikan, hitung total dari data tersebut
+    if (data) {
+        data.forEach(function (item) {
+            total += parseFloat(item.nilai_penyaluran) || 0; // Pastikan nilai diubah ke float
+        });
+    } else {
+        // Jika tidak, hitung total dari baris yang ada di DataTable
+        table.rows().every(function () {
+            var data = this.data();
+            total += parseFloat(data.nilai_penyaluran) || 0; // Pastikan nilai diubah ke float
+        });
+    }
+    // Perbarui nilai total di footer
+    $("#total-transaksi-pencairan").text(total.toLocaleString()); // Format total jika diperlukan
+}
