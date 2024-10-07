@@ -9,13 +9,22 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 
 class TransaksiPenyaluranExport implements FromCollection, WithHeadings, WithMapping
 {
+    protected $data;
+
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+
     public function collection()
     {
         // Filter data berdasarkan rentang tanggal
         return TransaksiPenyaluran::with(
             'master_data_bank',
             'pengajuan_kegiatan.user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis'
-        )->get();
+        )
+            ->whereBetween('created_at', [$this->data['tanggal_awal'], $this->data['tanggal_akhir']])
+            ->get();
     }
 
     public function map($transaksiPenyaluran): array
