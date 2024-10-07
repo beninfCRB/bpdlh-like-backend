@@ -20,9 +20,14 @@ class TransaksiPenyaluranController extends ApiController
         parent::__construct($request);
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        return Excel::download(new TransaksiPenyaluranExport(), 'transaksi_penyaluran.xlsx');
+        $input = $request->validate([
+            'tanggal_awal'      => 'required',
+            'tanggal_akhir'     => 'required|after_or_equal:tanggal_awal'
+        ]);
+
+        return Excel::download(new TransaksiPenyaluranExport($input), 'transaksi_penyaluran.xlsx');
     }
 
     public function index()
