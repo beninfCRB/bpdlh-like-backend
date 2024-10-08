@@ -23,7 +23,7 @@ class RiwayatPengajuanController extends ApiController
         $flag               = request()->query('flag', null);
         $search             = $request->query('search', null);
         $page               = $this->request->query('page', null);
-        $perPage            = $_GRT['perPage'];
+        $perPage            = $_GET['perPage'];
         $tahapanKegiatan    = $request->tahapanKegiatan;
         $fullUrlWithQuery = $request->fullUrl() . " " . request()->fullUrl() . " " . url()->full();
         dd($flag, $search, $page, $perPage, $tahapanKegiatan, $fullUrlWithQuery);
