@@ -56,11 +56,16 @@ if (!function_exists('tahapanPengajuan')) {
                 return 'Verifikasi Laporan Akhir Kegiatan';
                 break;
 
+            case 20:
+                return 'Ditolak';
+                break;
+
             default:
                 # code...
+                return 'Draft';
                 break;
         }
-        return 14;
+        return 'Ditolak';
     }
 }
 
