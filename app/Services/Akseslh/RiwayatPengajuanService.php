@@ -42,6 +42,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
 
     public function getPaginated($flag = null, $search = null, $page = null, $perPage = null, $tahapanKegiatan = null)
     {
+        dd($flag, $search, $page, $perPage, $tahapanKegiatan);
         $tahapan = tahapanPengajuanFlag($tahapanKegiatan);
 
         $result  = $this->model->newQuery()
@@ -60,7 +61,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                         return $query->where('tematik_kegiatan', 'like', '%' . $search . '%');
                     });
             })
-            ->when($flag, function ($query, $flag) {
+            ->when($flag, function ($query) use ($flag) {
                 switch ($flag) {
                     case 'Berjalan':
                         return $query->whereIn('flag', ['1', '2', '3', '4', '5', '6', '7', '8', '9']);
@@ -80,7 +81,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                         break;
                 }
             })
-            ->when($tahapan, function ($query, $tahapan) {
+            ->when($tahapan, function ($query) use ($tahapan) {
                 return $query->where('flag', $tahapan);
             })
             ->orderBy('created_at', 'DESC')
