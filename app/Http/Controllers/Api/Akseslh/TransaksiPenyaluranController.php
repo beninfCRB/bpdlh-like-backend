@@ -86,7 +86,7 @@ class TransaksiPenyaluranController extends ApiController
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
-        $input          = $validator->validated();
+        $input              = $validator->validated();
 
         $input['username']  = $request->user()->id;
 
