@@ -23,7 +23,7 @@ class RiwayatPengajuanController extends ApiController
         $flag               = $request->flag ?? null;
         $search             = $request->search ?? null;
         $page               = $request->page ?? null;
-        $perPage            = $request->perPage ?? null;
+        $perPage            = $request->perPage ?? 10;
         $tahapanKegiatan    = $request->tahapanKegiatan ?? null;
         dd($flag, $search, $page, $perPage, $tahapanKegiatan);
 
