@@ -18,13 +18,13 @@ class RiwayatPengajuanController extends ApiController
         parent::__construct($request);
     }
 
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         $flag               = request()->query('flag', null);
-        $search             = request()->query('search', null);
-        $page               = request()->query('page', null);
-        $perPage            = request()->query('perPage', 10);
-        $tahapanKegiatan    = request()->query('tahapanKegiatan', null);
+        $search             = $request->query('search', null);
+        $page               = $this->request->query('page', null);
+        $perPage            = $_GRT['perPage'];
+        $tahapanKegiatan    = $request->tahapanKegiatan;
 
         $result = $this->riwayatPengajuanService->getPaginated($flag, $search, $page, $perPage, $tahapanKegiatan);
 
