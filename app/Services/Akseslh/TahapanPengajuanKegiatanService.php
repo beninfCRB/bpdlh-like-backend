@@ -20,7 +20,7 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->orderBy('sort', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -63,6 +63,7 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
 
             $data = $this->model->newQuery()->create([
                 'deskripsi_kegiatan'     =>  $data['deskripsi_kegiatan'],
+                'sort'                  => $data['sort'],
                 'flag'                  => 1,
             ]);
 
@@ -83,6 +84,7 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
         try {
 
             $read->deskripsi_kegiatan    =   $data['deskripsi_kegiatan'];
+            $read->sort    =   $data['sort'];
             $read->save();
 
             \DB::commit(); // commit the changes
