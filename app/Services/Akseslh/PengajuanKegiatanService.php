@@ -158,7 +158,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found');
 
-        $result = $model->log_tahapan_pengajuan;
+        $result = $model->log_tahapan_pengajuan()->orderBy('updated_at', 'ASC')->get();
 
         $result->transform(function ($items, $key) {
 
@@ -168,6 +168,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tanggal_masuk'     => $items->tanggal_masuk,
                 'tanggal_selesai'   => $items->tanggal_selesai,
                 'user_akseslh'      => $items->user_akseslh_admin->email ?? null,
+                'created_at'        => $items->created_at->format('Y-m-d H:i:s'),
+                'updated_at'        => $items->updated_at->format('Y-m-d H:i:s'),
             ];
         });
 
