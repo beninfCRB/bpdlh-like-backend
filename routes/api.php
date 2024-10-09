@@ -92,4 +92,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::get('getDataValidasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'show']);
+
+    // Laporan Kegiatan
+    Route::get('getDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'getDokumenLaporanKegiatan']);
+    Route::put('uploadDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'uploadDokumenLaporanKegiatan']);
+    Route::delete('deleteDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'deleteDokumenLaporanKegiatan']);
 });
