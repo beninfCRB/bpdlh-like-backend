@@ -74,7 +74,11 @@ var data_pic_kelompok_masyarakat = (function () {
                     searchable: true,
                     orderable: true,
                     render: function (data, type, full, meta) {
-                        return full.user_akseslh.status_user;
+                        if (full.user_akseslh === null) {
+                            return "-";
+                        } else {
+                            return full.user_akseslh.status_user;
+                        }
                     },
                 },
                 {

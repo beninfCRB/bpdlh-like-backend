@@ -179,6 +179,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
 
         try {
             $this->fileUploadService->deleteFiles($oldDocument->file_path);
+            \DB::table('files')->where('id', $oldDocument->id)->delete();
             $oldDocument->delete();
             $read->delete();
             \DB::commit(); // commit the changes
@@ -196,6 +197,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
 
         try {
             $this->fileUploadService->deleteFiles($oldDocument->file_path);
+            \DB::table('files')->where('id', $oldDocument->id)->delete();
             $oldDocument->delete();
 
             \DB::commit(); // commit the changes
