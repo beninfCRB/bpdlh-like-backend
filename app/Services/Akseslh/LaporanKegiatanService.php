@@ -192,6 +192,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 'id'    => $item->id,
                 'url'   => $item->file_path,
                 'name'  => $item->real_name,
+                'size'  => $item->size,
             ];
         });
         return $document;
