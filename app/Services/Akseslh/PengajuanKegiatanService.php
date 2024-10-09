@@ -161,10 +161,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $result = $model->log_tahapan_pengajuan()->orderBy('updated_at', 'ASC')->get();
 
         $result->transform(function ($items, $key) {
-
             return [
                 'id'                => $items->id,
                 'tahapan_kegiatan'  => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
+                'sort'              => $items->tahapan_pengajuan_kegiatan->sort,
                 'tanggal_masuk'     => $items->tanggal_masuk,
                 'tanggal_selesai'   => $items->tanggal_selesai,
                 'user_akseslh'      => $items->user_akseslh_admin->email ?? null,
@@ -173,8 +173,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ];
         });
 
-
-        return $this->sendSuccess($result);
+        return $this->sendSuccess($result->sortBy('sort'));
     }
 
     public function getDataRiwayatPengajuan($user_akseslh_id)

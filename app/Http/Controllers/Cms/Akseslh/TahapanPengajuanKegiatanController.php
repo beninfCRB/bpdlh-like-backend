@@ -44,7 +44,8 @@ class TahapanPengajuanKegiatanController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'deskripsi_kegiatan'    => 'required'
+            'deskripsi_kegiatan'    => 'required',
+            'sort'                  => 'required'
         ]);
 
         $result =   $this->tahapanPengajuanKegiatanService->create($input);
@@ -65,7 +66,8 @@ class TahapanPengajuanKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'deskripsi_kegiatan'    => 'required'
+            'deskripsi_kegiatan'    => 'required',
+            'sort'                  => 'required',
         ]);
 
         $result =   $this->tahapanPengajuanKegiatanService->update($id, $input);

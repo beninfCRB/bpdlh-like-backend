@@ -26,6 +26,7 @@ var tahapan_pengajuan_kegiatan = (function () {
             columns: [
                 { data: "DT_RowIndex" },
                 { data: "deskripsi_kegiatan" },
+                { data: "sort" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
