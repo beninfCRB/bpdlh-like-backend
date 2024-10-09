@@ -154,11 +154,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getLogKegiatan($id)
     {
-        $model = $this->model->newQuery()->with(['log_tahapan_pengajuan'])->find($id);
+        $model = $this->model->newQuery()->with(['log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
 
         if (!$model) return $this->sendError(null, 'Not found');
 
-        $result = $model->log_tahapan_pengajuan()->orderBy('updated_at', 'ASC')->get();
+        $result = $model->log_tahapan_pengajuan()->get();
+
+        $result = $result->sortBy('tahapan_pengajuan_kegiatan.sort');
 
         $result->transform(function ($items, $key) {
             return [
@@ -173,7 +175,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ];
         });
 
-        return $this->sendSuccess($result->sortBy('sort'));
+        return $this->sendSuccess($result);
     }
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
