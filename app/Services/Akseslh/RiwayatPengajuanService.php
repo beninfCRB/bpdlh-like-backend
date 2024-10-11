@@ -152,7 +152,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
 
         $result = [
             'id'    => $model->id,
-            'tahap_1' => [
+            1 => [
                 'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                 'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
@@ -190,7 +190,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                     $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                 })->first()->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log
             ],
-            'tahap_2' => [
+            2 => [
                 'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                 'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
@@ -209,7 +209,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                 'dana_yang_disetujui'       => $total,
                 'dana_yang_dicairkan'       => $total_penyaluran,
             ],
-            'tahap_3'   => [
+            3   => [
                 'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                 'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
@@ -234,7 +234,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                 'dana_yang_disetujui'       => $total,
                 'dana_yang_dicairkan'       => $total_penyaluran,
             ],
-            'tahap_4'   => [
+            4   => [
                 'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                 'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
