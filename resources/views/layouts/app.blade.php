@@ -114,6 +114,9 @@
     {{-- Select 2 --}}
     <script src="{{ asset('assets/select2/select2.min.js') }}" type="text/javascript"></script>
 
+    {{-- Dayjs --}}
+    <script src="{{ asset('assets/dayjs/dayjs.min.js') }}"></script>
+
     {{-- Mix --}}
     <script src="{{ mix('app/build/app.js') }}"></script>
 
