@@ -39,6 +39,7 @@ Route::get('getDataBank', [App\Http\Controllers\Api\Akseslh\MasterDataBankContro
 Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
 
 Route::get('getRiwayatPengajuan', [App\Http\Controllers\Api\Akseslh\RiwayatPengajuanController::class, 'index']);
+Route::get('getDetailRiwayatPengajuan/{id}', [App\Http\Controllers\Api\Akseslh\RiwayatPengajuanController::class, 'show']);
 Route::get('getLogKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getLogKegiatan']);
 
 Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengajuanKegiatanController::class, 'index']);

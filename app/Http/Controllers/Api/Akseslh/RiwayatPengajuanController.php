@@ -40,11 +40,9 @@ class RiwayatPengajuanController extends ApiController
         }
     }
 
-    public function show($id, Request $request)
+    public function show($id)
     {
-        $lang           = $request->input('lang')  ?: 'ID';
-
-        $result = $this->riwayatPengajuanService->apiLang($id, $lang);
+        $result = $this->riwayatPengajuanService->getById($id);
 
         try {
             if ($result->success) {
