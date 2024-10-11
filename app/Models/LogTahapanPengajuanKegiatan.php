@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -22,6 +23,16 @@ class LogTahapanPengajuanKegiatan extends AppModel
         'flag',
         'username',
     ];
+
+    /**
+     * Get the catatan_log_tahapan_pengajuan_kegiatan associated with the LogTahapanPengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function catatan_log_tahapan_pengajuan_kegiatan(): HasOne
+    {
+        return $this->hasOne(CatatanLogTahapanPengajuanKegiatan::class, 'log_tahapan_pengajuan_kegiatan_id');
+    }
 
     /**
      * Get the jenis_kegiatan that owns the AkseslhPaketKegiatan
