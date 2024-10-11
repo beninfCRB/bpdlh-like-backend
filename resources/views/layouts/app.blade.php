@@ -17,25 +17,25 @@
     <title>{{ config('app.name') }} - @yield('title')</title>
 
     <!-- Base Css Files -->
-    <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet" />
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" />
 
     <!-- Font Icons -->
-    <link href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" />
-    <link href="{{asset('assets/ionicon/css/ionicons.min.css')}}" rel="stylesheet" />
-    <link href="{{asset('css/material-design-iconic-font.min.css')}}" rel="stylesheet" />
+    <link href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/ionicon/css/ionicons.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/material-design-iconic-font.min.css') }}" rel="stylesheet" />
 
     <!-- animate css -->
-    <link href="{{asset('css/animate.css')}}" rel="stylesheet" />
+    <link href="{{ asset('css/animate.css') }}" rel="stylesheet" />
 
     <!-- Waves-effect -->
-    <link href="{{asset('css/waves-effect.css')}}" rel="stylesheet" />
+    <link href="{{ asset('css/waves-effect.css') }}" rel="stylesheet" />
 
     <!-- DataTables -->
     <link href="{{ asset('assets/datatables/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- Custom Files -->
-    <link href="{{asset('css/helper.css')}}" rel="stylesheet" type="text/css" />
-    <link href="{{asset('css/style.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/helper.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css" />
 
     <link href="{{ asset('assets/select2/select2.css') }}" rel="stylesheet" type="text/css" />
 
@@ -93,32 +93,23 @@
     </script>
 
     <!-- jQuery  -->
-    <script src="{{asset('js/jquery.min.js')}}"></script>
-    <script src="{{asset('js/bootstrap.min.js')}}"></script>
-    <script src="{{asset('js/waves.js')}}"></script>
-    <script src="{{asset('js/wow.min.js')}}"></script>
-    <script src="{{asset('js/jquery.nicescroll.js')}}" type="text/javascript"></script>
-    <script src="{{asset('js/jquery.scrollTo.min.js')}}"></script>
-    <script src="{{asset('assets/jquery-detectmobile/detect.js')}}"></script>
-    <script src="{{asset('assets/fastclick/fastclick.js')}}"></script>
-    <script src="{{asset('assets/jquery-slimscroll/jquery.slimscroll.js')}}"></script>
-    <script src="{{asset('assets/jquery-blockui/jquery.blockUI.js')}}"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/waves.js') }}"></script>
+    <script src="{{ asset('js/wow.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.nicescroll.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/jquery.scrollTo.min.js') }}"></script>
+    <script src="{{ asset('assets/jquery-detectmobile/detect.js') }}"></script>
+    <script src="{{ asset('assets/fastclick/fastclick.js') }}"></script>
+    <script src="{{ asset('assets/jquery-slimscroll/jquery.slimscroll.js') }}"></script>
+    <script src="{{ asset('assets/jquery-blockui/jquery.blockUI.js') }}"></script>
 
     <!-- CUSTOM JS -->
-    <script src="{{asset('js/jquery.app.js')}}"></script>
+    <script src="{{ asset('js/jquery.app.js') }}"></script>
 
     {{-- Datatable --}}
-    <script src="{{asset('assets/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('assets/datatables/dataTables.bootstrap.js')}}"></script>
-
-    {{-- Day js --}}
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-
-    {{-- Sweetalert --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    {{-- Axios --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.3/axios.min.js"></script>
+    <script src="{{ asset('assets/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/datatables/dataTables.bootstrap.js') }}"></script>
 
     {{-- Select 2 --}}
     <script src="{{ asset('assets/select2/select2.min.js') }}" type="text/javascript"></script>
