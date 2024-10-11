@@ -132,7 +132,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $model =   $this->model->newQuery()->where('id', $id)->first();
+        $model =   $this->model->newQuery()->with('log_tahapan_pengajuan.catatan_log_tahapan_pengajuan_kegiatan')->where('id', $id)->first();
 
         $total = 0;
         $total_penyaluran = 0;
@@ -186,7 +186,9 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                 'tanggal_validasi'        => $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Validasi']);
                 })->first()->tanggal_selesai ?? null,
-                'catatan'               => $model->log_tahapan_pengajuan->catatan_log_tahapan_pengajuan_kegiatan
+                'catatan'               => $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                })->first()->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log
             ],
             'tahap_2' => [
                 'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,

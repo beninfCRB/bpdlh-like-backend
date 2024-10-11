@@ -3,8 +3,7 @@
 namespace App\Models;
 
 use App\Models\AppModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -25,13 +24,13 @@ class LogTahapanPengajuanKegiatan extends AppModel
     ];
 
     /**
-     * Get the catatan_log_tahapan_pengajuan_kegiatan associated with the LogTahapanPengajuanKegiatan
+     * Get all of the catatan_log_tahapan_pengajuan_kegiatan for the LogTahapanPengajuanKegiatan
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function catatan_log_tahapan_pengajuan_kegiatan(): HasOne
+    public function catatan_log_tahapan_pengajuan_kegiatan(): HasMany
     {
-        return $this->hasOne(CatatanLogTahapanPengajuanKegiatan::class, 'log_tahapan_pengajuan_kegiatan_id');
+        return $this->hasMany(CatatanLogTahapanPengajuanKegiatan::class, 'log_tahapan_pengajuan_kegiatan_id');
     }
 
     /**
