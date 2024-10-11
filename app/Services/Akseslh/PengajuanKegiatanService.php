@@ -178,7 +178,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         // dd();
 
-        return $this->sendSuccess($result->sortBy('sort')->values()->all());
+        return $this->sendSuccess(array_slice($result->sortBy('sort')->values()->all(), 2));
     }
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
