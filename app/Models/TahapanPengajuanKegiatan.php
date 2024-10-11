@@ -29,4 +29,13 @@ class TahapanPengajuanKegiatan extends AppModel
     {
         return $this->hasMany(JenisDokumen::class, 'tahapan_pengajuan_kegiatan_id');
     }
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'sort' => 'integer',
+    ];
 }
