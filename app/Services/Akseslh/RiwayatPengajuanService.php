@@ -133,7 +133,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
     public function getById($id)
     {
         $model =   $this->model->newQuery()->where('id', $id)->first();
-        dd($model->log_tahapan_pengajuan->catatan_log_tahapan_pengajuan_kegiatan);
+
         $total = 0;
         $total_penyaluran = 0;
 
