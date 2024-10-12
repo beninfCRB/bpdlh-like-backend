@@ -42,7 +42,7 @@
     <link href="{{ asset('assets/responsive-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css"
         media="screen" />
 
-    <link rel="stylesheet" href="{{ asset('sweet-alert/sweet-alert.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/sweet-alert/sweet-alert.min.css') }}"> --}}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -116,15 +116,9 @@
     {{-- Select 2 --}}
     <script src="{{ asset('assets/select2/select2.min.js') }}" type="text/javascript"></script>
 
-    {{-- Dayjs --}}
-    <script src="{{ asset('assets/dayjs/package/dayjs.min.js') }}"></script>
-
-    {{-- Sweetalert --}}
-    <script src="{{ asset('assets/sweet-alert/sweet-alert.min.js') }}"></script>
-
     {{-- Mix --}}
-    <script src="{{ mix('app/build/app.js') }}"></script>
-    <script src="{{ asset('app/build/app.js') }}"></script>
+    {{-- <script src="{{ mix('app/build/app.js') }}"></script> --}}
+    <script src="{{ asset('app/build/app.js') }}" type="text/javascript"></script>
 
     @include('layouts._partials._message')
 
