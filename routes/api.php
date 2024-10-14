@@ -33,6 +33,7 @@ Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Cont
 Route::get('getRangeOpening', [App\Http\Controllers\Api\Akseslh\LogJadwalPembukaanController::class, 'index']);
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
+Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
 
 Route::get('getDataBank', [App\Http\Controllers\Api\Akseslh\MasterDataBankController::class, 'index']);
 
