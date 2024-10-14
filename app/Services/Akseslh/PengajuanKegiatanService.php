@@ -17,6 +17,7 @@ use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\RabPengajuanPaketKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\TransaksiPenyaluran;
 use App\Models\UserAkseslh;
 use App\Services\EmailPhpService;
 use Carbon\Carbon;
@@ -25,6 +26,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
     protected $modelTahapanPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelRabPengajuanPaketKegiatan;
+    protected $modelTransaksiPenyaluran;
     protected $fileUploadService;
     protected $fileTable;
     protected $pdfService, $emailPhpService;
@@ -35,12 +38,16 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        RabPengajuanPaketKegiatan $modelRabPengajuanPaketKegiatan,
+        TransaksiPenyaluran $modelTransaksiPenyaluran,
         PdfService $pdfService,
         EmailPhpService $emailPhpService
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
+        $this->modelRabPengajuanPaketKegiatan   = $modelRabPengajuanPaketKegiatan;
+        $this->modelTransaksiPenyaluran         = $modelTransaksiPenyaluran;
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
         $this->pdfService           =   $pdfService;
@@ -89,6 +96,22 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
             ];
         });
+
+        return $this->sendSuccess($result);
+    }
+
+    public function getDataPenyerapanDana()
+    {
+        $sum_rab = $this->modelRabPengajuanPaketKegiatan->newQuery()->whereHas('pengajuan_kegiatan', function ($query) {
+            $query->whereBetween('flag', [1, 9]);
+        })->sum(\DB::raw('qty * harga_unit'));
+
+        $sum_transaksi_penyaluran = $this->modelTransaksiPenyaluran->newQuery()->sum(\DB::raw('nilai_penyaluran'));
+
+        $result = [
+            'total_pendanaan'           => (int) $sum_rab,
+            'total_dana_tersalurkan'    => (int) $sum_transaksi_penyaluran
+        ];
 
         return $this->sendSuccess($result);
     }
