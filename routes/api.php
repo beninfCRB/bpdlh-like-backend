@@ -45,6 +45,9 @@ Route::get('getLogKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\DashboardPen
 
 Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengajuanKegiatanController::class, 'index']);
 
+Route::get('getDataMasterDataIndikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\MasterDataIndikatorLaporanController::class, 'index']);
+Route::post('indikatorLaporan', [App\Http\Controllers\Api\Akseslh\IndikatorLaporanKegiatanController::class, 'store']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
