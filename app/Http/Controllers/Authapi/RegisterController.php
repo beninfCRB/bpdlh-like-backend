@@ -98,6 +98,7 @@ class RegisterController extends ApiController
                     'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
                     'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
                     'role_user'                 => $user->user_akseslh->role_user,
+                    'nama'                      => $user->nama_pic,
                 ]);
             } else {
                 \DB::rollBack();
