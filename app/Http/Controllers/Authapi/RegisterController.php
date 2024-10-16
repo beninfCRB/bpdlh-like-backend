@@ -76,6 +76,7 @@ class RegisterController extends ApiController
                 $user->save();
 
                 $user->user_akseslh->email          = $request->email_pic;
+                $user->user_akseslh->role_user      = 'maker';
                 $user->user_akseslh->password       = Hash::make($default_password);
                 $user->user_akseslh->status_user    = 'ACTIVE';
                 $user->user_akseslh->save();
