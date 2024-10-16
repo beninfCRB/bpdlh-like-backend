@@ -168,6 +168,8 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 $query->where('user_akseslh_id', $user->id);
             })->first();
 
+        if (!$model) return $this->sendError(null, 'Not Found', 422);
+
         $result = $model->tahapan_pengajuan_kegiatan->jenis_dokumen()->orderBy('created_at', 'ASC')->get();
         $dokumen = $model->document_file;
         $result->transform(function ($item, $key) use ($dokumen) {
