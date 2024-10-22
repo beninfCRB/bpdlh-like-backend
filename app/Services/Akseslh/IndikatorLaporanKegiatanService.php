@@ -3,17 +3,30 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\IndikatorLaporanKegiatan;
 use App\Services\AppService;
+use App\Models\PengajuanKegiatan;
 use App\Services\AppServiceInterface;
+use App\Models\IndikatorLaporanKegiatan;
+use App\Models\TahapanPengajuanKegiatan;
+use App\Models\LogTahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 
 class IndikatorLaporanKegiatanService extends AppService implements AppServiceInterface
 {
+    protected $modelPengajuanKegiatan;
+    protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelTahapanPengajuanKegiatan;
 
-    public function __construct(IndikatorLaporanKegiatan $model)
-    {
+    public function __construct(
+        IndikatorLaporanKegiatan $model,
+        PengajuanKegiatan $modelPengajuanKegiatan,
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan
+    ) {
         parent::__construct($model);
+        $this->modelPengajuanKegiatan           = $modelPengajuanKegiatan;
+        $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
+        $this->modelTahapanPengajuanKegiatan    = $modelTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -39,6 +52,8 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
 
     public function create($data)
     {
+        $pengajuan_kegiatan = $this->modelPengajuanKegiatan->find($data['pengajuan_kegiatan_id']);
+
         \DB::beginTransaction();
 
         try {
@@ -48,6 +63,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
                 'nilai_laporan'                     =>  $data['nilai_laporan'],
                 'flag'                              => 1,
             ]);
+
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($data);
@@ -59,15 +75,69 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
 
     public function update($id, $data)
     {
-        $read   =   $this->model->newQuery()->find($id);
+        $read   =   $this->modelPengajuanKegiatan->newQuery()->find($id);
 
         \DB::beginTransaction();
 
         try {
 
-            $read->jenis_kelompok_masyarakat_id         =   $data['jenis_kelompok_masyarakat_id'];
-            $read->kelompok_masyarakat                  =   $data['kelompok_masyarakat'];
-            $read->flag                                 =   1;
+            foreach ($data['indikator_kegiatan'] as $item) {
+
+                $dataIndikator[] = [
+                    'master_data_indikator_laporan_id'  => $item['master_data_indikator_laporan_id'],
+                    'pengajuan_kegiatan_id'             => $id,
+                    'nilai_laporan'                     => $item['nilai_laporan']
+                ];
+            }
+
+            $read->indikator_laporan_kegiatan()->saveMany(
+                collect($dataIndikator)->map(function ($dataIndikator) {
+                    return new IndikatorLaporanKegiatan($dataIndikator);
+                })
+            );
+
+            $laporan_kegiatan_termin_1 = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                })->first();
+
+            if (empty($laporan_kegiatan_termin_1->tanggal_masuk)) {
+                # code...
+                $konfirmasi_pencairan_dana_termin_1 = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+                    })->first();
+                $laporan_kegiatan_termin_1->tanggal_masuk = $konfirmasi_pencairan_dana_termin_1->tanggal_selesai;
+            }
+
+            $laporan_kegiatan_termin_1->tanggal_selesai = date('Y-m-d');
+            $laporan_kegiatan_termin_1->save();
+
+            if (empty($this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
+                })->first())) {
+
+                $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
+                    ->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1')->first();
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id'         => $id,
+                    'tahapan_pengajuan_kegiatan_id' => $dataTahapanPengajuanKegiatan->id,
+                ]);
+            }
+
+            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
+                })
+                ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+            $read->flag  =  6;
             $read->save();
 
             \DB::commit(); // commit the changes

@@ -208,7 +208,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan');
+                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 

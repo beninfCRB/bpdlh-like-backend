@@ -154,7 +154,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             }
 
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($model);
+            return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
