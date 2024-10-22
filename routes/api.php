@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
 Route::post('changePassword', [App\Http\Controllers\Authapi\PasswordController::class, 'changePassword']);
+Route::post('getKodeAktivasi', [App\Http\Controllers\Authapi\RegisterController::class, 'getKodeAktivasi']);
 
 Route::post('/resetPassword', [App\Http\Controllers\Authapi\PasswordController::class, 'resetPassword'])->name('password.update');
 
@@ -46,7 +47,7 @@ Route::get('getLogKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\DashboardPen
 Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengajuanKegiatanController::class, 'index']);
 
 Route::get('getDataMasterDataIndikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\MasterDataIndikatorLaporanController::class, 'index']);
-Route::post('indikatorLaporan', [App\Http\Controllers\Api\Akseslh\IndikatorLaporanKegiatanController::class, 'store']);
+Route::put('indikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\IndikatorLaporanKegiatanController::class, 'update']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 

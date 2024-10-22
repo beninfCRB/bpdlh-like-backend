@@ -65,7 +65,7 @@ class LogTahapanPengajuanKegiatan extends AppModel
 
     public function document_file()
     {
-        return $this->morphOne(File::class, 'fileable')
+        return $this->morphMany(File::class, 'fileable')
             ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id', 'real_name', 'size']);
     }
 }

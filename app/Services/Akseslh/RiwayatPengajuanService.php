@@ -134,6 +134,8 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
     {
         $model =   $this->model->newQuery()->with('log_tahapan_pengajuan.catatan_log_tahapan_pengajuan_kegiatan')->where('id', $id)->first();
 
+        if (!$model) return $this->sendError(null, 'Not Found', 422);
+
         $total = 0;
         $total_penyaluran = 0;
 
@@ -149,6 +151,42 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
             # code...
             $total += ($i->qty * $i->harga_unit);
         }
+
+        $laporan_kegiatan_termin_1 = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
+        })->first();
+
+        // Data Verifikator
+        $verifikasi = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+        })->first();
+
+        $nama_verifikator       = $verifikasi->user_akseslh_admin->email ?? null;
+        $tanggal_verifikasi     = $verifikasi->tanggal_selesai ?? null;
+        $catatan_verifikator    = $verifikasi->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null;
+
+        // Data Validator
+        $validator = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where(['deskripsi_kegiatan' => 'Validasi']);
+        })->first();
+
+        $nama_validator     = $validator->user_akseslh_admin->email ?? null;
+        $tanggal_validasi   = $validator->tanggal_selesai ?? null;
+        $catatan_validator  = $validator->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null;
+
+        // Data Master Bank Penyaluran Pertama
+        $transaksi_penyaluran   = $model->transaksi_penyaluran()->latest()->first();
+        $master_data_bank       = $transaksi_penyaluran->master_data_bank->nama_bank ?? null;
+        $nomor_rekening         = $transaksi_penyaluran->nomor_rekening ?? null;
+        $nama_pemilik_rekening  = $transaksi_penyaluran->nama_pemilik_rekening ?? null;
+        $tanggal_penyaluran     = $transaksi_penyaluran->tanggal_penyaluran ?? null;
+        $nilai_penyaluran       = $transaksi_penyaluran->nilai_penyaluran ?? null;
+
+        // Model Dokumen
+        $files              = $model->document;
+        $file_lampiran      = $files->where('group', 'document')->first();
+        $file_sk            = $files->where('group', 'document_sk')->first();
+        $file_perjanjian    = $files->where('group', 'perjanjian_kerjasama')->first();
 
         $result = [
             'id'    => $model->id,
@@ -174,21 +212,14 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                 'dana_yang_disetujui'       => $total,
                 'dana_yang_dicairkan'       => $total_penyaluran,
                 'sisa_pencairan'            => ($total - $total_penyaluran),
-                'nama_verifikator'          => $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                })->first()->user_akseslh_admin->email ?? null,
-                'tanggal_verifikasi'        => $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                })->first()->tanggal_selesai ?? null,
-                'nama_validator'          => $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where(['deskripsi_kegiatan' => 'Validasi']);
-                })->first()->user_akseslh_admin->email ?? null,
-                'tanggal_validasi'        => $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where(['deskripsi_kegiatan' => 'Validasi']);
-                })->first()->tanggal_selesai ?? null,
-                'catatan'               => $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                })->first()->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log
+                'nama_verifikator'          => $nama_verifikator,
+                'tanggal_verifikasi'        => $tanggal_verifikasi,
+                'catatan_verifikator'       => $catatan_verifikator,
+                'nama_validator'            => $nama_validator,
+                'tanggal_validasi'          => $tanggal_validasi,
+                'catatan_validator'         => $catatan_validator,
+                'lampiran'                  => $file_lampiran,
+                'sk'                        => $file_sk,
             ],
             2 => [
                 'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
@@ -208,6 +239,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                 'nomor_pengajuan'           => $model->nomor_pengajuan,
                 'dana_yang_disetujui'       => $total,
                 'dana_yang_dicairkan'       => $total_penyaluran,
+                'file_perjanjian'           => $file_perjanjian,
             ],
             3   => [
                 'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
@@ -225,12 +257,11 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                 'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
                 'lokasi'                    => $model->alamat_kegiatan,
                 'nomor_pengajuan'           => $model->nomor_pengajuan,
-                'master_data_bank'          => $model->transaksi_penyaluran()->latest()->first()->master_data_bank->nama_bank,
-                'nomor_rekening'            => $model->transaksi_penyaluran()->latest()->first()->nomor_rekening,
-                'nama_pemilik_rekening'     => $model->transaksi_penyaluran()->latest()->first()->nama_pemilik_rekening,
-                'nama_pemilik_rekening'     => $model->transaksi_penyaluran()->latest()->first()->nama_pemilik_rekening,
-                'tanggal_penyaluran'        => $model->transaksi_penyaluran()->latest()->first()->tanggal_penyaluran,
-                'nilai_penyaluran'          => $model->transaksi_penyaluran()->latest()->first()->nilai_penyaluran,
+                'master_data_bank'          => $master_data_bank,
+                'nomor_rekening'            => $nomor_rekening,
+                'nama_pemilik_rekening'     => $nama_pemilik_rekening,
+                'tanggal_penyaluran'        => $tanggal_penyaluran,
+                'nilai_penyaluran'          => $nilai_penyaluran,
                 'dana_yang_disetujui'       => $total,
                 'dana_yang_dicairkan'       => $total_penyaluran,
             ],
@@ -252,7 +283,63 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                 'nomor_pengajuan'           => $model->nomor_pengajuan,
                 'dana_yang_disetujui'       => $total,
                 'dana_yang_dicairkan'       => $total_penyaluran,
+                'indikator_laporan_kegiatan'    => $model->indikator_laporan_kegiatan->transform(function ($item, $key) {
+                    return [
+                        'nama_indikator'    => $item->master_data_indikator_laporan->nama_indikator,
+                        'nilai_laporan'     => $item->nilai_laporan,
+                        'satuan'            => $item->master_data_indikator_laporan->satuan
+                    ];
+                }),
+                'dokumen_file'              => $laporan_kegiatan_termin_1->document_file,
             ],
+            5 => [
+                'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
+                'kegiatan'                  => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                'jenis_kegiatan'            => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'rencana_kegiatan'          => $model->tanggal_mulai_kegiatan,
+                'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                'tanggal_pengajuan'         => $model->created_at->format('d M Y H:i'),
+                'tanggal_akhir_validasi'    => Carbon::parse($model->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'nama_pic'                  => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                'lokasi'                    => $model->alamat_kegiatan,
+                'nomor_pengajuan'           => $model->nomor_pengajuan,
+                'master_data_bank'          => $master_data_bank,
+                'nomor_rekening'            => $nomor_rekening,
+                'nama_pemilik_rekening'     => $nama_pemilik_rekening,
+                'tanggal_penyaluran'        => $tanggal_penyaluran,
+                'nilai_penyaluran'          => $nilai_penyaluran,
+                'dana_yang_disetujui'       => $total,
+                'dana_yang_dicairkan'       => $total_penyaluran,
+            ],
+            6 => [
+                'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
+                'kegiatan'                  => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                'jenis_kegiatan'            => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'rencana_kegiatan'          => $model->tanggal_mulai_kegiatan,
+                'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                'tanggal_pengajuan'         => $model->created_at->format('d M Y H:i'),
+                'tanggal_akhir_validasi'    => Carbon::parse($model->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'nama_pic'                  => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                'lokasi'                    => $model->alamat_kegiatan,
+                'nomor_pengajuan'           => $model->nomor_pengajuan,
+                'master_data_bank'          => $master_data_bank,
+                'nomor_rekening'            => $nomor_rekening,
+                'nama_pemilik_rekening'     => $nama_pemilik_rekening,
+                'tanggal_penyaluran'        => $tanggal_penyaluran,
+                'nilai_penyaluran'          => $nilai_penyaluran,
+                'dana_yang_disetujui'       => $total,
+                'dana_yang_dicairkan'       => $total_penyaluran,
+            ]
 
         ];
 

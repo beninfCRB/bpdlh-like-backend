@@ -127,6 +127,11 @@
                                 style="padding: 10px 25px 10px 30px;">>
                                 <span>Transaksi Penyaluran</span></a>
                         </li>
+                        <li>
+                            <a href="{{ route('master-data-indikator-laporan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Master Data Indikator Laporan</span></a>
+                        </li>
                     </ul>
                 </li>
 

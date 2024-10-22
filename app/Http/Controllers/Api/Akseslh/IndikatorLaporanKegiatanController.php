@@ -57,6 +57,8 @@ class IndikatorLaporanKegiatanController extends ApiController
             'master_data_indikator_laporan_id'  => 'required|exists:master_data_indikator_laporans,id',
             'pengajuan_kegiatan_id'             => 'required|exists:pengajuan_kegiatans,id',
             'nilai_laporan'                     => 'required',
+            'peserta_laki_laki'                 => 'required',
+            'peserta_perempuan'                 => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -67,6 +69,35 @@ class IndikatorLaporanKegiatanController extends ApiController
         $input          = $validator->validated();
 
         $result = $this->indikatorLaporanService->create($input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            return $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function update($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'tanggal_realisasi_kegiatan'                            => 'required',
+            'indikator_kegiatan'                                    => 'required|array',
+            'indikator_kegiatan.*.master_data_indikator_laporan_id' => 'required|exists:master_data_indikator_laporans,id',
+            'indikator_kegiatan.*.nilai_laporan'                    => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input  = $validator->validated();
+
+        $result = $this->indikatorLaporanService->update($id, $input);
 
         try {
             if ($result->success) {
