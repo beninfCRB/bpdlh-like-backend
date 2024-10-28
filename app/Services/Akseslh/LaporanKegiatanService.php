@@ -172,6 +172,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
         $result = $model->tahapan_pengajuan_kegiatan->jenis_dokumen()->orderBy('created_at', 'ASC')->get();
         $dokumen = $model->document_file;
+
         $result->transform(function ($item, $key) use ($dokumen) {
 
             return [
@@ -188,7 +189,8 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
     private function mapDokumen($dokument, $jenis_dokumen)
     {
-        $document = $dokument->where('group', $jenis_dokumen)->get();
+        $document = $dokument->where('group', $jenis_dokumen);
+        if (!$document) return null;
         $document->transform(function ($item, $key) {
             return [
                 'id'    => $item->id,
@@ -197,7 +199,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 'size'  => $item->size,
             ];
         });
-        return $document;
+        return $document->values()->all();
     }
 
     public function apiDeleteDokumenLaporanKegiatan($id)

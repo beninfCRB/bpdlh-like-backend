@@ -18,7 +18,7 @@ class MasterDataIndikatorLaporanController extends ApiController
         parent::__construct($request);
     }
 
-    public function index($id): \Illuminate\Http\JsonResponse
+    public function index($id, Request $request): \Illuminate\Http\JsonResponse
     {
         $result = $this->masterDataIndikatorLaporanSercice->apiGetAll($id);
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\ValidasiPengajuanKegiatanService;
+use Svg\Tag\Rect;
 
 class ValidasiPengajuanKegiatanController extends ApiController
 {
@@ -78,6 +79,39 @@ class ValidasiPengajuanKegiatanController extends ApiController
         $input['user_akselh_id']  = $request->user()->id;
 
         $result = $this->validasiPengajuanKegiatanService->update($id, $input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function update_termin_1($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'status'        => 'required',
+            'catatan_log'   => 'nullable'
+        ]);
+
+        $validator->sometimes('surat_pencairan_dana_termin_2', 'required|file|mimes:pdf', function ($input) {
+            return $input->status != 0;
+        });
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input = $validator->validated();
+
+        $input['user']  = $request->user();
+
+        $result = $this->validasiPengajuanKegiatanService->update_termin_1($id, $input);
 
         try {
             if ($result->success) {
