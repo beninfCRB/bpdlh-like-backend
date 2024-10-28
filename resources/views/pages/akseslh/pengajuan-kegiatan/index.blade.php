@@ -25,6 +25,8 @@
                     <h3 class="panel-title">Daftar Pengajuan Kegiatan</h3>
                     <input type="hidden" name="data-table-pengajuan-kegiatan" id="data-table-pengajuan-kegiatan"
                         value="{{ route('data-pengajuan-kegiatan') }}">
+                    <input type="hidden" name="pengajuan-kegiatan-route" id="pengajuan-kegiatan-route"
+                        value="{{ route('pengajuan-kegiatan.index') }}">
                 </div>
                 <div class="panel-body">
                     <div class="row m-b-10">
@@ -98,6 +100,7 @@
                                         <th>Flag</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                             </table>

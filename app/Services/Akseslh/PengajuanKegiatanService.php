@@ -257,7 +257,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $items =   $this->model->newQuery()->with(['document'])->find($id);
+        $items =   $this->model->newQuery()->with(['document', 'log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
 
         $result = [
             'id'    => $items->id,
@@ -274,6 +274,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'ruang_lingkup_kegiatan' => $items->ruang_lingkup_kegiatan,
             'paket_kegiatan_id' => $items->paket_kegiatan_id,
             'fileDocument'  => $items->document,
+            'log_tahapan_pengajuan' => $items->log_tahapan_pengajuan
         ];
 
         return $this->sendSuccess($result);

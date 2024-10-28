@@ -9,6 +9,7 @@ import {
     deleteData,
     showData,
 } from "../api";
+var route = $("#pengajuan-kegiatan-route").val();
 
 var data_pengajuan_kegiatan = (function () {
     var initTable1 = function () {
@@ -61,6 +62,7 @@ var data_pengajuan_kegiatan = (function () {
                 { data: "flag" },
                 { data: "created_at" },
                 { data: "updated_at" },
+                {},
             ],
             columnDefs: [
                 {
@@ -451,7 +453,7 @@ var data_pengajuan_kegiatan = (function () {
                     },
                 },
                 {
-                    targets: -2,
+                    targets: -3,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -463,7 +465,7 @@ var data_pengajuan_kegiatan = (function () {
                     },
                 },
                 {
-                    targets: -1,
+                    targets: -2,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -472,6 +474,20 @@ var data_pengajuan_kegiatan = (function () {
                         } else {
                             return dayjs(full.updated_at).format("DD MMM YYYY");
                         }
+                    },
+                },
+                {
+                    targets: -1,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        var showRoute = route + "/" + full.id + "";
+                        return (
+                            `<a href="` +
+                            showRoute +
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                          <i class="fa fa-eye"></i>
+                        </a>`
+                        );
                     },
                 },
             ],
