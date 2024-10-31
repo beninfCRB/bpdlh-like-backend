@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Sentry\Laravel\Integration;
 
 class Handler extends ExceptionHandler
 {
@@ -42,6 +43,10 @@ class Handler extends ExceptionHandler
                     'data'      => null,
                 ], 401);
             }
+        });
+
+        $this->reportable(function (\Throwable $e) {
+            Integration::captureUnhandledException($e);
         });
     }
 }
