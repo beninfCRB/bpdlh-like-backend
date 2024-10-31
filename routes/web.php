@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Row;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +19,10 @@ use Maatwebsite\Excel\Facades\Excel;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/debug-sentry', function () {
+    throw new Exception('My first Sentry error!');
+});
 
 Route::view('/login', 'auth.login')->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login.auth')->middleware('recaptcha');
