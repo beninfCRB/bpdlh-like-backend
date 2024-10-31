@@ -91,15 +91,28 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
         return $this->sendSuccess($result);
     }
 
-    public function apiGetPengajuanKegiatan()
+    public function apiGetPengajuanKegiatan($flag = null)
     {
-        $result  = $this->pengajuanKegiatan->newQuery()
-            ->where('flag', 4)
-            ->orderBy('created_at', 'ASC')
-            ->get();
+        if (isset($flag)) {
+            # code...
+            $result  = $this->pengajuanKegiatan->newQuery()
+                ->where('flag', $flag)
+                ->orderBy('created_at', 'ASC')
+                ->get();
+        } else {
+            $result  = $this->pengajuanKegiatan->newQuery()
+                ->where('flag', 4)
+                ->orderBy('created_at', 'ASC')
+                ->get();
+        }
 
         $result->transform(function ($items, $key) {
             $total = 0;
+            $total_pencairan = 0;
+
+            foreach ($items->transaksi_penyaluran as $i) {
+                $total_pencairan += $i->nilai_penyaluran;
+            }
 
             foreach ($items->rab_pengajuan_paket_kegiatans as $i) {
                 # code...
@@ -127,7 +140,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 'tujuan_kegiatan'           => $items->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
                 'dana_yang_disetujui'       => $total,
-                'dana_yang_dicairkan'       => 0,
+                'dana_yang_dicairkan'       => $total_pencairan,
                 'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                 })->first()->user_akseslh_admin->email ?? null,

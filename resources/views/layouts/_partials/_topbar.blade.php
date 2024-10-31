@@ -2,7 +2,7 @@
     <!-- LOGO -->
     <div class="topbar-left">
         <div class="text-center">
-            <a href="index.html" class="logo"><span>AKSES DANA LH </span></a>
+            <a href="index.html" class="logo"><span>{{ config('app.name') }} </span></a>
         </div>
     </div>
     <!-- Button mobile view to collapse sidebar menu -->
@@ -85,8 +85,9 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true"><img
-                                src="{{ asset('images/avatar-1.jpg') }}" alt="user-img" class="img-circle" />
+                        <a href="" class="dropdown-toggle profile" data-toggle="dropdown"
+                            aria-expanded="true"><img src="{{ asset('images/avatar-1.jpg') }}" alt="user-img"
+                                class="img-circle" />
                         </a>
                         <ul class="dropdown-menu">
                             <li>

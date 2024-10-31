@@ -7,7 +7,7 @@
             <div class="user-info">
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                        aria-expanded="false">{{ auth()->user()->nama_lengkap }}
+                        aria-expanded="false">{{ auth()->user()->nama_pic }}
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li>
@@ -22,13 +22,14 @@
                             <form action="{{ route('logout') }}" method="post" id="logout-form-sidebar">
                                 @csrf
                             </form>
-                            <a href="javascript:void(0)"><i class="md md-settings-power" onclick="alert('uhuy')"></i>
+                            <a href="#" onclick="document.getElementById('logout-form').submit()"><i
+                                    class="md md-settings-power"></i>
                                 Logout</a>
                         </li>
                     </ul>
                 </div>
 
-                <p class="text-muted m-0">{{ auth()->user()->username }}</p>
+                <p class="text-muted m-0">{{ auth()->user()->email }}</p>
             </div>
         </div>
         <!--- Divider -->
