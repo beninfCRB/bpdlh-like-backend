@@ -40,7 +40,8 @@ class TransaksiPenyaluranController extends ApiController
 
     public function getPengajuanKegiatan(): \Illuminate\Http\JsonResponse
     {
-        $result = $this->transaksiPenyaluranService->apiGetPengajuanKegiatan();
+        $input = request()->query('flag');
+        $result = $this->transaksiPenyaluranService->apiGetPengajuanKegiatan($input);
 
         try {
             if ($result->success) {
