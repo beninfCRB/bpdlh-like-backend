@@ -219,4 +219,37 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
         }
     }
+
+    public function laporan_akhir($data)
+    {
+        $read   =   $this->model->newQuery()->find($data['pengajuan_kegiatan_id']);
+
+        \DB::beginTransaction();
+
+        try {
+
+            $this->logTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+                })
+                ->update(['tanggal_selesai' => date("Y-m-d")]);
+
+            $this->logTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
+                })
+                ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+            $read->flag      =   9;
+            $read->save();
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+        }
+    }
 }

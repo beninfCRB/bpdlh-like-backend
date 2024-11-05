@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Row;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,4 +105,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'getDokumenLaporanKegiatan']);
     Route::put('uploadDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'uploadDokumenLaporanKegiatan']);
     Route::delete('deleteDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'deleteDokumenLaporanKegiatan']);
+
+    // Laporan Akhir Kegiatan
+    Route::post('laporanAkhir', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'laporan_akhir']);
 });
