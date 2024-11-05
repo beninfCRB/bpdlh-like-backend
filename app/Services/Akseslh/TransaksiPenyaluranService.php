@@ -176,60 +176,30 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
 
     public function create($data)
     {
+        $result = $this->pengajuanKegiatan->find($data['pengajuan_kegiatan_id']);
+
+        if (!$result) return $this->sendError(null, 'Not Found', 422);
+
+        $tpk = $result->transaksi_penyaluran->count();
+
         \DB::beginTransaction();
 
         try {
 
-            $newData = $this->model->newQuery()->create([
-                'master_data_bank_id'   =>  $data['master_data_bank_id'],
-                'pengajuan_kegiatan_id' =>  $data['pengajuan_kegiatan_id'],
-                'nomor_rekening'        =>  $data['nomor_rekening'],
-                'nama_pemilik_rekening' =>  $data['nama_pemilik_rekening'],
-                'nilai_penyaluran'      =>  $data['nilai_penyaluran'],
-                'tanggal_penyaluran'    =>  $data['tanggal_penyaluran'],
-                'flag'                  =>  1,
-                'username'              =>  $data['username'],
-            ]);
-
-            $informasiPencairanDana = $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
-                })
-                ->first();
-
-            if (!$informasiPencairanDana->tanggal_selesai) {
-                # code...
-                $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
-                $informasiPencairanDana->save();
-
-                $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
-                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
-                    })
-                    ->update(['tanggal_masuk' => date("Y-m-d")]);
+            if ($tpk == 0 && $result->flag == 4) {
+                // Jika belum ada penyaluran
+                $this->penyaluran_tahap_1($data);
+            } else if ($tpk == 1 && $result->flag == 7) {
+                // Penyaluran tahap ke 2, dan cek apabila sudah disalurkan 1x
+                $this->penyaluran_tahap_2($data);
+            } else {
+                // Kondisi ketika sudah disalurkan 2x
+                \DB::rollBack();
+                return $this->sendError(null, 'Tahap Salur sudah 2', 422);
             }
 
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
-                })
-                ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['username']]);
-
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
-                })
-                ->update(['tanggal_masuk' => date("Y-m-d")]);
-
-            $newData->pengajuan_kegiatan->flag = 5;
-            $newData->pengajuan_kegiatan->save();
-
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($newData);
+            return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
@@ -268,5 +238,87 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
         }
+    }
+
+    private function penyaluran_tahap_1($data)
+    {
+        $newData = $this->model->newQuery()->create([
+            'master_data_bank_id'   =>  $data['master_data_bank_id'],
+            'pengajuan_kegiatan_id' =>  $data['pengajuan_kegiatan_id'],
+            'nomor_rekening'        =>  $data['nomor_rekening'],
+            'nama_pemilik_rekening' =>  $data['nama_pemilik_rekening'],
+            'nilai_penyaluran'      =>  $data['nilai_penyaluran'],
+            'tanggal_penyaluran'    =>  $data['tanggal_penyaluran'],
+            'flag'                  =>  1,
+            'username'              =>  $data['username'],
+        ]);
+
+        $informasiPencairanDana = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
+            })
+            ->first();
+
+        if (!$informasiPencairanDana->tanggal_selesai) {
+            # code...
+            $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
+            $informasiPencairanDana->save();
+
+            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+                })
+                ->update(['tanggal_masuk' => date("Y-m-d")]);
+        }
+
+        $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+            })
+            ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['username']]);
+
+        $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+            })
+            ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+        $newData->pengajuan_kegiatan->flag = 5;
+        $newData->pengajuan_kegiatan->save();
+    }
+
+    private function penyaluran_tahap_2($data)
+    {
+        $newData = $this->model->newQuery()->create([
+            'master_data_bank_id'   =>  $data['master_data_bank_id'],
+            'pengajuan_kegiatan_id' =>  $data['pengajuan_kegiatan_id'],
+            'nomor_rekening'        =>  $data['nomor_rekening'],
+            'nama_pemilik_rekening' =>  $data['nama_pemilik_rekening'],
+            'nilai_penyaluran'      =>  $data['nilai_penyaluran'],
+            'tanggal_penyaluran'    =>  $data['tanggal_penyaluran'],
+            'flag'                  =>  1,
+            'username'              =>  $data['username'],
+        ]);
+
+        $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin II');
+            })
+            ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['username']]);
+
+        $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+            })
+            ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+        $newData->pengajuan_kegiatan->flag = 8;
+        $newData->pengajuan_kegiatan->save();
     }
 }

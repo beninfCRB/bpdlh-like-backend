@@ -109,4 +109,32 @@ class LaporanKegiatanController extends ApiController
             return $this->sendError($exception->getMessage(), "", 500);
         }
     }
+
+    public function laporan_akhir(Request $request)
+    {
+        $validator = Validator::make($this->request->all(), [
+            'pengajuan_kegiatan_id'  => 'required|exists:pengajuan_kegiatans,id',
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input = $validator->validated();
+
+        $input['user_akseslh']  = $this->request->user();
+
+        $result = $this->laporanKegiatanService->apiUploadDokumenLaporanKegiatan($id, $input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            return $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
 }

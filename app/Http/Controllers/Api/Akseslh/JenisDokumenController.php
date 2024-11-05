@@ -20,7 +20,8 @@ class JenisDokumenController extends ApiController
 
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $result = $this->jenisDokumenService->apiGetAll();
+        $flag = $request->query('flag');
+        $result = $this->jenisDokumenService->apiGetAll($flag);
 
         try {
             if ($result->success) {
