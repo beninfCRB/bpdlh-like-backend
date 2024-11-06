@@ -72,7 +72,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                             'log_tahapan_pengajuan',
                             function ($q) {
                                 $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                    $q->where(['deskripsi_kegiatan' => 'Laporan Pasca Kegiatan']);
+                                    $q->where(['deskripsi_kegiatan' => 'Laporan Akhir Kegiatan']);
                                 })->whereNotNull('tanggal_masuk')
                                     ->whereNull('tanggal_selesai');
                             }
