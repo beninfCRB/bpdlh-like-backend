@@ -123,4 +123,33 @@ class ValidasiPengajuanKegiatanController extends ApiController
             $this->sendError($exception->getMessage(), "", 500);
         }
     }
+
+    public function update_tahap_akhir($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'status'        => 'required',
+            'catatan_log'   => 'nullable'
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input = $validator->validated();
+
+        $input['user']  = $request->user();
+
+        $result = $this->validasiPengajuanKegiatanService->update_tahap_akhir($id, $input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
 }

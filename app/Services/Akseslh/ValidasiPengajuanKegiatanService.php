@@ -111,7 +111,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'log_tahapan_pengajuan',
                             function ($q) {
                                 $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                    $q->where(['deskripsi_kegiatan' => 'Laporan Pasca Kegiatan']);
+                                    $q->where(['deskripsi_kegiatan' => 'Verifikasi Laporan Akhir Kegiatan']);
                                 })->whereNotNull('tanggal_masuk')
                                     ->whereNull('tanggal_selesai');
                             }
@@ -426,6 +426,54 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'fileable_id'   => $read->id,
                 ]);
             }
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+        }
+    }
+
+    public function update_tahap_akhir($id, $data)
+    {
+        $read   =   $this->model->newQuery()->find($id);
+
+        // If data not found
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        // If data flag not equals 8 (Verifikasi Laporan Akhir)
+        if ($read->flag != 9 || $read->flag != '9') return $this->sendError(null, 'Data Invalid', 422);
+
+        \DB::beginTransaction();
+
+        try {
+
+            if (isset($data['catatan_log'])) {
+                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
+                    })->first()->id;
+
+                $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
+                    ->create([
+                        'log_tahapan_pengajuan_kegiatan_id' => $idLog,
+                        'catatan_log'           => $data['catatan_log'],
+                        'flag'                  => "8"
+                    ]);
+            }
+
+            // Update data langsung berdasarkan pengajuan_kegiatan_id
+            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
+                })
+                ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user']->id]);
+
+            $read->flag = 10;
+            $read->save();
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess(null);

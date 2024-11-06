@@ -125,7 +125,7 @@ class LaporanKegiatanController extends ApiController
 
         $input['user_akseslh']  = $this->request->user();
 
-        $result = $this->laporanKegiatanService->apiUploadDokumenLaporanKegiatan($id, $input);
+        $result = $this->laporanKegiatanService->laporan_akhir($input);
 
         try {
             if ($result->success) {
