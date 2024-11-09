@@ -159,4 +159,14 @@ class PengajuanKegiatan extends AppModel
     {
         return $this->hasMany(TransaksiPenyaluran::class, 'pengajuan_kegiatan_id');
     }
+
+    /**
+     * Get all of the indikator_laporan_kegiatan for the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function indikator_laporan_kegiatan(): HasMany
+    {
+        return $this->hasMany(IndikatorLaporanKegiatan::class, 'pengajuan_kegiatan_id');
+    }
 }

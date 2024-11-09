@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Row;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
 Route::post('changePassword', [App\Http\Controllers\Authapi\PasswordController::class, 'changePassword']);
+Route::post('getKodeAktivasi', [App\Http\Controllers\Authapi\RegisterController::class, 'getKodeAktivasi']);
 
 Route::post('/resetPassword', [App\Http\Controllers\Authapi\PasswordController::class, 'resetPassword'])->name('password.update');
 
@@ -33,15 +35,20 @@ Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Cont
 Route::get('getRangeOpening', [App\Http\Controllers\Api\Akseslh\LogJadwalPembukaanController::class, 'index']);
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
+Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
 
 Route::get('getDataBank', [App\Http\Controllers\Api\Akseslh\MasterDataBankController::class, 'index']);
 
 Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
 
 Route::get('getRiwayatPengajuan', [App\Http\Controllers\Api\Akseslh\RiwayatPengajuanController::class, 'index']);
+Route::get('getDetailRiwayatPengajuan/{id}', [App\Http\Controllers\Api\Akseslh\RiwayatPengajuanController::class, 'show']);
 Route::get('getLogKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getLogKegiatan']);
 
 Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengajuanKegiatanController::class, 'index']);
+
+Route::get('getDataMasterDataIndikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\MasterDataIndikatorLaporanController::class, 'index']);
+Route::put('indikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\IndikatorLaporanKegiatanController::class, 'update']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -84,6 +91,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['ensurerole:approver'])->group(function () {
         Route::get('getDataValidasiPengajuan', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'index']);
         Route::put('validasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update']);
+        Route::put('validasiPengajuanKegiatanTermin1/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_termin_1']);
+        Route::put('validasiPengajuanKegiatanTahapAkhir/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_tahap_akhir']);
     });
 
     Route::middleware(['ensurerole:pmu-bpdlh'])->group(function () {
@@ -97,4 +106,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'getDokumenLaporanKegiatan']);
     Route::put('uploadDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'uploadDokumenLaporanKegiatan']);
     Route::delete('deleteDokumenLaporanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'deleteDokumenLaporanKegiatan']);
+
+    // Laporan Akhir Kegiatan
+    Route::post('laporanAkhir', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'laporan_akhir']);
 });

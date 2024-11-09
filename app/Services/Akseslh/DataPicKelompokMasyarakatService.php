@@ -90,6 +90,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
                 'data_pic_kelompok_masyarakat_id'   => $data->id,
                 'nama_pic'                          => $data->nama_pic,
                 'email'                             => $data['email_pic'] ?? null,
+                'role_user'                         => 'maker',
                 // 'password'                          => Hash::make($default_password),
                 'status_user'                       => 'NON ACTIVE',
                 'flag'                              => 1,

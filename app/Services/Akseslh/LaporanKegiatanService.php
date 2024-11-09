@@ -154,7 +154,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             }
 
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($model);
+            return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
@@ -168,8 +168,11 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 $query->where('user_akseslh_id', $user->id);
             })->first();
 
+        if (!$model) return $this->sendError(null, 'Not Found', 422);
+
         $result = $model->tahapan_pengajuan_kegiatan->jenis_dokumen()->orderBy('created_at', 'ASC')->get();
         $dokumen = $model->document_file;
+
         $result->transform(function ($item, $key) use ($dokumen) {
 
             return [
@@ -186,7 +189,8 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
     private function mapDokumen($dokument, $jenis_dokumen)
     {
-        $document = $dokument->where('group', $jenis_dokumen)->get();
+        $document = $dokument->where('group', $jenis_dokumen);
+        if (!$document) return null;
         $document->transform(function ($item, $key) {
             return [
                 'id'    => $item->id,
@@ -195,7 +199,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 'size'  => $item->size,
             ];
         });
-        return $document;
+        return $document->values()->all();
     }
 
     public function apiDeleteDokumenLaporanKegiatan($id)
@@ -208,6 +212,39 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             $this->fileUploadService->deleteFiles($filePath);
 
             \DB::table('files')->where('id', $id)->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+        }
+    }
+
+    public function laporan_akhir($data)
+    {
+        $read   =   $this->model->newQuery()->find($data['pengajuan_kegiatan_id']);
+
+        \DB::beginTransaction();
+
+        try {
+
+            $this->logTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+                })
+                ->update(['tanggal_selesai' => date("Y-m-d")]);
+
+            $this->logTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
+                })
+                ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+            $read->flag      =   9;
+            $read->save();
+
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {

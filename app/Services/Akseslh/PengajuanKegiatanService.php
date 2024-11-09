@@ -17,6 +17,7 @@ use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\RabPengajuanPaketKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\TransaksiPenyaluran;
 use App\Models\UserAkseslh;
 use App\Services\EmailPhpService;
 use Carbon\Carbon;
@@ -25,6 +26,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
     protected $modelTahapanPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelRabPengajuanPaketKegiatan;
+    protected $modelTransaksiPenyaluran;
     protected $fileUploadService;
     protected $fileTable;
     protected $pdfService, $emailPhpService;
@@ -35,12 +38,16 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        RabPengajuanPaketKegiatan $modelRabPengajuanPaketKegiatan,
+        TransaksiPenyaluran $modelTransaksiPenyaluran,
         PdfService $pdfService,
         EmailPhpService $emailPhpService
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
+        $this->modelRabPengajuanPaketKegiatan   = $modelRabPengajuanPaketKegiatan;
+        $this->modelTransaksiPenyaluran         = $modelTransaksiPenyaluran;
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
         $this->pdfService           =   $pdfService;
@@ -89,6 +96,22 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
             ];
         });
+
+        return $this->sendSuccess($result);
+    }
+
+    public function getDataPenyerapanDana()
+    {
+        $sum_rab = $this->modelRabPengajuanPaketKegiatan->newQuery()->whereHas('pengajuan_kegiatan', function ($query) {
+            $query->whereBetween('flag', [1, 9]);
+        })->sum(\DB::raw('qty * harga_unit'));
+
+        $sum_transaksi_penyaluran = $this->modelTransaksiPenyaluran->newQuery()->sum(\DB::raw('nilai_penyaluran'));
+
+        $result = [
+            'total_pendanaan'           => (int) $sum_rab,
+            'total_dana_tersalurkan'    => (int) $sum_transaksi_penyaluran
+        ];
 
         return $this->sendSuccess($result);
     }
@@ -158,9 +181,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found');
 
+        // $result = $model->log_tahapan_pengajuan()->orderBy('tahapan_pengajuan_kegiatan')->get();
         $result = $model->log_tahapan_pengajuan()->get();
 
-        $result = $result->sortBy('tahapan_pengajuan_kegiatan.sort');
+        // dd($result->orderBy('tahapan_pengajuan_kegiatan.sort'));
 
         $result->transform(function ($items, $key) {
             return [
@@ -175,7 +199,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ];
         });
 
-        return $this->sendSuccess($result);
+        // dd();
+
+        return $this->sendSuccess(array_slice($result->sortBy('sort')->values()->all(), 2));
     }
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
@@ -231,7 +257,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $items =   $this->model->newQuery()->with(['document'])->find($id);
+        $items =   $this->model->newQuery()->with(['document', 'log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
 
         $result = [
             'id'    => $items->id,
@@ -248,6 +274,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'ruang_lingkup_kegiatan' => $items->ruang_lingkup_kegiatan,
             'paket_kegiatan_id' => $items->paket_kegiatan_id,
             'fileDocument'  => $items->document,
+            'log_tahapan_pengajuan' => $items->log_tahapan_pengajuan
         ];
 
         return $this->sendSuccess($result);

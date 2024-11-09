@@ -6,15 +6,19 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\PengajuanKegiatanService;
+use App\Services\Akseslh\TransaksiPenyaluranService;
 
 class DashboardController extends ApiController
 {
     protected $pengajuanKegiatanService;
+    protected $transaksiPenyaluranService;
 
     public function __construct(
+        TransaksiPenyaluranService $transaksiPenyaluranService,
         PengajuanKegiatanService $pengajuanKegiatanService,
         Request $request
     ) {
+        $this->transaksiPenyaluranService   = $transaksiPenyaluranService;
         $this->pengajuanKegiatanService    =   $pengajuanKegiatanService;
         parent::__construct($request);
     }
@@ -61,6 +65,21 @@ class DashboardController extends ApiController
         $lang           = $request->input('lang')  ?: 'ID';
 
         $result = $this->pengajuanKegiatanService->apiLang($id, $lang);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function getDataPenyerapanDana()
+    {
+        $result = $this->pengajuanKegiatanService->getDataPenyerapanDana();
 
         try {
             if ($result->success) {

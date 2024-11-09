@@ -30,4 +30,14 @@ class RabPengajuanPaketKegiatan extends AppModel
     {
         return $this->belongsTo(MasterKomponenRab::class, 'komponen_rab_id');
     }
+
+    /**
+     * Get the pengajuan_kegiatan that owns the RabPengajuanPaketKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pengajuan_kegiatan(): BelongsTo
+    {
+        return $this->belongsTo(PengajuanKegiatan::class, 'pengajuan_kegiatan_id');
+    }
 }

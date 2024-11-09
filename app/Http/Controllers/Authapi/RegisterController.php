@@ -76,6 +76,7 @@ class RegisterController extends ApiController
                 $user->save();
 
                 $user->user_akseslh->email          = $request->email_pic;
+                $user->user_akseslh->role_user      = 'maker';
                 $user->user_akseslh->password       = Hash::make($default_password);
                 $user->user_akseslh->status_user    = 'ACTIVE';
                 $user->user_akseslh->save();
@@ -97,6 +98,84 @@ class RegisterController extends ApiController
                     'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
                     'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
                     'role_user'                 => $user->user_akseslh->role_user,
+                    'nama'                      => $user->nama_pic,
+                ]);
+            } else {
+                \DB::rollBack();
+
+                return $this->sendError(null, "Mohon maaf. Kelompok anda belum terdaftar sebagai calon penerima. Untuk informasi lebih lanjut hubungi layanandanamasyarakat@bpdlh.id");
+            }
+        } catch (\Throwable $th) {
+
+            \DB::rollBack(); // rollback the changes
+
+            // return error
+            return $this->sendError(null, env('APP_ENV') == 'local' ? $th->getMessage() : 'Internal server error', 500);
+        }
+    }
+
+    public function getKodeAktivasi(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email_pic'  => 'required|email|unique:data_pic_kelompok_masyarakats,email_pic|unique:user_akseslhs,email',
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        // Get all input
+        $input = $validator->validated();
+
+        // Make default password for first login
+        $default_password =
+            crypt($request->email_pic . Carbon::now()->format('d M Y H:i:s'), $request->email_pic);
+
+        // Begin db transaction
+        \DB::beginTransaction();
+
+        try {
+
+            $user = DataPicKelompokMasyarakat::where('kelompok_masyarakat_id', $input['kelompok_masyarakat_id'])
+                ->where(function ($query) use ($input) {
+                    $query
+                        ->where('nohp_pic', $input['nohp_pic'])
+                        ->orWhere('email_pic', $input['email_pic']);
+                })->first();
+
+            if ($user) {
+
+                if ($user->user_akseslh->status_user == 'ACTIVE') return $this->sendError(null, 'Already active');
+
+                // Change user status to active
+                $user->email_pic = $request->email_pic;
+                $user->save();
+
+                $user->user_akseslh->email          = $request->email_pic;
+                $user->user_akseslh->role_user      = 'maker';
+                $user->user_akseslh->password       = Hash::make($default_password);
+                $user->user_akseslh->status_user    = 'ACTIVE';
+                $user->user_akseslh->save();
+
+                //Send email notification
+                // Notification::send($user->user_akseslh, new RegisterNotification($default_password));
+                $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
+
+                // Create token for user to access dashboard
+                $token = $user->user_akseslh->createToken("auth")->plainTextToken;
+
+                // Commit Change
+                \DB::commit();
+
+                // Return token to frontend
+                return $this->sendSuccess([
+                    'token'                     => $token,
+                    'jenis_kelompok_masyarakat' => $user->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
+                    'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
+                    'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
+                    'role_user'                 => $user->user_akseslh->role_user,
+                    'nama'                      => $user->nama_pic,
                 ]);
             } else {
                 \DB::rollBack();
