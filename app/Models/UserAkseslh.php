@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Models\AppAuthenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
 
 class UserAkseslh extends AppAuthenticatable
 {
@@ -34,5 +35,15 @@ class UserAkseslh extends AppAuthenticatable
     public function data_pic_kelompok_masyarakat(): BelongsTo
     {
         return $this->belongsTo(DataPicKelompokMasyarakat::class, 'data_pic_kelompok_masyarakat_id');
+    }
+
+    /**
+     * Get all of the master_user_jenis_kelompok for the UserAkseslh
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function master_user_jenis_kelompok(): HasMany
+    {
+        return $this->hasMany(MasterUserJenisKelompok::class, 'user_akseslh_id');
     }
 }

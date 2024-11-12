@@ -11,7 +11,7 @@ class MasterUserJenisKelompok extends AppModel
 {
     use HasFactory;
 
-    protected $table = 'master_sub_tematik_kegiatans';
+    protected $table = 'master_user_jenis_kelompoks';
 
     protected $fillable = [
         'user_akseslh_id',

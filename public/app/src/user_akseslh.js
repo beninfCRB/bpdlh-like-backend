@@ -8,6 +8,7 @@ import {
     showData,
 } from "../api";
 var route = $("#user-akseslh-route").val();
+var user_jenis_kelompok_route = $("#master-user-jenis-kelompok-route").val();
 
 var data_user_akseslh = (function () {
     var initTable1 = function () {
@@ -68,20 +69,42 @@ var data_user_akseslh = (function () {
                     orderable: false,
                     render: function (data, type, full, meta) {
                         var editRoute = route + "/" + full.id + "/edit";
-
-                        return (
-                            `
-                        <a href="` +
-                            editRoute +
-                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                        <a data-id=` +
-                            full.id +
-                            ` href="#" onclick="deletePICKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
-                          <i class="fa fa-trash"></i>
-                        </a>`
-                        );
+                        var showUserJenisKelompokRoute =
+                            user_jenis_kelompok_route + "/" + full.id;
+                        if (full.role_user == "verifikator") {
+                            return (
+                                `
+                                <a href="` +
+                                showUserJenisKelompokRoute +
+                                `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Tambah">
+                              <i class="fa fa-plus-circle"></i>
+                            </a>
+                            <a href="` +
+                                editRoute +
+                                `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                              <i class="fa fa-pencil"></i>
+                            </a>
+                            <a data-id=` +
+                                full.id +
+                                ` href="#" onclick="deletePICKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                              <i class="fa fa-trash"></i>
+                            </a>`
+                            );
+                        } else {
+                            return (
+                                `
+                            <a href="` +
+                                editRoute +
+                                `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                              <i class="fa fa-pencil"></i>
+                            </a>
+                            <a data-id=` +
+                                full.id +
+                                ` href="#" onclick="deletePICKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                              <i class="fa fa-trash"></i>
+                            </a>`
+                            );
+                        }
                     },
                 },
             ],
