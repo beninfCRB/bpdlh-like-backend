@@ -82,6 +82,10 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('transaksi-penyaluran', App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class);
         Route::resource('master-data-indikator-laporan', App\Http\Controllers\Cms\Akseslh\MasterDataIndikatorLaporanController::class);
 
+
+        // User Jenis Kelompok
+        Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
+
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
 
@@ -105,5 +109,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-log-jadwal-pembukaan', [App\Http\Controllers\Datatable\Akseslh\LogJadwalPembukaanController::class, 'getAll'])->name('data-log-jadwal-pembukaan');
         Route::get('/data-transaksi-penyaluran', [App\Http\Controllers\Datatable\Akseslh\TransaksiPenyaluranController::class, 'getAll'])->name('data-transaksi-penyaluran');
         Route::get('/data-master-data-indikator-laporan', [App\Http\Controllers\Datatable\Akseslh\MasterDataIndikatorLaporanController::class, 'getAll'])->name('data-master-data-indikator-laporan');
+        Route::get('/data-master-user-jenis-kelompok', [App\Http\Controllers\Datatable\Akseslh\MasterUserJenisKelompokController::class, 'getAll'])->name('data-master-user-jenis-kelompok');
+        Route::get('/data-master-user-jenis-kelompok/{id}', [App\Http\Controllers\Datatable\Akseslh\MasterUserJenisKelompokController::class, 'getAllUser'])->name('data-master-user-jenis-kelompok.show');
     });
 });

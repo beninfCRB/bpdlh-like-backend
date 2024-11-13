@@ -176,7 +176,15 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'tanggal_verifikasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                 })->first()->tanggal_selesai,
-                'document'                  => $items->document
+                'document'                      => $items->document,
+                'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
+                    return [
+                        'nilai_laporan' => $items->nilai_laporan,
+                        'nama_indikator' => $items->master_data_indikator_laporan->nama_indikator,
+                        'satuan' => $items->master_data_indikator_laporan->satuan,
+                        'tipe_data' => $items->master_data_indikator_laporan->satuan,
+                    ];
+                })
             ];
         });
 
