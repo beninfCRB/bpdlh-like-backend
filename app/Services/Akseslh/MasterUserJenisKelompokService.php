@@ -119,7 +119,7 @@ class MasterUserJenisKelompokService extends AppService implements AppServiceInt
     {
         $read   =   $this->model->newQuery()->find($id);
         try {
-            $read->delete();
+            $read->forceDelete();
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
