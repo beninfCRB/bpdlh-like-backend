@@ -73,6 +73,18 @@ jQuery(document).ready(function () {
     data_master_user_jenis_kelompok.init();
 });
 
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+    },
+});
+
 window.createMasterUserJenisKelompok = (input, evt) => {
     evt.preventDefault();
 
@@ -97,20 +109,17 @@ window.createMasterUserJenisKelompok = (input, evt) => {
         if (result.isConfirmed) {
             createData(route, formData)
                 .then((res) => {
-                    let response = res.data;
-                    if (response.success) {
-                        Swal.fire(
-                            "Sukses",
-                            "Data berhasil disimpan",
-                            "success"
-                        );
-                        window.location.reload(); // Halaman akan di-reload
-                    }
+                    Swal.fire("Sukses", "Data berhasil disimpan", "success");
+                    window.location.reload(); // Halaman akan di-reload
                 })
                 .catch((err) => {
                     let error = err.response.data;
                     if (!error.success) {
                         toastr.error(error.message);
+                        Toast.fire({
+                            icon: "error",
+                            title: error.message,
+                        });
                     }
                 });
         }

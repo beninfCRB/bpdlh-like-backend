@@ -104,7 +104,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         ->get();
                     break;
 
-                case 8:
+                case 9:
                     # code...
                     $result  = $this->model->newQuery()
                         ->whereHas(
