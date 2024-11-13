@@ -81,11 +81,8 @@ class MasterUserJenisKelompokService extends AppService implements AppServiceInt
         try {
 
             $tematik_kegiatan = $this->model->newQuery()->create([
-                'tematik_kegiatan_id'       =>  $data['tematik_kegiatan_id'],
-                'sub_tematik_kegiatan_id'   =>  $data['sub_tematik_kegiatan_id'],
-                'short_id'                  =>  $data['short_id'],
-                'deskripsi_tematik'         =>  $data['deskripsi_tematik'],
-                'flag'                      => 1,
+                'user_akseslh_id'       =>  $data['user_akseslh_id'],
+                'jenis_kelompok_masyarakat_id'   =>  $data['jenis_kelompok_masyarakat_id'],
             ]);
 
             \DB::commit(); // commit the changes

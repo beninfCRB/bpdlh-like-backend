@@ -44,7 +44,7 @@
                             <div class="col-md-6">
                             </div>
                             <div class="col-md-3">
-                                <select name="jenis_kelompok_masyarakat" id="jenis_kelompok_masyarakat"
+                                <select name="jenis_kelompok_masyarakat_id" id="jenis_kelompok_masyarakat_id"
                                     class="form-control">
                                     <option value="">Pilih Jenis Kelompok</option>
                                     @foreach ($jenisKelompokMasyarakat as $item)

@@ -13,6 +13,7 @@ var data_master_user_jenis_kelompok = (function () {
         var table = $("#dt_master_user_jenis_kelompok");
         var url_table = $("#data-table-master-user-jenis-kelompok").val();
         var user_id = $("#user_id").val();
+
         // begin first table
         table.DataTable({
             language: {
@@ -77,12 +78,11 @@ window.createMasterUserJenisKelompok = (input, evt) => {
 
     var formData = new FormData();
 
+    formData.append("user_akseslh_id", $("#user_id").val());
     formData.append(
-        "jenis_kelompok_masyarakat",
-        getValue("jenis_kelompok_masyarakat")
+        "jenis_kelompok_masyarakat_id",
+        getValue("jenis_kelompok_masyarakat_id")
     );
-
-    console.log(formData);
 
     Swal.fire({
         title: "Konfirmasi Penyimpanan",
@@ -99,21 +99,21 @@ window.createMasterUserJenisKelompok = (input, evt) => {
                 .then((res) => {
                     let response = res.data;
                     if (response.success) {
-                        afterLoadingAttr("#saveBtn");
-                        let urlBack = "/donor-assessment/" + resultId[2];
-                        console.log(urlBack);
-                        messages("Data berhasil disimpan", urlBack);
+                        Swal.fire(
+                            "Sukses",
+                            "Data berhasil disimpan",
+                            "success"
+                        );
+                        window.location.reload(); // Halaman akan di-reload
                     }
                 })
                 .catch((err) => {
-                    afterLoadingAttr("#saveBtn");
                     let error = err.response.data;
                     if (!error.success) {
                         toastr.error(error.message);
                     }
                 });
         }
-        afterLoadingAttr("#saveBtn");
     });
 };
 
