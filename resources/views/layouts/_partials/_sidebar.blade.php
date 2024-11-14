@@ -75,6 +75,14 @@
                                 <span>Paket Kegiatan</span></a>
                         </li>
                         <li>
+                            <a href="{{ route('jenis-pekerjaan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Jenis Pekerjaan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('pendidikan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Pendidikan</span></a>
+                        </li>
+                        <li>
                             <a href="{{ route('pic-kelompok-masyarakat.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
                         </li>

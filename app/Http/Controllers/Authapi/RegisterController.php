@@ -115,6 +115,8 @@ class RegisterController extends ApiController
         }
     }
 
+    public function register_2() {}
+
     public function getKodeAktivasi(Request $request)
     {
         $validator = Validator::make($request->all(), [
