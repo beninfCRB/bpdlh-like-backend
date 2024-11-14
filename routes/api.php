@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Maatwebsite\Excel\Row;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +14,7 @@ use Maatwebsite\Excel\Row;
 */
 
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
+Route::post('resgister-2', [App\Http\Controller\Authapi\RegisterController::class, 'register_2']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
 Route::post('changePassword', [App\Http\Controllers\Authapi\PasswordController::class, 'changePassword']);
 Route::post('getKodeAktivasi', [App\Http\Controllers\Authapi\RegisterController::class, 'getKodeAktivasi']);
@@ -33,6 +33,8 @@ Route::get('kelurahan', [App\Http\Controllers\Api\Akseslh\KelurahanController::c
 Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'show']);
 Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
 Route::get('getRangeOpening', [App\Http\Controllers\Api\Akseslh\LogJadwalPembukaanController::class, 'index']);
+Route::get('jenis-pekerjaan', [App\Http\Controllers\Api\Akseslh\JenisPekerjaanController::class, 'index']);
+Route::get('pendidikan', [App\Http\Controllers\Api\Akseslh\PendidikanController::class, 'index']);
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
 Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
