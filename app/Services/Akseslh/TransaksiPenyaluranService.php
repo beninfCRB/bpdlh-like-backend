@@ -178,7 +178,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
     {
         $result = $this->pengajuanKegiatan->find($data['pengajuan_kegiatan_id']);
 
-        if (!$result) return $this->sendError(null, 'Not Found', 422);
+        // if (!$result) return $this->sendError(null, 'Not Found', 422);
 
         $tpk = $result->transaksi_penyaluran->count();
 

@@ -10,6 +10,7 @@ use App\Models\UserEksternal;
 use App\Services\EmailPhpService;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Authapi\Register2Request;
 use App\Models\DataPicKelompokMasyarakat;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\RegisterNotification;
@@ -115,7 +116,10 @@ class RegisterController extends ApiController
         }
     }
 
-    public function register_2() {}
+    public function register_2(Register2Request $request)
+    {
+        dd($request->all());
+    }
 
     public function getKodeAktivasi(Request $request)
     {
