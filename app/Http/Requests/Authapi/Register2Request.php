@@ -26,7 +26,7 @@ class Register2Request extends FormRequest
         return [
             //
             'nama_pic'                  => 'required|max:255|string',
-            'nomor_identitas_pic'       => 'required|string|max:20',
+            'nomor_identitas_pic'       => 'required|string|min:16|max:16',
             'nomor_npwp_pic'            => 'required',
             'alamat_pic'                => 'required',
             'kelurahan_pic'             => 'required',
@@ -38,10 +38,10 @@ class Register2Request extends FormRequest
             'agama'                     => 'required',
             'status_perkawinan'         => 'required',
             'nama_gadis_ibu_kandung'    => 'required',
-            'jenis_pekerjaan'           => 'required',
-            'kelompok_masyarakat_id'    => 'required',
+            'jenis_pekerjaan_id'        => 'required|exists:jenis_pekerjaans,id',
+            'kelompok_masyarakat_id'    => 'required|exists:kelompok_masyarakats,id',
             'email_pic'                 => 'required|email',
-            'jenis_identitas_pic'       => 'required',
+            'token_verifikasi'          => 'required',
             'nohp_pic'                  => 'required',
         ];
     }

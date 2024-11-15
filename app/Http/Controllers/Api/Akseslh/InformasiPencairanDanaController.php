@@ -92,7 +92,6 @@ class InformasiPencairanDanaController extends ApiController
             'waktu_kegiatan'                        => 'nullable',
         ]);
 
-
         if ($validator->fails()) {
             # code...
             return $this->sendError(null, $validator->getMessageBag(), 422);
