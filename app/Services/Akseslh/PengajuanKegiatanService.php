@@ -288,7 +288,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $cekData = PengajuanKegiatan::where(['user_akseslh_id' => $data['user_akseslh_id']])->latest()->first();
             if ($cekData) {
                 # code...
-                if ($cekData->flag < 9 || $cekData->flag != '20' || $cekData->flag != 20) {
+                if ($cekData->flag < 10 || $cekData->flag != '20' || $cekData->flag != 20) {
                     # code...
                     return $this->sendError(null, 'Masih ada pengajuan yang berlangsung', 422);
                 }
@@ -350,6 +350,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     'harga_unit'            => $item->standar_harga_unit,
                     'nilai_standar'         => $item->standar_harga_unit,
                     'qty'                   => $item->standar_qty,
+                    500
                 ];
             }
 
@@ -368,7 +369,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($dataSend);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -536,6 +537,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found');
 
+        if ($model->flag != 0) return $this->sendError(null, 'Not Allowed', 403);
+
         if ($model->rab_pengajuan_paket_kegiatans->count() > 0) return $this->sendError(null, 'Rab sudah ada', 422);
 
         \DB::beginTransaction();
@@ -635,7 +638,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found', 422);
 
-        // if ($model->flag != 3) return $this->sendError(null, 'Tidak dapat melanjutkan', 422);
+        if ($model->flag != 3) return $this->sendError(null, 'Not Allowed', 403);
 
         \DB::beginTransaction();
 
@@ -695,7 +698,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess();
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 

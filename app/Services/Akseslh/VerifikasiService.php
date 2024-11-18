@@ -93,6 +93,11 @@ class VerifikasiService extends AppService implements AppServiceInterface
 
         if (!$read) return $this->sendError(null, 'Not Found');
 
+        if ($read->flag != 1) {
+            # code...
+            return $this->sendError(null, 'Not Allowed', 403);
+        }
+
         $total = 0;
 
         foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
