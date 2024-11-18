@@ -441,7 +441,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($dataSend);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -454,7 +454,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -598,7 +598,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($result);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
