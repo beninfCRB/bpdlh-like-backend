@@ -29,7 +29,7 @@ class DashboardPenerimaManfaatController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
@@ -75,7 +75,7 @@ class DashboardPenerimaManfaatController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
@@ -92,7 +92,7 @@ class DashboardPenerimaManfaatController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 }

@@ -190,7 +190,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -246,7 +246,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -259,7 +259,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 }

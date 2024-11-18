@@ -34,7 +34,7 @@ class InformasiPencairanDanaController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
@@ -51,7 +51,7 @@ class InformasiPencairanDanaController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
     public function store(Request $request): \Illuminate\Http\JsonResponse
@@ -81,7 +81,7 @@ class InformasiPencairanDanaController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
     public function update($id, Request $request): \Illuminate\Http\JsonResponse
@@ -148,7 +148,7 @@ class InformasiPencairanDanaController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
@@ -165,7 +165,7 @@ class InformasiPencairanDanaController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 }
