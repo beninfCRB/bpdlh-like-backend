@@ -88,8 +88,8 @@ class InformasiPencairanDanaController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'perjanjian_kerjasama'                  => 'required|file|mimes:pdf,jpg,png',
-            'tanggal_kegiatan'                      => 'nullable',
-            'waktu_kegiatan'                        => 'nullable',
+            'tanggal_kegiatan'                      => 'nullable|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
+            'waktu_kegiatan'                        => 'nullable|string|regex:/^\d{2}:\d{2} \- \d{2}:\d{2}$/',
         ]);
 
         if ($validator->fails()) {
@@ -108,6 +108,15 @@ class InformasiPencairanDanaController extends ApiController
             $input["time_mulai_kegiatan"]       = $waktuArray[0];
             $input["time_akhir_kegiatan"]       = $waktuArray[1];
 
+            // Validasi rentang tanggal dan waktu (optional)
+            if (strtotime($input["tanggal_mulai_kegiatan"]) > strtotime($input["tanggal_akhir_kegiatan"])) {
+                return $this->sendError(null, 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir.', 422);
+            }
+
+            if (strtotime($input["time_mulai_kegiatan"]) > strtotime($input["time_akhir_kegiatan"])) {
+                return $this->sendError(null, 'Waktu mulai tidak boleh lebih besar dari waktu akhir.', 422);
+            }
+
             //eliminate unnecessary key 
             unset($input["tanggal_kegiatan"]);
             unset($input["waktu_kegiatan"]);
@@ -122,7 +131,7 @@ class InformasiPencairanDanaController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 

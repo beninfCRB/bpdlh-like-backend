@@ -91,7 +91,7 @@ class ValidasiPengajuanKegiatanController extends ApiController
         }
     }
 
-    public function update_termin_1($id, Request $request)
+    public function zupdate_termin_1($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
             'status'        => 'required',
