@@ -17,17 +17,20 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
     protected $logTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
+    protected $modelPengembalian;
 
     public function __construct(
         PengajuanKegiatan $model,
         LogTahapanPengajuanKegiatan $logTahapanPengajuanKegiatan,
         FileUploadService $fileUploadService,
-        FileTable $fileTable
+        FileTable $fileTable,
+        Pengembalian $modelPengembalian
     ) {
         parent::__construct($model);
-        $this->logTahapanPengajuanKegiatan = $logTahapanPengajuanKegiatan;
-        $this->fileUploadService                        =   $fileUploadService;
-        $this->fileTable                                =   $fileTable;
+        $this->logTahapanPengajuanKegiatan  = $logTahapanPengajuanKegiatan;
+        $this->fileUploadService            =   $fileUploadService;
+        $this->fileTable                    =   $fileTable;
+        $this->modelPengembalian            = $modelPengembalian;
     }
 
     public function getAll()
@@ -241,6 +244,30 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                     $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+            if (isset($data['jumlah_pengembalian'])) {
+                # code...
+                $pengembalian = $this->modelPengembalian->newQuery()->create([
+                    'pengajuan_kegiatan_id'     =>  $data['pengajuan_kegiatan_id'],
+                    'jumlah_pengembalian'       =>  $data['jumlah_pengembalian'],
+                ]);
+
+                // Save document 
+                if ($input['bukti_pengembalian']->getClientOriginalExtension() == 'pdf') {
+                    // upload document
+                    $upload = $this->fileUploadService->handleFile($input['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($input['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
+                }
+
+                if (!empty($upload)) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($pengembalian),
+                        'fileable_id'   => $pengembalian->id,
+                    ]);
+                }
+            }
 
             $read->flag      =   9;
             $read->save();

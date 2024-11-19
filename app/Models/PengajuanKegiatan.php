@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\AppModel;
 use Carbon\Carbon;
+use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -168,5 +169,15 @@ class PengajuanKegiatan extends AppModel
     public function indikator_laporan_kegiatan(): HasMany
     {
         return $this->hasMany(IndikatorLaporanKegiatan::class, 'pengajuan_kegiatan_id');
+    }
+
+    /**
+     * Get the user associated with the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function user(): HasOne
+    {
+        return $this->hasOne(Pengembalian::class, 'pengajuan_kegiatan_id');
     }
 }
