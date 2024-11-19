@@ -462,7 +462,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $result = $this->model->find($id);
 
-        if (!$result || count($result->rab_pengajuan_paket_kegiatans) <= 0)  return $this->sendError(null, 'Not Found');
+        if (!$result || count($result->rab_pengajuan_paket_kegiatans) >= 0)  return $this->sendError(null, 'Not Found');
 
         $rab = null;
         foreach ($result->rab_pengajuan_paket_kegiatans as $item) {
