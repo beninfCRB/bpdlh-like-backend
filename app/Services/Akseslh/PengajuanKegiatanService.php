@@ -350,7 +350,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     'harga_unit'            => $item->standar_harga_unit,
                     'nilai_standar'         => $item->standar_harga_unit,
                     'qty'                   => $item->standar_qty,
-                    500
+
                 ];
             }
 
@@ -462,10 +462,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $result = $this->model->find($id);
 
-        if (!$result || count($result->rab_pengajuan_paket_kegiatans) >= 0)  return $this->sendError(null, 'Not Found');
+        if (!$result || count($result->rab_pengajuan_paket_kegiatans) > 0)  return $this->sendError(null, 'Not Found', 422);
 
         $rab = null;
-        foreach ($result->rab_pengajuan_paket_kegiatans as $item) {
+        foreach ($result->paket_kegiatan->standar_rab_paket_kegiatan as $item) {
             # code...
             $rab[] = [
                 'id_komponen'           => $item->master_komponen_rab->id,
