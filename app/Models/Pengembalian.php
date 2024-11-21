@@ -27,4 +27,10 @@ class Pengembalian extends AppModel
     {
         return $this->belongsTo(PengajuanKegiatan::class, 'pengajuan_kegiatan_id');
     }
+
+    public function document()
+    {
+        return $this->morphOne(File::class, 'fileable')
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
+    }
 }
