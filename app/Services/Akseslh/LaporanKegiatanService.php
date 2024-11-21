@@ -228,9 +228,9 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($data['pengajuan_kegiatan_id']);
 
-        if (!$read) return $this->sendError(null, 'Not Found', 422);
+        // if (!$read) return $this->sendError(null, 'Not Found', 422);
 
-        if ($read->flag != 9) return $this->sendError(null, 'Not Allowed', 403);
+        // if ($read->flag != 9) return $this->sendError(null, 'Not Allowed', 403);
 
         \DB::beginTransaction();
 
@@ -258,11 +258,11 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 ]);
 
                 // Save document 
-                if ($input['bukti_pengembalian']->getClientOriginalExtension() == 'pdf') {
+                if ($data['bukti_pengembalian']->getClientOriginalExtension() == 'pdf') {
                     // upload document
-                    $upload = $this->fileUploadService->handleFile($input['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
+                    $upload = $this->fileUploadService->handleFile($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
                 } else {
-                    $upload = $this->fileUploadService->handleImage($input['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
+                    $upload = $this->fileUploadService->handleImage($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
                 }
 
                 if (!empty($upload)) {
