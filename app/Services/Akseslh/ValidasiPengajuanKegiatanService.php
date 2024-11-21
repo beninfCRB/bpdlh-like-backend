@@ -102,6 +102,49 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         )
                         ->orderBy('created_at', 'ASC')
                         ->get();
+                    $result->transform(function ($items, $key) {
+                        return [
+                            'id'                        => $items->id,
+                            'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                            'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                            'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
+                            'kegiatan'                  => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                            'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                            'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
+                            'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                            'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                            'tanggal_akhir_validasi'    => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                            'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                            'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                            'lokasi'                    => $items->alamat_kegiatan,
+                            'nomor_pengajuan'           => $items->nomor_pengajuan,
+                            'proposal_kegiatan'         => $items->proposal_kegiatan,
+                            'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                            'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                            'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                            })->first()->user_akseslh_admin->email,
+                            'tanggal_verifikasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                            })->first()->tanggal_selesai,
+                            'document'                      => $items->document,
+                            'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
+                                return [
+                                    'nilai_laporan' => $items->nilai_laporan,
+                                    'nama_indikator' => $items->master_data_indikator_laporan->nama_indikator,
+                                    'satuan' => $items->master_data_indikator_laporan->satuan,
+                                    'tipe_data' => $items->master_data_indikator_laporan->satuan,
+                                ];
+                            }),
+                            'laporan_termin_1' => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
+                            })->first()->document_file->groupBy('group'),
+                        ];
+                    });
+
+                    return $this->sendSuccess($result);
                     break;
 
                 case 9:
