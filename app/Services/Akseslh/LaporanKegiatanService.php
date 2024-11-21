@@ -274,6 +274,31 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 }
             }
 
+            if (isset($data['laporan_akhir'])) {
+                # code...
+                $laporan_akhir_model = $this->logTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+                    })
+                    ->first();
+
+                if ($data['laporan_akhir']->getClientOriginalExtension() == 'pdf') {
+                    // upload document
+                    $upload = $this->fileUploadService->handleFile($data['laporan_akhir'])->saveToDb('Laporan Akhir Kegiatan');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['laporan_akhir'])->saveToDb('Laporan Akhir Kegiatan');
+                }
+
+                if (!empty($upload)) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($laporan_akhir_model),
+                        'fileable_id'   => $laporan_akhir_model->id,
+                    ]);
+                }
+            }
+
             $read->flag      =   9;
             $read->save();
 
