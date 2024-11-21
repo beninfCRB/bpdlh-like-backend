@@ -128,7 +128,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $result =   $this->model->newQuery()
             ->where(['user_akseslh_id' => $user_akseslh_id])
             ->where('flag', '>', 0)
-            ->where('flag', '<', 20)
+            ->where('flag', '<', 10)
             ->whereHas('rab_pengajuan_paket_kegiatans')
             ->latest()
             ->first();
