@@ -16,20 +16,23 @@ use Illuminate\Support\Facades\Validator;
 use App\Notifications\RegisterNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Authapi\RegisterRequest;
+use App\Services\Akseslh\KelompokMasyarakatService;
 use DateTime;
 
 class RegisterController extends ApiController
 {
     protected $emailPhpService;
+    protected $kelompokMasyarakatService;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(EmailPhpService $emailPhpService)
+    public function __construct(EmailPhpService $emailPhpService, KelompokMasyarakatService $kelompokMasyarakatService)
     {
         $this->middleware('guest');
         $this->emailPhpService = $emailPhpService;
+        $this->kelompokMasyarakatService = $kelompokMasyarakatService;
     }
 
     public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
@@ -118,7 +121,28 @@ class RegisterController extends ApiController
 
     public function register_2(Register2Request $request)
     {
-        dd($request->all());
+        $input = $request->validated();
+        $check_kelompok_masyarakat = \DB::table('kelompok_masyarakats')->where('id', $input['kelompok_masyarakat'])->first();
+
+        if (!$check_kelompok_masyarakat) {
+            # code...
+            $temp_data = [
+                'jenis_kelompok_masyarakat_id'  => $input['jenis_kelompok_masyarakat_id'],
+                'kelompok_masyarakat'           => $input['kelompok_masyarakat'],
+            ];
+
+            $result =   $this->kelompokMasyarakatService->create($temp_data);
+
+            try {
+                if (!$result->success) {
+                    // Contoh menyimpan session flash
+                    return $this->sendError(null, $result->message, 422);
+                }
+            } catch (\Exception $exception) {
+                return $this->sendError(null, $exception->getMessage(), 500);
+            }
+        }
+        dd(!$check_kelompok_masyarakat);
     }
 
     public function getKodeAktivasi(Request $request)
