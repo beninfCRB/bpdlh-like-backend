@@ -230,7 +230,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$read) return $this->sendError(null, 'Not Found', 422);
 
-        // if ($read->flag != 9) return $this->sendError(null, 'Not Allowed', 403);
+        // if ($read->flag != 8) return $this->sendError(null, 'Not Allowed', 403);
 
         \DB::beginTransaction();
 

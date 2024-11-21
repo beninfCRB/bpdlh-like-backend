@@ -172,11 +172,11 @@ class PengajuanKegiatan extends AppModel
     }
 
     /**
-     * Get the user associated with the PengajuanKegiatan
+     * Get the pengembalian associated with the PengajuanKegiatan
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function user(): HasOne
+    public function pengembalian(): HasOne
     {
         return $this->hasOne(Pengembalian::class, 'pengajuan_kegiatan_id');
     }
