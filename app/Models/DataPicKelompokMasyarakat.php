@@ -31,6 +31,12 @@ class DataPicKelompokMasyarakat extends AppModel
         'provinsi_pic',
         'flag',
         'username',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'agama_id',
+        'status_perkawinan_id',
+        'nama_gadis_ibu_kandung',
+        'jenis_pekerjaan_id',
     ];
 
     /**

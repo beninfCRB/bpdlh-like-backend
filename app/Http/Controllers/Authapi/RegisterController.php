@@ -18,21 +18,32 @@ use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Authapi\RegisterRequest;
 use App\Services\Akseslh\KelompokMasyarakatService;
 use DateTime;
+use App\Models\File as FileTable;
+use App\Services\FileUploadService;
 
 class RegisterController extends ApiController
 {
     protected $emailPhpService;
     protected $kelompokMasyarakatService;
+    protected $fileUploadService;
+    protected $fileTable;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(EmailPhpService $emailPhpService, KelompokMasyarakatService $kelompokMasyarakatService)
-    {
+    public function __construct(
+        EmailPhpService $emailPhpService,
+        KelompokMasyarakatService $kelompokMasyarakatService,
+        FileUploadService $fileUploadService,
+        FileTable $fileTable
+    ) {
         $this->middleware('guest');
         $this->emailPhpService = $emailPhpService;
         $this->kelompokMasyarakatService = $kelompokMasyarakatService;
+        $this->fileUploadService            =   $fileUploadService;
+        $this->fileTable                    =   $fileTable;
     }
 
     public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
@@ -122,7 +133,13 @@ class RegisterController extends ApiController
     public function register_2(Register2Request $request)
     {
         $input = $request->validated();
-        $check_kelompok_masyarakat = \DB::table('kelompok_masyarakats')->where('id', $input['kelompok_masyarakat'])->first();
+
+        // Begin db transaction
+        \DB::beginTransaction();
+
+        $check_kelompok_masyarakat = \DB::table('kelompok_masyarakats')
+            ->where('id', $input['kelompok_masyarakat'])
+            ->first();
 
         if (!$check_kelompok_masyarakat) {
             # code...
@@ -134,15 +151,123 @@ class RegisterController extends ApiController
             $result =   $this->kelompokMasyarakatService->create($temp_data);
 
             try {
-                if (!$result->success) {
-                    // Contoh menyimpan session flash
+                if ($result->success) {
+                    $input['kelompok_masyarakat'] = $result->data['id'];
+                } else {
                     return $this->sendError(null, $result->message, 422);
                 }
             } catch (\Exception $exception) {
                 return $this->sendError(null, $exception->getMessage(), 500);
             }
         }
-        dd(!$check_kelompok_masyarakat);
+
+        // Make default password for first login
+        $default_password =
+            crypt($input['email_pic'] . Carbon::now()->format('d M Y H:i:s'), $input['email_pic']);
+
+        try {
+
+            $user = DataPicKelompokMasyarakat::create([
+                'kelompok_masyarakat_id'    => $input['kelompok_masyarakat'],
+                'nama_pic'                  => $input['nama_pic'],
+                'jenis_identitas_pic'       => 'KTP',
+                'nomor_identitas_pic'       => $input['nomor_identitas_pic'],
+                'email_pic'                 => $input['email_pic'],
+                'nohp_pic'                  => $input['nohp_pic'],
+                'alamat_pic'                => $input['alamat_pic'],
+                'provinsi_pic'              => $input['provinsi_pic'],
+                'kabupaten_pic'             => $input['kabupaten_pic'],
+                'kecamatan_pic'             => $input['kecamatan_pic'],
+                'kelurahan_pic'             => $input['kelurahan_pic'],
+                'flag' => 1,
+                'tempat_lahir'              => $input['tempat_lahir'],
+                'tanggal_lahir'             => $input['tanggal_lahir'],
+                'agama_id'                  => $input['agama_id'],
+                'status_perkawinan_id'      => $input['status_perkawinan_id'],
+                'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
+                'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],
+            ]);
+
+            $user_akseslh = UserAkseslh::create([
+                'data_pic_kelompok_masyarakat_id'   => $user->id,
+                'nama_pic'                          => $input['nama_pic'],
+                'email'                             => $input['email_pic'],
+                'password'                          => Hash::make($default_password),
+                'status_user'                       => 'ACTIVE',
+                'role_user'                         => 'maker',
+                'flag'                              => 1,
+            ]);
+
+            $test = [
+                'jenis_kelompok_masyarakat' => $user->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
+                'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
+                'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
+                'role_user'                 => $user_akseslh->role_user,
+                'nama'                      => $user->nama_pic,
+            ];
+
+            //Send email notification
+            // Notification::send($user->user_akseslh, new RegisterNotification($default_password));
+            $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
+
+            // Create token for user to access dashboard
+            $token = $user->user_akseslh->createToken("auth")->plainTextToken;
+
+            // Save document 
+            if (isset($input['profil_kelompok']) && $input['profil_kelompok']->getClientOriginalExtension() == 'pdf') {
+                // upload document
+                $upload_profile_kelompok = $this->fileUploadService->handleFile($input['profil_kelompok'])->saveToDb('profil_kelompok');
+            }
+
+            if (!empty($upload_profile_kelompok)) {
+                $document = $this->fileTable->newQuery()->find($upload_profile_kelompok->id);
+                $document->update([
+                    'fileable_type' => get_class($user),
+                    'fileable_id'   => $user->id,
+                ]);
+            }
+
+            // Save document 
+            $upload_foto_ktp = $this->fileUploadService->handleImage($input['foto_ktp'])->saveToDb('foto_ktp');
+
+            if (!empty($upload_foto_ktp)) {
+                $document = $this->fileTable->newQuery()->find($upload_foto_ktp->id);
+                $document->update([
+                    'fileable_type' => get_class($user),
+                    'fileable_id'   => $user->id,
+                ]);
+            }
+
+            // Save document 
+            $upload_foto_selfie = $this->fileUploadService->handleImage($input['foto_selfie'])->saveToDb('foto_selfie');
+
+            if (!empty($upload_foto_selfie)) {
+                $document = $this->fileTable->newQuery()->find($upload_foto_selfie->id);
+                $document->update([
+                    'fileable_type' => get_class($user),
+                    'fileable_id'   => $user->id,
+                ]);
+            }
+
+            // Commit Change
+            \DB::commit();
+
+            // Return token to frontend
+            return $this->sendSuccess([
+                'token'                     => $token,
+                'jenis_kelompok_masyarakat' => $user->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
+                'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
+                'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
+                'role_user'                 => $user->user_akseslh->role_user,
+                'nama'                      => $user->nama_pic,
+            ]);
+        } catch (\Throwable $th) {
+
+            \DB::rollBack(); // rollback the changes
+
+            // return error
+            return $this->sendError(null, env('APP_ENV') == 'local' ? $th->getMessage() : 'Internal server error', 500);
+        }
     }
 
     public function getKodeAktivasi(Request $request)

@@ -35,6 +35,9 @@ Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Cont
 Route::get('getRangeOpening', [App\Http\Controllers\Api\Akseslh\LogJadwalPembukaanController::class, 'index']);
 Route::get('jenis-pekerjaan', [App\Http\Controllers\Api\Akseslh\JenisPekerjaanController::class, 'index']);
 Route::get('pendidikan', [App\Http\Controllers\Api\Akseslh\PendidikanController::class, 'index']);
+Route::get('agama', [App\Http\Controllers\Api\Akseslh\AgamaController::class, 'index']);
+Route::get('status-pernikahan', [App\Http\Controllers\Api\Akseslh\StatusPernikahanController::class, 'index']);
+
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
 Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
