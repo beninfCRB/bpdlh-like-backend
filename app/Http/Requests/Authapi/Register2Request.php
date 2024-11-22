@@ -42,7 +42,7 @@ class Register2Request extends FormRequest
             'tempat_lahir'              => 'required',
             'tanggal_lahir'             => 'required|date',
             'agama_id'                  => 'required|exists:agamas,id',
-            'status_perkawinan_id'      => 'required|exists:status_pernikahan,id',
+            'status_perkawinan_id'      => 'required|exists:status_pernikahans,id',
             'nama_gadis_ibu_kandung'    => 'required',
             'jenis_pekerjaan_id'        => 'required|exists:jenis_pekerjaans,id',
             'nohp_pic'                  => 'required|unique:data_pic_kelompok_masyarakats,nohp_pic',
