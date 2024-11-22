@@ -38,6 +38,9 @@ Route::get('pendidikan', [App\Http\Controllers\Api\Akseslh\PendidikanController:
 Route::get('agama', [App\Http\Controllers\Api\Akseslh\AgamaController::class, 'index']);
 Route::get('status-pernikahan', [App\Http\Controllers\Api\Akseslh\StatusPernikahanController::class, 'index']);
 
+// User PIC
+Route::get('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'show']);
+
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
 Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
