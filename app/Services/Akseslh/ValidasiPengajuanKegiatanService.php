@@ -102,6 +102,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         )
                         ->orderBy('created_at', 'ASC')
                         ->get();
+
                     $result->transform(function ($items, $key) {
                         return [
                             'id'                        => $items->id,
@@ -140,7 +141,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             }),
                             'laporan_termin_1' => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
-                            })->first()->document_file->groupBy('group'),
+                            })->first()->document_file,
                         ];
                     });
 
@@ -190,7 +191,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                                 $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                             })->first()->tanggal_selesai,
                             'document'                      => $items->document,
-                            'laporan_kegiatan'              => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                            'laporan_termin_1'              => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
                             })->first()->document_file,
                             'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
@@ -204,6 +205,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'nilai_penyaluran'          => $items->transaksi_penyaluran()->sum('nilai_penyaluran'),
                             'jumlah_pengembalian'       => $items->pengembalian->jumlah_pengembalian,
                             'bukti_pengembalian'        => $items->pengembalian->document,
+                            'laporan_akhir'             => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Laporan Akhir Kegiatan']);
+                            })->first()->document_file
                         ];
                     });
 
