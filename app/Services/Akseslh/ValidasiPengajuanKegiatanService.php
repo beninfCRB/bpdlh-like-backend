@@ -574,6 +574,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 })
                 ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user']->id]);
 
+
+
             $read->flag = 10;
             $read->save();
 
