@@ -198,14 +198,6 @@ class RegisterController extends ApiController
                 'flag'                              => 1,
             ]);
 
-            $test = [
-                'jenis_kelompok_masyarakat' => $user->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
-                'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
-                'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
-                'role_user'                 => $user_akseslh->role_user,
-                'nama'                      => $user->nama_pic,
-            ];
-
             //Send email notification
             // Notification::send($user->user_akseslh, new RegisterNotification($default_password));
             $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
