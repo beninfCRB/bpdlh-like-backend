@@ -8,25 +8,29 @@ use App\Models\PengajuanKegiatan;
 use App\Services\AppServiceInterface;
 use App\Models\IndikatorLaporanKegiatan;
 use App\Models\TahapanPengajuanKegiatan;
-use App\Models\LogTahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 
 class IndikatorLaporanKegiatanService extends AppService implements AppServiceInterface
 {
     protected $modelPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
     protected $modelTahapanPengajuanKegiatan;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
     public function __construct(
         IndikatorLaporanKegiatan $model,
         PengajuanKegiatan $modelPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
-        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan
+        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelPengajuanKegiatan           = $modelPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
         $this->modelTahapanPengajuanKegiatan    = $modelTahapanPengajuanKegiatan;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -81,6 +85,12 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
 
         try {
 
+            // cek apabila indikator laporan ada isinya
+            if (isset($read->indikator_laporan_kegiatan) && count($read->indikator_laporan_kegiatan) > 0) {
+                # code...
+                $read->indikator_laporan_kegiatan()->delete();
+            }
+
             foreach ($data['indikator_kegiatan'] as $item) {
 
                 $dataIndikator[] = [
@@ -114,6 +124,14 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
 
             $laporan_kegiatan_termin_1->tanggal_selesai = date('Y-m-d');
             $laporan_kegiatan_termin_1->save();
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id' => $read->id,
+                'tahapan_pengajuan_kegiatan_id' => $laporan_kegiatan_termin_1->id,
+                'tanggal_masuk' => date("Y-m-d"),
+                'tanggal_selesai' => date("Y-m-d")
+            ]);
 
             if (empty($this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
