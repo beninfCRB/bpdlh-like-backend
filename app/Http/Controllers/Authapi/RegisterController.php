@@ -186,6 +186,10 @@ class RegisterController extends ApiController
                 'status_perkawinan_id'      => $input['status_perkawinan_id'],
                 'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
                 'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],
+                'provinsi_kelompok_masyarakat_id'              => $input['provinsi_kelompok_masyarakat_id'],
+                'kabupaten_kelompok_masyarakat_id'             => $input['kabupaten_kelompok_masyarakat_id'],
+                'kecamatan_kelompok_masyarakat_id'             => $input['kecamatan_kelompok_masyarakat_id'],
+                'kelurahan_kelompok_masyarakat_id'             => $input['kelurahan_kelompok_masyarakat_id'],
             ]);
 
             $user_akseslh = UserAkseslh::create([
