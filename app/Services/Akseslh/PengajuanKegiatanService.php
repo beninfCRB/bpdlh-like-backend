@@ -286,6 +286,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
             $cekData = PengajuanKegiatan::where(['user_akseslh_id' => $data['user_akseslh_id']])->latest()->first();
+
             if ($cekData) {
                 # code...
                 if ($cekData->flag < 10) {
@@ -377,7 +378,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->where(['nomor_pengajuan' => $id, 'user_akseslh_id' => $data['user_akseslh_id']])->first();
 
-        if (!$read) return $this->sendError('Not Found');
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
 
         if ($read->flag > 0) {
             # code...
@@ -535,7 +536,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $model = $this->model->newQuery()->where(['nomor_pengajuan' => $id])->first();
 
-        if (!$model) return $this->sendError(null, 'Not found');
+        if (!$model) return $this->sendError(null, 'Not found', 422);
 
         if ($model->flag != 0) return $this->sendError(null, 'Not Allowed', 403);
 

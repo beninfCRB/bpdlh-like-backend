@@ -27,11 +27,9 @@ class ProfileService extends AppService implements AppServiceInterface
 
     public function apiGetById($id)
     {
-        $model =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->find($id);
 
-        $result = [
-            'id'    => $model->id
-        ];
+
         return $this->sendSuccess($result);
     }
 

@@ -14,6 +14,7 @@ use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Notifications\VerifikasiValidasiNotification;
 
 
@@ -21,6 +22,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 {
     private $modelTahapanPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
     protected $modelCatatanLogTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
@@ -33,7 +35,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan,
         FileUploadService $fileUploadService,
         FileTable $fileTable,
-        EmailPhpService $emailPhpService
+        EmailPhpService $emailPhpService,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
@@ -42,6 +45,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         $this->fileUploadService                        =   $fileUploadService;
         $this->fileTable                                =   $fileTable;
         $this->emailService = $emailPhpService;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -356,7 +360,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
     {
         $read   =   $this->model->newQuery()->find($id);
 
-        if (!$read) return $this->sendError(null, 'Not Found');
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        if ($read->flag != 2 || $read->flag != '2') return $this->sendError(null, 'Invalid data', 422);
 
         $total = 0;
 
@@ -499,34 +505,79 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ]);
             }
 
-            // Update data langsung berdasarkan pengajuan_kegiatan_id
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
-                })
-                ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user']->id]);
+            if ($data['status'] == 1) {
+                # code...
 
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin II');
-                })
-                ->update(['tanggal_masuk' => date("Y-m-d")]);
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
+                    })
+                    ->first();
+                $idLog->tanggal_selesai = date('Y-m-d');
+                $idLog->user_akseslh_id = $data['user']->id;
+                $idLog->save();
 
-            $read->flag = 7;
-            $read->save();
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin II');
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
 
-            // Save document 
-            // upload document
-            $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
-
-            if (!empty($upload)) {
-                $image = $this->fileTable->newQuery()->find($upload->id);
-                $image->update([
-                    'fileable_type' => get_class($read),
-                    'fileable_id'   => $read->id,
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $read->id,
+                    'tahapan_pengajuan_kegiatan_id' => $idLog->id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['user']->id
                 ]);
+
+                $read->flag = 7;
+                $read->save();
+
+                // Save document 
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
+
+                if (!empty($upload)) {
+                    $image = $this->fileTable->newQuery()->find($upload->id);
+                    $image->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+            } else {
+
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
+                    })
+                    ->first();
+
+                $idLog->tanggal_masuk = null;
+                $idLog->save();;
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                    })
+                    ->update(['tanggal_selesai' => null]);
+
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $read->id,
+                    'tahapan_pengajuan_kegiatan_id' => $idLog->id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['user']->id
+                ]);
+
+                $read->flag = 5;
+                $read->save();
             }
 
             \DB::commit(); // commit the changes

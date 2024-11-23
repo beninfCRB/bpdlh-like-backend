@@ -98,4 +98,10 @@ class DataPicKelompokMasyarakat extends AppModel
     {
         return $this->belongsTo(Village::class, 'kelurahan_pic');
     }
+
+    public function foto()
+    {
+        return $this->morphMany(File::class, 'fileable')
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
+    }
 }
