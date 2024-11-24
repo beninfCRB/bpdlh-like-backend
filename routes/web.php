@@ -21,7 +21,7 @@ use Maatwebsite\Excel\Row;
 */
 
 Route::get('/debug-sentry', function () {
-    throw new Exception('My first Sentry error!');
+    dd(date('Y-m-d', strtotime('31-12-9999')), date('Y-m-d'));
 });
 
 Route::view('/login', 'auth.login')->name('login');

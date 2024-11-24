@@ -3,6 +3,7 @@
 
 namespace App\Services\Akseslh;
 
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Models\Pengembalian;
 use App\Models\PengajuanKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
@@ -19,19 +20,22 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
     protected $fileUploadService;
     protected $fileTable;
     protected $modelPengembalian;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
     public function __construct(
         PengajuanKegiatan $model,
         LogTahapanPengajuanKegiatan $logTahapanPengajuanKegiatan,
         FileUploadService $fileUploadService,
         FileTable $fileTable,
-        Pengembalian $modelPengembalian
+        Pengembalian $modelPengembalian,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->logTahapanPengajuanKegiatan  = $logTahapanPengajuanKegiatan;
         $this->fileUploadService            =   $fileUploadService;
         $this->fileTable                    =   $fileTable;
         $this->modelPengembalian            = $modelPengembalian;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -230,18 +234,27 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$read) return $this->sendError(null, 'Not Found', 422);
 
-        // if ($read->flag != 8) return $this->sendError(null, 'Not Allowed', 403);
+        if ($read->flag != 8 || $read->flag != '8') return $this->sendError(null, 'Not Allowed', 422);
 
         \DB::beginTransaction();
 
         try {
 
-            $this->logTahapanPengajuanKegiatan->newQuery()
+            $log = $this->logTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
                 })
-                ->update(['tanggal_selesai' => date("Y-m-d")]);
+                ->first();
+            $log->tanggal_selesai = date('Y-m-d');
+            $log->save();
+
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+                'tahapan_pengajuan_kegiatan_id' => $log->id,
+                'tanggal_masuk' => date("Y-m-d"),
+                'tanggal_selesai' => date("Y-m-d"),
+            ]);
 
             $this->logTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])

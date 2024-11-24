@@ -3,7 +3,7 @@
 
 namespace App\Services\Akseslh;
 
-
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use Carbon\Carbon;
 use App\Services\AppService;
 use App\Models\PengajuanKegiatan;
@@ -16,15 +16,18 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
 {
     protected $pengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
     public function __construct(
         TransaksiPenyaluran $model,
         PengajuanKegiatan $pengajuanKegiatan,
-        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->pengajuanKegiatan = $pengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan         = $modelLogTahapanPengajuanKegiatan;
+        $this->modelDetailLogTahapanPengajuanKegiatan   =   $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -178,8 +181,6 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
     {
         $result = $this->pengajuanKegiatan->find($data['pengajuan_kegiatan_id']);
 
-        if (!$result) return $this->sendError(null, 'Not Found', 422);
-
         $tpk = $result->transaksi_penyaluran->count();
 
         \DB::beginTransaction();
@@ -260,25 +261,33 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             })
             ->first();
 
+        $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+            })
+            ->first();
+
         if (!$informasiPencairanDana->tanggal_selesai) {
             # code...
             $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
             $informasiPencairanDana->save();
 
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
-                })
-                ->update(['tanggal_masuk' => date("Y-m-d")]);
+            $log->tanggal_masuk = $date('Y-m-d');
+            $log->save();
         }
 
-        $this->modelLogTahapanPengajuanKegiatan->newQuery()
-            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
-            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
-            })
-            ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['username']]);
+        $log->tanggal_selesai = date('Y-m-d');
+        $log->user_akseslh_id = $data['username'];
+        $log->save();
+
+        $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+            'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+            'tahapan_pengajuan_kegiatan_id' => $log->id,
+            'tanggal_masuk' => date("Y-m-d"),
+            'tanggal_selesai' => date("Y-m-d"),
+            'user_akseslh_id'   => $data['username']
+        ]);
 
         $this->modelLogTahapanPengajuanKegiatan->newQuery()
             ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
@@ -304,12 +313,24 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             'username'              =>  $data['username'],
         ]);
 
-        $this->modelLogTahapanPengajuanKegiatan->newQuery()
+        $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
             ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
             ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                 $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin II');
             })
-            ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['username']]);
+            ->first();
+
+        $log->tanggal_selesai = date('Y-m-d');
+        $log->user_akseslh_id = $data['username'];
+        $log->save();
+
+        $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+            'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+            'tahapan_pengajuan_kegiatan_id' => $log->id,
+            'tanggal_masuk' => date("Y-m-d"),
+            'tanggal_selesai' => date("Y-m-d"),
+            'user_akseslh_id'   => $data['username']
+        ]);
 
         $this->modelLogTahapanPengajuanKegiatan->newQuery()
             ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
