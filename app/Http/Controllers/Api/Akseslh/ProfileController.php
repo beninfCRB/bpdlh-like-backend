@@ -36,7 +36,7 @@ class ProfileController extends ApiController
 
     public function show($id)
     {
-        $result = $this->profileService->show($id);
+        $result = $this->profileService->apiGetById($id);
 
         try {
             if ($result->success) {
@@ -46,6 +46,21 @@ class ProfileController extends ApiController
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
             return $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function destroy($id): \Illuminate\Http\JsonResponse
+    {
+        $result =   $this->profileService->delete($id);
+        try {
+            if ($result->success) {
+                $response = $result->data;
+                return $this->sendSuccess($response, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (\Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
         }
     }
 }

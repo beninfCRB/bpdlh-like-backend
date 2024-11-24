@@ -40,6 +40,7 @@ Route::get('status-pernikahan', [App\Http\Controllers\Api\Akseslh\StatusPernikah
 
 // User PIC
 Route::get('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'show']);
+Route::delete('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'destroy']);
 
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);

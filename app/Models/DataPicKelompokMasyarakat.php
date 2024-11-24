@@ -22,6 +22,7 @@ class DataPicKelompokMasyarakat extends AppModel
         'nama_pic',
         'jenis_identitas_pic',
         'nomor_identitas_pic',
+        'nomor_npwp_pic',
         'email_pic',
         'nohp_pic',
         'alamat_pic',
@@ -103,5 +104,35 @@ class DataPicKelompokMasyarakat extends AppModel
     {
         return $this->morphMany(File::class, 'fileable')
             ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
+    }
+
+    /**
+     * Get the agama that owns the DataPicKelompokMasyarakat
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function agama(): BelongsTo
+    {
+        return $this->belongsTo(Agama::class, 'agama_id');
+    }
+
+    /**
+     * Get the status_perkawinan that owns the DataPicKelompokMasyarakat
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function status_perkawinan(): BelongsTo
+    {
+        return $this->belongsTo(StatusPernikahan::class, 'status_perkawinan_id');
+    }
+
+    /**
+     * Get the jenis_pekerjaan that owns the DataPicKelompokMasyarakat
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function jenis_pekerjaan(): BelongsTo
+    {
+        return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id');
     }
 }

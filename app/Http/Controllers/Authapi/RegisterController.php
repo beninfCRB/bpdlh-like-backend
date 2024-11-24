@@ -172,6 +172,7 @@ class RegisterController extends ApiController
                 'nama_pic'                  => $input['nama_pic'],
                 'jenis_identitas_pic'       => 'KTP',
                 'nomor_identitas_pic'       => $input['nomor_identitas_pic'],
+                'nomor_npwp_pic'            => $input['nomor_npwp_pic'],
                 'email_pic'                 => $input['email_pic'],
                 'nohp_pic'                  => $input['nohp_pic'],
                 'alamat_pic'                => $input['alamat_pic'],
