@@ -24,7 +24,7 @@ class Register2Request extends FormRequest
      */
     public function rules()
     {
-        dd($this->provinsi_kelompok_masyarakat_id);
+
         return [
             //
             'jenis_kelompok_masyarakat_id'  => 'required|exists:jenis_kelompok_masyarakats,id',
