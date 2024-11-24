@@ -15,7 +15,7 @@ class RemoveUniqueConstraintFromEmail extends Migration
     {
         Schema::table('data_pic_kelompok_masyarakats', function (Blueprint $table) {
             // Menghapus unique constraint dari kolom email
-            $table->dropUnique(['email_pic']);
+            // $table->dropUnique(['email_pic']);
         });
 
         Schema::table('user_akseslhs', function (Blueprint $table) {
