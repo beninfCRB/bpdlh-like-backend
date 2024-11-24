@@ -617,17 +617,45 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ]);
             }
 
-            // Update data langsung berdasarkan pengajuan_kegiatan_id
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
                 })
-                ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user']->id]);
+                ->first();
+
+            if ($data['status'] == 0) {
+                # code...
+                $log->tanggal_masuk = null;
+                $log->save();
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+                    })->update(['tanggal_selesai' => null]);
 
 
+                $read->flag = 8;
+            } else {
 
-            $read->flag = 10;
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+
+                $log->tanggal_selesai = date('Y-m-d');
+                $log->user_akselh_id = $data['user']->id;
+                $Log->save();
+
+                $read->flag = 10;
+            }
+
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id' => $id,
+                'tahapan_pengajuan_kegiatan_id' => $log->id,
+                'tanggal_masuk' => date("Y-m-d"),
+                'tanggal_selesai' => date("Y-m-d"),
+                'user_akseslh_id'   => $data['user']->id
+            ]);
+
             $read->save();
 
             \DB::commit(); // commit the changes
