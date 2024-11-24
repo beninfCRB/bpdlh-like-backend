@@ -124,6 +124,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                 'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
                 'tanggal_akhir_verifikasi'  => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
                 'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'id_pic'                    => $items->user_akseslh->data_pic_kelompok_masyarakat->id,
                 'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
                 'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
                 'lokasi'                    => $items->alamat_kegiatan,

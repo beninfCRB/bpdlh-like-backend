@@ -27,8 +27,30 @@ class ProfileService extends AppService implements AppServiceInterface
 
     public function apiGetById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $model =   $this->model->newQuery()->find($id);
 
+        $result = [
+            "id" => $model->id,
+            "kelompok_masyarakat" => $model->kelompok_masyarakat->kelompok_masyarakat,
+            "nama_pic" => $model->nama_pic,
+            "jenis_identitas_pic" => $model->jenis_identitas_pic,
+            "nomor_identitas_pic" => $model->nomor_identitas_pic,
+            "nomor_npwp_pic" => $model->nomor_npwp_pic,
+            "email_pic" => $model->email_pic,
+            "nohp_pic" => $model->nohp_pic,
+            "alamat_pic" => $model->alamat_pic,
+            "kelurahan_pic" => $model->kelurahan->name,
+            "kecamatan_pic" => $model->kecamatan->name,
+            "kabupaten_pic" => $model->kabupaten->name,
+            "provinsi_pic" => $model->provinsi->name,
+            "tempat_lahir" => $model->tempat_lahir,
+            "tanggal_lahir" => $model->tanggal_lahir,
+            "agama" => $model->agama->agama,
+            "status_perkawinan" => $model->status_perkawinan->status_pernikahan,
+            "nama_gadis_ibu_kandung" => $model->nama_gadis_ibu_kandung,
+            "jenis_pekerjaan" => $model->jenis_pekerjaan->jenis_pekerjaan,
+            "foto"  => $model->foto
+        ];
 
         return $this->sendSuccess($result);
     }
@@ -108,10 +130,12 @@ class ProfileService extends AppService implements AppServiceInterface
     public function delete($id)
     {
         $read   =   $this->model->newQuery()->find($id);
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
         try {
+            $read->user_akseslh->delete();
             $read->delete();
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($read);
+            return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
