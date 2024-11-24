@@ -236,8 +236,6 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                         return new LogTahapanPengajuanKegiatan($tahapanPengajuanKegiatan);
                     })
                 );
-
-                dd($read->log_tahapan_pengajuan);
             } else {
             }
 

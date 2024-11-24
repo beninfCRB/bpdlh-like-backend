@@ -3,19 +3,31 @@
 
 namespace App\Services\Akseslh;
 
-
-use App\Models\DataPicKelompokMasyarakat;
+use App\Models\CatatanLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
+use App\Services\EmailPhpService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\DataPicKelompokMasyarakat;
+use App\Models\LogTahapanPengajuanKegiatan;
 
 class ProfileService extends AppService implements AppServiceInterface
 {
+    protected $emailService;
+    protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelCatatanLogTahapanPengajuanKegiatan;
 
-    public function __construct(DataPicKelompokMasyarakat $model)
-    {
+    public function __construct(
+        DataPicKelompokMasyarakat $model,
+        EmailPhpService $emailPhpService,
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan
+    ) {
         parent::__construct($model);
+        $this->emailService = $emailPhpService;
+        $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
+        $this->modelCatatanLogTahapanPengajuanKegiatan = $modelCatatanLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -132,6 +144,50 @@ class ProfileService extends AppService implements AppServiceInterface
         $read   =   $this->model->newQuery()->find($id);
         if (!$read) return $this->sendError(null, 'Not Found', 422);
         try {
+            $read->user_akseslh->delete();
+            $read->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function delete_profile($id, $data)
+    {
+        $read   =   $this->model->newQuery()->find($id);
+
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        \DB::beginTransaction();
+
+        try {
+            $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi');
+                })->first();
+
+            $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
+                ->create([
+                    'log_tahapan_pengajuan_kegiatan_id' => $idLog->id,
+                    'catatan_log'                       => $data['catatan_log']
+                ]);
+
+            $idLog->tanggal_selesai = date('Y-m-d');
+            $idLog->user_akseslh_id = $data['user']->id;
+            $idLog->save();
+
+            $dataSend = array(
+                'nomor_pengajuan'   => null,
+                'catatan_log'       => $data['catatan_log'],
+                'keterangan'        => 'Ditolak',
+                'status'            => 20
+            );
+
+            $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
+
             $read->user_akseslh->delete();
             $read->delete();
             \DB::commit(); // commit the changes
