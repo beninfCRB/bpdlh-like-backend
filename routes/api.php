@@ -40,8 +40,6 @@ Route::get('status-pernikahan', [App\Http\Controllers\Api\Akseslh\StatusPernikah
 
 // User PIC
 Route::get('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'show']);
-Route::delete('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'destroy']);
-
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
 Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
@@ -95,6 +93,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('getDataVerifikasiPengajuan', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'index']);
         Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'show']);
         Route::put('verifikasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiController::class, 'update']);
+        Route::put('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'destroy']);
     });
 
     Route::middleware(['ensurerole:approver'])->group(function () {

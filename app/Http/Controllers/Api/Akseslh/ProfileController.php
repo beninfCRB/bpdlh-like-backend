@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
-use App\Services\Akseslh\ProfileService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
+use App\Services\Akseslh\ProfileService;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends ApiController
 {
@@ -49,9 +50,23 @@ class ProfileController extends ApiController
         }
     }
 
-    public function destroy($id): \Illuminate\Http\JsonResponse
+    public function destroy($id, Request $request): \Illuminate\Http\JsonResponse
     {
-        $result =   $this->profileService->delete($id);
+        $validator = Validator::make($request->all(), [
+            'pengajuan_kegiatan_id' => 'required',
+            'catatan_log'         => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input          = $validator->validated();
+
+        $input['user'] = $request->user();
+
+        $result =   $this->profileService->delete_profile($id, $input);
         try {
             if ($result->success) {
                 $response = $result->data;
