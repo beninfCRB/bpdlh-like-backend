@@ -51,7 +51,7 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
                 'kabupaten_kelompok_masyarakat_id'  =>  $data['kabupaten_kelompok_masyarakat_id'],
                 'kecamatan_kelompok_masyarakat_id'  =>  $data['kecamatan_kelompok_masyarakat_id'],
                 'kelurahan_kelompok_masyarakat_id'  =>  $data['kelurahan_kelompok_masyarakat_id'],
-                'flag'                          => 1,
+                'flag'                              => 1,
             ]);
 
             \DB::commit(); // commit the changes

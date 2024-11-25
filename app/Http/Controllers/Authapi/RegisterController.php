@@ -130,12 +130,9 @@ class RegisterController extends ApiController
         }
     }
 
-    public function register_2(Register2Request $request)
+    public function register_2(Register2Request $request): \Illuminate\Http\JsonResponse
     {
         $input = $request->validated();
-
-        // Begin db transaction
-        \DB::beginTransaction();
 
         $check_kelompok_masyarakat = \DB::table('kelompok_masyarakats')
             ->where('id', $input['kelompok_masyarakat'])
@@ -146,6 +143,10 @@ class RegisterController extends ApiController
             $temp_data = [
                 'jenis_kelompok_masyarakat_id'  => $input['jenis_kelompok_masyarakat_id'],
                 'kelompok_masyarakat'           => $input['kelompok_masyarakat'],
+                'provinsi_kelompok_masyarakat_id'              => $input['provinsi_kelompok_masyarakat_id'],
+                'kabupaten_kelompok_masyarakat_id'             => $input['kabupaten_kelompok_masyarakat_id'],
+                'kecamatan_kelompok_masyarakat_id'             => $input['kecamatan_kelompok_masyarakat_id'],
+                'kelurahan_kelompok_masyarakat_id'             => $input['kelurahan_kelompok_masyarakat_id'],
             ];
 
             $result =   $this->kelompokMasyarakatService->create($temp_data);
@@ -160,6 +161,9 @@ class RegisterController extends ApiController
                 return $this->sendError(null, $exception->getMessage(), 500);
             }
         }
+
+        // Begin db transaction
+        \DB::beginTransaction();
 
         // Make default password for first login
         $default_password =
@@ -187,10 +191,6 @@ class RegisterController extends ApiController
                 'status_perkawinan_id'      => $input['status_perkawinan_id'],
                 'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
                 'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],
-                'provinsi_kelompok_masyarakat_id'              => $input['provinsi_kelompok_masyarakat_id'],
-                'kabupaten_kelompok_masyarakat_id'             => $input['kabupaten_kelompok_masyarakat_id'],
-                'kecamatan_kelompok_masyarakat_id'             => $input['kecamatan_kelompok_masyarakat_id'],
-                'kelurahan_kelompok_masyarakat_id'             => $input['kelurahan_kelompok_masyarakat_id'],
             ]);
 
             $user_akseslh = UserAkseslh::create([
