@@ -246,8 +246,6 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                     $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
                 })
                 ->first();
-            $log->tanggal_selesai = date('Y-m-d');
-            $log->save();
 
             $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
                 'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
@@ -256,6 +254,9 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 'tanggal_selesai' => date("Y-m-d"),
             ]);
 
+            $log->tanggal_selesai = date('Y-m-d');
+            $log->save();
+
             $this->logTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
@@ -263,7 +264,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
-            if (isset($data['jumlah_pengembalian'])) {
+            if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
                 # code...
                 $pengembalian = $this->modelPengembalian->newQuery()->create([
                     'pengajuan_kegiatan_id'     =>  $data['pengajuan_kegiatan_id'],

@@ -115,9 +115,12 @@ class LaporanKegiatanController extends ApiController
         $validator = Validator::make($this->request->all(), [
             'pengajuan_kegiatan_id'     => 'required|exists:pengajuan_kegiatans,id',
             'jumlah_pengembalian'       => 'nullable|numeric',
-            'bukti_pengembalian'        => 'nullable|file|mimes:pdf',
             'laporan_akhir'             => 'required|file|mimes:pdf'
         ]);
+
+        $validator->sometimes('bukti_pengembalian', 'required|file|mimes:pdf', function ($input) {
+            return $input->jumlah_pengembalian > 0;
+        });
 
         if ($validator->fails()) {
             # code...
