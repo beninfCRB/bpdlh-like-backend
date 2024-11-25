@@ -2,6 +2,25 @@
 
 @section('title', 'Buat Data Kelompok Masyarakat')
 
+@section('script')
+    <script>
+        jQuery("#provinsi_kelompok_masyarakat_id").select2({
+            width: "100%",
+        });
+        jQuery("#kabupaten_kelompok_masyarakat_id").select2({
+            width: "100%",
+        });
+        jQuery("#kecamatan_kelompok_masyarakat_id").select2({
+            width: "100%",
+        });
+        jQuery("#kelurahan_kelompok_masyarakat_id").select2({
+            width: "100%",
+        });
+    </script>
+    <script src="{{ asset('app/build/kelompok_masyarakat.js') }}" type="text/javascript"></script>
+@endsection
+
+
 @section('content')
     <!-- Page-Title -->
     <div class="row">
@@ -22,6 +41,7 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">Pengelolaan Data Kelompok Masyarakat</h3>
+                    <input type="hidden" name="app_url" id="app_url" value="{{ env('APP_URL') }}">
                 </div>
                 <div class="panel-body">
                     <form role="form" action="{{ route('kelompok-masyarakat.store') }}" method="POST">
@@ -61,6 +81,93 @@
                                     {{ $message }}
                                 </span>
                             @enderror
+                        </div>
+                        <div class="row">
+                            <div class="form-group @error('provinsi_kelompok_masyarakat_id') has-error @enderror col-md-6">
+                                <label for="provinsi_kelompok_masyarakat_id">Provinsi PIC <span
+                                        class="text-danger">*</span></label>
+                                <select class="" id="provinsi_kelompok_masyarakat_id"
+                                    name="provinsi_kelompok_masyarakat_id" required onchange="getKotaKabupaten()">
+                                    <option class='form-control' value=''>- Pilih Data -</option>
+                                    @isset($provinsi)
+                                        @foreach ($provinsi as $item)
+                                            @if (old('provinsi_kelompok_masyarakat_id') == $item['id'])
+                                                <option class='form-control' value="{{ $item['id'] }}" selected>
+                                                    {{ $item['name'] }}</option>
+                                            @else
+                                                <option class='form-control' value="{{ $item['id'] }}">
+                                                    {{ $item['name'] }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    @endisset
+                                </select>
+                                @error('provinsi_kelompok_masyarakat_id')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+
+                            <div class="form-group @error('kabupaten_kelompok_masyarakat_id') has-error @enderror col-md-6">
+                                <label for="kabupaten_kelompok_masyarakat_id">Kabupaten/Kota <span
+                                        class="text-danger">*</span></label>
+                                <select class="" id="kabupaten_kelompok_masyarakat_id"
+                                    name="kabupaten_kelompok_masyarakat_id" required onchange="getKecamatan()">
+                                    <option class='form-control' value=''>- Pilih Data -</option>
+                                </select>
+                                @error('kabupaten_kelompok_masyarakat_id')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+
+                            <div
+                                class=" form-group @error('kecamatan_kelompok_masyarakat_id') has-error @enderror col-md-6">
+                                <label for="kecamatan_kelompok_masyarakat_id">Kecamatan <span
+                                        class="text-danger">*</span></label>
+                                <select class="" id="kecamatan_kelompok_masyarakat_id"
+                                    name="kecamatan_kelompok_masyarakat_id" required onchange="getKelurahan()">
+                                    <option class='form-control' value=''>- Pilih Data -</option>
+                                    @isset($provinsi)
+                                        @foreach ($provinsi as $item)
+                                            @if (old('kecamatan_kelompok_masyarakat_id') == $item['id'])
+                                                <option class='form-control' value="{{ $item['id'] }}" selected>
+                                                    {{ $item['name'] }}</option>
+                                            @else
+                                                <option class='form-control' value="{{ $item['id'] }}">
+                                                    {{ $item['name'] }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    @endisset
+                                </select>
+                                @error('kecamatan_kelompok_masyarakat_id')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+
+                            <div
+                                class=" form-group @error('kelurahan_kelompok_masyarakat_id') has-error @enderror col-md-6">
+                                <label for="kelurahan_kelompok_masyarakat_id">Kelurahan/Desa <span
+                                        class="text-danger">*</span></label>
+                                <select class="" id="kelurahan_kelompok_masyarakat_id"
+                                    name="kelurahan_kelompok_masyarakat_id" required>
+                                    <option class='form-control' value=''>- Pilih Data -</option>
+                                    @isset($provinsi)
+                                        @foreach ($provinsi as $item)
+                                            @if (old('kelurahan_kelompok_masyarakat_id') == $item['id'])
+                                                <option class='form-control' value="{{ $item['id'] }}" selected>
+                                                    {{ $item['name'] }}</option>
+                                            @else
+                                                <option class='form-control' value="{{ $item['id'] }}">
+                                                    {{ $item['name'] }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    @endisset
+                                </select>
+                                @error('kelurahan_kelompok_masyarakat_id')
+                                    {{ $message }}
+                                @enderror
+                            </div>
                         </div>
                         <div class="row">
                             <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>

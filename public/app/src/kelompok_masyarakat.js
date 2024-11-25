@@ -129,3 +129,87 @@ window.deleteKelompokMasyarakat = (input) => {
         }
     });
 };
+
+window.getKotaKabupaten = () => {
+    const provinsi = $("#provinsi_kelompok_masyarakat_id").val();
+    const app_url = $("#app_url").val();
+
+    const old_kabupaten = $("#kabupaten_kelompok_masyarakat_id_old");
+    $("#kabupaten_kelompok_masyarakat_id")
+        .empty()
+        .append("<option class='form-control' value=''>- Pilih Data -</option>")
+        .trigger("change");
+
+    if (provinsi) {
+        const url = app_url + "/provinsi/" + provinsi;
+        axios.get(url).then((response) => {
+            const d = response.data.data.kota;
+            for (const key in d) {
+                const append =
+                    "<option class='form-control' value='" +
+                    d[key].id +
+                    "'>" +
+                    d[key].name +
+                    "</option>";
+                $("#kabupaten_kelompok_masyarakat_id")
+                    .append(append)
+                    .trigger("change");
+            }
+        });
+    }
+};
+
+window.getKecamatan = () => {
+    const kabupaten = $("#kabupaten_kelompok_masyarakat_id").val();
+    const app_url = $("#app_url").val();
+
+    $("#kecamatan_kelompok_masyarakat_id")
+        .empty()
+        .append("<option class='form-control' value=''>- Pilih Data -</option>")
+        .trigger("change");
+
+    if (kabupaten) {
+        const url = app_url + "/kota/" + kabupaten;
+        axios.get(url).then((response) => {
+            const d = response.data.data.kecamatan;
+            for (const key in d) {
+                const append =
+                    "<option class='form-control' value='" +
+                    d[key].id +
+                    "'>" +
+                    d[key].name +
+                    "</option>";
+                $("#kecamatan_kelompok_masyarakat_id")
+                    .append(append)
+                    .trigger("change");
+            }
+        });
+    }
+};
+
+window.getKelurahan = () => {
+    const kecamatan = $("#kecamatan_kelompok_masyarakat_id").val();
+    const app_url = $("#app_url").val();
+    $("#kelurahan_kelompok_masyarakat_id")
+        .empty()
+        .append("<option class='form-control' value=''>- Pilih Data -</option>")
+        .trigger("change");
+
+    if (kecamatan) {
+        const url = app_url + "/kecamatan/" + kecamatan;
+        axios.get(url).then((response) => {
+            const d = response.data.data.kelurahan;
+            for (const key in d) {
+                const append =
+                    "<option class='form-control' value='" +
+                    d[key].id +
+                    "'>" +
+                    d[key].name +
+                    "</option>";
+                $("#kelurahan_kelompok_masyarakat_id")
+                    .append(append)
+                    .trigger("change");
+            }
+        });
+    }
+};
