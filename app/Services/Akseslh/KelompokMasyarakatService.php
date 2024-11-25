@@ -203,10 +203,22 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
         return $result;
     }
 
-    public function apiGetByIdJenisKelompokMasyarakat($id)
+    public function apiGetByIdJenisKelompokMasyarakat($id, $fltProvinsi = null, $fltKabupaten = null, $fltKecamatan = null, $fltKelurahan = null)
     {
         $result  = $this->model->newQuery()
             ->where('jenis_kelompok_masyarakat_id', $id)
+            ->when($fltProvinsi, function ($query) use ($fltProvinsi) {
+                $query->where('provinsi_kelompok_masyarakat_id', $fltProvinsi);
+            })
+            ->when($fltKabupaten, function ($query) use ($fltKabupaten) {
+                $query->where('kabupaten_kelompok_masyarakat_id', $fltKabupaten);
+            })
+            ->when($fltKecamatan, function ($query) use ($fltKecamatan) {
+                $query->where('kecamatan_kelompok_masyarakat_id', $fltKecamatan);
+            })
+            ->when($fltKelurahan, function ($query) use ($fltKelurahan) {
+                $query->where('kelurahan_kelompok_masyarakat_id', $fltKelurahan);
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 
