@@ -128,8 +128,11 @@ class ValidasiPengajuanKegiatanController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'status'        => 'required',
-            'catatan_log'   => 'nullable'
         ]);
+
+        $validator->sometimes('catatan_log', 'required|string', function ($input) {
+            return $input->status == 0;
+        });
 
         if ($validator->fails()) {
             # code...

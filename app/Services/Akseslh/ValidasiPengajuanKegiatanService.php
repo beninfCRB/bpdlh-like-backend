@@ -16,6 +16,7 @@ use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
 use App\Notifications\VerifikasiValidasiNotification;
+use App\Notifications\VerifikasiLaporanDitolakNotification;
 use App\Notifications\VerifikasiValidasiDitolakNotification;
 
 
@@ -489,6 +490,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         // If data flag not equals 6 (Verifikasi Laporan Kegiatan Termin 1)
         if ($read->flag != 6 || $read->flag != '6') return $this->sendError(null, 'Data Invalid', 422);
 
+        $total = 0;
+
+        foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
+            # code...
+            $total += ($items->qty * $items->harga_unit);
+        }
+
         \DB::beginTransaction();
 
         try {
@@ -520,7 +528,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ->first();
                 $idLog->tanggal_selesai = date('Y-m-d');
                 $idLog->user_akseslh_id = $data['user']->id;
-                $idLog->save();
 
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
@@ -537,9 +544,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'user_akseslh_id'   => $data['user']->id
                 ]);
 
-                $read->flag = 7;
-                $read->save();
-
                 // Save document 
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
@@ -551,6 +555,10 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         'fileable_id'   => $read->id,
                     ]);
                 }
+
+                $read->flag = 7;
+                $idLog->save();
+                $read->save();
             } else {
 
                 // Update data langsung berdasarkan pengajuan_kegiatan_id
@@ -562,7 +570,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ->first();
 
                 $idLog->tanggal_masuk = null;
-                $idLog->save();;
 
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
@@ -579,7 +586,19 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'user_akseslh_id'   => $data['user']->id
                 ]);
 
+                $dataSend = array(
+                    'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'catatan_log'     => $data['catatan_log'],
+                    'keterangan'      => 'Ditolak',
+                    'status'          => '5'
+                );
+
+                $read->user_akseslh->notify(new VerifikasiLaporanDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+
+                $this->emailService->verifikasiLaporanDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-laporan-ditolak');
+
                 $read->flag = 5;
+                $idLog->save();
                 $read->save();
             }
 
@@ -601,24 +620,16 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         // If data flag not equals 8 (Verifikasi Laporan Akhir)
         if ($read->flag != 9 || $read->flag != '9') return $this->sendError(null, 'Data Invalid', 422);
 
+        $total = 0;
+
+        foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
+            # code...
+            $total += ($items->qty * $items->harga_unit);
+        }
+
         \DB::beginTransaction();
 
         try {
-
-            if (isset($data['catatan_log'])) {
-                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                    ->where('pengajuan_kegiatan_id', $id)
-                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                        $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
-                    })->first()->id;
-
-                $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
-                    ->create([
-                        'log_tahapan_pengajuan_kegiatan_id' => $idLog,
-                        'catatan_log'           => $data['catatan_log'],
-                        'flag'                  => "8"
-                    ]);
-            }
 
             $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
@@ -627,10 +638,19 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 })
                 ->first();
 
+            if (isset($data['catatan_log'])) {
+
+                $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
+                    ->create([
+                        'log_tahapan_pengajuan_kegiatan_id' => $log->id,
+                        'catatan_log'           => $data['catatan_log'],
+                        'flag'                  => "8"
+                    ]);
+            }
+
             if ($data['status'] == 0) {
                 # code...
                 $log->tanggal_masuk = null;
-                $log->save();
 
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
@@ -638,15 +658,24 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
                     })->update(['tanggal_selesai' => null]);
 
-
                 $read->flag = 8;
+
+                $dataSend = array(
+                    'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'catatan_log'     => $data['catatan_log'],
+                    'keterangan'      => 'Ditolak',
+                    'status'          => '8'
+                );
+
+                $read->user_akseslh->notify(new VerifikasiLaporanDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+
+                $this->emailService->verifikasiLaporanDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-laporan-ditolak');
             } else {
 
                 // Update data langsung berdasarkan pengajuan_kegiatan_id
 
                 $log->tanggal_selesai = date('Y-m-d');
-                $log->user_akselh_id = $data['user']->id;
-                $Log->save();
+                $log->user_akseslh_id = $data['user']->id;
 
                 $read->flag = 10;
             }
@@ -659,6 +688,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'user_akseslh_id'   => $data['user']->id
             ]);
 
+            $log->save();
             $read->save();
 
             \DB::commit(); // commit the changes
