@@ -45,8 +45,12 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
         try {
 
             $data = $this->model->newQuery()->create([
-                'jenis_kelompok_masyarakat_id'  =>  $data['jenis_kelompok_masyarakat_id'],
-                'kelompok_masyarakat'           =>  $data['kelompok_masyarakat'],
+                'jenis_kelompok_masyarakat_id'      =>  $data['jenis_kelompok_masyarakat_id'],
+                'kelompok_masyarakat'               =>  $data['kelompok_masyarakat'],
+                'provinsi_kelompok_masyarakat_id'   =>  $data['provinsi_kelompok_masyarakat_id'],
+                'kabupaten_kelompok_masyarakat_id'  =>  $data['kabupaten_kelompok_masyarakat_id'],
+                'kecamatan_kelompok_masyarakat_id'  =>  $data['kecamatan_kelompok_masyarakat_id'],
+                'kelurahan_kelompok_masyarakat_id'  =>  $data['kelurahan_kelompok_masyarakat_id'],
                 'flag'                          => 1,
             ]);
 
@@ -66,8 +70,12 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
 
         try {
 
-            $read->jenis_kelompok_masyarakat_id         =   $data['jenis_kelompok_masyarakat_id'];
-            $read->kelompok_masyarakat                  =   $data['kelompok_masyarakat'];
+            $read->jenis_kelompok_masyarakat_id         = $data['jenis_kelompok_masyarakat_id'];
+            $read->kelompok_masyarakat                  = $data['kelompok_masyarakat'];
+            $read->provinsi_kelompok_masyarakat_id      = $data['provinsi_kelompok_masyarakat_id'];
+            $read->kabupaten_kelompok_masyarakat_id     = $data['kabupaten_kelompok_masyarakat_id'];
+            $read->kecamatan_kelompok_masyarakat_id     = $data['kecamatan_kelompok_masyarakat_id'];
+            $read->kelurahan_kelompok_masyarakat_id     = $data['kelurahan_kelompok_masyarakat_id'];
             $read->flag                                 =   1;
             $read->save();
 
