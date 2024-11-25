@@ -41,6 +41,8 @@ class ProfileService extends AppService implements AppServiceInterface
     {
         $model =   $this->model->newQuery()->find($id);
 
+        if (!$model) return $this->sendError(null, 'Not Found', 422);
+
         $result = [
             "id" => $model->id,
             "kelompok_masyarakat" => $model->kelompok_masyarakat->kelompok_masyarakat,
