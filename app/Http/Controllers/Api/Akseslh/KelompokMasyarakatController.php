@@ -36,7 +36,12 @@ class KelompokMasyarakatController extends ApiController
 
     public function byIdJenisKelompokMasyarakat($id)
     {
-        $result = $this->kelompokMasyarakatService->apiGetByIdJenisKelompokMasyarakat($id);
+        $fltProvinsi    = request()->query('fltProvinsi') ?? null;
+        $fltKabupaten   = request()->query('fltKabupaten') ?? null;
+        $fltKecamatan   = request()->query('fltKecamatan') ?? null;
+        $fltKelurahan   = request()->query('fltKelurahan') ?? null;
+
+        $result = $this->kelompokMasyarakatService->apiGetByIdJenisKelompokMasyarakat($id, $fltProvinsi, $fltKabupaten, $fltKecamatan, $fltKelurahan);
 
         try {
             if ($result->success) {

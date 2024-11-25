@@ -168,6 +168,17 @@ class RegisterController extends ApiController
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
+        $record = \DB::table('users_verify_tokens')
+            ->where('user_email', $request->email_pic)
+            ->where('token', $request->kode_aktivasi)
+            ->first();
+
+        if (!$record) {
+            return $this->sendError(null, 'Token tidak valid.', 422);
+        } elseif (Carbon::parse($record->expired_at)->isPast()) {
+            return $this->sendError(null, 'Token sudah kedaluwarsa.', 422);
+        }
+
         // Get all input
         $input = $validator->validated();
         // $input = $request->validated();
