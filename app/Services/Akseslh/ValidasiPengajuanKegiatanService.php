@@ -13,9 +13,10 @@ use App\Services\AppServiceInterface;
 use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
-use App\Models\CatatanLogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
+use App\Models\CatatanLogTahapanPengajuanKegiatan;
 use App\Notifications\VerifikasiValidasiNotification;
+use App\Notifications\VerifikasiValidasiDitolakNotification;
 
 
 class ValidasiPengajuanKegiatanService extends AppService implements AppServiceInterface
@@ -412,6 +413,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'keterangan'      => 'Ditolak',
                     'status'          => '20'
                 );
+
+                $read->user_akseslh->notify(new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
 
                 $this->emailService->verifikasiValidasiDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-pengajuan-kegiatan-ditolak');
             } else {
