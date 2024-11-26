@@ -19,6 +19,7 @@ use App\Http\Requests\Authapi\RegisterRequest;
 use App\Services\Akseslh\KelompokMasyarakatService;
 use DateTime;
 use App\Models\File as FileTable;
+use App\Models\KelompokMasyarakat;
 use App\Services\FileUploadService;
 
 class RegisterController extends ApiController
@@ -168,6 +169,9 @@ class RegisterController extends ApiController
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
+        // Begin db transaction
+        \DB::beginTransaction();
+
         $record = \DB::table('users_verify_tokens')
             ->where('user_email', $request->email_pic)
             ->where('token', $request->kode_aktivasi)
@@ -189,30 +193,33 @@ class RegisterController extends ApiController
 
         if (!$check_kelompok_masyarakat) {
             # code...
-            $temp_data = [
-                'jenis_kelompok_masyarakat_id'  => $input['jenis_kelompok_masyarakat_id'],
-                'kelompok_masyarakat'           => $input['kelompok_masyarakat'],
-                'provinsi_kelompok_masyarakat_id'              => $input['provinsi_kelompok_masyarakat_id'],
-                'kabupaten_kelompok_masyarakat_id'             => $input['kabupaten_kelompok_masyarakat_id'],
-                'kecamatan_kelompok_masyarakat_id'             => $input['kecamatan_kelompok_masyarakat_id'],
-                'kelurahan_kelompok_masyarakat_id'             => $input['kelurahan_kelompok_masyarakat_id'],
-            ];
 
-            $result =   $this->kelompokMasyarakatService->create($temp_data);
+            $check_kelompok_2 = \DB::table('kelompok_masyarakats')
+                ->where('kelompok_masyarakat', $input['kelompok_masyarakat'])
+                ->where('provinsi_kelompok_masyarakat_id', $input['provinsi_kelompok_masyarakat_id'])
+                ->where('kabupaten_kelompok_masyarakat_id', $input['kabupaten_kelompok_masyarakat_id'])
+                ->where('kecamatan_kelompok_masyarakat_id', $input['kecamatan_kelompok_masyarakat_id'])
+                ->where('kelurahan_kelompok_masyarakat_id', $input['kelurahan_kelompok_masyarakat_id'])
+                ->first();
 
-            try {
-                if ($result->success) {
-                    $input['kelompok_masyarakat'] = $result->data['id'];
-                } else {
-                    return $this->sendError(null, $result->message, 422);
-                }
-            } catch (\Exception $exception) {
-                return $this->sendError(null, $exception->getMessage(), 500);
+            if ($check_kelompok_2) {
+                # code...
+                $input['kelompok_masyarakat'] = $check_kelompok_2->id;
+            } else {
+
+                $kelompok_masyarakat = KelompokMasyarakat::create([
+                    'jenis_kelompok_masyarakat_id'      =>  $input['jenis_kelompok_masyarakat_id'],
+                    'kelompok_masyarakat'               =>  $input['kelompok_masyarakat'],
+                    'provinsi_kelompok_masyarakat_id'   =>  $input['provinsi_kelompok_masyarakat_id'],
+                    'kabupaten_kelompok_masyarakat_id'  =>  $input['kabupaten_kelompok_masyarakat_id'],
+                    'kecamatan_kelompok_masyarakat_id'  =>  $input['kecamatan_kelompok_masyarakat_id'],
+                    'kelurahan_kelompok_masyarakat_id'  =>  $input['kelurahan_kelompok_masyarakat_id'],
+                    'flag'                              => 1,
+                ]);
+
+                $input['kelompok_masyarakat'] = $kelompok_masyarakat->id;
             }
         }
-
-        // Begin db transaction
-        \DB::beginTransaction();
 
         // Make default password for first login
         $default_password =
@@ -225,7 +232,7 @@ class RegisterController extends ApiController
                 'nama_pic'                  => $input['nama_pic'],
                 'jenis_identitas_pic'       => 'KTP',
                 'nomor_identitas_pic'       => $input['nomor_identitas_pic'],
-                'nomor_npwp_pic'            => $input['nomor_npwp_pic'],
+                'nomor_npwp_pic'            => $input['nomor_npwp_pic'] ?? null,
                 'email_pic'                 => $input['email_pic'],
                 'nohp_pic'                  => $input['nohp_pic'],
                 'alamat_pic'                => $input['alamat_pic'],
