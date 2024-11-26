@@ -210,7 +210,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             }),
                             'nilai_penyaluran'          => $items->transaksi_penyaluran()->sum('nilai_penyaluran'),
                             'jumlah_pengembalian'       => $items->pengembalian->jumlah_pengembalian ?? 0,
-                            'bukti_pengembalian'        => $items->pengembalian->document,
+                            'bukti_pengembalian'        => $items->pengembalian->document ?? null,
                             'laporan_akhir'             => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Laporan Akhir Kegiatan']);
                             })->first()->document_file
