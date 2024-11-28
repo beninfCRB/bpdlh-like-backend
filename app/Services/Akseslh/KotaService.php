@@ -213,9 +213,12 @@ class KotaService extends AppService implements AppServiceInterface
         return $result;
     }
 
-    public function apiGetAll()
+    public function apiGetAll($name = null)
     {
         $result  = $this->model->newQuery()
+            ->when($name, function ($q) use ($name) {
+                $q->where('name', 'like', '%' . $name . '%');
+            })
             ->orderBy('id', 'ASC')
             ->get();
 

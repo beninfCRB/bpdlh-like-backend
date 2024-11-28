@@ -688,6 +688,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'user_akseslh_id'   => $data['user']->id
             ]);
 
+            $read->user_akseslh->unreadNotifications->markAsRead();
+
             $log->save();
             $read->save();
 
