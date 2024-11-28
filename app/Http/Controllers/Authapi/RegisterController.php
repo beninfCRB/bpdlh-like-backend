@@ -146,7 +146,7 @@ class RegisterController extends ApiController
             'nama_pic'                  => 'required|max:255|string',
             // 'nomor_identitas_pic'       => 'required|string|min:16|max:16|unique:data_pic_kelompok_masyarakats,nomor_identitas_pic',
             'nomor_identitas_pic'       => ['required', 'string', 'min:16', 'max:16', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats')->whereNull('deleted_at')],
-            'nomor_npwp_pic'            => 'nullable',
+            'nomor_npwp_pic'            => 'nullable|string|min:16|max:16',
             'alamat_pic'                => 'required|string|max:255',
             'provinsi_pic'              => 'required',
             'kabupaten_pic'             => 'required',
@@ -166,6 +166,7 @@ class RegisterController extends ApiController
 
         if ($validator->fails()) {
             # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
@@ -331,6 +332,7 @@ class RegisterController extends ApiController
 
         if ($validator->fails()) {
             # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
