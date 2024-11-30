@@ -128,9 +128,10 @@ class PengajuanKegiatanController extends ApiController
                 return $this->sendSuccess($result->data, $result->message, $result->code);
             }
 
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError(null, $exception->getMessage(), 500);
         }
     }
 
