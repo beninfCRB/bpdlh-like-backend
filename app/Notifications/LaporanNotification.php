@@ -10,15 +10,18 @@ use Illuminate\Notifications\Notification;
 class LaporanNotification extends Notification
 {
     use Queueable;
+    protected $nomor_pengajuan, $atas_nama;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($nomor_pengajuan, $atas_nama)
     {
         //
+        $this->nomor_pengajuan  = $nomor_pengajuan;
+        $this->atas_nama        = $atas_nama;
     }
 
     /**
@@ -56,7 +59,7 @@ class LaporanNotification extends Notification
     {
         return [
             //
-            'message_header'    => 'Proposal No. #' . $this->nomor_pengajuan . ' atas nama ' . $this->atas_nama . ' sebesar Rp. ' . number_format($this->sebesar) . ' telah diterima.',
+            'message_header'    => 'Laporan Kegiatan Pengajuan No. #' . $this->nomor_pengajuan . ' atas nama ' . $this->atas_nama . ' telah diterima.',
             'message_body'      => 'Pantau proses berikutnya di Layanan Dana Masyarakat untuk Lingkungan.'
         ];
     }

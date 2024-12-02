@@ -9,6 +9,7 @@ use App\Models\PengajuanKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Models\File as FileTable;
+use App\Notifications\LaporanNotification;
 use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
@@ -312,6 +313,10 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                     ]);
                 }
             }
+
+            $read->user_akseslh->unreadNotifications->markAsRead();
+
+            $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
 
             $read->flag      =   9;
             $read->save();

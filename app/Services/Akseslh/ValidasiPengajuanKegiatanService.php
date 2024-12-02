@@ -678,12 +678,15 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'status'          => '8'
                 );
 
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
                 $read->user_akseslh->notify(new VerifikasiLaporanDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
 
                 $this->emailService->verifikasiLaporanDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-laporan-ditolak');
             } else {
 
                 // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $read->user_akseslh->unreadNotifications->markAsRead();
 
                 $log->tanggal_selesai = date('Y-m-d');
                 $log->user_akseslh_id = $data['user']->id;
@@ -699,7 +702,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'user_akseslh_id'   => $data['user']->id
             ]);
 
-            $read->user_akseslh->unreadNotifications->markAsRead();
 
             $log->save();
             $read->save();
