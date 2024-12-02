@@ -16,6 +16,10 @@ class KelompokMasyarakat extends AppModel
     protected $fillable = [
         'jenis_kelompok_masyarakat_id',
         'kelompok_masyarakat',
+        'provinsi_kelompok_masyarakat_id',
+        'kabupaten_kelompok_masyarakat_id',
+        'kecamatan_kelompok_masyarakat_id',
+        'kelurahan_kelompok_masyarakat_id',
         'flag',
         'username'
     ];
