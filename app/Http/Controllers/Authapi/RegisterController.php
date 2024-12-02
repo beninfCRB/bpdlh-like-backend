@@ -133,9 +133,14 @@ class RegisterController extends ApiController
 
     public function register_2(Request $request): \Illuminate\Http\JsonResponse
     {
+        // Menambahkan custom rule untuk mengecek apakah inputan sama dengan "undefined"
+        Validator::extend('not_undefined', function ($attribute, $value, $parameters, $validator) {
+            return $value !== 'undefined'; // Mengembalikan false jika nilai "undefined"
+        });
+
         $validator = Validator::make($request->all(), [
             'jenis_kelompok_masyarakat_id'  => 'required|exists:jenis_kelompok_masyarakats,id',
-            'kelompok_masyarakat'           => 'required',
+            'kelompok_masyarakat'           => 'required|not_undefined',
             'provinsi_kelompok_masyarakat_id'              => 'required',
             'kabupaten_kelompok_masyarakat_id'             => 'required',
             'kecamatan_kelompok_masyarakat_id'             => 'required',
