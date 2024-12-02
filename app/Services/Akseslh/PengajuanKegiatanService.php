@@ -640,7 +640,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found', 422);
 
-        if ($model->flag != 3) return $this->sendError(null, 'Not Allowed', 403);
+        if ($model->flag != 3) return $this->sendError(null, 'Data Invalid', 422);
 
         \DB::beginTransaction();
 
@@ -692,6 +692,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+            $model->user_akseslh->unreadNotifications->markAsRead();
 
             $model->flag = 4;
             $model->save();

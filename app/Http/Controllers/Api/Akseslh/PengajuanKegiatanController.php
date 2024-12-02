@@ -142,6 +142,9 @@ class PengajuanKegiatanController extends ApiController
         try {
             //code...
             if ($result->success) {
+                // Make before notification read
+                $request->user()->unreadNotifications->markAsRead();
+
                 // Send notification database
                 $request->user()->notify(new PengajuanKegiatanNotification($result->data['nomor_pengajuan'], $result->data['atas_nama'], $result->data['sebesar']));
 

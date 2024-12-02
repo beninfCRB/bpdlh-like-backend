@@ -17,6 +17,7 @@ use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
 use App\Notifications\VerifikasiValidasiNotification;
 use App\Notifications\VerifikasiLaporanDitolakNotification;
+use App\Notifications\VerifikasiLaporanNotification;
 use App\Notifications\VerifikasiValidasiDitolakNotification;
 
 
@@ -415,6 +416,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'status'          => '20'
                 );
 
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
                 $read->user_akseslh->notify(new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
 
                 $this->emailService->verifikasiValidasiDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-pengajuan-kegiatan-ditolak');
@@ -468,6 +471,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 //     null,
                 //     'mail.pengajuan-kegiatan-diterima'
                 // );
+
+                $read->user_akseslh->unreadNotifications->markAsRead();
 
                 $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
             }
@@ -556,6 +561,10 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ]);
                 }
 
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
+                $read->user_akseslh->notify(new VerifikasiLaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+
                 $read->flag = 7;
                 $idLog->save();
                 $read->save();
@@ -592,6 +601,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'keterangan'      => 'Ditolak',
                     'status'          => '5'
                 );
+
+                $read->user_akseslh->unreadNotifications->markAsRead();
 
                 $read->user_akseslh->notify(new VerifikasiLaporanDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
 
