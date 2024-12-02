@@ -158,6 +158,8 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
 
             $read->user_akseslh->unreadNotifications->markAsRead();
 
+            $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
+
             $read->flag  =  6;
             $read->save();
 
