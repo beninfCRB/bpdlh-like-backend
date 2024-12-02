@@ -145,7 +145,7 @@ class RegisterController extends ApiController
             'kabupaten_kelompok_masyarakat_id'             => 'required',
             'kecamatan_kelompok_masyarakat_id'             => 'required',
             'kelurahan_kelompok_masyarakat_id'             => 'required',
-            'profil_kelompok'               => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'profil_kelompok'               => 'required|file|mimes:pdf,doc,docx|max:5096',
             'foto_ktp'                      => 'required|file|mimes:png,jpg,jpeg|max:2048',
             'foto_selfie'                   => 'required|file|mimes:png,jpg,jpeg|max:2048',
             'nama_pic'                             => 'required|max:255|string',
