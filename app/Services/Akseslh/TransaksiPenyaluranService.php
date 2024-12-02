@@ -11,6 +11,7 @@ use App\Models\TransaksiPenyaluran;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Notifications\TransaksiPenyaluranNotification;
 
 class TransaksiPenyaluranService extends AppService implements AppServiceInterface
 {
@@ -296,6 +297,10 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             })
             ->update(['tanggal_masuk' => date("Y-m-d")]);
 
+        $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
+
+        $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
+
         $newData->pengajuan_kegiatan->flag = 5;
         $newData->pengajuan_kegiatan->save();
     }
@@ -338,6 +343,10 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
             })
             ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+        $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
+
+        $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
 
         $newData->pengajuan_kegiatan->flag = 8;
         $newData->pengajuan_kegiatan->save();

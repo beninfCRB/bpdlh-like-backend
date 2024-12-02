@@ -11,6 +11,7 @@ use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
+use App\Notifications\LaporanNotification;
 
 class IndikatorLaporanKegiatanService extends AppService implements AppServiceInterface
 {
@@ -154,6 +155,8 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
                     $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+            $read->user_akseslh->unreadNotifications->markAsRead();
 
             $read->flag  =  6;
             $read->save();
