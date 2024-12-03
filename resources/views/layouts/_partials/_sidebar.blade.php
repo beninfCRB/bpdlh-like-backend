@@ -36,13 +36,12 @@
         <div id="sidebar-menu">
             <ul>
                 <li>
-                    <a href="{{ route('home') }}" class="waves-effect" style="padding-left: 20px;"><i class="md md-home"
-                            style="margin-right: 5px;"></i><span> Dashboard</span></a>
+                    <a href="{{ route('home') }}" class="waves-effect"><i class="md md-home"></i><span>
+                            Dashboard</span></a>
                 </li>
                 <li class="has_sub">
-                    <a href="#" class="waves-effect" style="padding-left: 20px;"><i class="md md-apps"
-                            style="margin-right: 5px;"></i><span> Data Master<i
-                                class="md md-add pull-right"></i></span></a>
+                    <a href="#" class="waves-effect"><i class="md md-apps"></i><span>
+                            Data Master<i class="md md-add pull-right"></i></span></a>
                     <ul class="list-unstyled">
                         <li>
                             <a href="{{ route('jenis-kelompok-masyarakat.index') }}" class="waves-effect"
@@ -142,6 +141,11 @@
                                 <span>Master Data Indikator Laporan</span></a>
                         </li>
                     </ul>
+                </li>
+                <li>
+                    <a href="{{ route('banner-informasi.index') }}" class="waves-effect"><i
+                            class="md md-now-widgets"></i><span> Banner Informasi
+                        </span></a>
                 </li>
 
                 <!-- <li class="has_sub">
