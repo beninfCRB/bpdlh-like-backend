@@ -82,6 +82,10 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
     {
         $read   =   $this->modelPengajuanKegiatan->newQuery()->find($id);
 
+        if (!$read) return $this->sendError(null, 'Not found', 422);
+
+        if ($read->flag != 5) return $this->sendError(null, 'Invalid data', 422);
+
         \DB::beginTransaction();
 
         try {
@@ -159,6 +163,9 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
             $read->user_akseslh->unreadNotifications->markAsRead();
 
             $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
+
+            $read->tanggal_mulai_kegiatan = $data['tanggal_mulai_kegiatan'];
+            $read->tanggal_akhir_kegiatan = $data['tanggal_akhir_kegiatan'];
 
             $read->flag  =  6;
             $read->save();
