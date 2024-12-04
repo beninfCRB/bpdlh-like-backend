@@ -97,6 +97,21 @@ class IndikatorLaporanKegiatanController extends ApiController
 
         $input  = $validator->validated();
 
+        if (isset($request->tanggal_realisasi_kegiatan)) {
+            # code...
+            $tanggalArray   = explode(" - ", $input["tanggal_realisasi_kegiatan"]);
+            $input["tanggal_mulai_kegiatan"]    = $tanggalArray[0];
+            $input["tanggal_akhir_kegiatan"]    = $tanggalArray[1];
+
+            // Validasi rentang tanggal dan waktu (optional)
+            if (strtotime($input["tanggal_mulai_kegiatan"]) > strtotime($input["tanggal_akhir_kegiatan"])) {
+                return $this->sendError(null, 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir.', 422);
+            }
+
+            //eliminate unnecessary key 
+            unset($input["tanggal_realisasi_kegiatan"]);
+        }
+
         $result = $this->indikatorLaporanService->update($id, $input);
 
         try {
