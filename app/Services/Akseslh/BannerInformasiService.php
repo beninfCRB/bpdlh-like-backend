@@ -25,6 +25,13 @@ class BannerInformasiService extends AppService implements AppServiceInterface
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
 
+    public function apiGetAll()
+    {
+        $result =   $this->model->newQuery()->latest()->first();
+
+        return $this->sendSuccess($result);
+    }
+
     public function getPaginated($search = null, $page = null, $perPage = null, $lang = null)
     {
         $result =   $this->switchLang($search, $page, $perPage, $lang);
@@ -67,7 +74,6 @@ class BannerInformasiService extends AppService implements AppServiceInterface
         try {
 
             $read->deskripsi    =   $data['deskripsi'];
-            $read->flag         =   $data['flag'];
             $read->save();
 
             \DB::commit(); // commit the changes

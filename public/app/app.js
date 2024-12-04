@@ -10,6 +10,7 @@ window.dayjs = require("dayjs");
 
 import "chart.js";
 import "dayjs/locale/id";
+import "summernote";
 
 dayjs.locale("id");
 // import "sweetalert2/src/sweetalert2.scss";
@@ -156,7 +157,7 @@ window.sendFiles = (file, el) => {
         });
 };
 
-// window.setupSummerNote = (element) => {
+// window.summernoteSetup = (element) => {
 //     $(element).summernote({
 //         insertTableMaxSize: {
 //             col: 200,

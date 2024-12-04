@@ -145,7 +145,7 @@ class RegisterController extends ApiController
             'kabupaten_kelompok_masyarakat_id'  => 'required',
             'kecamatan_kelompok_masyarakat_id'  => 'required',
             'kelurahan_kelompok_masyarakat_id'  => 'required',
-            'profil_kelompok'                   => 'required|file|mimes:pdf,doc,docx|max:5096',
+            'profil_kelompok'                   => 'required|file|mimes:pdf,doc,docx|max:10192',
             'foto_ktp'                          => 'required|file|mimes:png,jpg,jpeg|max:2048',
             'foto_selfie'                       => 'required|file|mimes:png,jpg,jpeg|max:2048',
             'nama_pic'                          => 'required|max:255|string',
@@ -333,7 +333,8 @@ class RegisterController extends ApiController
     public function getKodeAktivasi(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email_pic'  => 'required|email|unique:data_pic_kelompok_masyarakats,email_pic|unique:user_akseslhs,email',
+            // 'email_pic'  => 'required|email|unique:data_pic_kelompok_masyarakats,email_pic|unique:user_akseslhs,email',
+            'email_pic' => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')]
         ]);
 
         if ($validator->fails()) {
@@ -381,7 +382,7 @@ class RegisterController extends ApiController
                 \DB::commit();
 
                 // Return token to frontend
-                return $this->sendSuccess();
+                return $this->sendSuccess(null, 'Kode verifikasi sudah terkirim ke email');
             } else {
                 \DB::rollBack();
 
