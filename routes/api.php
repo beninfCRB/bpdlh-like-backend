@@ -57,6 +57,8 @@ Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengaj
 Route::get('getDataMasterDataIndikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\MasterDataIndikatorLaporanController::class, 'index']);
 Route::put('indikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\IndikatorLaporanKegiatanController::class, 'update']);
 
+Route::get('banner-informasi', [App\Http\Controllers\Api\Akseslh\BannerInformasiController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);

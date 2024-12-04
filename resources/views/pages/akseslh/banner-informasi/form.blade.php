@@ -3,7 +3,7 @@
 @section('title', 'Buat Jenis Kelompok Masyarakat')
 
 @section('script')
-    <script src=""></script>
+    <script src="{{ asset('app/build/banner_informasi.js') }}" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -22,21 +22,22 @@
 
     <div class="row">
         <!-- Basic example -->
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Pengelolaan Data Jenis Kelompok Masyarakat</h3>
+                    <h3 class="panel-title">Pengelolaan Data Banner Informasi</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form" action="{{ route('jenis-kelompok-masyarakat.store') }}" method="POST">
+                    <form role="form" action="{{ route('banner-informasi.store') }}" method="POST">
                         @csrf
-                        <div class="form-group @error('jenis_kelompok_masyarakat') has-error @enderror">
-                            <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="jenis_kelompok_masyarakat"
-                                name="jenis_kelompok_masyarakat" placeholder="Jenis Kelompok Masyarakat"
-                                value="{{ old('jenis_kelompok_masyarakat') }}">
-                            @error('jenis_kelompok_masyarakat')
+                        <div class="form-group @error('deskripsi') has-error @enderror">
+                            <label for="deskripsi">Banner Informasi <span class="text-danger">*</span></label>
+                            <textarea name="deskripsi" id="deskripsi" cols="30" rows="10">
+                                {{ empty($data->data->deskripsi) ? null : $data->data->deskripsi }}
+                            </textarea>
+                            <input type="hidden" name="id"
+                                value="{{ empty($data->data->id) ? null : $data->data->id }}">
+                            @error('deskripsi')
                                 <span class="error">
                                     {{ $message }}
                                 </span>
@@ -52,6 +53,5 @@
                 </div><!-- panel-body -->
             </div> <!-- panel -->
         </div> <!-- col-->
-
     </div> <!-- End row -->
 @endsection

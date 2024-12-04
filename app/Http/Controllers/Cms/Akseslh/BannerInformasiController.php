@@ -21,41 +21,45 @@ class BannerInformasiController extends ApiController
 
     public function index()
     {
-        return view("pages.akseslh.jenis-kelompok-masyarakat.index");
+        $data = $this->bannerInformasiService->apiGetAll();
+        return view("pages.akseslh.banner-informasi.form", compact('data'));
     }
 
     public function create()
     {
-        return view("pages.akseslh.jenis-kelompok-masyarakat.create");
+        return view("pages.akseslh.banner-informasi.create");
     }
 
     public function edit($id)
     {
         $data   =   $this->bannerInformasiService->getById($id);
-        return view("pages.akseslh.jenis-kelompok-masyarakat.edit", compact('data'));
+        return view("pages.akseslh.banner-informasi.edit", compact('data'));
     }
 
     public function show($id)
     {
         $data   =   $this->bannerInformasiService->getById($id);
-        return view("pages.akseslh.jenis-kelompok-masyarakat.show", compact('data'));
+        return view("pages.akseslh.banner-informasi.show", compact('data'));
     }
 
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string|max:150',
-            'short_id'                      => 'required|numeric|min:0',
-            'code_id'                       => 'required|numeric|min:0',
+            'id'            => 'nullable',
+            'deskripsi'     => 'required',
         ]);
 
-        $result =   $this->bannerInformasiService->create($input);
+        if ($request->id) {
+            $result =   $this->bannerInformasiService->update($request->id, $input);
+        } else {
+            $result =   $this->bannerInformasiService->create($input);
+        }
 
         try {
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('jenis-kelompok-masyarakat.index');
+                return redirect()->route('banner-informasi.index');
             }
 
             return back()->with('error', $result->message);
@@ -78,7 +82,7 @@ class BannerInformasiController extends ApiController
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('jenis-kelompok-masyarakat.index');
+                return redirect()->route('banner-informasi.index');
             }
 
             return back()->with('error', $result->message);
