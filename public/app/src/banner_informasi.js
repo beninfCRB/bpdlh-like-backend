@@ -95,15 +95,15 @@ var data_banner_informasi = (function () {
 
 jQuery(document).ready(function () {
     data_banner_informasi.init();
-    // summernoteSetup("#deskripsi");
-    $("#deskripsi").summernote({
-        height: 200, // set editor height
+    summernoteSetup("#deskripsi");
+    // $("#deskripsi").summernote({
+    //     height: 200, // set editor height
 
-        minHeight: null, // set minimum height of editor
-        maxHeight: null, // set maximum height of editor
+    //     minHeight: null, // set minimum height of editor
+    //     maxHeight: null, // set maximum height of editor
 
-        focus: true, // set focus to editable area after initializing summernote
-    });
+    //     focus: true, // set focus to editable area after initializing summernote
+    // });
 });
 
 window.deleteJenisKelompokMasyarakat = (input) => {
