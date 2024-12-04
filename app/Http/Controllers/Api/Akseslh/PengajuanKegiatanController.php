@@ -72,7 +72,7 @@ class PengajuanKegiatanController extends ApiController
             'proposal_kegiatan'         => 'required|max:255',
             'tujuan_kegiatan'           => 'required|max:255',
             'ruang_lingkup_kegiatan'    => 'required|max:255',
-            'fileDocument'              => 'nullable',
+            'fileDocument'              => 'nullable|file|mimes:pdf|max:10192',
             'nomor_pengajuan'           => 'nullable',
         ]);
 
