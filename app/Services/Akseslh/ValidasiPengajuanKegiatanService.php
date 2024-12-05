@@ -726,4 +726,121 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
+
+    public function getAllAttrTemp($data = null)
+    {
+        // Membuat query dasar
+        $query = $this->model->newQuery()->whereHas('log_tahapan_pengajuan', function ($q) {
+            $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->whereIn('deskripsi_kegiatan', [
+                    'Validasi',
+                    'Informasi Pencairan Dana',
+                    'Verifikasi Laporan Kegiatan Termin 1',
+                    'Verifikasi Laporan Akhir Kegiatan',
+                    'Verifikasi'
+                ]);
+            })
+                ->whereNotNull('tanggal_masuk')
+                ->whereNull('tanggal_selesai');
+        });
+
+        // Kondisi berdasarkan input data
+        switch ($data) {
+            case 4:
+                $query->whereHas('log_tahapan_pengajuan', function ($q) {
+                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(['deskripsi_kegiatan' => 'Informasi Pencairan Dana']);
+                    });
+                });
+                break;
+
+            case 6:
+                $query->whereHas('log_tahapan_pengajuan', function ($q) {
+                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(['deskripsi_kegiatan' => 'Verifikasi Laporan Kegiatan Termin 1']);
+                    });
+                });
+                break;
+
+            case 9:
+                $query->whereHas('log_tahapan_pengajuan', function ($q) {
+                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(['deskripsi_kegiatan' => 'Verifikasi Laporan Akhir Kegiatan']);
+                    });
+                });
+                break;
+
+            default:
+                // Default case (Validasi)
+                $query->where('flag', 2);
+                break;
+        }
+
+        // Order query and get results
+        $result = $query->orderBy('created_at', 'ASC')->get();
+
+        // Eager load relations for more efficient access
+        $result->load([
+            'user_akseslh.data_pic_kelompok_masyarakat',
+            'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan',
+            'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan',
+            'paket_kegiatan.jenis_kegiatan',
+            'log_tahapan_pengajuan.tahapan_pengajuan_kegiatan',
+            'indikator_laporan_kegiatan.master_data_indikator_laporan',
+            'transaksi_penyaluran',
+            'pengembalian'
+        ]);
+
+        // Transform the results
+        $result->transform(function ($items) {
+            $logVerifikasi = $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Verifikasi');
+            })->first();
+
+            $logTermin1 = $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+            })->first();
+
+            $logLaporanAkhir = $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+            })->first();
+
+            return [
+                'id'                        => $items->id,
+                'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
+                'kegiatan'                  => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
+                'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                'tanggal_akhir_validasi'    => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                'lokasi'                    => $items->alamat_kegiatan,
+                'nomor_pengajuan'           => $items->nomor_pengajuan,
+                'proposal_kegiatan'         => $items->proposal_kegiatan,
+                'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                'nama_verifikator'          => $logVerifikasi ? $logVerifikasi->user_akseslh_admin->email : null,
+                'tanggal_verifikasi'        => $logVerifikasi ? $logVerifikasi->tanggal_selesai : null,
+                'document'                  => $items->document,
+                'indikator_laporan_kegiatan' => $items->indikator_laporan_kegiatan->transform(function ($ind) {
+                    return [
+                        'nilai_laporan'   => $ind->nilai_laporan,
+                        'nama_indikator'  => $ind->master_data_indikator_laporan->nama_indikator,
+                        'satuan'           => $ind->master_data_indikator_laporan->satuan,
+                        'tipe_data'        => $ind->master_data_indikator_laporan->satuan,
+                    ];
+                }),
+                'laporan_termin_1'          => $logTermin1 ? $logTermin1->document_file : null,
+                'laporan_akhir'             => $logLaporanAkhir ? $logLaporanAkhir->document_file : null,
+                'nilai_penyaluran'          => $items->transaksi_penyaluran->sum('nilai_penyaluran'),
+                'jumlah_pengembalian'       => $items->pengembalian->jumlah_pengembalian ?? 0,
+                'bukti_pengembalian'        => $items->pengembalian->document ?? null
+            ];
+        });
+
+        return $this->sendSuccess($result);
+    }
 }

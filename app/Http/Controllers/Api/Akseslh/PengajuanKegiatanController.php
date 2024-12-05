@@ -118,9 +118,9 @@ class PengajuanKegiatanController extends ApiController
 
         if (isset($input['nomor_pengajuan'])) {
             # code...
-            $result = $this->pengajuanKegiatanService->update($input['nomor_pengajuan'], $input);
+            $result = $this->pengajuanKegiatanService->updateTemp($input['nomor_pengajuan'], $input);
         } else {
-            $result = $this->pengajuanKegiatanService->create($input);
+            $result = $this->pengajuanKegiatanService->createTemp($input);
         }
 
         try {
@@ -137,7 +137,7 @@ class PengajuanKegiatanController extends ApiController
 
     public function update($id, Request $request)
     {
-        $result = $this->pengajuanKegiatanService->updateRab($id, $request->komponen_rab);
+        $result = $this->pengajuanKegiatanService->updateRabTemp($id, $request->komponen_rab);
 
         try {
             //code...
