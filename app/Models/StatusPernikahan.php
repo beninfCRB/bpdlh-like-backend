@@ -13,7 +13,7 @@ class StatusPernikahan extends AppModel
     protected $table = 'status_pernikahans';
 
     protected $fillable = [
-        'status_pernikahans',
+        'status_pernikahan',
         'flag',
         'username',
     ];

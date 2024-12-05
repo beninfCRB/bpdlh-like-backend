@@ -41,6 +41,8 @@ mix.js("public/app/app.js", build)
     .js(source + "jenis_pekerjaan.js", build)
     .js(source + "pendidikan.js", build)
     .js(source + "banner_informasi.js", build)
+    .js(source + "status_pernikahan.js", build)
+    .js(source + "agama.js", build)
     .version();
 
 mix.disableNotifications();

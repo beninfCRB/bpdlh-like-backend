@@ -82,6 +82,16 @@
                                 style="padding: 10px 25px 10px 30px;">> <span>Pendidikan</span></a>
                         </li>
                         <li>
+                            <a href="{{ route('status-pernikahan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Status Pernikahan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('agama.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Agama</span></a>
+                        </li>
+                        <li>
                             <a href="{{ route('pic-kelompok-masyarakat.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
                         </li>
