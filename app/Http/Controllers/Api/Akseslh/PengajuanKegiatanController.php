@@ -68,7 +68,7 @@ class PengajuanKegiatanController extends ApiController
             'kelurahan_kegiatan'        => 'required',
             'alamat_kegiatan'           => 'required',
             'tanggal_kegiatan'          => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
-            'waktu_kegiatan'            => 'required|string|regex:/^\d{2}:\d{2} \- \d{2}:\d{2}$/',
+            'waktu_kegiatan'            => 'required|string|regex:/^\d{2}:\d{2}(:\d{2})?$/',
             'proposal_kegiatan'         => 'required|max:255',
             'tujuan_kegiatan'           => 'required|max:255',
             'ruang_lingkup_kegiatan'    => 'required|max:255',
