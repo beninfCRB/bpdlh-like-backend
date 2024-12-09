@@ -3,7 +3,7 @@
 
 namespace App\Services\Akseslh;
 
-
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\PdfService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -21,6 +21,7 @@ use App\Models\TransaksiPenyaluran;
 use App\Models\UserAkseslh;
 use App\Services\EmailPhpService;
 use Carbon\Carbon;
+use Ramsey\Uuid\Uuid;
 
 class PengajuanKegiatanService extends AppService implements AppServiceInterface
 {
@@ -31,6 +32,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     protected $fileUploadService;
     protected $fileTable;
     protected $pdfService, $emailPhpService;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
     public function __construct(
         FileUploadService $fileUploadService,
@@ -41,17 +43,19 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         RabPengajuanPaketKegiatan $modelRabPengajuanPaketKegiatan,
         TransaksiPenyaluran $modelTransaksiPenyaluran,
         PdfService $pdfService,
-        EmailPhpService $emailPhpService
+        EmailPhpService $emailPhpService,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
-        $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
-        $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
-        $this->modelRabPengajuanPaketKegiatan   = $modelRabPengajuanPaketKegiatan;
-        $this->modelTransaksiPenyaluran         = $modelTransaksiPenyaluran;
-        $this->fileUploadService    =   $fileUploadService;
-        $this->fileTable            =   $fileTable;
-        $this->pdfService           =   $pdfService;
-        $this->emailPhpService      =   $emailPhpService;
+        $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
+        $this->modelLogTahapanPengajuanKegiatan         = $modelLogTahapanPengajuanKegiatan;
+        $this->modelRabPengajuanPaketKegiatan           = $modelRabPengajuanPaketKegiatan;
+        $this->modelTransaksiPenyaluran                 = $modelTransaksiPenyaluran;
+        $this->fileUploadService                        = $fileUploadService;
+        $this->fileTable                                = $fileTable;
+        $this->pdfService                               = $pdfService;
+        $this->emailPhpService                          = $emailPhpService;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -756,19 +760,33 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
             // Ambil tahapan pengajuan kegiatan terbaru sekali saja
-            $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->orderBy('created_at', 'DESC')->get();
+            $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->orderBy('sort', 'ASC')->get();
 
             // Menyimpan log tahapan pengajuan kegiatan
             $logData = $dataTahapanPengajuanKegiatan->map(function ($dt) use ($model) {
                 return [
+                    'id'                            => Uuid::uuid4()->toString(),
                     'pengajuan_kegiatan_id'         => $model->id,
                     'tahapan_pengajuan_kegiatan_id' => $dt->id,
                     'tanggal_masuk'                 => in_array($dt->deskripsi_kegiatan, ['Pengajuan', 'Verifikasi']) ? now()->toDateString() : null,
-                    'tanggal_selesai'               => $dt->deskripsi_kegiatan == 'Pengajuan' ? now()->toDateString() : null
+                    'tanggal_selesai'               => $dt->deskripsi_kegiatan == 'Pengajuan' ? now()->toDateString() : null,
+                    'created_at'                    => Carbon::now(),
+                    'updated_at'                    => Carbon::now(),
                 ];
             });
 
             $this->modelLogTahapanPengajuanKegiatan->insert($logData->toArray());
+
+            // Cari ID log untuk tahapan pengajuan kegiatan 'Pengajuan'
+            $id_log = $dataTahapanPengajuanKegiatan->firstWhere('deskripsi_kegiatan', 'Pengajuan')->id;
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id'         => $model->id,
+                'tahapan_pengajuan_kegiatan_id' => $id_log,
+                'tanggal_masuk'                 => date("Y-m-d"),
+                'tanggal_selesai'               => date("Y-m-d")
+            ]);
 
             // Menghitung total harga RAB dan mempersiapkan data komponen RAB
             $total = 0;
@@ -797,6 +815,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             // Mengirim email ke verifikator
             $verifikator = UserAkseslh::where('role_user', 'verifikator')->get();
+
             foreach ($verifikator as $user) {
                 $this->emailPhpService->verifikasiPengajuanKegiatan($user, 'Verifikasi Pengajuan Kegiatan', $model, null, 'mail.verifikasi-pengajuan-kegiatan');
             }

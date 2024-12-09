@@ -8,6 +8,7 @@ use App\Models\PengajuanKegiatan;
 use App\Models\TahapanPengajuanKegiatan;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Notifications\VerifikasiValidasiDitolakNotification;
 use App\Notifications\VerifikasiValidasiNotification;
 use App\Services\AppService;
@@ -22,19 +23,22 @@ class VerifikasiService extends AppService implements AppServiceInterface
     protected $modelLogTahapanPengajuanKegiatan;
     protected $modelCatatanLogTahapanPengajuanKegiatan;
     protected $emailService;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
     public function __construct(
         PengajuanKegiatan $model,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
         CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan,
-        EmailPhpService $emailPhpService
+        EmailPhpService $emailPhpService,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan = $modelTahapanPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
         $this->modelCatatanLogTahapanPengajuanKegiatan = $modelCatatanLogTahapanPengajuanKegiatan;
         $this->emailService = $emailPhpService;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -227,6 +231,14 @@ class VerifikasiService extends AppService implements AppServiceInterface
             $this->modelCatatanLogTahapanPengajuanKegiatan->create([
                 'log_tahapan_pengajuan_kegiatan_id' => $logTahapan->id,
                 'catatan_log'                       => $data['catatan_log']
+            ]);
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id'         => $read->id,
+                'tahapan_pengajuan_kegiatan_id' => $logTahapan->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk'                 => date("Y-m-d"),
+                'tanggal_selesai'               => date("Y-m-d")
             ]);
 
             // Update status tergantung dari status yang diberikan

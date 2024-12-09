@@ -31,86 +31,18 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
 
     public function getAllAttr($data = null)
     {
-        if ($data) {
-            # code...
-            switch ($data) {
-                case 4:
-                    # code...
-                    $result  = $this->model->newQuery()
-                        ->whereHas(
-                            'log_tahapan_pengajuan',
-                            function ($q) {
-                                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                    $q->where(['deskripsi_kegiatan' => 'Informasi Pencairan Dana']);
-                                })->whereNotNull('tanggal_masuk')
-                                    ->whereNull('tanggal_selesai');
-                            }
-                        )
-                        ->orderBy('created_at', 'ASC')
-                        ->get();
-                    break;
-                case 6:
-                    # code...
-                    $result  = $this->model->newQuery()
-                        ->whereHas(
-                            'log_tahapan_pengajuan',
-                            function ($q) {
-                                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                    $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan']);
-                                })->whereNotNull('tanggal_masuk')
-                                    ->whereNull('tanggal_selesai');
-                            }
-                        )
-                        ->orderBy('created_at', 'ASC')
-                        ->get();
-                    break;
+        $result  = $this->model->newQuery()
+            ->whereHas('log_tahapan_pengajuan', function ($q) {
+                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                })->whereNotNull('tanggal_masuk')
+                    ->whereNull('tanggal_selesai');
+            })
+            ->where('flag', 1)
+            ->orderBy('created_at', 'ASC')
+            ->get();
 
-                case 8:
-                    # code...
-                    $result  = $this->model->newQuery()
-                        ->whereHas(
-                            'log_tahapan_pengajuan',
-                            function ($q) {
-                                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                    $q->where(['deskripsi_kegiatan' => 'Laporan Akhir Kegiatan']);
-                                })->whereNotNull('tanggal_masuk')
-                                    ->whereNull('tanggal_selesai');
-                            }
-                        )
-                        ->orderBy('created_at', 'ASC')
-                        ->get();
-                    break;
-
-                default:
-                    # code...
-                    $result  = $this->model->newQuery()
-                        ->whereHas(
-                            'log_tahapan_pengajuan',
-                            function ($q) {
-                                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                                })->whereNotNull('tanggal_masuk')
-                                    ->whereNull('tanggal_selesai');
-                            }
-                        )
-                        ->orderBy('created_at', 'ASC')
-                        ->get();
-                    break;
-            }
-        } else {
-            $result  = $this->model->newQuery()
-                ->whereHas('log_tahapan_pengajuan', function ($q) {
-                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                        $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                    })->whereNotNull('tanggal_masuk')
-                        ->whereNull('tanggal_selesai');
-                })
-                ->where('flag', 1)
-                ->orderBy('created_at', 'ASC')
-                ->get();
-        }
-
-        $result->transform(function ($items, $key) {
+        $result->transform(function ($items) {
             return [
                 'id'                        => $items->id,
                 'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
