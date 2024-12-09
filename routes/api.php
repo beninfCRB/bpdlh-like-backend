@@ -33,6 +33,7 @@ Route::get('kelurahan', [App\Http\Controllers\Api\Akseslh\KelurahanController::c
 Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'show']);
 Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
 Route::get('getRangeOpening', [App\Http\Controllers\Api\Akseslh\LogJadwalPembukaanController::class, 'index']);
+Route::get('log-masa-sanggah', [App\Http\Controllers\Api\Akseslh\LogMasaSanggahController::class, 'index']);
 Route::get('jenis-pekerjaan', [App\Http\Controllers\Api\Akseslh\JenisPekerjaanController::class, 'index']);
 Route::get('pendidikan', [App\Http\Controllers\Api\Akseslh\PendidikanController::class, 'index']);
 Route::get('agama', [App\Http\Controllers\Api\Akseslh\AgamaController::class, 'index']);
