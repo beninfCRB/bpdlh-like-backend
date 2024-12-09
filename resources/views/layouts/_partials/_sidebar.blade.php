@@ -135,6 +135,11 @@
                                 <span>Log Jadwal Pembukaan</span></a>
                         </li>
                         <li>
+                            <a href="{{ route('log-masa-sanggah.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>Log Masa Sanggah</span></a>
+                        </li>
+                        <li>
                             <a href="{{ route('jenis-dokumen.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">>
                                 <span>Jenis Dokumen</span></a>

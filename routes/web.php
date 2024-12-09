@@ -1,5 +1,6 @@
 <?php
 
+use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/debug-sentry', function () {
-    dd(date('Y-m-d', strtotime('31-12-9999')), date('Y-m-d'));
-    // dd(Uuid::uuid4()->toString());
+    // dd(date('Y-m-d', strtotime('31-12-9999')), date('Y-m-d'));
+    dd(Uuid::uuid4()->toString());
 });
 
 Route::view('/login', 'auth.login')->name('login');
@@ -80,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('banner-informasi', App\Http\Controllers\Cms\Akseslh\BannerInformasiController::class);
         Route::resource('status-pernikahan', App\Http\Controllers\Cms\Akseslh\StatusPernikahanController::class);
         Route::resource('agama', App\Http\Controllers\Cms\Akseslh\AgamaController::class);
+        Route::resource('log-masa-sanggah', App\Http\Controllers\Cms\Akseslh\LogMasaSanggahController::class);
 
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
@@ -114,5 +116,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-banner-informasi', [App\Http\Controllers\Datatable\Akseslh\BannerInformasiController::class, 'getAll'])->name('data-banner-informasi');
         Route::get('/data-status-pernikahan', [App\Http\Controllers\Datatable\Akseslh\StatusPernikahanController::class, 'getAll'])->name('data-status-pernikahan');
         Route::get('/data-agama', [App\Http\Controllers\Datatable\Akseslh\AgamaController::class, 'getAll'])->name('data-agama');
+        Route::get('/data-log-masa-sanggah', [App\Http\Controllers\Datatable\Akseslh\LogMasaSanggahController::class, 'getAll'])->name('data-log-masa-sanggah');
     });
 });
