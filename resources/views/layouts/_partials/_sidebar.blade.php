@@ -115,11 +115,6 @@
                                 <span>Master Komponen RAB</span></a>
                         </li>
                         <li>
-                            <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"
-                                style="padding: 10px 25px 10px 30px;">>
-                                <span>Pengajuan Kegiatan</span></a>
-                        </li>
-                        <li>
                             <a href="{{ route('master-data-bank.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">>
                                 <span>Master Data Bank</span></a>
@@ -156,6 +151,11 @@
                                 <span>Master Data Indikator Laporan</span></a>
                         </li>
                     </ul>
+                </li>
+                <li>
+                    <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"><i
+                            class="md md-view-list"></i><span> Pengajuan Kegiatan
+                        </span></a>
                 </li>
                 <li>
                     <a href="{{ route('banner-informasi.index') }}" class="waves-effect"><i

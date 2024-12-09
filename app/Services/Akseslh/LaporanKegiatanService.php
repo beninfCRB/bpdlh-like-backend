@@ -250,7 +250,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
             $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
                 'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
-                'tahapan_pengajuan_kegiatan_id' => $log->id,
+                'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
                 'tanggal_masuk' => date("Y-m-d"),
                 'tanggal_selesai' => date("Y-m-d"),
             ]);

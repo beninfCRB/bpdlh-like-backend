@@ -203,7 +203,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
     {
         $read = $this->model->newQuery()->find($id);
 
-        if (!$read) return $this->sendError(null, 'Not Found');
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
 
         if ($read->flag != 1) return $this->sendError(null, 'Not Allowed', 403);
 
@@ -224,7 +224,8 @@ class VerifikasiService extends AppService implements AppServiceInterface
                 ->first();
 
             if (!$logTahapan) {
-                throw new \Exception('Log Tahapan not found');
+                \DB::rollBack();
+                return $this->sendError(null, 'Tahapan tidak ditemukan', 422);
             }
 
             // Membuat Catatan Log Tahapan Pengajuan Kegiatan
@@ -238,7 +239,8 @@ class VerifikasiService extends AppService implements AppServiceInterface
                 'pengajuan_kegiatan_id'         => $read->id,
                 'tahapan_pengajuan_kegiatan_id' => $logTahapan->tahapan_pengajuan_kegiatan_id,
                 'tanggal_masuk'                 => date("Y-m-d"),
-                'tanggal_selesai'               => date("Y-m-d")
+                'tanggal_selesai'               => date("Y-m-d"),
+                'user_akseslh_id'               => $data['user_akseslh_id']
             ]);
 
             // Update status tergantung dari status yang diberikan
@@ -246,12 +248,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
             $keterangan = $data['status'] == 0 ? 'Ditolak' : 'Disetujui';
 
             // Update log tahapan berdasarkan status
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Verifikasi');
-                })
-                ->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akselh_id']]);
+            $logTahapan->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akselh_id']]);
 
             // Update status pengajuan
             $read->update(['flag' => $statusUpdate]);

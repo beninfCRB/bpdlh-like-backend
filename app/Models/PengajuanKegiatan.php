@@ -95,6 +95,16 @@ class PengajuanKegiatan extends AppModel
         return $this->hasMany(LogTahapanPengajuanKegiatan::class, 'pengajuan_kegiatan_id');
     }
 
+    /**
+     * Get all of the detail_log_tahapan_pengajuan for the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function detail_log_tahapan_pengajuan(): HasMany
+    {
+        return $this->hasMany(DetailLogTahapanPengajuanKegiatan::class, 'pengajuan_kegiatan_id');
+    }
+
     public function document()
     {
         return $this->morphMany(File::class, 'fileable')
