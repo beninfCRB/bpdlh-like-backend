@@ -365,7 +365,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
         if (!$read) return $this->sendError(null, 'Not Found', 422);
 
-        if ($read->flag != 2 || $read->flag != '2') return $this->sendError(null, 'Invalid data', 422);
+        if (!in_array($read->flag, [2, '2'])) return $this->sendError(null, 'Invalid data', 422);
 
         $total = 0;
 
@@ -391,20 +391,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'flag'                  => "3"
                 ]);
 
-            // $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
-            //     ->orderBy('created_at', 'DESC')->get();
-            // $dataLogTahapanPengajuanKegiatan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
-            //     ->with(['tahapan_pengajuan_kegiatan'])
-            //     ->where('pengajuan_kegiatan_id', $id)
-            //     ->orderBy('created_at', 'DESC')->get();
-
             if ($data['status'] == 0) {
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
-                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akseslh_id']]);
 
                 $read->flag = 20;
                 $read->save();
@@ -429,7 +422,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
-                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akseslh_id']]);
 
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
@@ -543,7 +536,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
                 $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
                     'pengajuan_kegiatan_id' => $read->id,
-                    'tahapan_pengajuan_kegiatan_id' => $idLog->id,
+                    'tahapan_pengajuan_kegiatan_id' => $idLog->tahapan_pengajuan_kegiatan_id,
                     'tanggal_masuk' => date("Y-m-d"),
                     'tanggal_selesai' => date("Y-m-d"),
                     'user_akseslh_id'   => $data['user']->id
@@ -696,7 +689,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
             $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
                 'pengajuan_kegiatan_id' => $id,
-                'tahapan_pengajuan_kegiatan_id' => $log->id,
+                'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
                 'tanggal_masuk' => date("Y-m-d"),
                 'tanggal_selesai' => date("Y-m-d"),
                 'user_akseslh_id'   => $data['user']->id
@@ -842,5 +835,110 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         });
 
         return $this->sendSuccess($result);
+    }
+
+    public function updateTemp($id, $data)
+    {
+        $read = $this->model->newQuery()->find($id);
+
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        // Memastikan flag adalah 2
+        if (!in_array($read->flag, [2, '2'])) return $this->sendError(null, 'Not Allowed', 403);
+
+        // Menghitung total dari rab_pengajuan_paket_kegiatans dengan eager loading
+        $total = $read->rab_pengajuan_paket_kegiatans->sum(function ($items) {
+            return $items->qty * $items->harga_unit;
+        });
+
+        \DB::beginTransaction();
+
+        try {
+            // Mengambil LogTahapanPengajuanKegiatan untuk deskripsi 'Verifikasi'
+            $logTahapan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Validasi');
+                })
+                ->first();
+
+            if (!$logTahapan) {
+                \DB::rollBack();
+                return $this->sendError(null, 'Tahapan tidak ditemukan', 422);
+            }
+
+            // Membuat Catatan Log Tahapan Pengajuan Kegiatan
+            $this->modelCatatanLogTahapanPengajuanKegiatan->create([
+                'log_tahapan_pengajuan_kegiatan_id' => $logTahapan->id,
+                'catatan_log'                       => $data['catatan_log']
+            ]);
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id'         => $read->id,
+                'tahapan_pengajuan_kegiatan_id' => $logTahapan->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk'                 => date("Y-m-d"),
+                'tanggal_selesai'               => date("Y-m-d"),
+                'user_akseslh_id'               => $data['user_akseslh_id']
+            ]);
+
+            // Update status tergantung dari status yang diberikan
+            $statusUpdate = $data['status'] == 0 ? 20 : 3;
+            $keterangan = $data['status'] == 0 ? 'Ditolak' : 'Disetujui';
+
+            // Update log tahapan berdasarkan status
+            $logTahapan->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akseslh_id']]);
+
+            // upload document
+            $upload = $this->fileUploadService->handleFile($data['file_sk'])->saveToDb('document_sk');
+            if ($upload) {
+                $upload->update([
+                    'fileable_type' => get_class($read),
+                    'fileable_id'   => $read->id,
+                ]);
+            }
+
+            // Update status pengajuan
+            $read->update(['flag' => $statusUpdate]);
+
+            // Persiapkan data untuk pengiriman notifikasi dan email
+            $dataSend = [
+                'nomor_pengajuan' => $read->nomor_pengajuan,
+                'catatan_log'     => $data['catatan_log'] ?? null,
+                'keterangan'      => $keterangan,
+                'status'          => $statusUpdate
+            ];
+
+            // Mark notifications as read and send notification
+            $read->user_akseslh->unreadNotifications->markAsRead();
+            $notification = $data['status'] == 0
+                ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
+                : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total);
+            $read->user_akseslh->notify($notification);
+
+            if ($data['status'] != 0) {
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
+                    })
+                    ->update(['tanggal_masuk' => now()]);
+            } else {
+                // Kirim email
+                $this->emailService->verifikasiValidasiDitolak(
+                    $read->user_akseslh,
+                    'Pengajuan Ditolak',
+                    $dataSend,
+                    null,
+                    'mail.verifikasi-pengajuan-kegiatan-ditolak'
+                );
+            }
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($dataSend);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
     }
 }

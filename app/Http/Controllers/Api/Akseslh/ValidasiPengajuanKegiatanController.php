@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api\Akseslh;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\ValidasiPengajuanKegiatanService;
-use Svg\Tag\Rect;
 
 class ValidasiPengajuanKegiatanController extends ApiController
 {
@@ -76,9 +74,9 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
         $input = $validator->validated();
 
-        $input['user_akselh_id']  = $request->user()->id;
+        $input['user_akseslh_id']  = $request->user()->id;
 
-        $result = $this->validasiPengajuanKegiatanService->update($id, $input);
+        $result = $this->validasiPengajuanKegiatanService->updateTemp($id, $input);
 
         try {
             if ($result->success) {
@@ -154,5 +152,22 @@ class ValidasiPengajuanKegiatanController extends ApiController
         } catch (Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
         }
+    }
+
+    public function retur($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'catatan_log'       => 'required|string',
+            'caping_rab'        => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input = $validator->validated();
+
+        dd($input);
     }
 }

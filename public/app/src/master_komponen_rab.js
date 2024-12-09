@@ -8,7 +8,6 @@ import {
     showData,
 } from "../api";
 var route = $("#master-komponen-rab-route").val();
-console.log(route);
 
 var data_master_komponen_rab = (function () {
     var initTable1 = function () {

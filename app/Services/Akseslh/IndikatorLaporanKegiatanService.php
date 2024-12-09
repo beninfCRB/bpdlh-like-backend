@@ -133,7 +133,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
             // Create Log Tahapan Pengajuan
             $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
                 'pengajuan_kegiatan_id' => $read->id,
-                'tahapan_pengajuan_kegiatan_id' => $laporan_kegiatan_termin_1->id,
+                'tahapan_pengajuan_kegiatan_id' => $laporan_kegiatan_termin_1->tahapan_pengajuan_kegiatan_id,
                 'tanggal_masuk' => date("Y-m-d"),
                 'tanggal_selesai' => date("Y-m-d")
             ]);

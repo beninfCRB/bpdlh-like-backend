@@ -261,7 +261,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $items =   $this->model->newQuery()->with(['document', 'log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
+        $items =   $this->model->newQuery()->with(['document', 'log_tahapan_pengajuan.tahapan_pengajuan_kegiatan', 'detail_log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
 
         $result = [
             'id'    => $items->id,
@@ -278,7 +278,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'ruang_lingkup_kegiatan' => $items->ruang_lingkup_kegiatan,
             'paket_kegiatan_id' => $items->paket_kegiatan_id,
             'fileDocument'  => $items->document,
-            'log_tahapan_pengajuan' => $items->log_tahapan_pengajuan
+            'log_tahapan_pengajuan' => $items->log_tahapan_pengajuan,
+            'detail_log_tahapan_pengajuan' => $items->detail_log_tahapan_pengajuan,
         ];
 
         return $this->sendSuccess($result);
@@ -613,7 +614,16 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $model = $this->model->newQuery()->where([
             'user_akseslh_id' => $user_id,
             'flag' => 0
-        ])->latest()->first();
+        ])
+            ->orWhereHas(
+                'log_tahapan_pengajuan',
+                function ($q) {
+                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(['deskripsi_kegiatan' => 'Validasi']);
+                    })->where('flag', 2);
+                }
+            )
+            ->latest()->first();
 
         if (!$model) return $this->sendSuccess(collect([]));
 
@@ -683,12 +693,22 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $model->time_akhir_kegiatan     = $data["time_akhir_kegiatan"];
             }
 
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            $logTahapan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
-                })
-                ->update(['tanggal_selesai' => date("Y-m-d")]);
+                })->first();
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id'         => $model->id,
+                'tahapan_pengajuan_kegiatan_id' => $logTahapan->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk'                 => date("Y-m-d"),
+                'tanggal_selesai'               => date("Y-m-d")
+            ]);
+
+
+            $logTahapan->update(['tanggal_selesai' => date("Y-m-d")]);
 
             $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
