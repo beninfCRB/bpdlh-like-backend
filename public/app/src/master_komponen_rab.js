@@ -7,7 +7,7 @@ import {
     deleteData,
     showData,
 } from "../api";
-var route = $("#jenis-komponen-rab-route").val();
+var route = $("#master-komponen-rab-route").val();
 
 var data_master_komponen_rab = (function () {
     var initTable1 = function () {
