@@ -21,7 +21,7 @@ class BannerInformasiController extends ApiController
 
     public function index()
     {
-        $data = $this->bannerInformasiService->apiGetAll();
+        $data = $this->bannerInformasiService->getAll();
         return view("pages.akseslh.banner-informasi.form", compact('data'));
     }
 

@@ -18,16 +18,27 @@ class BannerInformasiService extends AppService implements AppServiceInterface
         parent::__construct($model);
     }
 
+    // public function getAll()
+    // {
+    //     $model = $this->model->query()->orderBy('short_id', 'ASC');
+
+    //     return DataTables::eloquent($model)->addIndexColumn()->toJson();
+    // }
+
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('short_id', 'ASC');
+        $result =   $this->model->newQuery()->latest()->first();
 
-        return DataTables::eloquent($model)->addIndexColumn()->toJson();
+        return $this->sendSuccess($result);
     }
 
     public function apiGetAll()
     {
-        $result =   $this->model->newQuery()->latest()->first();
+        $model =   $this->model->newQuery()->latest()->first();
+
+        $result = [
+            'deskripsi' => html_entity_decode($model->deskripsi)
+        ];
 
         return $this->sendSuccess($result);
     }
