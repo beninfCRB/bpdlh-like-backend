@@ -122,6 +122,16 @@ class PengajuanKegiatan extends AppModel
     }
 
     /**
+     * Get all of the rab_pengajuan_paket_kegiatans for the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function log_rab_pengajuan_paket_kegiatan(): HasMany
+    {
+        return $this->hasMany(LogRabPengajuanPaketKegiatan::class, 'pengajuan_kegiatan_id');
+    }
+
+    /**
      * Get the provinsi that owns the PengajuanKegiatan
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

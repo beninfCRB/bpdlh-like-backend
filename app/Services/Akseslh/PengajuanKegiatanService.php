@@ -262,26 +262,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $items =   $this->model->newQuery()->with(['document', 'log_tahapan_pengajuan.tahapan_pengajuan_kegiatan', 'detail_log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
-
-        $result = [
-            'id'    => $items->id,
-            'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
-            'provinsi_kegiatan' => $items->provinsi_kegiatan,
-            'kabupaten_kegiatan'    => $items->kabupaten_kegiatan,
-            'kecamatan_kegiatan'    => $items->kecamatan_kegiatan,
-            'kelurahan_kegiatan'    => $items->kelurahan_kegiatan,
-            'alamat_kegiatan'   => $items->alamat_kegiatan,
-            'tanggal_kegiatan' => $items->tanggal_mulai_kegiatan . ' - ' . $items->tanggal_akhir_kegiatan,
-            'waktu_kegiatan'    => $items->time_mulai_kegiatan . ' - ' . $items->time_akhir_kegiatan,
-            'proposal_kegiatan' => $items->proposal_kegiatan,
-            'tujuan_kegiatan'   => $items->tujuan_kegiatan,
-            'ruang_lingkup_kegiatan' => $items->ruang_lingkup_kegiatan,
-            'paket_kegiatan_id' => $items->paket_kegiatan_id,
-            'fileDocument'  => $items->document,
-            'log_tahapan_pengajuan' => $items->log_tahapan_pengajuan,
-            'detail_log_tahapan_pengajuan' => $items->detail_log_tahapan_pengajuan,
-        ];
+        $result =   $this->model->newQuery()->find($id);
 
         return $this->sendSuccess($result);
     }
