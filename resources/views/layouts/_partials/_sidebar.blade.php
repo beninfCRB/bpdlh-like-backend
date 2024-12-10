@@ -92,10 +92,6 @@
                                 <span>Agama</span></a>
                         </li>
                         <li>
-                            <a href="{{ route('pic-kelompok-masyarakat.index') }}" class="waves-effect"
-                                style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
-                        </li>
-                        <li>
                             <a href="{{ route('tahapan-pengajuan-kegiatan.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">> <span>Tahapan Pengajuan Kegiatan</span></a>
                         </li>
@@ -120,11 +116,6 @@
                                 <span>Master Data Bank</span></a>
                         </li>
                         <li>
-                            <a href="{{ route('user-akseslh.index') }}" class="waves-effect"
-                                style="padding: 10px 25px 10px 30px;">>
-                                <span>User Akseslh</span></a>
-                        </li>
-                        <li>
                             <a href="{{ route('log-jadwal-pembukaan.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">>
                                 <span>Log Jadwal Pembukaan</span></a>
@@ -139,7 +130,6 @@
                                 style="padding: 10px 25px 10px 30px;">>
                                 <span>Jenis Dokumen</span></a>
                         </li>
-
                         <li>
                             <a href="{{ route('transaksi-penyaluran.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">>
@@ -149,6 +139,26 @@
                             <a href="{{ route('master-data-indikator-laporan.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">>
                                 <span>Master Data Indikator Laporan</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="has_sub">
+                    <a href="#" class="waves-effect">
+                        <i class="md md-group"></i>
+                        <span>
+                            Data User
+                            <i class="md md-add pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="{{ route('pic-kelompok-masyarakat.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>PIC Kelompok Masyarakat</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('user-akseslh.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">>
+                                <span>User Akseslh</span></a>
                         </li>
                     </ul>
                 </li>
