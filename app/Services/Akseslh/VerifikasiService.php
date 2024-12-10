@@ -248,7 +248,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
             $keterangan = $data['status'] == 0 ? 'Ditolak' : 'Disetujui';
 
             // Update log tahapan berdasarkan status
-            $logTahapan->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akselh_id']]);
+            $logTahapan->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akseslh_id']]);
 
             // Update status pengajuan
             $read->update(['flag' => $statusUpdate]);

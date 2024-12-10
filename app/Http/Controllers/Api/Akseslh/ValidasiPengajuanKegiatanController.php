@@ -154,7 +154,7 @@ class ValidasiPengajuanKegiatanController extends ApiController
         }
     }
 
-    public function retur($id, Request $request)
+    public function retur_pengajuan_kegiatan($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
             'catatan_log'       => 'required|string',
@@ -168,6 +168,20 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
         $input = $validator->validated();
 
-        dd($input);
+        $input = $validator->validated();
+
+        $input['user_akseslh_id']  = $request->user()->id;
+
+        $result = $this->validasiPengajuanKegiatanService->retur_pengajuan_kegiatan($id, $input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
     }
 }

@@ -108,7 +108,7 @@ class VerifikasiController extends ApiController
 
 		$input  = $validator->validated();
 
-		$input['user_akselh_id']  = $request->user()->id;
+		$input['user_akseslh_id']  = $request->user()->id;
 
 		$result = $this->VerifikasiService->updateTemp($id, $input);
 

@@ -15,6 +15,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
+use App\Notifications\PengajuanKegiatanReturNotification;
 use App\Notifications\VerifikasiValidasiNotification;
 use App\Notifications\VerifikasiLaporanDitolakNotification;
 use App\Notifications\VerifikasiLaporanNotification;
@@ -933,6 +934,95 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'mail.verifikasi-pengajuan-kegiatan-ditolak'
                 );
             }
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($dataSend);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function retur_pengajuan_kegiatan($id, $data)
+    {
+        $read = $this->model->newQuery()->find($id);
+
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        // Memastikan flag adalah 2
+        if (!in_array($read->flag, [2, '2'])) return $this->sendError(null, 'Not Allowed', 403);
+
+        // Menghitung total dari rab_pengajuan_paket_kegiatans dengan eager loading
+        $total = $read->rab_pengajuan_paket_kegiatans->sum(function ($items) {
+            return $items->qty * $items->harga_unit;
+        });
+
+        \DB::beginTransaction();
+
+        try {
+            // Mengambil LogTahapanPengajuanKegiatan untuk deskripsi 'Verifikasi'
+            $logTahapan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Validasi');
+                })
+                ->first();
+
+            if (!$logTahapan) {
+                \DB::rollBack();
+                return $this->sendError(null, 'Tahapan tidak ditemukan', 422);
+            }
+
+            // Membuat Catatan Log Tahapan Pengajuan Kegiatan
+            $this->modelCatatanLogTahapanPengajuanKegiatan->create([
+                'log_tahapan_pengajuan_kegiatan_id' => $logTahapan->id,
+                'catatan_log'                       => $data['catatan_log']
+            ]);
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id'         => $read->id,
+                'tahapan_pengajuan_kegiatan_id' => $logTahapan->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk'                 => date("Y-m-d"),
+                'tanggal_selesai'               => date("Y-m-d"),
+                'user_akseslh_id'               => $data['user_akseslh_id']
+            ]);
+
+            // Update status tergantung dari status yang diberikan
+            $statusUpdate = 0;
+            $keterangan = 'Diretur';
+
+            // Update log tahapan berdasarkan status
+            $logTahapan->update([
+                'tanggal_selesai' => now(),
+                'user_akseslh_id' => $data['user_akseslh_id'],
+                'flag'            => 2
+            ]);
+
+            // Update status pengajuan
+            $read->update(['flag' => $statusUpdate, 'caping_rab' => $data['caping_rab']]);
+
+            // Persiapkan data untuk pengiriman notifikasi dan email
+            $dataSend = [
+                'nomor_pengajuan' => $read->nomor_pengajuan,
+                'catatan_log'     => $data['catatan_log'] ?? null,
+                'keterangan'      => $keterangan,
+                'status'          => $statusUpdate
+            ];
+
+            // Mark notifications as read and send notification
+            $read->user_akseslh->unreadNotifications->markAsRead();
+            $notification = new PengajuanKegiatanReturNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']);
+            $read->user_akseslh->notify($notification);
+
+            // Kirim email
+            $this->emailService->verifikasiValidasiDitolak(
+                $read->user_akseslh,
+                'Pengajuan Ditolak',
+                $dataSend,
+                null,
+                'mail.pengajuan-kegiatan-retur'
+            );
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
