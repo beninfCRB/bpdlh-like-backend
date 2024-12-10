@@ -78,6 +78,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('pengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'update']);
     });
 
+    Route::middleware(['masa_sanggah'])->group(function () {
+        Route::post('revisiPengajuanKegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'revisi_pengajuan_kegiatan_create']);
+        Route::put('revisiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'revisi_pengajuan_kegiatan_update']);
+    });
+
     Route::get('getDataRab/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'getDataRab']);
     Route::get('getDraftPengajuan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'show']);
 
@@ -104,7 +109,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('validasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update']);
         Route::put('validasiPengajuanKegiatanTermin1/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_termin_1']);
         Route::put('validasiPengajuanKegiatanTahapAkhir/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_tahap_akhir']);
-        Route::put('retur-pengajuan-kegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'retur']);
+        Route::put('retur-pengajuan-kegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'retur_pengajuan_kegiatan']);
     });
 
     Route::middleware(['ensurerole:pmu-bpdlh'])->group(function () {

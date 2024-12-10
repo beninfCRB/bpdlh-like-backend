@@ -6,13 +6,11 @@ namespace App\Services\Akseslh;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\PdfService;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\File as FileTable;
+use App\Models\LogRabPengajuanPaketKegiatan;
 use App\Models\PengajuanKegiatan;
 use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\RabPengajuanPaketKegiatan;
@@ -33,6 +31,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     protected $fileTable;
     protected $pdfService, $emailPhpService;
     protected $modelDetailLogTahapanPengajuanKegiatan;
+    protected $modelLogRabPengajuanKegiatan;
 
     public function __construct(
         FileUploadService $fileUploadService,
@@ -44,7 +43,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         TransaksiPenyaluran $modelTransaksiPenyaluran,
         PdfService $pdfService,
         EmailPhpService $emailPhpService,
-        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan,
+        LogRabPengajuanPaketKegiatan $modelLogRabPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
@@ -56,6 +56,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $this->pdfService                               = $pdfService;
         $this->emailPhpService                          = $emailPhpService;
         $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
+        $this->modelLogRabPengajuanKegiatan             = $modelLogRabPengajuanKegiatan;
     }
 
     public function getAll()
@@ -624,6 +625,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 }
             )
             ->latest()->first();
+        $retur = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where('deskripsi_kegiatan', 'Validasi');
+        })->first();
 
         if (!$model) return $this->sendSuccess(collect([]));
 
@@ -643,6 +647,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'paket_kegiatan_id'         => $model->paket_kegiatan_id,
             'fileDocument'              => $model->document,
             'nomor_pengajuan'           => $model->nomor_pengajuan,
+            'status'                    => $retur ? ($retur->flag == 2 ? 'retur' : null) : null,
+            'caping_rab'                => $model->caping_rab
         ];
 
         return $this->sendSuccess($result);
@@ -1002,6 +1008,145 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function revisi_pengajuan_kegiatan_create($data)
+    {
+        // Mengecek data sebelumnya
+        $read = PengajuanKegiatan::where(['id' => $data['id_pengajuan'], 'user_akseslh_id' => $data['user_akseslh_id']])->first();
+
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        if (!in_array($read->flag, [0, '0'])) return $this->sendError(null, 'Invalid Data', 422);
+
+        $retur = $read->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where('deskripsi_kegiatan', 'Validasi');
+        })->first();
+
+        if (!$retur || ($retur && $retur->flag != 2)) return $this->sendError(null, 'Invalid Data', 422);
+
+        \DB::beginTransaction();
+
+        try {
+
+            // Eager load relasi yang dibutuhkan dan map data untuk komponen RAB
+            $rab = $read->rab_pengajuan_paket_kegiatans->map(function ($item) {
+                return [
+                    'id_komponen'        => $item->master_komponen_rab->id,
+                    'jenis_komponen_rab' => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                    'komponen_rab'       => $item->master_komponen_rab->komponen_rab,
+                    'satuan'             => $item->master_komponen_rab->satuan->satuan,
+                    'harga_unit'         => $item->harga_unit,
+                    'nilai_standar'      => $item->harga_unit,
+                    'qty'                => $item->qty,
+                ];
+            });
+
+            // Menyiapkan data yang akan dikirim
+            $dataSend = [
+                'id_pengajuan'    => $read->id,
+                'nomor_pengajuan' => $read->nomor_pengajuan,
+                'caping_rab'      => $read->caping_rab,
+                'komponen_rab'    => $rab->groupBy('jenis_komponen_rab'),
+            ];
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($dataSend);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function revisi_pengajuan_kegiatan_update($id, $data)
+    {
+        // Mencari model pengajuan berdasarkan nomor pengajuan
+        $model = $this->model->with(['rab_pengajuan_paket_kegiatans', 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat'])
+            ->where(['id' => $id, 'user_akseslh_id' => $data['user_akseslh_id']])
+            ->first();
+
+        // Memeriksa apakah model ditemukan dan valid
+        if (!$model) {
+            return $this->sendError(null, 'Not found', 422);
+        }
+
+        if ($model->flag != 0) {
+            return $this->sendError(null, 'Not Allowed', 403);
+        }
+
+        $retur = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where('deskripsi_kegiatan', 'Validasi');
+        })->first();
+
+        if (!$retur || ($retur && $retur->flag != 2)) return $this->sendError(null, 'Invalid Data', 422);
+
+        \DB::beginTransaction();
+
+        try {
+
+            $retur->update(['tanggal_selesai' => null, 'user_akseslh_id' => null]);
+
+            // Ambil tahapan pengajuan kegiatan terbaru sekali saja
+            $id_log = $this->modelTahapanPengajuanKegiatan->firstWhere('deskripsi_kegiatan', 'Pengajuan')->id;
+
+            // Create Detail Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id'         => $model->id,
+                'tahapan_pengajuan_kegiatan_id' => $id_log,
+                'tanggal_masuk'                 => date("Y-m-d"),
+                'tanggal_selesai'               => date("Y-m-d")
+            ]);
+
+            // Menghitung total harga RAB dan mempersiapkan data komponen RAB
+            $total = 0;
+            $dataKomponenRabInput = array_map(function ($item) use ($model, &$total) {
+                $total += $item['qty'] * $item['harga_unit'];
+                return [
+                    'pengajuan_kegiatan_id' => $model->id,
+                    'komponen_rab_id'       => $item['id_komponen'],
+                    'harga_unit'            => $item['harga_unit'],
+                    'qty'                   => $item['qty'],
+                ];
+            }, $data['komponen_rab']);
+
+            // Menyimpan rab sebelumnya ke tabel log rab
+            $rabData = $model->rab_pengajuan_paket_kegiatans->map(function ($dt) use ($model) {
+                return [
+                    'id'                    => Uuid::uuid4()->toString(),
+                    'pengajuan_kegiatan_id' => $model->id,
+                    'komponen_rab_id'       => $dt->komponen_rab_id,
+                    'harga_unit'            => $dt->harga_unit,
+                    'qty'                   => $dt->qty,
+                    'created_at'            => Carbon::now(),
+                    'updated_at'            => Carbon::now(),
+                ];
+            });
+
+            // Insert Ke log Rab Pengajuan Kegiatan
+            $this->modelLogRabPengajuanKegiatan->insert($rabData->toArray());
+
+            // Menghapus RAB Sebelumnya
+            $model->rab_pengajuan_paket_kegiatans()->forceDelete();
+
+            // Menyimpan RAB pengajuan paket kegiatan
+            $model->rab_pengajuan_paket_kegiatans()->createMany($dataKomponenRabInput);
+
+            // Update status flag
+            $model->update(['flag' => 2]);
+
+            // Persiapkan data untuk response
+            $result = [
+                'nomor_pengajuan'   => $model->nomor_pengajuan,
+                'sebesar'           => $total ?? null,
+                'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
+            ];
+
+            \DB::commit();
+            return $this->sendSuccess($result);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : 'Internal Server Error', 500);
         }
     }
 }
