@@ -135,7 +135,7 @@
                         <tbody>
                             @foreach ($data->data->detail_log_tahapan_pengajuan->sortBy('tahapan_pengajuan_kegiatan.sort') as $item)
                                 <tr>
-                                    <td>{{ $item->tahapan_pengajuan_kegiatan->deskripsi_kegiatan }}</td>
+                                    <td>{{ $item->tahapan_pengajuan_kegiatan->deskripsi_kegiatan ?? null }}</td>
                                     <td>{{ $item->tanggal_masuk }}</td>
                                     <td>{{ $item->tanggal_selesai }}</td>
                                     <td>{{ $item->user_akseslh_admin->email ?? null }}</td>

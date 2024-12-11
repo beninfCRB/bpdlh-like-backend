@@ -583,7 +583,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
                 $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
                     'pengajuan_kegiatan_id' => $read->id,
-                    'tahapan_pengajuan_kegiatan_id' => $idLog->id,
+                    'tahapan_pengajuan_kegiatan_id' => $idLog->tahapan_pengajuan_kegiatan_id,
                     'tanggal_masuk' => date("Y-m-d"),
                     'tanggal_selesai' => date("Y-m-d"),
                     'user_akseslh_id'   => $data['user']->id

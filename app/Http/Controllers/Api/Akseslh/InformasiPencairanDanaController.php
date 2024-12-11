@@ -89,7 +89,7 @@ class InformasiPencairanDanaController extends ApiController
         $validator = Validator::make($request->all(), [
             'perjanjian_kerjasama'                  => 'required|file|mimes:pdf,jpg,png',
             'tanggal_kegiatan'                      => 'nullable|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
-            'waktu_kegiatan'                        => 'nullable|string|regex:/^\d{2}:\d{2} \- \d{2}:\d{2}$/',
+            'waktu_kegiatan'                        => 'nullable|string|regex:/^\d{2}:\d{2}(:\d{2})? - \d{2}:\d{2}(:\d{2})?$/',
         ]);
 
         if ($validator->fails()) {
