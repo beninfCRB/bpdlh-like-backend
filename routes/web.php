@@ -46,6 +46,7 @@ Route::delete('/dokumen-delete/{id}', [App\Http\Controllers\Cms\Akseslh\JenisDok
 Route::middleware(['auth'])->group(function () {
 
     Route::view('/home', 'pages.home.index')->name('home');
+    Route::get('dashboard', [App\Http\Controllers\Cms\DashboardController::class, 'index']);
 
     Route::prefix('akseslh')->group(function () {
 
