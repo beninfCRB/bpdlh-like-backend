@@ -609,13 +609,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $retur = null;
 
+        if (!$model) return $this->sendSuccess(collect([]));
+
         if ($model->log_tahapan_pengajuan) {
             $retur = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                 $q->where('deskripsi_kegiatan', 'Validasi');
             })->first();
         }
-
-        if (!$model) return $this->sendSuccess(collect([]));
 
         $result = [
             'id'                        => $model->id,
