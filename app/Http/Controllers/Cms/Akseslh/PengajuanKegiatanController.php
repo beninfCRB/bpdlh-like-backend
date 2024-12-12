@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\ApiController;
+use App\Models\File;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
 use App\Services\Akseslh\UserEksternalService;
@@ -32,7 +33,8 @@ class PengajuanKegiatanController extends ApiController
 
     public function index()
     {
-        return view("pages.akseslh.pengajuan-kegiatan.index");
+        $group = File::select('group')->distinct()->get();
+        return view("pages.akseslh.pengajuan-kegiatan.index", compact('group'));
     }
 
     public function create()

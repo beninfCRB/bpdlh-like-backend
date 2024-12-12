@@ -46,17 +46,19 @@ class DashboardController extends Controller
         return response()->json(['total' => $total]);
     }
 
-    public function download_zip($group)
+    public function download_zip(Request $request)
     {
+        $request->validate(['group' => 'required']);
+
         // Ambil file berdasarkan group
-        $files = File::where('group', $group)->get();
+        $files = File::where('group', $request->group)->get();
 
         if ($files->isEmpty()) {
             return response()->json(['message' => 'No files found for this group.'], 404);
         }
 
         // Buat nama file zip
-        $zipFileName = $group . '_files_' . time() . '.zip';
+        $zipFileName = $request->group . '_files_' . time() . '.zip';
 
         // Tentukan path sementara untuk menyimpan file zip
         $zipFilePath = storage_path('app/public/' . $zipFileName);

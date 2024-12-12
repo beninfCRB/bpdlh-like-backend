@@ -21,7 +21,7 @@ Route::get('/debug-sentry', function () {
     dd(File::where('group', 'document')->get());
 });
 
-Route::get('download-zip/{group}', [App\Http\Controllers\Cms\DashboardController::class, 'download_zip']);
+Route::post('download-zip', [App\Http\Controllers\Cms\DashboardController::class, 'download_zip'])->name('download-zip');
 
 Route::view('/login', 'auth.login')->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login.auth')->middleware('recaptcha');
