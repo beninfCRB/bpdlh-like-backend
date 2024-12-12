@@ -17,40 +17,48 @@
     <!--Widget-4 -->
     <div class="row">
         <div class="col-md-6 col-sm-6 col-lg-3">
-            <div class="mini-stat clearfix bx-shadow">
-                <span class="mini-stat-icon bg-info"><i class="fa fa-users"></i></span>
-                <div class="mini-stat-info text-right text-muted">
-                    <span class="counter" id="counter-users">0</span>
-                    Total Users
+            <a href="{{ route('user-akseslh.index') }}">
+                <div class="mini-stat clearfix bx-shadow">
+                    <span class="mini-stat-icon bg-info"><i class="fa fa-users"></i></span>
+                    <div class="mini-stat-info text-right text-muted">
+                        <span class="counter" id="counter-users">0</span>
+                        Total Users
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-md-6 col-sm-6 col-lg-3">
-            <div class="mini-stat clearfix bx-shadow">
-                <span class="mini-stat-icon bg-warning"><i class="fa fa-user"></i></span>
-                <div class="mini-stat-info text-right text-muted">
-                    <span class="counter" id="counter-pic">0</span>
-                    Total PIC
+            <a href="{{ route('pic-kelompok-masyarakat.index') }}">
+                <div class="mini-stat clearfix bx-shadow">
+                    <span class="mini-stat-icon bg-warning"><i class="fa fa-user"></i></span>
+                    <div class="mini-stat-info text-right text-muted">
+                        <span class="counter" id="counter-pic">0</span>
+                        Total PIC
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-md-6 col-sm-6 col-lg-3">
-            <div class="mini-stat clearfix bx-shadow">
-                <span class="mini-stat-icon bg-success"><i class="fa fa-eye"></i></span>
-                <div class="mini-stat-info text-right text-muted">
-                    <span class="counter" id="counter-kelompok">0</span>
-                    Total Kelompok
+            <a href="{{ route('kelompok-masyarakat.index') }}">
+                <div class="mini-stat clearfix bx-shadow">
+                    <span class="mini-stat-icon bg-success"><i class="fa fa-eye"></i></span>
+                    <div class="mini-stat-info text-right text-muted">
+                        <span class="counter" id="counter-kelompok">0</span>
+                        Total Kelompok
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-md-6 col-sm-6 col-lg-3">
-            <div class="mini-stat clearfix bx-shadow">
-                <span class="mini-stat-icon bg-pink"><i class="fa fa-fax"></i></span>
-                <div class="mini-stat-info text-right text-muted">
-                    <span class="counter" id="counter-pengajuan">0</span>
-                    Total Pengajuan
+            <a href="{{ route('pengajuan-kegiatan.index') }}">
+                <div class="mini-stat clearfix bx-shadow">
+                    <span class="mini-stat-icon bg-pink"><i class="fa fa-fax"></i></span>
+                    <div class="mini-stat-info text-right text-muted">
+                        <span class="counter" id="counter-pengajuan">0</span>
+                        Total Pengajuan
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
     </div>
