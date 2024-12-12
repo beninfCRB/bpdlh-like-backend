@@ -271,7 +271,7 @@ class RegisterController extends ApiController
             $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
 
             // Create token for user to access dashboard
-            $token = $user->user_akseslh->createToken("auth")->plainTextToken;
+            // $token = $user->user_akseslh->createToken("auth")->plainTextToken;
 
             // Save document 
             if (isset($input['profil_kelompok']) && $input['profil_kelompok']->getClientOriginalExtension() == 'pdf') {
@@ -314,12 +314,7 @@ class RegisterController extends ApiController
 
             // Return token to frontend
             return $this->sendSuccess([
-                'token'                     => $token,
-                'jenis_kelompok_masyarakat' => $user->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
-                'kelompok_masyarakat_id'    => $user->kelompok_masyarakat->id,
-                'kelompok_masyarakat'       => $user->kelompok_masyarakat->kelompok_masyarakat,
-                'role_user'                 => $user->user_akseslh->role_user,
-                'nama'                      => $user->nama_pic,
+                'message'                     => "Proses Registrasi Berhasil, Silahkan periksa email anda",
             ]);
         } catch (\Throwable $th) {
 

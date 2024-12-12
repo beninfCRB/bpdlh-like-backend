@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\File;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Route;
 
@@ -16,8 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/debug-sentry', function () {
     // dd(date('Y-m-d', strtotime('31-12-9999')), date('Y-m-d'));
-    dd(Uuid::uuid4()->toString());
+    // dd(Uuid::uuid4()->toString());
+    dd(File::where('group', 'document')->get());
 });
+
+Route::get('download-zip/{group}', [App\Http\Controllers\Cms\DashboardController::class, 'download_zip']);
 
 Route::view('/login', 'auth.login')->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login.auth')->middleware('recaptcha');
@@ -83,6 +87,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('status-pernikahan', App\Http\Controllers\Cms\Akseslh\StatusPernikahanController::class);
         Route::resource('agama', App\Http\Controllers\Cms\Akseslh\AgamaController::class);
         Route::resource('log-masa-sanggah', App\Http\Controllers\Cms\Akseslh\LogMasaSanggahController::class);
+        Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen']);
 
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);

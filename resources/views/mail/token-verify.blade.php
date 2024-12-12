@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Token Verifikasi</title>
+    <title>Kode Verifikasi Verifikasi</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,14 +61,16 @@
             Halo {{ $email }},
         </p>
         <p>
-            Terima kasih atas antusiasme Anda pada Layanan Dana Masyarakat untuk Lingkungan. Berikut adalah token
+            Terima kasih atas antusiasme Anda pada Layanan Dana Masyarakat untuk Lingkungan. Berikut adalah Kode
+            Verifikasi
             yang dapat anda gunakan untuk proses registrasi:
         </p>
         <div class="info">
-            <p><strong>Token:</strong> {{ $token }}</p>
+            <p><strong>Kode Verifikasi:</strong> {{ $token }}</p>
         </div>
         <p>
-            Token berikut hanya berlaku selama 30 menit, Harap tidak membagikannya kepada pihak lain. Jika Anda memiliki
+            Kode Verifikasi berikut hanya berlaku selama 30 menit, Harap tidak membagikannya kepada pihak lain. Jika
+            Anda memiliki
             pertanyaan lebih lanjut atau memerlukan bantuan kami, jangan ragu untuk menghubungi kami melalui email
             <a href="mailto:layanandanamasyarakat@bpdlh.id">
                 layanandanamasyarakat@bpdlh.id.

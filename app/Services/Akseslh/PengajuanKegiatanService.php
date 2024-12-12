@@ -1135,4 +1135,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, $this->debug ? $exception->getMessage() : 'Internal Server Error', 500);
         }
     }
+
+    public function getDokumen($id)
+    {
+        $result =   $this->model->newQuery()->find($id);
+        dd($result->document);
+    }
 }
