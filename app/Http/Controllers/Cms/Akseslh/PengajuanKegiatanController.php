@@ -135,4 +135,10 @@ class PengajuanKegiatanController extends ApiController
 
         return Excel::download(new PengajuanKegiatanExport($input), 'pengajuan_kegiatan.xlsx');
     }
+
+    public function dokumen($id)
+    {
+        $data = $this->PengajuanKegiatanService->getDokumen($id);
+        return view('pages.akseslh.pengajuan-kegiatan.dokumen', compact('data'));
+    }
 }

@@ -481,12 +481,21 @@ var data_pengajuan_kegiatan = (function () {
                     orderable: false,
                     render: function (data, type, full, meta) {
                         var showRoute = route + "/" + full.id + "";
+                        var showDokumenRoute =
+                            route + "/" + full.id + "/dokumen";
                         return (
-                            `<a href="` +
+                            `
+                        <a href="` +
                             showRoute +
-                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Lihat Detail">
                           <i class="fa fa-eye"></i>
-                        </a>`
+                        </a>
+                        <a href="` +
+                            showDokumenRoute +
+                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Lihat Dokumen">
+                          <i class="fa fa-file"></i>
+                        </a>
+                        `
                         );
                     },
                 },
