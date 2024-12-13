@@ -879,6 +879,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             // Jika ada file document, proses upload
             if (isset($data['fileDocument'])) {
+
+                $temp = $read->document()->where('group', 'document')->first();
+                if ($temp) {
+                    $this->fileUploadService->deleteFiles($temp->file_path);
+                    $temp->delete();
+                }
+
                 $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
                 if ($upload) {
                     $upload->update([
