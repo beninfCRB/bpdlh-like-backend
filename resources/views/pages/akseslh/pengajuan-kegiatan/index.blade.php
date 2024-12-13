@@ -87,7 +87,7 @@
                         <select name="group" id="group" class="form-control">
                             <option value="">-- Pilih --</option>
                             @foreach ($group as $item)
-                                <option value="{{ $item->group }}">{{ $item->group }}</option>
+                                <option value="{{ $item->group }}">{{ toPascalCase($item->group) }}</option>
                             @endforeach
                         </select>
                         <button class="btn btn-primary" type="submit">Download</button>
