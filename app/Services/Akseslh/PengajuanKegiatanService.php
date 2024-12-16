@@ -1146,6 +1146,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     public function getDokumen($id)
     {
         $result =   $this->model->newQuery()->find($id);
-        dd($result->document);
+
+        return $this->sendSuccess($result);
     }
 }
