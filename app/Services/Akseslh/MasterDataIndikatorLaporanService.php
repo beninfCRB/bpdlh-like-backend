@@ -126,6 +126,6 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
             'indikator'     => $result
         ];
 
-        return $this->sendSuccess($return);
+        return $this->sendSuccess($result);
     }
 }
