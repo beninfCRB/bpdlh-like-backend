@@ -3,6 +3,7 @@
 
 namespace App\Services\Akseslh;
 
+use App\Models\LogJadwalPembukaan;
 use App\Models\MasterDataIndikatorLaporan;
 use App\Models\PengajuanKegiatan;
 use App\Services\AppService;
@@ -11,12 +12,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MasterDataIndikatorLaporanService extends AppService implements AppServiceInterface
 {
-    protected $modelPengajuanKegiatan;
+    protected $modelPengajuanKegiatan, $modelLogJadwalPembukaan;
 
-    public function __construct(MasterDataIndikatorLaporan $model, PengajuanKegiatan $pengajuanKegiatan)
+    public function __construct(MasterDataIndikatorLaporan $model, PengajuanKegiatan $pengajuanKegiatan, LogJadwalPembukaan $modelLogJadwalPembukaan)
     {
         parent::__construct($model);
         $this->modelPengajuanKegiatan = $pengajuanKegiatan;
+        $this->modelLogJadwalPembukaan  = $modelLogJadwalPembukaan;
     }
 
     public function getAll()
@@ -109,15 +111,20 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
         $jenis_kegiatan_id          = $pengajuan->paket_kegiatan->jenis_kegiatan_id;
         $sub_tematik_kegiatan_id    = $pengajuan->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id;
         $result = $this->model->newQuery()->where(['jenis_kegiatan_id' => $jenis_kegiatan_id, 'sub_tematik_kegiatan_id' => $sub_tematik_kegiatan_id])->get();
+        $tanggal_awal = $this->modelLogJadwalPembukaan->latest()->first()->tanggal_awal ?? null;
 
         $result->transform(function ($item, $key) {
             return [
-                'id' => $item->id,
+                'id'                => $item->id,
                 'nama_indikator'    => $item->nama_indikator,
-                'satuan'    => $item->satuan,
-                'tipe_data'    => $item->tipe_data,
+                'satuan'            => $item->satuan,
+                'tipe_data'         => $item->tipe_data,
             ];
         });
+        $return = [
+            'tanggal_awal'  => $tanggal_awal,
+            'indikator'     => $result
+        ];
 
         return $this->sendSuccess($result);
     }
