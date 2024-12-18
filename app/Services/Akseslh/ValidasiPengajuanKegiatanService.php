@@ -890,15 +890,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             // Update log tahapan berdasarkan status
             $logTahapan->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akseslh_id']]);
 
-            // upload document
-            $upload = $this->fileUploadService->handleFile($data['file_sk'])->saveToDb('document_sk');
-            if ($upload) {
-                $upload->update([
-                    'fileable_type' => get_class($read),
-                    'fileable_id'   => $read->id,
-                ]);
-            }
-
             // Update status pengajuan
             $read->update(['flag' => $statusUpdate]);
 
@@ -918,6 +909,15 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             $read->user_akseslh->notify($notification);
 
             if ($data['status'] != 0) {
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['file_sk'])->saveToDb('document_sk');
+                if ($upload) {
+                    $upload->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
