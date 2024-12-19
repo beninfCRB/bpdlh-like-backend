@@ -325,6 +325,156 @@ class RegisterController extends ApiController
         }
     }
 
+    public function register_2_temp(Request $request): \Illuminate\Http\JsonResponse
+    {
+        // Menambahkan custom rule untuk mengecek apakah inputan sama dengan "undefined"
+        Validator::extend('not_undefined', function ($attribute, $value, $parameters, $validator) {
+            return $value !== 'undefined'; // Mengembalikan false jika nilai "undefined"
+        });
+
+        $validator = Validator::make($request->all(), [
+            'jenis_kelompok_masyarakat_id'      => 'required|exists:jenis_kelompok_masyarakats,id',
+            'kelompok_masyarakat'               => 'required|not_undefined',
+            'provinsi_kelompok_masyarakat_id'   => 'required',
+            'kabupaten_kelompok_masyarakat_id'  => 'required',
+            'kecamatan_kelompok_masyarakat_id'  => 'required',
+            'kelurahan_kelompok_masyarakat_id'  => 'required',
+            'profil_kelompok'                   => 'required|file|mimes:pdf,doc,docx|max:10192',
+            'foto_ktp'                          => 'required|file|mimes:png,jpg,jpeg|max:2048',
+            'foto_selfie'                       => 'required|file|mimes:png,jpg,jpeg|max:2048',
+            'nama_pic'                          => 'required|max:255|string',
+            'nomor_identitas_pic'               => ['required', 'string', 'min:16', 'max:16', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_identitas_pic')->whereNull('deleted_at')],
+            'nomor_npwp_pic'                    => 'nullable',
+            'alamat_pic'                        => 'required|string|max:255',
+            'provinsi_pic'                      => 'required',
+            'kabupaten_pic'                     => 'required',
+            'kecamatan_pic'                     => 'required',
+            'kelurahan_pic'                     => 'required',
+            'tempat_lahir'                      => 'required',
+            'tanggal_lahir'                     => 'required|date',
+            'agama_id'                          => 'required|exists:agamas,id',
+            'status_perkawinan_id'              => 'required|exists:status_pernikahans,id',
+            'nama_gadis_ibu_kandung'            => 'required',
+            'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
+            'nohp_pic'                          => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->whereNull('deleted_at')],
+            'email_pic'                         => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')],
+            'kode_aktivasi'                     => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        \DB::beginTransaction();
+
+        $record = \DB::table('users_verify_tokens')
+            ->where('user_email', $request->email_pic)
+            ->where('token', $request->kode_aktivasi)
+            ->first();
+
+        if (!$record) {
+            return $this->sendError(null, 'Token tidak valid.', 422);
+        } elseif (Carbon::parse($record->expired_at)->isPast()) {
+            return $this->sendError(null, 'Token sudah kedaluwarsa.', 422);
+        }
+
+        $input = $validator->validated();
+
+        // Use firstOrCreate for more efficient query
+        $kelompok_masyarakat = \DB::table('kelompok_masyarakats')
+            ->where('kelompok_masyarakat', $input['kelompok_masyarakat'])
+            ->where('provinsi_kelompok_masyarakat_id', $input['provinsi_kelompok_masyarakat_id'])
+            ->where('kabupaten_kelompok_masyarakat_id', $input['kabupaten_kelompok_masyarakat_id'])
+            ->where('kecamatan_kelompok_masyarakat_id', $input['kecamatan_kelompok_masyarakat_id'])
+            ->where('kelurahan_kelompok_masyarakat_id', $input['kelurahan_kelompok_masyarakat_id'])
+            ->first();
+
+        if (!$kelompok_masyarakat) {
+            $kelompok_masyarakat = KelompokMasyarakat::create([
+                'jenis_kelompok_masyarakat_id'      =>  $input['jenis_kelompok_masyarakat_id'],
+                'kelompok_masyarakat'               =>  $input['kelompok_masyarakat'],
+                'provinsi_kelompok_masyarakat_id'   =>  $input['provinsi_kelompok_masyarakat_id'],
+                'kabupaten_kelompok_masyarakat_id'  =>  $input['kabupaten_kelompok_masyarakat_id'],
+                'kecamatan_kelompok_masyarakat_id'  =>  $input['kecamatan_kelompok_masyarakat_id'],
+                'kelurahan_kelompok_masyarakat_id'  =>  $input['kelurahan_kelompok_masyarakat_id'],
+                'flag'                              => 1,
+            ]);
+        }
+
+        $input['kelompok_masyarakat'] = $kelompok_masyarakat->id;
+
+        // Make default password for first login
+        $default_password = crypt($input['email_pic'] . Carbon::now()->format('d M Y H:i:s'), $input['email_pic']);
+
+        try {
+            $user = DataPicKelompokMasyarakat::create([
+                'kelompok_masyarakat_id'    => $input['kelompok_masyarakat'],
+                'nama_pic'                  => $input['nama_pic'],
+                'jenis_identitas_pic'       => 'KTP',
+                'nomor_identitas_pic'       => $input['nomor_identitas_pic'],
+                'nomor_npwp_pic'            => $input['nomor_npwp_pic'] ?? null,
+                'email_pic'                 => $input['email_pic'],
+                'nohp_pic'                  => $input['nohp_pic'],
+                'alamat_pic'                => $input['alamat_pic'],
+                'provinsi_pic'              => $input['provinsi_pic'],
+                'kabupaten_pic'             => $input['kabupaten_pic'],
+                'kecamatan_pic'             => $input['kecamatan_pic'],
+                'kelurahan_pic'             => $input['kelurahan_pic'],
+                'flag' => 1,
+                'tempat_lahir'              => $input['tempat_lahir'],
+                'tanggal_lahir'             => $input['tanggal_lahir'],
+                'agama_id'                  => $input['agama_id'],
+                'status_perkawinan_id'      => $input['status_perkawinan_id'],
+                'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
+                'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],
+            ]);
+
+            $user_akseslh = UserAkseslh::create([
+                'data_pic_kelompok_masyarakat_id'   => $user->id,
+                'nama_pic'                          => $input['nama_pic'],
+                'email'                             => $input['email_pic'],
+                'password'                          => Hash::make($default_password),
+                'status_user'                       => 'ACTIVE',
+                'role_user'                         => 'maker',
+                'flag'                              => 1,
+            ]);
+
+            //Send email notification
+            $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
+
+            // Upload files in a loop
+            $documents = [
+                'profil_kelompok' => 'profil_kelompok',
+                'foto_ktp' => 'foto_ktp',
+                'foto_selfie' => 'foto_selfie',
+            ];
+
+            foreach ($documents as $key => $column) {
+                if (isset($input[$key])) {
+                    $upload = $this->fileUploadService->handleImage($input[$key])->saveToDb($column);
+                    if ($upload) {
+                        $document = $this->fileTable->newQuery()->find($upload->id);
+                        $document->update([
+                            'fileable_type' => get_class($user),
+                            'fileable_id'   => $user->id,
+                        ]);
+                    }
+                }
+            }
+
+            \DB::commit();
+
+            return $this->sendSuccess([
+                'message' => "Proses Registrasi Berhasil, Silahkan periksa email anda",
+            ]);
+        } catch (\Throwable $th) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, env('APP_ENV') == 'local' ? $th->getMessage() : 'Internal server error', 500);
+        }
+    }
+
+
     public function getKodeAktivasi(Request $request)
     {
         $validator = Validator::make($request->all(), [
