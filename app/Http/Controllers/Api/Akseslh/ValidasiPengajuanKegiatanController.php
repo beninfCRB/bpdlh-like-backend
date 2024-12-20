@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api\Akseslh;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\ValidasiPengajuanKegiatanService;
-use Svg\Tag\Rect;
 
 class ValidasiPengajuanKegiatanController extends ApiController
 {
@@ -76,9 +74,9 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
         $input = $validator->validated();
 
-        $input['user_akselh_id']  = $request->user()->id;
+        $input['user_akseslh_id']  = $request->user()->id;
 
-        $result = $this->validasiPengajuanKegiatanService->update($id, $input);
+        $result = $this->validasiPengajuanKegiatanService->updateTemp($id, $input);
 
         try {
             if ($result->success) {
@@ -128,8 +126,11 @@ class ValidasiPengajuanKegiatanController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'status'        => 'required',
-            'catatan_log'   => 'nullable'
         ]);
+
+        $validator->sometimes('catatan_log', 'required|string', function ($input) {
+            return $input->status == 0;
+        });
 
         if ($validator->fails()) {
             # code...
@@ -141,6 +142,37 @@ class ValidasiPengajuanKegiatanController extends ApiController
         $input['user']  = $request->user();
 
         $result = $this->validasiPengajuanKegiatanService->update_tahap_akhir($id, $input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function retur_pengajuan_kegiatan($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'catatan_log'       => 'required|string',
+            'caping_rab'        => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input = $validator->validated();
+
+        $input = $validator->validated();
+
+        $input['user_akseslh_id']  = $request->user()->id;
+
+        $result = $this->validasiPengajuanKegiatanService->retur_pengajuan_kegiatan($id, $input);
 
         try {
             if ($result->success) {

@@ -55,7 +55,7 @@ class KotaService extends AppService implements AppServiceInterface
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -75,7 +75,7 @@ class KotaService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -88,7 +88,7 @@ class KotaService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -106,7 +106,7 @@ class KotaService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -213,9 +213,12 @@ class KotaService extends AppService implements AppServiceInterface
         return $result;
     }
 
-    public function apiGetAll()
+    public function apiGetAll($name = null)
     {
         $result  = $this->model->newQuery()
+            ->when($name, function ($q) use ($name) {
+                $q->where('name', 'like', '%' . $name . '%');
+            })
             ->orderBy('id', 'ASC')
             ->get();
 

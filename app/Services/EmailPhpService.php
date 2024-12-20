@@ -89,6 +89,46 @@ class EmailPhpService
         }
     }
 
+    public function verifikasiLaporanDitolak($to, $subject, $data, $altBody = '', $view)
+    {
+        try {
+            // Pengaturan pengirim dan penerima
+            $this->mail->setFrom(env('PHPEMAIL_FROM_ADDRESS'), env('PHPEMAIL_FROM_NAME'));
+            $this->mail->addAddress($to->email);
+
+            // Konten email
+            $this->mail->isHTML(true);
+            $this->mail->Subject = $subject;
+            $this->mail->Body    = view($view, compact('data', 'to'));
+            $this->mail->AltBody = $altBody;
+
+            $this->mail->send();
+            return 'Email berhasil dikirim';
+        } catch (Exception $e) {
+            return "Email gagal dikirim. Mailer Error: {$this->mail->ErrorInfo}";
+        }
+    }
+
+    public function profileDitolak($to, $subject, $data, $altBody = '', $view)
+    {
+        try {
+            // Pengaturan pengirim dan penerima
+            $this->mail->setFrom(env('PHPEMAIL_FROM_ADDRESS'), env('PHPEMAIL_FROM_NAME'));
+            $this->mail->addAddress($to->email);
+
+            // Konten email
+            $this->mail->isHTML(true);
+            $this->mail->Subject = $subject;
+            $this->mail->Body    = view($view, compact('data', 'to'));
+            $this->mail->AltBody = $altBody;
+
+            $this->mail->send();
+            return 'Email berhasil dikirim';
+        } catch (Exception $e) {
+            return "Email gagal dikirim. Mailer Error: {$this->mail->ErrorInfo}";
+        }
+    }
+
     public function pengajuanKegiatanDiterima($to, $subject, $data, $altBody = '', $view)
     {
         try {
@@ -106,6 +146,27 @@ class EmailPhpService
             return true;
         } catch (\Throwable $th) {
             //throw $th;
+            return "Email gagal dikirim. Mailer Error: {$this->mail->ErrorInfo}";
+        }
+    }
+
+    public function getTokenAktivasi($to, $subject, $token, $altBody = '')
+    {
+        try {
+            // Pengaturan pengirim dan penerima
+            $this->mail->setFrom(env('PHPEMAIL_FROM_ADDRESS'), env('PHPEMAIL_FROM_NAME'));
+            $this->mail->addAddress($to);
+
+            // Konten email
+            $this->mail->isHTML(true);
+            $this->mail->Subject = $subject;
+
+            $this->mail->Body    = view('mail.token-verify', ['email' => $to, 'token' => $token]);
+            $this->mail->AltBody = $altBody;
+
+            $this->mail->send();
+            return 'Email berhasil dikirim';
+        } catch (Exception $e) {
             return "Email gagal dikirim. Mailer Error: {$this->mail->ErrorInfo}";
         }
     }

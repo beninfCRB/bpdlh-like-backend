@@ -13,14 +13,20 @@ use App\Services\AppServiceInterface;
 use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
+use App\Notifications\PengajuanKegiatanReturNotification;
 use App\Notifications\VerifikasiValidasiNotification;
+use App\Notifications\VerifikasiLaporanDitolakNotification;
+use App\Notifications\VerifikasiLaporanNotification;
+use App\Notifications\VerifikasiValidasiDitolakNotification;
 
 
 class ValidasiPengajuanKegiatanService extends AppService implements AppServiceInterface
 {
     private $modelTahapanPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
     protected $modelCatatanLogTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
@@ -33,7 +39,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan,
         FileUploadService $fileUploadService,
         FileTable $fileTable,
-        EmailPhpService $emailPhpService
+        EmailPhpService $emailPhpService,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
@@ -42,6 +49,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         $this->fileUploadService                        =   $fileUploadService;
         $this->fileTable                                =   $fileTable;
         $this->emailService = $emailPhpService;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -102,9 +110,53 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         )
                         ->orderBy('created_at', 'ASC')
                         ->get();
+
+                    $result->transform(function ($items, $key) {
+                        return [
+                            'id'                        => $items->id,
+                            'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                            'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                            'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
+                            'kegiatan'                  => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                            'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                            'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
+                            'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                            'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                            'tanggal_akhir_validasi'    => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                            'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                            'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                            'lokasi'                    => $items->alamat_kegiatan,
+                            'nomor_pengajuan'           => $items->nomor_pengajuan,
+                            'proposal_kegiatan'         => $items->proposal_kegiatan,
+                            'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                            'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                            'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                            })->first()->user_akseslh_admin->email,
+                            'tanggal_verifikasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                            })->first()->tanggal_selesai,
+                            'document'                      => $items->document,
+                            'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
+                                return [
+                                    'nilai_laporan' => $items->nilai_laporan,
+                                    'nama_indikator' => $items->master_data_indikator_laporan->nama_indikator,
+                                    'satuan' => $items->master_data_indikator_laporan->satuan,
+                                    'tipe_data' => $items->master_data_indikator_laporan->satuan,
+                                ];
+                            }),
+                            'laporan_termin_1' => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
+                            })->first()->document_file,
+                        ];
+                    });
+
+                    return $this->sendSuccess($result);
                     break;
 
-                case 8:
+                case 9:
                     # code...
                     $result  = $this->model->newQuery()
                         ->whereHas(
@@ -118,6 +170,56 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         )
                         ->orderBy('created_at', 'ASC')
                         ->get();
+
+                    $result->transform(function ($items, $key) {
+                        return [
+                            'id'                        => $items->id,
+                            'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                            'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                            'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
+                            'kegiatan'                  => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                            'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                            'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
+                            'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                            'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                            'tanggal_akhir_validasi'    => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                            'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                            'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                            'lokasi'                    => $items->alamat_kegiatan,
+                            'nomor_pengajuan'           => $items->nomor_pengajuan,
+                            'proposal_kegiatan'         => $items->proposal_kegiatan,
+                            'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                            'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                            'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                            })->first()->user_akseslh_admin->email,
+                            'tanggal_verifikasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                            })->first()->tanggal_selesai,
+                            'document'                      => $items->document,
+                            'laporan_termin_1'              => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
+                            })->first()->document_file,
+                            'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
+                                return [
+                                    'nilai_laporan' => $items->nilai_laporan,
+                                    'nama_indikator' => $items->master_data_indikator_laporan->nama_indikator,
+                                    'satuan' => $items->master_data_indikator_laporan->satuan,
+                                    'tipe_data' => $items->master_data_indikator_laporan->satuan,
+                                ];
+                            }),
+                            'nilai_penyaluran'          => $items->transaksi_penyaluran()->sum('nilai_penyaluran'),
+                            'jumlah_pengembalian'       => $items->pengembalian->jumlah_pengembalian ?? 0,
+                            'bukti_pengembalian'        => $items->pengembalian->document ?? null,
+                            'laporan_akhir'             => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Laporan Akhir Kegiatan']);
+                            })->first()->document_file
+                        ];
+                    });
+
+                    return $this->sendSuccess($result);
                     break;
 
                 default:
@@ -176,7 +278,15 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'tanggal_verifikasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                 })->first()->tanggal_selesai,
-                'document'                  => $items->document
+                'document'                      => $items->document,
+                'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
+                    return [
+                        'nilai_laporan' => $items->nilai_laporan,
+                        'nama_indikator' => $items->master_data_indikator_laporan->nama_indikator,
+                        'satuan' => $items->master_data_indikator_laporan->satuan,
+                        'tipe_data' => $items->master_data_indikator_laporan->satuan,
+                    ];
+                })
             ];
         });
 
@@ -246,7 +356,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -254,7 +364,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
     {
         $read   =   $this->model->newQuery()->find($id);
 
-        if (!$read) return $this->sendError(null, 'Not Found');
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        if (!in_array($read->flag, [2, '2'])) return $this->sendError(null, 'Invalid data', 422);
 
         $total = 0;
 
@@ -280,20 +392,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'flag'                  => "3"
                 ]);
 
-            // $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
-            //     ->orderBy('created_at', 'DESC')->get();
-            // $dataLogTahapanPengajuanKegiatan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
-            //     ->with(['tahapan_pengajuan_kegiatan'])
-            //     ->where('pengajuan_kegiatan_id', $id)
-            //     ->orderBy('created_at', 'DESC')->get();
-
             if ($data['status'] == 0) {
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
-                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akseslh_id']]);
 
                 $read->flag = 20;
                 $read->save();
@@ -305,6 +410,10 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'status'          => '20'
                 );
 
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
+                $read->user_akseslh->notify(new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+
                 $this->emailService->verifikasiValidasiDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-pengajuan-kegiatan-ditolak');
             } else {
 
@@ -314,7 +423,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
-                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akselh_id']]);
+                    ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user_akseslh_id']]);
 
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
@@ -357,6 +466,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 //     'mail.pengajuan-kegiatan-diterima'
                 // );
 
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
                 $read->user_akseslh->notify(new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total));
             }
 
@@ -364,7 +475,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             return $this->sendSuccess($dataSend);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -377,6 +488,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
         // If data flag not equals 6 (Verifikasi Laporan Kegiatan Termin 1)
         if ($read->flag != 6 || $read->flag != '6') return $this->sendError(null, 'Data Invalid', 422);
+
+        $total = 0;
+
+        foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
+            # code...
+            $total += ($items->qty * $items->harga_unit);
+        }
 
         \DB::beginTransaction();
 
@@ -397,41 +515,103 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ]);
             }
 
-            // Update data langsung berdasarkan pengajuan_kegiatan_id
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
-                })
-                ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user']->id]);
+            if ($data['status'] == 1) {
+                # code...
 
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin II');
-                })
-                ->update(['tanggal_masuk' => date("Y-m-d")]);
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
+                    })
+                    ->first();
+                $idLog->tanggal_selesai = date('Y-m-d');
+                $idLog->user_akseslh_id = $data['user']->id;
 
-            $read->flag = 7;
-            $read->save();
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin II');
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
 
-            // Save document 
-            // upload document
-            $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
-
-            if (!empty($upload)) {
-                $image = $this->fileTable->newQuery()->find($upload->id);
-                $image->update([
-                    'fileable_type' => get_class($read),
-                    'fileable_id'   => $read->id,
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $read->id,
+                    'tahapan_pengajuan_kegiatan_id' => $idLog->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['user']->id
                 ]);
+
+                // Save document 
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
+
+                if (!empty($upload)) {
+                    $image = $this->fileTable->newQuery()->find($upload->id);
+                    $image->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
+                $read->user_akseslh->notify(new VerifikasiLaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+
+                $read->flag = 7;
+                $idLog->save();
+                $read->save();
+            } else {
+
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
+                    })
+                    ->first();
+
+                $idLog->tanggal_masuk = null;
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                    })
+                    ->update(['tanggal_selesai' => null]);
+
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $read->id,
+                    'tahapan_pengajuan_kegiatan_id' => $idLog->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['user']->id
+                ]);
+
+                $dataSend = array(
+                    'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'catatan_log'     => $data['catatan_log'],
+                    'keterangan'      => 'Ditolak',
+                    'status'          => '5'
+                );
+
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
+                $read->user_akseslh->notify(new VerifikasiLaporanDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+
+                $this->emailService->verifikasiLaporanDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-laporan-ditolak');
+
+                $read->flag = 5;
+                $idLog->save();
+                $read->save();
             }
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -445,41 +625,86 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         // If data flag not equals 8 (Verifikasi Laporan Akhir)
         if ($read->flag != 9 || $read->flag != '9') return $this->sendError(null, 'Data Invalid', 422);
 
+        $total = 0;
+
+        foreach ($read->rab_pengajuan_paket_kegiatans as $items) {
+            # code...
+            $total += ($items->qty * $items->harga_unit);
+        }
+
         \DB::beginTransaction();
 
         try {
 
+            $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
+                })
+                ->first();
+
             if (isset($data['catatan_log'])) {
-                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                    ->where('pengajuan_kegiatan_id', $id)
-                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                        $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
-                    })->first()->id;
 
                 $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
                     ->create([
-                        'log_tahapan_pengajuan_kegiatan_id' => $idLog,
+                        'log_tahapan_pengajuan_kegiatan_id' => $log->id,
                         'catatan_log'           => $data['catatan_log'],
                         'flag'                  => "8"
                     ]);
             }
 
-            // Update data langsung berdasarkan pengajuan_kegiatan_id
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
-                })
-                ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['user']->id]);
+            if ($data['status'] == 0) {
+                # code...
+                $log->tanggal_masuk = null;
 
-            $read->flag = 10;
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+                    })->update(['tanggal_selesai' => null]);
+
+                $read->flag = 8;
+
+                $dataSend = array(
+                    'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'catatan_log'     => $data['catatan_log'],
+                    'keterangan'      => 'Ditolak',
+                    'status'          => '8'
+                );
+
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
+                $read->user_akseslh->notify(new VerifikasiLaporanDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+
+                $this->emailService->verifikasiLaporanDitolak($read->user_akseslh, 'Pengajuan Ditolak', $dataSend, null, 'mail.verifikasi-laporan-ditolak');
+            } else {
+
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
+                $log->tanggal_selesai = date('Y-m-d');
+                $log->user_akseslh_id = $data['user']->id;
+
+                $read->flag = 10;
+            }
+
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id' => $id,
+                'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk' => date("Y-m-d"),
+                'tanggal_selesai' => date("Y-m-d"),
+                'user_akseslh_id'   => $data['user']->id
+            ]);
+
+
+            $log->save();
             $read->save();
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -492,7 +717,318 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function getAllAttrTemp($data = null)
+    {
+        // Membuat query dasar
+        $query = $this->model->newQuery()->whereHas('log_tahapan_pengajuan', function ($q) {
+            $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->whereIn('deskripsi_kegiatan', [
+                    'Validasi',
+                    'Informasi Pencairan Dana',
+                    'Verifikasi Laporan Kegiatan Termin 1',
+                    'Verifikasi Laporan Akhir Kegiatan',
+                    'Verifikasi'
+                ]);
+            })
+                ->whereNotNull('tanggal_masuk')
+                ->whereNull('tanggal_selesai');
+        });
+
+        // Kondisi berdasarkan input data
+        switch ($data) {
+            case 4:
+                $query->whereHas('log_tahapan_pengajuan', function ($q) {
+                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(['deskripsi_kegiatan' => 'Informasi Pencairan Dana']);
+                    });
+                });
+                break;
+
+            case 6:
+                $query->whereHas('log_tahapan_pengajuan', function ($q) {
+                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(['deskripsi_kegiatan' => 'Verifikasi Laporan Kegiatan Termin 1']);
+                    });
+                });
+                break;
+
+            case 9:
+                $query->whereHas('log_tahapan_pengajuan', function ($q) {
+                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(['deskripsi_kegiatan' => 'Verifikasi Laporan Akhir Kegiatan']);
+                    });
+                });
+                break;
+
+            default:
+                // Default case (Validasi)
+                $query->where('flag', 2);
+                break;
+        }
+
+        // Order query and get results
+        $result = $query->orderBy('created_at', 'ASC')->get();
+
+        // Eager load relations for more efficient access
+        $result->load([
+            'user_akseslh.data_pic_kelompok_masyarakat',
+            'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan',
+            'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan',
+            'paket_kegiatan.jenis_kegiatan',
+            'log_tahapan_pengajuan.tahapan_pengajuan_kegiatan',
+            'indikator_laporan_kegiatan.master_data_indikator_laporan',
+            'transaksi_penyaluran',
+            'pengembalian'
+        ]);
+
+        // Transform the results
+        $result->transform(function ($items) {
+            $logVerifikasi = $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Verifikasi');
+            })->first();
+
+            $logTermin1 = $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+            })->first();
+
+            $logLaporanAkhir = $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+            })->first();
+
+            return [
+                'id'                        => $items->id,
+                'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
+                'kegiatan'                  => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
+                'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                'tanggal_akhir_validasi'    => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                'lokasi'                    => $items->alamat_kegiatan,
+                'nomor_pengajuan'           => $items->nomor_pengajuan,
+                'proposal_kegiatan'         => $items->proposal_kegiatan,
+                'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                'nama_verifikator'          => $logVerifikasi ? $logVerifikasi->user_akseslh_admin->email : null,
+                'tanggal_verifikasi'        => $logVerifikasi ? $logVerifikasi->tanggal_selesai : null,
+                'document'                  => $items->document,
+                'indikator_laporan_kegiatan' => $items->indikator_laporan_kegiatan->transform(function ($ind) {
+                    return [
+                        'nilai_laporan'   => $ind->nilai_laporan,
+                        'nama_indikator'  => $ind->master_data_indikator_laporan->nama_indikator,
+                        'satuan'           => $ind->master_data_indikator_laporan->satuan,
+                        'tipe_data'        => $ind->master_data_indikator_laporan->satuan,
+                    ];
+                }),
+                'laporan_termin_1'          => $logTermin1 ? $logTermin1->document_file : null,
+                'laporan_akhir'             => $logLaporanAkhir ? $logLaporanAkhir->document_file : null,
+                'nilai_penyaluran'          => $items->transaksi_penyaluran->sum('nilai_penyaluran'),
+                'jumlah_pengembalian'       => $items->pengembalian->jumlah_pengembalian ?? 0,
+                'bukti_pengembalian'        => $items->pengembalian->document ?? null
+            ];
+        });
+
+        return $this->sendSuccess($result);
+    }
+
+    public function updateTemp($id, $data)
+    {
+        $read = $this->model->newQuery()->find($id);
+
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        // Memastikan flag adalah 2
+        if (!in_array($read->flag, [2, '2'])) return $this->sendError(null, 'Not Allowed', 403);
+
+        // Menghitung total dari rab_pengajuan_paket_kegiatans dengan eager loading
+        $total = $read->rab_pengajuan_paket_kegiatans->sum(function ($items) {
+            return $items->qty * $items->harga_unit;
+        });
+
+        \DB::beginTransaction();
+
+        try {
+            // Mengambil LogTahapanPengajuanKegiatan untuk deskripsi 'Verifikasi'
+            $logTahapan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Validasi');
+                })
+                ->first();
+
+            if (!$logTahapan) {
+                \DB::rollBack();
+                return $this->sendError(null, 'Tahapan tidak ditemukan', 422);
+            }
+
+            // Membuat Catatan Log Tahapan Pengajuan Kegiatan
+            $this->modelCatatanLogTahapanPengajuanKegiatan->create([
+                'log_tahapan_pengajuan_kegiatan_id' => $logTahapan->id,
+                'catatan_log'                       => $data['catatan_log']
+            ]);
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id'         => $read->id,
+                'tahapan_pengajuan_kegiatan_id' => $logTahapan->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk'                 => date("Y-m-d"),
+                'tanggal_selesai'               => date("Y-m-d"),
+                'user_akseslh_id'               => $data['user_akseslh_id']
+            ]);
+
+            // Update status tergantung dari status yang diberikan
+            $statusUpdate = $data['status'] == 0 ? 20 : 3;
+            $keterangan = $data['status'] == 0 ? 'Ditolak' : 'Disetujui';
+
+            // Update log tahapan berdasarkan status
+            $logTahapan->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akseslh_id']]);
+
+            // Update status pengajuan
+            $read->update(['flag' => $statusUpdate]);
+
+            // Persiapkan data untuk pengiriman notifikasi dan email
+            $dataSend = [
+                'nomor_pengajuan' => $read->nomor_pengajuan,
+                'catatan_log'     => $data['catatan_log'] ?? null,
+                'keterangan'      => $keterangan,
+                'status'          => $statusUpdate
+            ];
+
+            // Mark notifications as read and send notification
+            $read->user_akseslh->unreadNotifications->markAsRead();
+            $notification = $data['status'] == 0
+                ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
+                : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total);
+            $read->user_akseslh->notify($notification);
+
+            if ($data['status'] != 0) {
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['file_sk'])->saveToDb('document_sk');
+                if ($upload) {
+                    $upload->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
+                    })
+                    ->update(['tanggal_masuk' => now()]);
+            } else {
+                // Kirim email
+                $this->emailService->verifikasiValidasiDitolak(
+                    $read->user_akseslh,
+                    'Pengajuan Ditolak',
+                    $dataSend,
+                    null,
+                    'mail.verifikasi-pengajuan-kegiatan-ditolak'
+                );
+            }
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($dataSend);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function retur_pengajuan_kegiatan($id, $data)
+    {
+        $read = $this->model->newQuery()->find($id);
+
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        // Memastikan flag adalah 2
+        if (!in_array($read->flag, [2, '2'])) return $this->sendError(null, 'Not Allowed', 403);
+
+        // Menghitung total dari rab_pengajuan_paket_kegiatans dengan eager loading
+        $total = $read->rab_pengajuan_paket_kegiatans->sum(function ($items) {
+            return $items->qty * $items->harga_unit;
+        });
+
+        \DB::beginTransaction();
+
+        try {
+            // Mengambil LogTahapanPengajuanKegiatan untuk deskripsi 'Verifikasi'
+            $logTahapan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Validasi');
+                })
+                ->first();
+
+            if (!$logTahapan) {
+                \DB::rollBack();
+                return $this->sendError(null, 'Tahapan tidak ditemukan', 422);
+            }
+
+            // Membuat Catatan Log Tahapan Pengajuan Kegiatan
+            $this->modelCatatanLogTahapanPengajuanKegiatan->create([
+                'log_tahapan_pengajuan_kegiatan_id' => $logTahapan->id,
+                'catatan_log'                       => $data['catatan_log']
+            ]);
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id'         => $read->id,
+                'tahapan_pengajuan_kegiatan_id' => $logTahapan->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk'                 => date("Y-m-d"),
+                'tanggal_selesai'               => date("Y-m-d"),
+                'user_akseslh_id'               => $data['user_akseslh_id']
+            ]);
+
+            // Update status tergantung dari status yang diberikan
+            $statusUpdate = 0;
+            $keterangan = 'Diretur';
+
+            // Update log tahapan berdasarkan status
+            $logTahapan->update([
+                'tanggal_selesai' => now(),
+                'user_akseslh_id' => $data['user_akseslh_id'],
+                'flag'            => 2
+            ]);
+
+            // Update status pengajuan
+            $read->update(['flag' => $statusUpdate, 'caping_rab' => $data['caping_rab']]);
+
+            // Persiapkan data untuk pengiriman notifikasi dan email
+            $dataSend = [
+                'nomor_pengajuan' => $read->nomor_pengajuan,
+                'catatan_log'     => $data['catatan_log'] ?? null,
+                'keterangan'      => $keterangan,
+                'status'          => $statusUpdate
+            ];
+
+            // Mark notifications as read and send notification
+            $read->user_akseslh->unreadNotifications->markAsRead();
+            $notification = new PengajuanKegiatanReturNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']);
+            $read->user_akseslh->notify($notification);
+
+            // Kirim email
+            $this->emailService->verifikasiValidasiDitolak(
+                $read->user_akseslh,
+                'Pengajuan Ditolak',
+                $dataSend,
+                null,
+                'mail.pengajuan-kegiatan-retur'
+            );
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($dataSend);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 }

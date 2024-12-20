@@ -19,21 +19,28 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Daftar Pengajuan Kegiatan</h3>
-                    <input type="hidden" name="data-table-pengajuan-kegiatan" id="data-table-pengajuan-kegiatan"
-                        value="{{ route('data-pengajuan-kegiatan') }}">
-                    <input type="hidden" name="pengajuan-kegiatan-route" id="pengajuan-kegiatan-route"
-                        value="{{ route('pengajuan-kegiatan.index') }}">
-                </div>
-                <div class="panel-body">
-                    <div class="row m-b-10">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-8 text-right">
-                            <form class="form-inline" role="form" action="{{ route('export-excel-pengajuan') }}"
-                                method="POST">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs navtab-bg">
+                <li class="active">
+                    <a href="#export" data-toggle="tab" aria-expanded="false">
+                        <span class="visible-xs"><i class="fa fa-home"></i></span>
+                        <span class="hidden-xs">Export</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="#download" data-toggle="tab" aria-expanded="true">
+                        <span class="visible-xs"><i class="fa fa-user"></i></span>
+                        <span class="hidden-xs">Download</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="export">
+                    <div class="row">
+                        <div class="col-lg-2 col-md"></div>
+                        <div class="col-lg-10 col-md-12 col-sm-12">
+                            <form class="form-inline pull-right" role="form"
+                                action="{{ route('export-excel-pengajuan') }}" method="POST">
                                 @csrf
                                 <div class="form-group m-l-10">
                                     <label for="tanggal_awal">Tanggal Awal</label>
@@ -59,6 +66,41 @@
                                     Export Excel
                                 </button>
                             </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="download">
+                    <form class="form-inline" role="form" action="{{ route('download-zip') }}" method="post">
+                        @csrf
+                        <select name="group" id="group" class="form-control">
+                            <option value="">-- Pilih --</option>
+                            @foreach ($group as $item)
+                                <option value="{{ $item->group }}">{{ toPascalCase($item->group) }}</option>
+                            @endforeach
+                        </select>
+                        <button class="btn btn-primary" type="submit">Download</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Daftar Pengajuan Kegiatan</h3>
+                    <input type="hidden" name="data-table-pengajuan-kegiatan" id="data-table-pengajuan-kegiatan"
+                        value="{{ route('data-pengajuan-kegiatan') }}">
+                    <input type="hidden" name="pengajuan-kegiatan-route" id="pengajuan-kegiatan-route"
+                        value="{{ route('pengajuan-kegiatan.index') }}">
+                </div>
+                <div class="panel-body">
+                    <div class="row m-b-10">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-8 text-right">
+
                         </div>
                     </div>
                     <div class="row">
@@ -109,21 +151,7 @@
                 </div>
             </div>
 
-            <!--  Modal content for the above example -->
-            <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-                aria-hidden="true" style="display: none;">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                            <h4 class="modal-title" id="myLargeModalLabel">Large modal</h4>
-                        </div>
-                        <div class="modal-body">
-                            ...
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-            </div><!-- /.modal -->
+
         </div>
     </div>
     <!-- End Row -->

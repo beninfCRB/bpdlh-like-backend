@@ -21,7 +21,8 @@ class KotaController extends ApiController
 
   public function index(Request $request): \Illuminate\Http\JsonResponse
   {
-    $result = $this->KotaService->apiGetAll();
+    $name = request()->query('name');
+    $result = $this->KotaService->apiGetAll($name);
 
     try {
       if ($result->success) {

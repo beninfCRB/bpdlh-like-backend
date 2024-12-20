@@ -67,12 +67,12 @@ class PengajuanKegiatanController extends ApiController
             'kecamatan_kegiatan'        => 'required',
             'kelurahan_kegiatan'        => 'required',
             'alamat_kegiatan'           => 'required',
-            'tanggal_kegiatan'          => 'required',
-            'waktu_kegiatan'            => 'required',
+            'tanggal_kegiatan'          => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
+            'waktu_kegiatan'            => 'required|string|regex:/^\d{2}:\d{2}(:\d{2})? - \d{2}:\d{2}(:\d{2})?$/',
             'proposal_kegiatan'         => 'required|max:255',
             'tujuan_kegiatan'           => 'required|max:255',
             'ruang_lingkup_kegiatan'    => 'required|max:255',
-            'fileDocument'              => 'nullable',
+            'fileDocument'              => 'nullable|file|mimes:pdf|max:10192',
             'nomor_pengajuan'           => 'nullable',
         ]);
 
@@ -83,6 +83,7 @@ class PengajuanKegiatanController extends ApiController
 
         if ($validator->fails()) {
             # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
@@ -97,6 +98,15 @@ class PengajuanKegiatanController extends ApiController
             $input["time_mulai_kegiatan"]       = $waktuArray[0];
             $input["time_akhir_kegiatan"]       = $waktuArray[1];
 
+            // Validasi rentang tanggal dan waktu (optional)
+            if (strtotime($input["tanggal_mulai_kegiatan"]) > strtotime($input["tanggal_akhir_kegiatan"])) {
+                return $this->sendError(null, 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir.', 422);
+            }
+
+            if (strtotime($input["time_mulai_kegiatan"]) > strtotime($input["time_akhir_kegiatan"])) {
+                return $this->sendError(null, 'Waktu mulai tidak boleh lebih besar dari waktu akhir.', 422);
+            }
+
             //eliminate unnecessary key 
             unset($input["tanggal_kegiatan"]);
             unset($input["waktu_kegiatan"]);
@@ -108,9 +118,9 @@ class PengajuanKegiatanController extends ApiController
 
         if (isset($input['nomor_pengajuan'])) {
             # code...
-            $result = $this->pengajuanKegiatanService->update($input['nomor_pengajuan'], $input);
+            $result = $this->pengajuanKegiatanService->updateTemp($input['nomor_pengajuan'], $input);
         } else {
-            $result = $this->pengajuanKegiatanService->create($input);
+            $result = $this->pengajuanKegiatanService->createTemp($input);
         }
 
         try {
@@ -118,19 +128,36 @@ class PengajuanKegiatanController extends ApiController
                 return $this->sendSuccess($result->data, $result->message, $result->code);
             }
 
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError(null, $exception->getMessage(), 500);
         }
     }
 
     public function update($id, Request $request)
     {
-        $result = $this->pengajuanKegiatanService->updateRab($id, $request->komponen_rab);
+        $validator = Validator::make($request->all(), [
+            'komponen_rab' => 'required|array', // Pastikan 'komponen_rab' adalah array
+            'komponen_rab.*.id_komponen' => 'required|exists:master_komponen_rabs,id', // Pastikan id_komponen ada di tabel master_data_komponen
+            'komponen_rab.*.harga_unit' => 'required|numeric|min:1', // Pastikan harga_unit adalah angka dan lebih besar dari 0
+            'komponen_rab.*.qty' => 'required|numeric|min:1', // Pastikan qty adalah angka dan lebih besar dari 0
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $result = $this->pengajuanKegiatanService->updateRabTemp($id, $request->komponen_rab);
 
         try {
             //code...
             if ($result->success) {
+                // Make before notification read
+                $request->user()->unreadNotifications->markAsRead();
+
                 // Send notification database
                 $request->user()->notify(new PengajuanKegiatanNotification($result->data['nomor_pengajuan'], $result->data['atas_nama'], $result->data['sebesar']));
 
@@ -151,6 +178,77 @@ class PengajuanKegiatanController extends ApiController
         try {
             //code...
             if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            //throw $th;
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function revisi_pengajuan_kegiatan_create(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_pengajuan' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input = $validator->validated();
+
+        $input['user_akseslh_id']   = $request->user()->id;
+
+        $result = $this->pengajuanKegiatanService->revisi_pengajuan_kegiatan_create($input);
+
+        try {
+            //code...
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            //throw $th;
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function revisi_pengajuan_kegiatan_update($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'komponen_rab' => 'required|array', // Pastikan 'komponen_rab' adalah array
+            'komponen_rab.*.id_komponen' => 'required|exists:master_komponen_rabs,id', // Pastikan id_komponen ada di tabel master_data_komponen
+            'komponen_rab.*.harga_unit' => 'required|numeric|min:1', // Pastikan harga_unit adalah angka dan lebih besar dari 0
+            'komponen_rab.*.qty' => 'required|numeric|min:1', // Pastikan qty adalah angka dan lebih besar dari 0
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input = $validator->validated();
+
+        $input['user_akseslh_id']   = $request->user()->id;
+
+        $result = $this->pengajuanKegiatanService->revisi_pengajuan_kegiatan_update($id, $input);
+
+        try {
+            //code...
+            if ($result->success) {
+                // Make before notification read
+                $request->user()->unreadNotifications->markAsRead();
+
+                // Send notification database
+                $request->user()->notify(new PengajuanKegiatanNotification($result->data['nomor_pengajuan'], $result->data['atas_nama'], $result->data['sebesar']));
+
                 return $this->sendSuccess($result->data, $result->message, $result->code);
             }
 

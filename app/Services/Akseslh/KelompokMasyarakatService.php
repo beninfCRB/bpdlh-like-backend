@@ -45,16 +45,20 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
         try {
 
             $data = $this->model->newQuery()->create([
-                'jenis_kelompok_masyarakat_id'  =>  $data['jenis_kelompok_masyarakat_id'],
-                'kelompok_masyarakat'           =>  $data['kelompok_masyarakat'],
-                'flag'                          => 1,
+                'jenis_kelompok_masyarakat_id'      =>  $data['jenis_kelompok_masyarakat_id'],
+                'kelompok_masyarakat'               =>  $data['kelompok_masyarakat'],
+                'provinsi_kelompok_masyarakat_id'   =>  $data['provinsi_kelompok_masyarakat_id'],
+                'kabupaten_kelompok_masyarakat_id'  =>  $data['kabupaten_kelompok_masyarakat_id'],
+                'kecamatan_kelompok_masyarakat_id'  =>  $data['kecamatan_kelompok_masyarakat_id'],
+                'kelurahan_kelompok_masyarakat_id'  =>  $data['kelurahan_kelompok_masyarakat_id'],
+                'flag'                              => 1,
             ]);
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -66,8 +70,12 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
 
         try {
 
-            $read->jenis_kelompok_masyarakat_id         =   $data['jenis_kelompok_masyarakat_id'];
-            $read->kelompok_masyarakat                  =   $data['kelompok_masyarakat'];
+            $read->jenis_kelompok_masyarakat_id         = $data['jenis_kelompok_masyarakat_id'];
+            $read->kelompok_masyarakat                  = $data['kelompok_masyarakat'];
+            $read->provinsi_kelompok_masyarakat_id      = $data['provinsi_kelompok_masyarakat_id'];
+            $read->kabupaten_kelompok_masyarakat_id     = $data['kabupaten_kelompok_masyarakat_id'];
+            $read->kecamatan_kelompok_masyarakat_id     = $data['kecamatan_kelompok_masyarakat_id'];
+            $read->kelurahan_kelompok_masyarakat_id     = $data['kelurahan_kelompok_masyarakat_id'];
             $read->flag                                 =   1;
             $read->save();
 
@@ -75,7 +83,7 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -88,7 +96,7 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -195,10 +203,22 @@ class KelompokMasyarakatService extends AppService implements AppServiceInterfac
         return $result;
     }
 
-    public function apiGetByIdJenisKelompokMasyarakat($id)
+    public function apiGetByIdJenisKelompokMasyarakat($id, $fltProvinsi = null, $fltKabupaten = null, $fltKecamatan = null, $fltKelurahan = null)
     {
         $result  = $this->model->newQuery()
             ->where('jenis_kelompok_masyarakat_id', $id)
+            ->when($fltProvinsi, function ($query) use ($fltProvinsi) {
+                $query->where('provinsi_kelompok_masyarakat_id', $fltProvinsi);
+            })
+            ->when($fltKabupaten, function ($query) use ($fltKabupaten) {
+                $query->where('kabupaten_kelompok_masyarakat_id', $fltKabupaten);
+            })
+            ->when($fltKecamatan, function ($query) use ($fltKecamatan) {
+                $query->where('kecamatan_kelompok_masyarakat_id', $fltKecamatan);
+            })
+            ->when($fltKelurahan, function ($query) use ($fltKelurahan) {
+                $query->where('kelurahan_kelompok_masyarakat_id', $fltKelurahan);
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 

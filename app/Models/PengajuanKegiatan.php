@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\AppModel;
 use Carbon\Carbon;
+use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -94,6 +95,16 @@ class PengajuanKegiatan extends AppModel
         return $this->hasMany(LogTahapanPengajuanKegiatan::class, 'pengajuan_kegiatan_id');
     }
 
+    /**
+     * Get all of the detail_log_tahapan_pengajuan for the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function detail_log_tahapan_pengajuan(): HasMany
+    {
+        return $this->hasMany(DetailLogTahapanPengajuanKegiatan::class, 'pengajuan_kegiatan_id');
+    }
+
     public function document()
     {
         return $this->morphMany(File::class, 'fileable')
@@ -108,6 +119,16 @@ class PengajuanKegiatan extends AppModel
     public function rab_pengajuan_paket_kegiatans(): HasMany
     {
         return $this->hasMany(RabPengajuanPaketKegiatan::class, 'pengajuan_kegiatan_id');
+    }
+
+    /**
+     * Get all of the rab_pengajuan_paket_kegiatans for the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function log_rab_pengajuan_paket_kegiatan(): HasMany
+    {
+        return $this->hasMany(LogRabPengajuanPaketKegiatan::class, 'pengajuan_kegiatan_id');
     }
 
     /**
@@ -168,5 +189,15 @@ class PengajuanKegiatan extends AppModel
     public function indikator_laporan_kegiatan(): HasMany
     {
         return $this->hasMany(IndikatorLaporanKegiatan::class, 'pengajuan_kegiatan_id');
+    }
+
+    /**
+     * Get the pengembalian associated with the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function pengembalian(): HasOne
+    {
+        return $this->hasOne(Pengembalian::class, 'pengajuan_kegiatan_id');
     }
 }

@@ -126,3 +126,13 @@ if (!function_exists('tahapanPengajuanFlag')) {
         return null;
     }
 }
+
+if (!function_exists('toPascalCase')) {
+    function toPascalCase($string)
+    {
+        // Mengganti underscore atau spasi dengan huruf besar di awal kata
+        $string = ucwords(str_replace(['_', ' '], ' ', $string));
+        // Menghapus spasi atau karakter lainnya yang tidak diinginkan
+        return $string;
+    }
+}

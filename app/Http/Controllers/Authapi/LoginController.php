@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Authapi;
 
 
+use App\Models\UserAkseslh;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
+use Illuminate\Http\Request;
 use App\Http\Requests\Authapi\LoginRequest;
-use App\Models\UserAkseslh;
 
 class LoginController extends ApiController
 {
@@ -20,10 +21,21 @@ class LoginController extends ApiController
         $this->middleware('guest');
     }
 
-    public function authenticate(LoginRequest $request): \Illuminate\Http\JsonResponse
+    public function authenticate(Request $request): \Illuminate\Http\JsonResponse
     {
+        $validator = \Validator::make($request->all(), [
+            'email_pic'    => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
         // Get all input
-        $input = $request->all();
+        $input = $validator->validated();
 
         try {
 

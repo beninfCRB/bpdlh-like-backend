@@ -3,7 +3,7 @@
 
 namespace App\Services\Akseslh;
 
-
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use Carbon\Carbon;
 use App\Services\AppService;
 use App\Models\PengajuanKegiatan;
@@ -11,20 +11,24 @@ use App\Models\TransaksiPenyaluran;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Notifications\TransaksiPenyaluranNotification;
 
 class TransaksiPenyaluranService extends AppService implements AppServiceInterface
 {
     protected $pengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
     public function __construct(
         TransaksiPenyaluran $model,
         PengajuanKegiatan $pengajuanKegiatan,
-        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->pengajuanKegiatan = $pengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan         = $modelLogTahapanPengajuanKegiatan;
+        $this->modelDetailLogTahapanPengajuanKegiatan   =   $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -178,8 +182,6 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
     {
         $result = $this->pengajuanKegiatan->find($data['pengajuan_kegiatan_id']);
 
-        if (!$result) return $this->sendError(null, 'Not Found', 422);
-
         $tpk = $result->transaksi_penyaluran->count();
 
         \DB::beginTransaction();
@@ -195,14 +197,14 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             } else {
                 // Kondisi ketika sudah disalurkan 2x
                 \DB::rollBack();
-                return $this->sendError(null, 'Tahap Salur sudah 2', 422);
+                return $this->sendError(null, 'Data Invalid', 422);
             }
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -223,7 +225,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -236,7 +238,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -260,25 +262,33 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             })
             ->first();
 
+        $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+            })
+            ->first();
+
         if (!$informasiPencairanDana->tanggal_selesai) {
             # code...
             $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
             $informasiPencairanDana->save();
 
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
-                })
-                ->update(['tanggal_masuk' => date("Y-m-d")]);
+            $log->tanggal_masuk = $date('Y-m-d');
+            $log->save();
         }
 
-        $this->modelLogTahapanPengajuanKegiatan->newQuery()
-            ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
-            ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
-            })
-            ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['username']]);
+        $log->tanggal_selesai = date('Y-m-d');
+        $log->user_akseslh_id = $data['username'];
+        $log->save();
+
+        $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+            'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+            'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+            'tanggal_masuk' => date("Y-m-d"),
+            'tanggal_selesai' => date("Y-m-d"),
+            'user_akseslh_id'   => $data['username']
+        ]);
 
         $this->modelLogTahapanPengajuanKegiatan->newQuery()
             ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
@@ -286,6 +296,10 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
             })
             ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+        $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
+
+        $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
 
         $newData->pengajuan_kegiatan->flag = 5;
         $newData->pengajuan_kegiatan->save();
@@ -304,12 +318,24 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             'username'              =>  $data['username'],
         ]);
 
-        $this->modelLogTahapanPengajuanKegiatan->newQuery()
+        $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
             ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
             ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                 $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin II');
             })
-            ->update(['tanggal_selesai' => date("Y-m-d"), 'user_akseslh_id' => $data['username']]);
+            ->first();
+
+        $log->tanggal_selesai = date('Y-m-d');
+        $log->user_akseslh_id = $data['username'];
+        $log->save();
+
+        $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+            'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+            'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+            'tanggal_masuk' => date("Y-m-d"),
+            'tanggal_selesai' => date("Y-m-d"),
+            'user_akseslh_id'   => $data['username']
+        ]);
 
         $this->modelLogTahapanPengajuanKegiatan->newQuery()
             ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
@@ -317,6 +343,10 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
             })
             ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+        $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
+
+        $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
 
         $newData->pengajuan_kegiatan->flag = 8;
         $newData->pengajuan_kegiatan->save();

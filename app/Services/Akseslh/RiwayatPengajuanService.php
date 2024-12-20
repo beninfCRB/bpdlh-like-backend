@@ -108,14 +108,14 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
             return [
                 'id'                        => $items->id,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
-                'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat ?? null,
                 'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                 'tahapan_pengajuan'         => tahapanPengajuan($items->flag),
                 'status'                    => $items->flag,
                 'progres'                   => '',
                 'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
-                'pic_kelompok'              => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                'pic_kelompok'              => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic ?? null,
                 'tanggal_pengajuan'         => $items->created_at->format('Y-m-d H:i:s'),
                 'tanggal_kegiatan'          => $items->tanggal_mulai_kegiatan . ' - ' . $items->tanggal_akhir_kegiatan,
                 'tanggal_realisasi'         => '',
@@ -363,7 +363,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -384,7 +384,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -397,7 +397,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 

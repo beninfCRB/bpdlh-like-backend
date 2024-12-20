@@ -23,6 +23,7 @@ var data_pic_kelompok_masyarakat = (function () {
             responsive: true,
             searchDelay: 500,
             processing: true,
+            scrollX: true,
             ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },

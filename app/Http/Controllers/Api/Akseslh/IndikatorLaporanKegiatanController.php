@@ -30,7 +30,7 @@ class IndikatorLaporanKegiatanController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
@@ -47,7 +47,7 @@ class IndikatorLaporanKegiatanController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
@@ -84,7 +84,7 @@ class IndikatorLaporanKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'tanggal_realisasi_kegiatan'                            => 'required',
+            'tanggal_realisasi_kegiatan'                            => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
             'indikator_kegiatan'                                    => 'required|array',
             'indikator_kegiatan.*.master_data_indikator_laporan_id' => 'required|exists:master_data_indikator_laporans,id',
             'indikator_kegiatan.*.nilai_laporan'                    => 'required'
@@ -96,6 +96,21 @@ class IndikatorLaporanKegiatanController extends ApiController
         }
 
         $input  = $validator->validated();
+
+        if (isset($request->tanggal_realisasi_kegiatan)) {
+            # code...
+            $tanggalArray   = explode(" - ", $input["tanggal_realisasi_kegiatan"]);
+            $input["tanggal_mulai_kegiatan"]    = $tanggalArray[0];
+            $input["tanggal_akhir_kegiatan"]    = $tanggalArray[1];
+
+            // Validasi rentang tanggal dan waktu (optional)
+            if (strtotime($input["tanggal_mulai_kegiatan"]) > strtotime($input["tanggal_akhir_kegiatan"])) {
+                return $this->sendError(null, 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir.', 422);
+            }
+
+            //eliminate unnecessary key 
+            unset($input["tanggal_realisasi_kegiatan"]);
+        }
 
         $result = $this->indikatorLaporanService->update($id, $input);
 

@@ -19,12 +19,8 @@ class NotificationController extends ApiController
     {
 
         try {
-            $result = $request->user()->notifications;
+            $result = $request->user()->unreadNotifications;
             return $this->sendSuccess($result);
-            // if ($result->success) {
-            // }
-
-            // return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
         }

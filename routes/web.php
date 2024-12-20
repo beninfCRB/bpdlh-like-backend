@@ -1,13 +1,9 @@
 <?php
 
-use App\Exports\DataPicKelompokMasyarakatExport;
-use App\Models\UserAkseslh;
-use FontLib\Table\Type\name;
+use App\Models\File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Route;
-use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Row;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +17,12 @@ use Maatwebsite\Excel\Row;
 */
 
 Route::get('/debug-sentry', function () {
-    throw new Exception('My first Sentry error!');
+    // dd(date('Y-m-d', strtotime('31-12-9999')), date('Y-m-d'));
+    // dd(Uuid::uuid4()->toString());
+    dd(File::where('group', 'document')->get());
 });
+
+Route::post('download-zip', [App\Http\Controllers\Cms\DashboardController::class, 'download_zip'])->name('download-zip');
 
 Route::view('/login', 'auth.login')->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login.auth')->middleware('recaptcha');
@@ -51,6 +51,8 @@ Route::delete('/dokumen-delete/{id}', [App\Http\Controllers\Cms\Akseslh\JenisDok
 Route::middleware(['auth'])->group(function () {
 
     Route::view('/home', 'pages.home.index')->name('home');
+
+    Route::get('dashboard', [App\Http\Controllers\Cms\DashboardController::class, 'index']);
 
     Route::prefix('akseslh')->group(function () {
 
@@ -81,6 +83,16 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('log-jadwal-pembukaan', App\Http\Controllers\Cms\Akseslh\LogJadwalPembukaanController::class);
         Route::resource('transaksi-penyaluran', App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class);
         Route::resource('master-data-indikator-laporan', App\Http\Controllers\Cms\Akseslh\MasterDataIndikatorLaporanController::class);
+        Route::resource('jenis-pekerjaan', App\Http\Controllers\Cms\Akseslh\JenisPekerjaanController::class);
+        Route::resource('pendidikan', App\Http\Controllers\Cms\Akseslh\PendidikanController::class);
+        Route::resource('banner-informasi', App\Http\Controllers\Cms\Akseslh\BannerInformasiController::class);
+        Route::resource('status-pernikahan', App\Http\Controllers\Cms\Akseslh\StatusPernikahanController::class);
+        Route::resource('agama', App\Http\Controllers\Cms\Akseslh\AgamaController::class);
+        Route::resource('log-masa-sanggah', App\Http\Controllers\Cms\Akseslh\LogMasaSanggahController::class);
+        Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen']);
+
+        // User Jenis Kelompok
+        Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
 
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
@@ -105,5 +117,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-log-jadwal-pembukaan', [App\Http\Controllers\Datatable\Akseslh\LogJadwalPembukaanController::class, 'getAll'])->name('data-log-jadwal-pembukaan');
         Route::get('/data-transaksi-penyaluran', [App\Http\Controllers\Datatable\Akseslh\TransaksiPenyaluranController::class, 'getAll'])->name('data-transaksi-penyaluran');
         Route::get('/data-master-data-indikator-laporan', [App\Http\Controllers\Datatable\Akseslh\MasterDataIndikatorLaporanController::class, 'getAll'])->name('data-master-data-indikator-laporan');
+        Route::get('/data-master-user-jenis-kelompok', [App\Http\Controllers\Datatable\Akseslh\MasterUserJenisKelompokController::class, 'getAll'])->name('data-master-user-jenis-kelompok');
+        Route::get('/data-master-user-jenis-kelompok/{id}', [App\Http\Controllers\Datatable\Akseslh\MasterUserJenisKelompokController::class, 'getAllUser'])->name('data-master-user-jenis-kelompok.show');
+        Route::get('/data-jenis-pekerjaan', [App\Http\Controllers\Datatable\Akseslh\JenisPekerjaanController::class, 'getAll'])->name('data-jenis-pekerjaan');
+        Route::get('/data-pendidikan', [App\Http\Controllers\Datatable\Akseslh\PendidikanController::class, 'getAll'])->name('data-pendidikan');
+        Route::get('/data-banner-informasi', [App\Http\Controllers\Datatable\Akseslh\BannerInformasiController::class, 'getAll'])->name('data-banner-informasi');
+        Route::get('/data-status-pernikahan', [App\Http\Controllers\Datatable\Akseslh\StatusPernikahanController::class, 'getAll'])->name('data-status-pernikahan');
+        Route::get('/data-agama', [App\Http\Controllers\Datatable\Akseslh\AgamaController::class, 'getAll'])->name('data-agama');
+        Route::get('/data-log-masa-sanggah', [App\Http\Controllers\Datatable\Akseslh\LogMasaSanggahController::class, 'getAll'])->name('data-log-masa-sanggah');
     });
 });

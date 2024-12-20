@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Maatwebsite\Excel\Row;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +14,7 @@ use Maatwebsite\Excel\Row;
 */
 
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
+Route::post('registerdua', [App\Http\Controllers\Authapi\RegisterController::class, 'register_2_temp']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
 Route::post('changePassword', [App\Http\Controllers\Authapi\PasswordController::class, 'changePassword']);
 Route::post('getKodeAktivasi', [App\Http\Controllers\Authapi\RegisterController::class, 'getKodeAktivasi']);
@@ -33,6 +33,14 @@ Route::get('kelurahan', [App\Http\Controllers\Api\Akseslh\KelurahanController::c
 Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'show']);
 Route::get('kelompokMasyarakat/{id}/byIdJenisKelompokMasyarakat', [App\Http\Controllers\Api\Akseslh\KelompokMasyarakatController::class, 'byIdJenisKelompokMasyarakat']);
 Route::get('getRangeOpening', [App\Http\Controllers\Api\Akseslh\LogJadwalPembukaanController::class, 'index']);
+Route::get('log-masa-sanggah', [App\Http\Controllers\Api\Akseslh\LogMasaSanggahController::class, 'index']);
+Route::get('jenis-pekerjaan', [App\Http\Controllers\Api\Akseslh\JenisPekerjaanController::class, 'index']);
+Route::get('pendidikan', [App\Http\Controllers\Api\Akseslh\PendidikanController::class, 'index']);
+Route::get('agama', [App\Http\Controllers\Api\Akseslh\AgamaController::class, 'index']);
+Route::get('status-pernikahan', [App\Http\Controllers\Api\Akseslh\StatusPernikahanController::class, 'index']);
+
+// User PIC
+Route::get('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'show']);
 
 Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
 Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
@@ -50,6 +58,8 @@ Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengaj
 Route::get('getDataMasterDataIndikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\MasterDataIndikatorLaporanController::class, 'index']);
 Route::put('indikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\IndikatorLaporanKegiatanController::class, 'update']);
 
+Route::get('banner-informasi', [App\Http\Controllers\Api\Akseslh\BannerInformasiController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
@@ -66,6 +76,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['pembukaan'])->group(function () {
         Route::post('pengajuanKegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'store']);
         Route::put('pengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'update']);
+    });
+
+    Route::middleware(['masa_sanggah'])->group(function () {
+        Route::post('revisiPengajuanKegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'revisi_pengajuan_kegiatan_create']);
+        Route::put('revisiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'revisi_pengajuan_kegiatan_update']);
     });
 
     Route::get('getDataRab/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'getDataRab']);
@@ -86,6 +101,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('getDataVerifikasiPengajuan', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'index']);
         Route::get('getDataVerifikasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'show']);
         Route::put('verifikasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\VerifikasiController::class, 'update']);
+        Route::put('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'destroy']);
     });
 
     Route::middleware(['ensurerole:approver'])->group(function () {
@@ -93,6 +109,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('validasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update']);
         Route::put('validasiPengajuanKegiatanTermin1/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_termin_1']);
         Route::put('validasiPengajuanKegiatanTahapAkhir/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_tahap_akhir']);
+        Route::put('retur-pengajuan-kegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'retur_pengajuan_kegiatan']);
     });
 
     Route::middleware(['ensurerole:pmu-bpdlh'])->group(function () {

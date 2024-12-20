@@ -42,6 +42,10 @@
     <link href="{{ asset('assets/responsive-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css"
         media="screen" />
 
+    <link href="{{ asset('assets/summernote/summernote.css') }}" rel="stylesheet" />
+
+    @yield('style')
+
     {{-- <link rel="stylesheet" href="{{ asset('assets/sweet-alert/sweet-alert.min.css') }}"> --}}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -119,6 +123,8 @@
     {{-- Mix --}}
     {{-- <script src="{{ mix('app/build/app.js') }}"></script> --}}
     <script src="{{ asset('app/build/app.js') }}" type="text/javascript"></script>
+
+    <script src="{{ asset('assets/summernote/summernote.min.js') }}"></script>
 
     @include('layouts._partials._message')
 

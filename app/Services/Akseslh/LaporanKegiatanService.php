@@ -3,13 +3,16 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
+use App\Models\Pengembalian;
 use App\Models\PengajuanKegiatan;
+use App\Models\LogTahapanPengajuanKegiatan;
 use App\Services\AppService;
+use App\Models\File as FileTable;
+use App\Notifications\LaporanNotification;
+use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\File as FileTable;
-use App\Services\FileUploadService;
 
 
 class LaporanKegiatanService extends AppService implements AppServiceInterface
@@ -17,17 +20,23 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
     protected $logTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
+    protected $modelPengembalian;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
     public function __construct(
         PengajuanKegiatan $model,
         LogTahapanPengajuanKegiatan $logTahapanPengajuanKegiatan,
         FileUploadService $fileUploadService,
-        FileTable $fileTable
+        FileTable $fileTable,
+        Pengembalian $modelPengembalian,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
-        $this->logTahapanPengajuanKegiatan = $logTahapanPengajuanKegiatan;
-        $this->fileUploadService                        =   $fileUploadService;
-        $this->fileTable                                =   $fileTable;
+        $this->logTahapanPengajuanKegiatan  = $logTahapanPengajuanKegiatan;
+        $this->fileUploadService            =   $fileUploadService;
+        $this->fileTable                    =   $fileTable;
+        $this->modelPengembalian            = $modelPengembalian;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -84,7 +93,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -105,7 +114,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -118,7 +127,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -157,7 +166,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -216,7 +225,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -224,16 +233,30 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($data['pengajuan_kegiatan_id']);
 
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        if ($read->flag != 8 || $read->flag != '8') return $this->sendError(null, 'Not Allowed', 422);
+
         \DB::beginTransaction();
 
         try {
 
-            $this->logTahapanPengajuanKegiatan->newQuery()
+            $log = $this->logTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
                 })
-                ->update(['tanggal_selesai' => date("Y-m-d")]);
+                ->first();
+
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+                'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk' => date("Y-m-d"),
+                'tanggal_selesai' => date("Y-m-d"),
+            ]);
+
+            $log->tanggal_selesai = date('Y-m-d');
+            $log->save();
 
             $this->logTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
@@ -242,6 +265,59 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
+            if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
+                # code...
+                $pengembalian = $this->modelPengembalian->newQuery()->create([
+                    'pengajuan_kegiatan_id'     =>  $data['pengajuan_kegiatan_id'],
+                    'jumlah_pengembalian'       =>  $data['jumlah_pengembalian'],
+                ]);
+
+                // Save document 
+                if ($data['bukti_pengembalian']->getClientOriginalExtension() == 'pdf') {
+                    // upload document
+                    $upload = $this->fileUploadService->handleFile($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
+                }
+
+                if (!empty($upload)) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($pengembalian),
+                        'fileable_id'   => $pengembalian->id,
+                    ]);
+                }
+            }
+
+            if (isset($data['laporan_akhir'])) {
+                # code...
+                $laporan_akhir_model = $this->logTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+                    })
+                    ->first();
+
+                if ($data['laporan_akhir']->getClientOriginalExtension() == 'pdf') {
+                    // upload document
+                    $upload = $this->fileUploadService->handleFile($data['laporan_akhir'])->saveToDb('Laporan Akhir Kegiatan');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['laporan_akhir'])->saveToDb('Laporan Akhir Kegiatan');
+                }
+
+                if (!empty($upload)) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($laporan_akhir_model),
+                        'fileable_id'   => $laporan_akhir_model->id,
+                    ]);
+                }
+            }
+
+            $read->user_akseslh->unreadNotifications->markAsRead();
+
+            $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
+
             $read->flag      =   9;
             $read->save();
 
@@ -249,7 +325,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 }

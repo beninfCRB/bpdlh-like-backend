@@ -8,25 +8,30 @@ use App\Models\PengajuanKegiatan;
 use App\Services\AppServiceInterface;
 use App\Models\IndikatorLaporanKegiatan;
 use App\Models\TahapanPengajuanKegiatan;
-use App\Models\LogTahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
+use App\Notifications\LaporanNotification;
 
 class IndikatorLaporanKegiatanService extends AppService implements AppServiceInterface
 {
     protected $modelPengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
     protected $modelTahapanPengajuanKegiatan;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
     public function __construct(
         IndikatorLaporanKegiatan $model,
         PengajuanKegiatan $modelPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
-        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan
+        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelPengajuanKegiatan           = $modelPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
         $this->modelTahapanPengajuanKegiatan    = $modelTahapanPengajuanKegiatan;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -69,7 +74,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -77,9 +82,19 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
     {
         $read   =   $this->modelPengajuanKegiatan->newQuery()->find($id);
 
+        if (!$read) return $this->sendError(null, 'Not found', 422);
+
+        if ($read->flag != 5) return $this->sendError(null, 'Invalid data', 422);
+
         \DB::beginTransaction();
 
         try {
+
+            // cek apabila indikator laporan ada isinya
+            if (isset($read->indikator_laporan_kegiatan) && count($read->indikator_laporan_kegiatan) > 0) {
+                # code...
+                $read->indikator_laporan_kegiatan()->delete();
+            }
 
             foreach ($data['indikator_kegiatan'] as $item) {
 
@@ -115,6 +130,14 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
             $laporan_kegiatan_termin_1->tanggal_selesai = date('Y-m-d');
             $laporan_kegiatan_termin_1->save();
 
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id' => $read->id,
+                'tahapan_pengajuan_kegiatan_id' => $laporan_kegiatan_termin_1->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk' => date("Y-m-d"),
+                'tanggal_selesai' => date("Y-m-d")
+            ]);
+
             if (empty($this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
@@ -137,6 +160,13 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
+            $read->user_akseslh->unreadNotifications->markAsRead();
+
+            $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
+
+            $read->tanggal_mulai_kegiatan = $data['tanggal_mulai_kegiatan'];
+            $read->tanggal_akhir_kegiatan = $data['tanggal_akhir_kegiatan'];
+
             $read->flag  =  6;
             $read->save();
 
@@ -144,7 +174,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 
@@ -157,7 +187,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null);
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
 

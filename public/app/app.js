@@ -156,50 +156,50 @@ window.sendFiles = (file, el) => {
         });
 };
 
-// window.setupSummerNote = (element) => {
-//     $(element).summernote({
-//         insertTableMaxSize: {
-//             col: 200,
-//             row: 200,
-//         },
-//         height: 300,
-//         tabDisable: false,
-//         blockquoteBreakingLevel: 2,
-//         popover: {
-//             image: [
-//                 [
-//                     "image",
-//                     ["resizeFull", "resizeHalf", "resizeQuarter", "resizeNone"],
-//                 ],
-//                 ["float", ["floatLeft", "floatRight", "floatNone"]],
-//                 ["remove", ["removeMedia"]],
-//             ],
-//             link: [["link", ["linkDialogShow", "unlink"]]],
-//             table: [
-//                 [
-//                     "add",
-//                     ["addRowDown", "addRowUp", "addColLeft", "addColRight"],
-//                 ],
-//                 ["delete", ["deleteRow", "deleteCol", "deleteTable"]],
-//             ],
-//         },
-//         toolbar: [
-//             // [groupName, [list of button]]
-//             ["style", ["bold", "italic", "underline", "clear"]],
-//             ["font", ["strikethrough", "superscript", "subscript"]],
-//             ["fontsize", ["fontsize"]],
-//             ["color", ["color"]],
-//             ["para", ["ul", "ol", "paragraph", "height"]],
-//             ["insert", ["link", "picture", "video", "table", "hr"]],
-//             ["fontname", ["fontname"]],
-//             ["view", ["fullscreen", "help"]],
-//         ],
-//         callbacks: {
-//             onImageUpload: function (image) {
-//                 sendFiles(image[0], element);
-//             },
-//         },
-//     });
-// };
+window.summernoteSetup = (element) => {
+    $(element).summernote({
+        insertTableMaxSize: {
+            col: 200,
+            row: 200,
+        },
+        height: 300,
+        tabDisable: false,
+        blockquoteBreakingLevel: 2,
+        popover: {
+            image: [
+                [
+                    "image",
+                    ["resizeFull", "resizeHalf", "resizeQuarter", "resizeNone"],
+                ],
+                ["float", ["floatLeft", "floatRight", "floatNone"]],
+                ["remove", ["removeMedia"]],
+            ],
+            link: [["link", ["linkDialogShow", "unlink"]]],
+            table: [
+                [
+                    "add",
+                    ["addRowDown", "addRowUp", "addColLeft", "addColRight"],
+                ],
+                ["delete", ["deleteRow", "deleteCol", "deleteTable"]],
+            ],
+        },
+        toolbar: [
+            // [groupName, [list of button]]
+            ["style", ["bold", "italic", "underline", "clear"]],
+            ["font", ["strikethrough", "superscript", "subscript"]],
+            ["fontsize", ["fontsize"]],
+            ["color", ["color"]],
+            ["para", ["ul", "ol", "paragraph", "height"]],
+            ["insert", ["link", "picture", "video", "table", "hr"]],
+            ["fontname", ["fontname"]],
+            ["view", ["fullscreen", "help"]],
+        ],
+        callbacks: {
+            onImageUpload: function (image) {
+                sendFiles(image[0], element);
+            },
+        },
+    });
+};
 
 export default messages;

@@ -30,13 +30,18 @@ class KelompokMasyarakatController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return  $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
     public function byIdJenisKelompokMasyarakat($id)
     {
-        $result = $this->kelompokMasyarakatService->apiGetByIdJenisKelompokMasyarakat($id);
+        $fltProvinsi    = request()->query('fltProvinsi') ?? null;
+        $fltKabupaten   = request()->query('fltKabupaten') ?? null;
+        $fltKecamatan   = request()->query('fltKecamatan') ?? null;
+        $fltKelurahan   = request()->query('fltKelurahan') ?? null;
+
+        $result = $this->kelompokMasyarakatService->apiGetByIdJenisKelompokMasyarakat($id, $fltProvinsi, $fltKabupaten, $fltKecamatan, $fltKelurahan);
 
         try {
             if ($result->success) {
@@ -45,7 +50,7 @@ class KelompokMasyarakatController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
@@ -62,7 +67,7 @@ class KelompokMasyarakatController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 }
