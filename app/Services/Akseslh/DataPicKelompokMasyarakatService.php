@@ -123,6 +123,12 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->kecamatan_pic            = $data['kecamatan_pic'];
             $read->kabupaten_pic            = $data['kabupaten_pic'];
             $read->provinsi_pic             = $data['provinsi_pic'];
+            $read->tempat_lahir             = $data['tempat_lahir'];
+            $read->tanggal_lahir            = $data['tanggal_lahir'];
+            $read->agama_id                 = $data['agama_id'];
+            $read->status_perkawinan_id     = $data['status_perkawinan_id'];
+            $read->nama_gadis_ibu_kandung   = $data['nama_gadis_ibu_kandung'];
+            $read->jenis_pekerjaan_id       = $data['jenis_pekerjaan_id'];
             $read->save();
 
             $read->user_akseslh->nama_pic           = $data['nama_pic'] ?? null;
