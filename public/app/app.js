@@ -3,8 +3,6 @@
 window.Swal = require("sweetalert2");
 window.axios = require("axios");
 window.toastr = require("toastr");
-window.select2 = require("select2");
-// window.summernote = require("summernote");
 window.chartJs = require("chart.js");
 window.dayjs = require("dayjs");
 
@@ -12,7 +10,6 @@ import "chart.js";
 import "dayjs/locale/id";
 
 dayjs.locale("id");
-// import "sweetalert2/src/sweetalert2.scss";
 
 window.baseUrlAsset = "https://bpdlh-cms.dev.pinteraktif.id/storage/";
 

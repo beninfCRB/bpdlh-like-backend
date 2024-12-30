@@ -268,6 +268,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                 'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
                 'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                'id_pic'                    => $items->user_akseslh->data_pic_kelompok_masyarakat->id,
                 'lokasi'                    => $items->alamat_kegiatan,
                 'nomor_pengajuan'           => $items->nomor_pengajuan,
                 'proposal_kegiatan'         => $items->proposal_kegiatan,
@@ -279,6 +280,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'tanggal_verifikasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                     $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                 })->first()->tanggal_selesai,
+                'komentar_verifikator'       => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+                })->first()->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null,
                 'document'                      => $items->document,
                 'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
                     return [
