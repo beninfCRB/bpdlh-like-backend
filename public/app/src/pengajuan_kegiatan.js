@@ -81,10 +81,11 @@ var data_pengajuan_kegiatan = (function () {
                         ) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat
-                                .kelompok_masyarakat.jenis
-                                .jenis_kelompok_masyarakat;
+                            return (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .kelompok_masyarakat.jenis
+                                    .jenis_kelompok_masyarakat ?? "-"
+                            );
                         }
                     },
                 },
@@ -99,9 +100,11 @@ var data_pengajuan_kegiatan = (function () {
                         ) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat
-                                .kelompok_masyarakat.kelompok_masyarakat;
+                            return (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .kelompok_masyarakat.kelompok_masyarakat ??
+                                "-"
+                            );
                         }
                     },
                 },
@@ -115,8 +118,10 @@ var data_pengajuan_kegiatan = (function () {
                         ) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat.nama_pic;
+                            return (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .nama_pic ?? "-"
+                            );
                         }
                     },
                 },
@@ -130,9 +135,10 @@ var data_pengajuan_kegiatan = (function () {
                         ) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat
-                                .jenis_identitas_pic;
+                            return (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .jenis_identitas_pic ?? "-"
+                            );
                         }
                     },
                 },
@@ -146,9 +152,10 @@ var data_pengajuan_kegiatan = (function () {
                         ) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat
-                                .nomor_identitas_pic;
+                            return (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .nomor_identitas_pic ?? "-"
+                            );
                         }
                     },
                 },

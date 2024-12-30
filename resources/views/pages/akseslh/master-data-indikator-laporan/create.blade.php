@@ -80,6 +80,11 @@
                             <label for="nama_indikator">Nama Indikator <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nama_indikator" name="nama_indikator"
                                 placeholder="Nama Indikator" value="{{ old('nama_indikator') }}">
+                            <span class="help-block">
+                                <small>
+                                    E.g: Perempuan, Laki-laki, Sampah, Pohon
+                                </small>
+                            </span>
                             @error('nama_indikator')
                                 <span class="error">
                                     {{ $message }}
@@ -90,6 +95,11 @@
                             <label for="satuan">Satuan <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="satuan" name="satuan" placeholder="Satuan"
                                 value="{{ old('satuan') }}">
+                            <span class="help-block">
+                                <small>
+                                    E.g: hektar, M2, orang, kg
+                                </small>
+                            </span>
                             @error('satuan')
                                 <span class="error">
                                     {{ $message }}
@@ -98,8 +108,10 @@
                         </div>
                         <div class="form-group @error('tipe_data') has-error @enderror">
                             <label for="tipe_data">Tipe Data <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="tipe_data" name="tipe_data"
-                                placeholder="Tipe Data" value="{{ old('tipe_data') }}">
+                            <select name="tipe_data" id="tipe_data" class="form-control">
+                                <option value="text" @if (old('tipe_data') == 'text') required @endif>text</option>
+                                <option value="numeric" @if (old('tipe_data') == 'numeric') required @endif>numeric</option>
+                            </select>
                             @error('tipe_data')
                                 <span class="error">
                                     {{ $message }}

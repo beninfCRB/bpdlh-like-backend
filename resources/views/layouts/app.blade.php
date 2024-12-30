@@ -12,50 +12,43 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="url" content="{{ env('APP_URL') }}">
 
-    <link rel="shortcut icon" href="{{ asset('images/favicon_1.ico') }}" />
+    <link rel="shortcut icon" href="{{ asset('template/images/favicon_1.ico') }}" />
 
     <title>{{ config('app.name') }} - @yield('title')</title>
 
     <!-- Base Css Files -->
-    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/css/bootstrap.min.css') }}" rel="stylesheet" />
 
     <!-- Font Icons -->
-    <link href="{{ asset('assets/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/ionicon/css/ionicons.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/material-design-iconic-font.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/assets/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/assets/ionicon/css/ionicons.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/css/material-design-iconic-font.min.css') }}" rel="stylesheet" />
 
     <!-- animate css -->
-    <link href="{{ asset('css/animate.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/css/animate.css') }}" rel="stylesheet" />
 
     <!-- Waves-effect -->
-    <link href="{{ asset('css/waves-effect.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/css/waves-effect.css') }}" rel="stylesheet" />
 
     <!-- DataTables -->
-    <link href="{{ asset('assets/datatables/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('template/assets/datatables/jquery.dataTables.min.css') }}" rel="stylesheet"
+        type="text/css" />
 
     <!-- Custom Files -->
-    <link href="{{ asset('css/helper.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('template/css/helper.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('template/css/style.css') }}" rel="stylesheet" type="text/css" />
 
-    <link href="{{ asset('assets/select2/select2.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Select2 -->
+    <link href="{{ asset('template/assets/select2/select2.css') }}" rel="stylesheet" type="text/css" />
 
-    <link href="{{ asset('assets/responsive-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css"
+    <link href="{{ asset('template/assets/responsive-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css"
         media="screen" />
 
-    <link href="{{ asset('assets/summernote/summernote.css') }}" rel="stylesheet" />
+    <link href="{{ asset('template/assets/summernote/summernote.css') }}" rel="stylesheet" />
 
     @yield('style')
 
-    {{-- <link rel="stylesheet" href="{{ asset('assets/sweet-alert/sweet-alert.min.css') }}"> --}}
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
-
-    <script src="{{ asset('js/modernizr.min.js') }}"></script>
+    <script src="{{ asset('template/js/modernizr.min.js') }}"></script>
 </head>
 
 <body class="fixed-left">
@@ -99,32 +92,31 @@
     </script>
 
     <!-- jQuery  -->
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/waves.js') }}"></script>
-    <script src="{{ asset('js/wow.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.nicescroll.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/jquery.scrollTo.min.js') }}"></script>
-    <script src="{{ asset('assets/jquery-detectmobile/detect.js') }}"></script>
-    <script src="{{ asset('assets/fastclick/fastclick.js') }}"></script>
-    <script src="{{ asset('assets/jquery-slimscroll/jquery.slimscroll.js') }}"></script>
-    <script src="{{ asset('assets/jquery-blockui/jquery.blockUI.js') }}"></script>
+    <script src="{{ asset('template/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('template/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('template/js/waves.js') }}"></script>
+    <script src="{{ asset('template/js/wow.min.js') }}"></script>
+    <script src="{{ asset('template/js/jquery.nicescroll.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('template/js/jquery.scrollTo.min.js') }}"></script>
+    <script src="{{ asset('template/assets/jquery-detectmobile/detect.js') }}"></script>
+    <script src="{{ asset('template/assets/fastclick/fastclick.js') }}"></script>
+    <script src="{{ asset('template/assets/jquery-slimscroll/jquery.slimscroll.js') }}"></script>
+    <script src="{{ asset('template/assets/jquery-blockui/jquery.blockUI.js') }}"></script>
 
     <!-- CUSTOM JS -->
-    <script src="{{ asset('js/jquery.app.js') }}"></script>
+    <script src="{{ asset('template/js/jquery.app.js') }}"></script>
 
     {{-- Datatable --}}
-    <script src="{{ asset('assets/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/datatables/dataTables.bootstrap.js') }}"></script>
+    <script src="{{ asset('template/assets/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('template/assets/datatables/dataTables.bootstrap.js') }}"></script>
 
     {{-- Select 2 --}}
-    <script src="{{ asset('assets/select2/select2.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('template/assets/select2/select2.min.js') }}" type="text/javascript"></script>
 
     {{-- Mix --}}
-    {{-- <script src="{{ mix('app/build/app.js') }}"></script> --}}
     <script src="{{ asset('app/build/app.js') }}" type="text/javascript"></script>
 
-    <script src="{{ asset('assets/summernote/summernote.min.js') }}"></script>
+    <script src="{{ asset('template/assets/summernote/summernote.min.js') }}"></script>
 
     @include('layouts._partials._message')
 
