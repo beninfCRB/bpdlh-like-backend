@@ -74,18 +74,23 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 1,
                     orderable: true,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .kelompok_masyarakat.jenis
-                                .jenis_kelompok_masyarakat === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return (
+                            if (
                                 full.user_akseslh.data_pic_kelompok_masyarakat
                                     .kelompok_masyarakat.jenis
-                                    .jenis_kelompok_masyarakat ?? "-"
-                            );
+                                    .jenis_kelompok_masyarakat === null
+                            ) {
+                                return "-";
+                            } else {
+                                return (
+                                    full.user_akseslh
+                                        .data_pic_kelompok_masyarakat
+                                        .kelompok_masyarakat.jenis
+                                        .jenis_kelompok_masyarakat ?? "-"
+                                );
+                            }
                         }
                     },
                 },
@@ -93,18 +98,23 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 2,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .kelompok_masyarakat.kelompok_masyarakat ===
-                            null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return (
+                            if (
                                 full.user_akseslh.data_pic_kelompok_masyarakat
-                                    .kelompok_masyarakat.kelompok_masyarakat ??
-                                "-"
-                            );
+                                    .kelompok_masyarakat.kelompok_masyarakat ===
+                                null
+                            ) {
+                                return "-";
+                            } else {
+                                return (
+                                    full.user_akseslh
+                                        .data_pic_kelompok_masyarakat
+                                        .kelompok_masyarakat
+                                        .kelompok_masyarakat ?? "-"
+                                );
+                            }
                         }
                     },
                 },
@@ -112,16 +122,21 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 3,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .nama_pic === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return (
+                            if (
                                 full.user_akseslh.data_pic_kelompok_masyarakat
-                                    .nama_pic ?? "-"
-                            );
+                                    .nama_pic === null
+                            ) {
+                                return "-";
+                            } else {
+                                return (
+                                    full.user_akseslh
+                                        .data_pic_kelompok_masyarakat
+                                        .nama_pic ?? "-"
+                                );
+                            }
                         }
                     },
                 },
@@ -129,16 +144,21 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 4,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .jenis_identitas_pic === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return (
+                            if (
                                 full.user_akseslh.data_pic_kelompok_masyarakat
-                                    .jenis_identitas_pic ?? "-"
-                            );
+                                    .jenis_identitas_pic === null
+                            ) {
+                                return "-";
+                            } else {
+                                return (
+                                    full.user_akseslh
+                                        .data_pic_kelompok_masyarakat
+                                        .jenis_identitas_pic ?? "-"
+                                );
+                            }
                         }
                     },
                 },
@@ -146,16 +166,21 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 5,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .nomor_identitas_pic === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return (
+                            if (
                                 full.user_akseslh.data_pic_kelompok_masyarakat
-                                    .nomor_identitas_pic ?? "-"
-                            );
+                                    .nomor_identitas_pic === null
+                            ) {
+                                return "-";
+                            } else {
+                                return (
+                                    full.user_akseslh
+                                        .data_pic_kelompok_masyarakat
+                                        .nomor_identitas_pic ?? "-"
+                                );
+                            }
                         }
                     },
                 },
@@ -163,14 +188,19 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 6,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .kelurahan === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat.kelurahan.name;
+                            if (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .kelurahan === null
+                            ) {
+                                return "-";
+                            } else {
+                                return full.user_akseslh
+                                    .data_pic_kelompok_masyarakat.kelurahan
+                                    .name;
+                            }
                         }
                     },
                 },
@@ -178,14 +208,19 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 7,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .kecamatan === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat.kecamatan.name;
+                            if (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .kecamatan === null
+                            ) {
+                                return "-";
+                            } else {
+                                return full.user_akseslh
+                                    .data_pic_kelompok_masyarakat.kecamatan
+                                    .name;
+                            }
                         }
                     },
                 },
@@ -193,14 +228,19 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 8,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .kabupaten === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat.kabupaten.name;
+                            if (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .kabupaten === null
+                            ) {
+                                return "-";
+                            } else {
+                                return full.user_akseslh
+                                    .data_pic_kelompok_masyarakat.kabupaten
+                                    .name;
+                            }
                         }
                     },
                 },
@@ -208,14 +248,18 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 9,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .provinsi === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat.provinsi.name;
+                            if (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .provinsi === null
+                            ) {
+                                return "-";
+                            } else {
+                                return full.user_akseslh
+                                    .data_pic_kelompok_masyarakat.provinsi.name;
+                            }
                         }
                     },
                 },
@@ -223,14 +267,18 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 10,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .email_pic === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat.email_pic;
+                            if (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .email_pic === null
+                            ) {
+                                return "-";
+                            } else {
+                                return full.user_akseslh
+                                    .data_pic_kelompok_masyarakat.email_pic;
+                            }
                         }
                     },
                 },
@@ -238,14 +286,18 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 11,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (
-                            full.user_akseslh.data_pic_kelompok_masyarakat
-                                .nohp_pic === null
-                        ) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return full.user_akseslh
-                                .data_pic_kelompok_masyarakat.nohp_pic;
+                            if (
+                                full.user_akseslh.data_pic_kelompok_masyarakat
+                                    .nohp_pic === null
+                            ) {
+                                return "-";
+                            } else {
+                                return full.user_akseslh
+                                    .data_pic_kelompok_masyarakat.nohp_pic;
+                            }
                         }
                     },
                 },
@@ -253,10 +305,14 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 12,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.user_akseslh.status_user === null) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return full.user_akseslh.status_user;
+                            if (full.user_akseslh.status_user === null) {
+                                return "-";
+                            } else {
+                                return full.user_akseslh.status_user;
+                            }
                         }
                     },
                 },
@@ -264,10 +320,14 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 13,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.user_akseslh.role_user === null) {
+                        if (full.user_akseslh === null) {
                             return "-";
                         } else {
-                            return full.user_akseslh.role_user;
+                            if (full.user_akseslh.role_user === null) {
+                                return "-";
+                            } else {
+                                return full.user_akseslh.role_user;
+                            }
                         }
                     },
                 },

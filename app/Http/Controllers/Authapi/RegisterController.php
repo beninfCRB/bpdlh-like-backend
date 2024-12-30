@@ -6,21 +6,18 @@ use Carbon\Carbon;
 use App\Models\UserAkseslh;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\UserEksternal;
 use App\Services\EmailPhpService;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Authapi\Register2Request;
 use App\Models\DataPicKelompokMasyarakat;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\RegisterNotification;
-use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Authapi\RegisterRequest;
 use App\Services\Akseslh\KelompokMasyarakatService;
 use DateTime;
 use App\Models\File as FileTable;
 use App\Models\KelompokMasyarakat;
 use App\Services\FileUploadService;
+use Ramsey\Uuid\Guid\Guid;
 
 class RegisterController extends ApiController
 {
@@ -381,28 +378,32 @@ class RegisterController extends ApiController
 
         $input = $validator->validated();
 
-        // Use firstOrCreate for more efficient query
-        $kelompok_masyarakat = \DB::table('kelompok_masyarakats')
-            ->where('kelompok_masyarakat', $input['kelompok_masyarakat'])
-            ->where('provinsi_kelompok_masyarakat_id', $input['provinsi_kelompok_masyarakat_id'])
-            ->where('kabupaten_kelompok_masyarakat_id', $input['kabupaten_kelompok_masyarakat_id'])
-            ->where('kecamatan_kelompok_masyarakat_id', $input['kecamatan_kelompok_masyarakat_id'])
-            ->where('kelurahan_kelompok_masyarakat_id', $input['kelurahan_kelompok_masyarakat_id'])
-            ->first();
+        if (Guid::isValid($input['kelompok_masyarakat'])) {
+            if (!\DB::table('kelompok_masyarakats')->where('id', $input['kelompok_masyarakat'])->first()) return $this->sendError(null, 'Kelompok Masyarakat Tidak Valid', 422);
+        } else {
+            // Use firstOrCreate for more efficient query
+            $kelompok_masyarakat = \DB::table('kelompok_masyarakats')
+                ->where('kelompok_masyarakat', $input['kelompok_masyarakat'])
+                ->where('provinsi_kelompok_masyarakat_id', $input['provinsi_kelompok_masyarakat_id'])
+                ->where('kabupaten_kelompok_masyarakat_id', $input['kabupaten_kelompok_masyarakat_id'])
+                ->where('kecamatan_kelompok_masyarakat_id', $input['kecamatan_kelompok_masyarakat_id'])
+                ->where('kelurahan_kelompok_masyarakat_id', $input['kelurahan_kelompok_masyarakat_id'])
+                ->first();
 
-        if (!$kelompok_masyarakat) {
-            $kelompok_masyarakat = KelompokMasyarakat::create([
-                'jenis_kelompok_masyarakat_id'      =>  $input['jenis_kelompok_masyarakat_id'],
-                'kelompok_masyarakat'               =>  $input['kelompok_masyarakat'],
-                'provinsi_kelompok_masyarakat_id'   =>  $input['provinsi_kelompok_masyarakat_id'],
-                'kabupaten_kelompok_masyarakat_id'  =>  $input['kabupaten_kelompok_masyarakat_id'],
-                'kecamatan_kelompok_masyarakat_id'  =>  $input['kecamatan_kelompok_masyarakat_id'],
-                'kelurahan_kelompok_masyarakat_id'  =>  $input['kelurahan_kelompok_masyarakat_id'],
-                'flag'                              => 1,
-            ]);
+            if (!$kelompok_masyarakat) {
+                $kelompok_masyarakat = KelompokMasyarakat::create([
+                    'jenis_kelompok_masyarakat_id'      =>  $input['jenis_kelompok_masyarakat_id'],
+                    'kelompok_masyarakat'               =>  $input['kelompok_masyarakat'],
+                    'provinsi_kelompok_masyarakat_id'   =>  $input['provinsi_kelompok_masyarakat_id'],
+                    'kabupaten_kelompok_masyarakat_id'  =>  $input['kabupaten_kelompok_masyarakat_id'],
+                    'kecamatan_kelompok_masyarakat_id'  =>  $input['kecamatan_kelompok_masyarakat_id'],
+                    'kelurahan_kelompok_masyarakat_id'  =>  $input['kelurahan_kelompok_masyarakat_id'],
+                    'flag'                              => 1,
+                ]);
+            }
+
+            $input['kelompok_masyarakat'] = $kelompok_masyarakat->id;
         }
-
-        $input['kelompok_masyarakat'] = $kelompok_masyarakat->id;
 
         // Make default password for first login
         $default_password = crypt($input['email_pic'] . Carbon::now()->format('d M Y H:i:s'), $input['email_pic']);
