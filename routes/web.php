@@ -25,7 +25,7 @@ Route::get('/debug-sentry', function () {
 Route::post('download-zip', [App\Http\Controllers\Cms\DashboardController::class, 'download_zip'])->name('download-zip');
 
 Route::view('/login', 'auth.login')->name('login');
-Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login'])->name('login.auth')->middleware('recaptcha');
+Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'authenticate'])->name('login.auth')->middleware('recaptcha');
 
 Route::get('/', function () {
     return redirect()->route('home');
