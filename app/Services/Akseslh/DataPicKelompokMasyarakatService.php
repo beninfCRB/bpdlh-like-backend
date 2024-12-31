@@ -83,6 +83,13 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
                 'kecamatan_pic'             => $data['kecamatan_pic'],
                 'kabupaten_pic'             => $data['kabupaten_pic'],
                 'provinsi_pic'              => $data['provinsi_pic'],
+                'tempat_lahir'              => $data['tempat_lahir'],
+                'tanggal_lahir'             => $data['tanggal_lahir'],
+                'agama_id'                  => $data['agama_id'],
+                'status_perkawinan_id'      => $data['status_perkawinan_id'],
+                'nama_gadis_ibu_kandung'    => $data['nama_gadis_ibu_kandung'],
+                'jenis_pekerjaan_id'        => $data['jenis_pekerjaan_id'],
+                'pendidikan_id'             => $data['pendidikan_id'],
                 'flag'                      => 1,
             ]);
 
@@ -129,6 +136,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->status_perkawinan_id     = $data['status_perkawinan_id'];
             $read->nama_gadis_ibu_kandung   = $data['nama_gadis_ibu_kandung'];
             $read->jenis_pekerjaan_id       = $data['jenis_pekerjaan_id'];
+            $read->pendidikan_id            = $data['pendidikan_id'];
             $read->save();
 
             $read->user_akseslh->nama_pic           = $data['nama_pic'] ?? null;
