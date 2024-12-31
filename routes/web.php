@@ -22,16 +22,14 @@ Route::get('/debug-sentry', function () {
     dd(File::where('group', 'document')->get());
 });
 
-Route::post('download-zip', [App\Http\Controllers\Cms\DashboardController::class, 'download_zip'])->name('download-zip');
-
-Route::view('/login', 'auth.login')->name('login');
-Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'authenticate'])->name('login.auth')->middleware('recaptcha');
-
 Route::get('/', function () {
     return redirect()->route('home');
 });
 
+Route::view('/login', 'auth.login')->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'authenticate'])->name('login.auth')->middleware('recaptcha');
 Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
 Route::view('/blank', 'pages.blank.index')->name('blank');
 
 Route::get('provinsi/{id}', [App\Http\Controllers\Api\Akseslh\ProvinsiController::class, 'show']);
@@ -43,10 +41,9 @@ Route::get('kelurahan', [App\Http\Controllers\Api\Akseslh\KelurahanController::c
 Route::get('kelurahan/{id}', [App\Http\Controllers\Api\Akseslh\KelurahanController::class, 'show']);
 
 Route::view('/pdf', 'pdf.template-small-grant');
-
 Route::delete('/dokumen-delete/{id}', [App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class, 'delete_dokumen']);
-
 // Route::get('/export', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export']);
+Route::post('download-zip', [App\Http\Controllers\Cms\DashboardController::class, 'download_zip'])->name('download-zip');
 
 Route::middleware(['auth'])->group(function () {
 
