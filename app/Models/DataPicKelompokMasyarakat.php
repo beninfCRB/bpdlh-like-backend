@@ -135,4 +135,14 @@ class DataPicKelompokMasyarakat extends AppModel
     {
         return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id');
     }
+
+    /**
+     * Get the pendidikan that owns the DataPicKelompokMasyarakat
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pendidikan(): BelongsTo
+    {
+        return $this->belongsTo(Pendidikan::class, 'pendidikan_id');
+    }
 }

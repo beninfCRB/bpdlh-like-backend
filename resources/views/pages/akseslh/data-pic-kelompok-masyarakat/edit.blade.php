@@ -181,7 +181,18 @@
                                                     {{ $message }}
                                                 @enderror
                                             </div>
-                                            <div class="form-group @error('agama_id') has-error @enderror col-md-4">
+                                            <div
+                                                class="form-group @error('nama_gadis_ibu_kandung') has-error @enderror col-md-4">
+                                                <label for="nama_gadis_ibu_kandung">Nama Gadis Ibu Kandung PIC<span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="nama_gadis_ibu_kandung"
+                                                    name="nama_gadis_ibu_kandung" placeholder="Nama Gadis Ibu Kandung"
+                                                    value="{{ old('nama_gadis_ibu_kandung', $data->nama_gadis_ibu_kandung) }}">
+                                                @error('nama_gadis_ibu_kandung')
+                                                    {{ $message }}
+                                                @enderror
+                                            </div>
+                                            <div class="form-group @error('agama_id') has-error @enderror col-md-3">
                                                 <label for="agama_id">Agama PIC<span class="text-danger">*</span></label>
                                                 <select name="agama_id" id="agama_id" class="form-control">
                                                     <option value="">-- Pilih Data --</option>
@@ -196,7 +207,7 @@
                                                 @enderror
                                             </div>
                                             <div
-                                                class=" form-group @error('status_perkawinan_id') has-error @enderror col-md-4">
+                                                class=" form-group @error('status_perkawinan_id') has-error @enderror col-md-3">
                                                 <label for="status_perkawinan_id">Status Perkawinan PIC<span
                                                         class="text-danger">*</span></label>
                                                 <select name="status_perkawinan_id" id="status_perkawinan_id"
@@ -212,19 +223,9 @@
                                                     {{ $message }}
                                                 @enderror
                                             </div>
+
                                             <div
-                                                class="form-group @error('nama_gadis_ibu_kandung') has-error @enderror col-md-4">
-                                                <label for="nama_gadis_ibu_kandung">Nama Gadis Ibu Kandung PIC<span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="nama_gadis_ibu_kandung"
-                                                    name="nama_gadis_ibu_kandung" placeholder="Nama Gadis Ibu Kandung"
-                                                    value="{{ old('nama_gadis_ibu_kandung', $data->nama_gadis_ibu_kandung) }}">
-                                                @error('nama_gadis_ibu_kandung')
-                                                    {{ $message }}
-                                                @enderror
-                                            </div>
-                                            <div
-                                                class=" form-group @error('jenis_pekerjaan_id') has-error @enderror col-md-4">
+                                                class=" form-group @error('jenis_pekerjaan_id') has-error @enderror col-md-3">
                                                 <label for="jenis_pekerjaan_id">Jenis Pekerjaan PIC<span
                                                         class="text-danger">*</span></label>
                                                 <select name="jenis_pekerjaan_id" id="jenis_pekerjaan_id"
@@ -237,6 +238,21 @@
                                                     @endforeach
                                                 </select>
                                                 @error('jenis_pekerjaan_id')
+                                                    {{ $message }}
+                                                @enderror
+                                            </div>
+                                            <div class=" form-group @error('pendidikan_id') has-error @enderror col-md-3">
+                                                <label for="pendidikan_id">Pendidikan PIC<span
+                                                        class="text-danger">*</span></label>
+                                                <select name="pendidikan_id" id="pendidikan_id" class="form-control">
+                                                    <option value="">-- Pilih Data --</option>
+                                                    @foreach ($pendidikan as $item)
+                                                        <option value="{{ $item['id'] }}"
+                                                            @if (old('pendidikan_id', $data->pendidikan_id) == $item['id']) selected @endif>
+                                                            {{ $item['pendidikan'] }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('pendidikan_id')
                                                     {{ $message }}
                                                 @enderror
                                             </div>

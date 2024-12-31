@@ -353,6 +353,7 @@ class RegisterController extends ApiController
             'status_perkawinan_id'              => 'required|exists:status_pernikahans,id',
             'nama_gadis_ibu_kandung'            => 'required',
             'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
+            'pendidikan'                        => 'required|exists:pendidikans,id',
             'nohp_pic'                          => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->whereNull('deleted_at')],
             'email_pic'                         => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')],
             'kode_aktivasi'                     => 'required',
@@ -431,6 +432,7 @@ class RegisterController extends ApiController
                 'status_perkawinan_id'      => $input['status_perkawinan_id'],
                 'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
                 'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],
+                'pendidikan_id'             => $input['pendidikan'],
             ]);
 
             $user_akseslh = UserAkseslh::create([
