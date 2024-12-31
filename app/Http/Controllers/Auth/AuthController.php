@@ -17,7 +17,7 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([
-            'email'  => ['required', 'email'],
+            'email'     => ['required', 'email'],
             'password'  => ['required'],
             'remember'  => 'nullable'
         ]);
@@ -50,9 +50,7 @@ class AuthController extends Controller
             //     return redirect()->intended('home');
             // }
 
-            return back()->withErrors([
-                'username' => 'Akun tidak ditemukan',
-            ]);
+            return redirect()->back()->with(['email' => 'Akun tidak ditemukan']);
         } catch (\Throwable $th) {
             //throw $th;
             return back()->with('error', $th->getMessage());

@@ -60,6 +60,9 @@
     <!-- CUSTOM JS -->
     <script src="{{ asset('template/js/jquery.app.js') }}"></script>
 
+    {{-- Mix --}}
+    <script src="{{ asset('app/build/app.js') }}" type="text/javascript"></script>
+
     @include('layouts._partials._message')
 
 </body>
