@@ -374,15 +374,15 @@ class RegisterController extends ApiController
             ->first();
 
         if (!$record) {
-            return $this->sendError(null, 'Token tidak valid.', 422);
+            return $this->sendError(null, collect(['kode_aktivasi' => ['Token tidak valid.']]), 422);
         } elseif (Carbon::parse($record->expired_at)->isPast()) {
-            return $this->sendError(null, 'Token sudah kedaluwarsa.', 422);
+            return $this->sendError(null, collect(['kode_aktivasi' => ['Token sudah kedaluwarsa.']]), 422);
         }
 
         $input = $validator->validated();
 
         if (Guid::isValid($input['kelompok_masyarakat'])) {
-            if (!\DB::table('kelompok_masyarakats')->where('id', $input['kelompok_masyarakat'])->first()) return $this->sendError(null, 'Kelompok Masyarakat Tidak Valid', 422);
+            if (!\DB::table('kelompok_masyarakats')->where('id', $input['kelompok_masyarakat'])->first()) return $this->sendError(null, collect(['kelompok_masyarakat' => ['Kelompok Masyarakat Tidak Valid']]), 422);
         } else {
             // Use firstOrCreate for more efficient query
             $kelompok_masyarakat = \DB::table('kelompok_masyarakats')
