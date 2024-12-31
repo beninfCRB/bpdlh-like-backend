@@ -356,6 +356,8 @@ class RegisterController extends ApiController
             'nohp_pic'                          => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->whereNull('deleted_at')],
             'email_pic'                         => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')],
             'kode_aktivasi'                     => 'required',
+        ], [
+            'kelompok_masyarakat.not_undefined' => ':attribute tidak valid'
         ]);
 
         if ($validator->fails()) {
