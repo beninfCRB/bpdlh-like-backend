@@ -32,7 +32,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('short_id', 'ASC');
+        $model = $this->model->query()->withTrashed()->orderBy('short_id', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -126,6 +126,19 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         $read   =   $this->model->newQuery()->find($id);
         try {
             $read->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function restore($id)
+    {
+        $read   =   $this->model->newQuery()->withTrashed()->find($id);
+        try {
+            $read->restore();
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
@@ -245,13 +258,17 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
             ->orderBy('short_id', 'ASC')
             ->get();
 
+        if (!$result) return $this->sendError(null, 'Not Found', 422);
+
         $result->transform(function ($items, $key) {
-            return [
-                'id'                    => $items->sub_tematik_kegiatan->id,
-                'tematik_kegiatan_id'   => $items->tematik_kegiatan_id,
-                'sub_tematik_kegiatan'  => $items->sub_tematik_kegiatan->sub_tematik_kegiatan,
-                'image'                 => $items->sub_tematik_kegiatan->image
-            ];
+            if ($items->sub_tematik_kegiatan) {
+                return [
+                    'id'                    => $items->sub_tematik_kegiatan->id ?? null,
+                    'tematik_kegiatan_id'   => $items->tematik_kegiatan_id ?? null,
+                    'sub_tematik_kegiatan'  => $items->sub_tematik_kegiatan->sub_tematik_kegiatan ?? null,
+                    'image'                 => $items->sub_tematik_kegiatan->image ?? null
+                ];
+            }
         });
 
         return $this->sendSuccess($result);

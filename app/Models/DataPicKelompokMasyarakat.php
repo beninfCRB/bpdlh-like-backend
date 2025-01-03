@@ -103,7 +103,7 @@ class DataPicKelompokMasyarakat extends AppModel
     public function foto()
     {
         return $this->morphMany(File::class, 'fileable')
-            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id', 'real_name', 'created_at']);
     }
 
     /**

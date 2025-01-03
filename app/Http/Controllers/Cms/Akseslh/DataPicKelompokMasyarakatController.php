@@ -151,7 +151,8 @@ class DataPicKelompokMasyarakatController extends ApiController
             'nama_gadis_ibu_kandung'            => 'required',
             'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
             'pendidikan_id'                     => 'required|exists:pendidikans,id',
-            'status_user'                       => 'required'
+            'status_user'                       => 'required',
+            'dokumen_pendukung'                 => 'required|file|mimes:pdf|max:2048'
         ]);
 
         $result =   $this->dataPicKelompokMasyarakatService->update($id, $input);
