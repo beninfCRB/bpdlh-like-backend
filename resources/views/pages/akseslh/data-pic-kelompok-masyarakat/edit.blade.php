@@ -26,7 +26,7 @@
             <div class="bg-picture text-center" style="background-image: url('{{ asset('template/images/big/bg.jpg') }}')">
                 <div class="bg-picture-overlay"></div>
                 <div class="profile-info-name">
-                    @if ($data->foto->count() > 0)
+                    @if ($data->foto->where('group', 'foto_selfie')->count() > 0)
                         <img src="{{ env('APP_URL') . '/storage/' . $data->foto->where('group', 'foto_selfie')->first()->file_path }}"
                             class="thumb-lg img-circle img-thumbnail" alt="profile-image" />
                     @else
