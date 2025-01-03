@@ -265,7 +265,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
             $read->user_akseslh->unreadNotifications->markAsRead();
             $notification = $data['status'] == 0
                 ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
-                : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total);
+                : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']);
             $read->user_akseslh->notify($notification);
 
             if ($data['status'] != 0) {
@@ -275,6 +275,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
                     ->update(['tanggal_masuk' => now()]);
+                $this->emailService->verifikasiPengajuanKegiatan($read->user_akseslh, 'Pengajuan Kegiatan Terverifikasi', $dataSend, '', 'mail.verifikasi-pengajuan-kegiatan-diterima');
             } else {
                 // Kirim email
                 $this->emailService->verifikasiValidasiDitolak(
