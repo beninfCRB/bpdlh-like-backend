@@ -28,7 +28,7 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->orderBy('short_id', 'ASC');
+        $model = $this->model->query()->withTrashed()->orderBy('short_id', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -122,6 +122,19 @@ class TematikKegiatanService extends AppService implements AppServiceInterface
         $read   =   $this->model->newQuery()->find($id);
         try {
             $read->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function restore($id)
+    {
+        $read   =   $this->model->newQuery()->withTrashed()->find($id);
+        try {
+            $read->restore();
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {

@@ -9,22 +9,26 @@ use App\Models\UserAkseslh;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\RegisterNotification;
+use App\Models\File as FileTable;
+use App\Services\FileUploadService;
 
 
 class DataPicKelompokMasyarakatService extends AppService implements AppServiceInterface
 {
     protected $modelUserAkseslh;
+    protected $fileUploadService;
+    protected $fileTable;
 
     public function __construct(
         DataPicKelompokMasyarakat $model,
-        UserAkseslh $modelAkseslh
+        UserAkseslh $modelAkseslh,
+        FileUploadService $fileUploadService,
+        FileTable $fileTable
     ) {
         parent::__construct($model);
         $this->modelUserAkseslh = $modelAkseslh;
+        $this->fileUploadService                        = $fileUploadService;
+        $this->fileTable                                = $fileTable;
     }
 
     public function getAll()
@@ -137,6 +141,16 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->nama_gadis_ibu_kandung   = $data['nama_gadis_ibu_kandung'];
             $read->jenis_pekerjaan_id       = $data['jenis_pekerjaan_id'];
             $read->pendidikan_id            = $data['pendidikan_id'];
+
+            $upload = $this->fileUploadService->handleFile($data['dokumen_pendukung'])->saveToDb('dokumen_pendukung');
+
+            if ($upload) {
+                $upload->update([
+                    'fileable_type' => get_class($read),
+                    'fileable_id'   => $read->id,
+                ]);
+            }
+
             $read->save();
 
             $read->user_akseslh->nama_pic           = $data['nama_pic'] ?? null;

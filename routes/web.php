@@ -61,6 +61,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/export-pic', [App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class, 'export'])->name('pic-kelompok-masyarakat.export');
 
+        Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen']);
+
         Route::resource('jenis-kegiatan', App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class);
         Route::resource('jenis-dokumen', App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class);
         Route::resource('jenis-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class);
@@ -86,7 +88,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('status-pernikahan', App\Http\Controllers\Cms\Akseslh\StatusPernikahanController::class);
         Route::resource('agama', App\Http\Controllers\Cms\Akseslh\AgamaController::class);
         Route::resource('log-masa-sanggah', App\Http\Controllers\Cms\Akseslh\LogMasaSanggahController::class);
-        Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen']);
+
+        Route::post('/tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class, 'restore']);
+        Route::post('/sub-tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class, 'restore']);
 
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
