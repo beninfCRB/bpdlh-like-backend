@@ -471,7 +471,7 @@ class RegisterController extends ApiController
             \DB::commit();
 
             return $this->sendSuccess([
-                'message' => "Proses Registrasi Berhasil, Silahkan periksa email anda",
+                'message' => "Proses Registrasi Berhasil, Silahkan periksa email anda untuk melihat detail akun anda",
             ]);
         } catch (\Throwable $th) {
             \DB::rollBack(); // rollback the changes

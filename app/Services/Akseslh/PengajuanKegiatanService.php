@@ -7,6 +7,7 @@ use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\PdfService;
 use App\Models\File as FileTable;
+use App\Models\LogJadwalPembukaan;
 use App\Models\LogRabPengajuanPaketKegiatan;
 use App\Models\PengajuanKegiatan;
 use App\Services\FileUploadService;
@@ -32,6 +33,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     protected $pdfService, $emailPhpService;
     protected $modelDetailLogTahapanPengajuanKegiatan;
     protected $modelLogRabPengajuanKegiatan;
+    protected $modelLogJadwalPembukaan;
 
     public function __construct(
         FileUploadService $fileUploadService,
@@ -44,7 +46,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         PdfService $pdfService,
         EmailPhpService $emailPhpService,
         DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan,
-        LogRabPengajuanPaketKegiatan $modelLogRabPengajuanKegiatan
+        LogRabPengajuanPaketKegiatan $modelLogRabPengajuanKegiatan,
+        LogJadwalPembukaan $modelLogJadwalPembukaan
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
@@ -57,6 +60,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $this->emailPhpService                          = $emailPhpService;
         $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
         $this->modelLogRabPengajuanKegiatan             = $modelLogRabPengajuanKegiatan;
+        $this->modelLogJadwalPembukaan                  = $modelLogJadwalPembukaan;
     }
 
     public function getAll()
@@ -750,6 +754,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function updateRabTemp($id, $dataKomponenRab)
     {
+        $logJadwalPembukaan = $this->modelLogJadwalPembukaan->newQuery()->latest()->first();
+
         // Mencari model pengajuan berdasarkan nomor pengajuan
         $model = $this->model->with(['rab_pengajuan_paket_kegiatans', 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat'])
             ->where('nomor_pengajuan', $id)
@@ -761,7 +767,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         }
 
         if ($model->flag != 0) {
-            return $this->sendError(null, 'Not Allowed', 403);
+            return $this->sendError(null, 'Not Allowed', 422);
         }
 
         if ($model->rab_pengajuan_paket_kegiatans->count() > 0) {
@@ -771,6 +777,20 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
+            // Menghitung total harga RAB dan mempersiapkan data komponen RAB
+            $total = 0;
+            $dataKomponenRabInput = array_map(function ($item) use ($model, &$total) {
+                $total += $item['qty'] * $item['harga_unit'];
+                return [
+                    'pengajuan_kegiatan_id' => $model->id,
+                    'komponen_rab_id'       => $item['id_komponen'],
+                    'harga_unit'            => $item['harga_unit'],
+                    'qty'                   => $item['qty'],
+                ];
+            }, $dataKomponenRab);
+
+            if ($total > (int)$logJadwalPembukaan->batas_pengajuan) return $this->sendError(null, 'Rab tidak boleh lebih dari caping', 422);
+
             // Ambil tahapan pengajuan kegiatan terbaru sekali saja
             $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->orderBy('sort', 'ASC')->get();
 
@@ -799,18 +819,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tanggal_masuk'                 => date("Y-m-d"),
                 'tanggal_selesai'               => date("Y-m-d")
             ]);
-
-            // Menghitung total harga RAB dan mempersiapkan data komponen RAB
-            $total = 0;
-            $dataKomponenRabInput = array_map(function ($item) use ($model, &$total) {
-                $total += $item['qty'] * $item['harga_unit'];
-                return [
-                    'pengajuan_kegiatan_id' => $model->id,
-                    'komponen_rab_id'       => $item['id_komponen'],
-                    'harga_unit'            => $item['harga_unit'],
-                    'qty'                   => $item['qty'],
-                ];
-            }, $dataKomponenRab);
 
             // Menyimpan RAB pengajuan paket kegiatan
             $model->rab_pengajuan_paket_kegiatans()->createMany($dataKomponenRabInput);

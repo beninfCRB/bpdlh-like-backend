@@ -10,19 +10,20 @@ use Illuminate\Notifications\Notification;
 class VerifikasiValidasiNotification extends Notification
 {
     use Queueable;
-    protected $nomor_pengajuan, $atas_nama, $sebesar;
+    protected $nomor_pengajuan, $atas_nama, $sebesar, $catatan_log;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($nomor_pengajuan, $atas_nama, $sebesar)
+    public function __construct($nomor_pengajuan, $atas_nama, $sebesar, $catatan_log = null)
     {
         //
         $this->nomor_pengajuan  = $nomor_pengajuan;
         $this->atas_nama        = $atas_nama;
         $this->sebesar          = $sebesar;
+        $this->catatan_log      = $catatan_log;
     }
 
     /**
@@ -58,10 +59,11 @@ class VerifikasiValidasiNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        isset($this->catatan_log) ? $catatan_log = $this->catatan_log : $catatan_log = 'Pantau proses berikutnya di Layanan Dana Masyarakat untuk Lingkungan.';
         return [
             //
             'message_header'    => 'Nomor permohonan: #' . $this->nomor_pengajuan . ' atas nama ' . $this->atas_nama . ' sebesar nilai Rp. ' . number_format($this->sebesar) . ' telah diterima.',
-            'message_body'      => 'Pantau proses berikutnya di Layanan Dana Masyarakat untuk Lingkungan.'
+            'message_body'      => $catatan_log
         ];
     }
 }
