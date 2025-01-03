@@ -38,6 +38,7 @@ class DataPicKelompokMasyarakat extends AppModel
         'status_perkawinan_id',
         'nama_gadis_ibu_kandung',
         'jenis_pekerjaan_id',
+        'pendidikan_id'
     ];
 
     /**
