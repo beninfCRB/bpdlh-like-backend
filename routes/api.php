@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register']);
-Route::post('registerdua', [App\Http\Controllers\Authapi\RegisterController::class, 'register_2_temp']);
+Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register'])->middleware(['pembukaan']);
+Route::post('registerdua', [App\Http\Controllers\Authapi\RegisterController::class, 'register_2_temp'])->middleware(['pembukaan']);
 Route::post('login', [App\Http\Controllers\Authapi\LoginController::class, 'authenticate']);
 Route::post('changePassword', [App\Http\Controllers\Authapi\PasswordController::class, 'changePassword']);
 Route::post('getKodeAktivasi', [App\Http\Controllers\Authapi\RegisterController::class, 'getKodeAktivasi']);
