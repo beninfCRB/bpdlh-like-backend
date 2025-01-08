@@ -9,11 +9,15 @@ use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\ProvinsiService;
 use Illuminate\Support\Facades\Validator;
 use App\Imports\DataPicKelompokMasyarakatImport;
+use App\Services\Akseslh\AgamaService;
 use App\Services\Akseslh\KelompokMasyarakatService;
 use App\Services\Akseslh\DataPicKelompokMasyarakatService;
+use App\Services\Akseslh\JenisPekerjaanService;
 use App\Services\Akseslh\KecamatanService;
 use App\Services\Akseslh\KelurahanService;
 use App\Services\Akseslh\KotaService;
+use App\Services\Akseslh\PendidikanService;
+use App\Services\Akseslh\StatusPernikahanService;
 
 class DataPicKelompokMasyarakatController extends ApiController
 {
@@ -23,6 +27,7 @@ class DataPicKelompokMasyarakatController extends ApiController
     protected $kotaService;
     protected $kecamatanService;
     protected $kelurahanService;
+    protected $agamaService, $statusPernikahanService, $jenisPekerjaanService, $pendidikanService;
 
     public function __construct(
         DataPicKelompokMasyarakatService $dataPicKelompokMasyarakatService,
@@ -31,6 +36,10 @@ class DataPicKelompokMasyarakatController extends ApiController
         KotaService $kotaService,
         KecamatanService $kecamatanService,
         KelurahanService $kelurahanService,
+        AgamaService $agamaService,
+        StatusPernikahanService $statusPernikahanService,
+        JenisPekerjaanService $jenisPekerjaanService,
+        PendidikanService $pendidikanService,
         Request $request
     ) {
         $this->dataPicKelompokMasyarakatService     =   $dataPicKelompokMasyarakatService;
@@ -39,6 +48,10 @@ class DataPicKelompokMasyarakatController extends ApiController
         $this->kotaService                          =   $kotaService;
         $this->kecamatanService                     =   $kecamatanService;
         $this->kelurahanService                     =   $kelurahanService;
+        $this->agamaService                         =   $agamaService;
+        $this->statusPernikahanService              =   $statusPernikahanService;
+        $this->jenisPekerjaanService                =   $jenisPekerjaanService;
+        $this->pendidikanService                    =   $pendidikanService;
         parent::__construct($request);
     }
 
@@ -51,7 +64,11 @@ class DataPicKelompokMasyarakatController extends ApiController
     {
         $kelompokMasyarakat = $this->kelompokMasyarakatService->apiGetAll()->data;
         $provinsi           = $this->provinsiService->apiGetAll()->data;
-        return view("pages.akseslh.data-pic-kelompok-masyarakat.create", compact('kelompokMasyarakat', 'provinsi'));
+        $agama              = $this->agamaService->getAllAttr()->data;
+        $statusPerkawinan   = $this->statusPernikahanService->getAllAttr()->data;
+        $jenisPekerjaan     = $this->jenisPekerjaanService->getAllAttr()->data;
+        $pendidikan         = $this->pendidikanService->getAllAttr()->data;
+        return view("pages.akseslh.data-pic-kelompok-masyarakat.create", compact('kelompokMasyarakat', 'provinsi', 'agama', 'statusPerkawinan', 'jenisPekerjaan', 'pendidikan'));
     }
 
     public function edit($id)
@@ -62,7 +79,11 @@ class DataPicKelompokMasyarakatController extends ApiController
         $kota               = $this->provinsiService->getById($data->provinsi_pic)->data ? $this->provinsiService->getById($data->provinsi_pic)->data->kota : null;
         $kecamatan          = $this->kotaService->getById($data->kabupaten_pic)->data ? $this->kotaService->getById($data->kabupaten_pic)->data->kecamatan : null;
         $kelurahan          = $this->kecamatanService->getById($data->kecamatan_pic)->data ? $this->kecamatanService->getById($data->kecamatan_pic)->data->kelurahan : null;
-        return view("pages.akseslh.data-pic-kelompok-masyarakat.edit", compact('data', 'kelompokMasyarakat', 'provinsi', 'kota', 'kecamatan', 'kelurahan'));
+        $agama              = $this->agamaService->getAllAttr()->data;
+        $statusPerkawinan   = $this->statusPernikahanService->getAllAttr()->data;
+        $jenisPekerjaan     = $this->jenisPekerjaanService->getAllAttr()->data;
+        $pendidikan         = $this->pendidikanService->getAllAttr()->data;
+        return view("pages.akseslh.data-pic-kelompok-masyarakat.edit", compact('data', 'jenisPekerjaan', 'kelompokMasyarakat', 'provinsi', 'kota', 'kecamatan', 'kelurahan', 'agama', 'statusPerkawinan', 'pendidikan'));
     }
 
     public function show($id)
@@ -85,6 +106,13 @@ class DataPicKelompokMasyarakatController extends ApiController
             'kecamatan_pic'                     => 'required',
             'kabupaten_pic'                     => 'required',
             'provinsi_pic'                      => 'required',
+            'tempat_lahir'                      => 'required',
+            'tanggal_lahir'                     => 'required|date',
+            'agama_id'                          => 'required|exists:agamas,id',
+            'status_perkawinan_id'              => 'required|exists:status_pernikahans,id',
+            'nama_gadis_ibu_kandung'            => 'required',
+            'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
+            'pendidikan_id'                     => 'required|exists:pendidikans,id',
         ]);
 
         $result =   $this->dataPicKelompokMasyarakatService->create($input);
@@ -116,7 +144,15 @@ class DataPicKelompokMasyarakatController extends ApiController
             'kecamatan_pic'                     => 'required',
             'kabupaten_pic'                     => 'required',
             'provinsi_pic'                      => 'required',
-            'status_user'                       => 'required'
+            'tempat_lahir'                      => 'required',
+            'tanggal_lahir'                     => 'required|date',
+            'agama_id'                          => 'required|exists:agamas,id',
+            'status_perkawinan_id'              => 'required|exists:status_pernikahans,id',
+            'nama_gadis_ibu_kandung'            => 'required',
+            'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
+            'pendidikan_id'                     => 'required|exists:pendidikans,id',
+            'status_user'                       => 'required',
+            'dokumen_pendukung'                 => 'required|file|mimes:pdf|max:2048'
         ]);
 
         $result =   $this->dataPicKelompokMasyarakatService->update($id, $input);

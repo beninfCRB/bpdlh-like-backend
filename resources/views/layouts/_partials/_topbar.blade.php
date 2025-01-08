@@ -86,7 +86,7 @@
                     </li>
                     <li class="dropdown">
                         <a href="" class="dropdown-toggle profile" data-toggle="dropdown"
-                            aria-expanded="true"><img src="{{ asset('images/avatar-1.jpg') }}" alt="user-img"
+                            aria-expanded="true"><img src="{{ asset('template/images/avatar-1.jpg') }}" alt="user-img"
                                 class="img-circle" />
                         </a>
                         <ul class="dropdown-menu">

@@ -38,6 +38,7 @@ class DataPicKelompokMasyarakat extends AppModel
         'status_perkawinan_id',
         'nama_gadis_ibu_kandung',
         'jenis_pekerjaan_id',
+        'pendidikan_id'
     ];
 
     /**
@@ -103,7 +104,7 @@ class DataPicKelompokMasyarakat extends AppModel
     public function foto()
     {
         return $this->morphMany(File::class, 'fileable')
-            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id', 'real_name', 'created_at']);
     }
 
     /**
@@ -134,5 +135,15 @@ class DataPicKelompokMasyarakat extends AppModel
     public function jenis_pekerjaan(): BelongsTo
     {
         return $this->belongsTo(JenisPekerjaan::class, 'jenis_pekerjaan_id');
+    }
+
+    /**
+     * Get the pendidikan that owns the DataPicKelompokMasyarakat
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pendidikan(): BelongsTo
+    {
+        return $this->belongsTo(Pendidikan::class, 'pendidikan_id');
     }
 }

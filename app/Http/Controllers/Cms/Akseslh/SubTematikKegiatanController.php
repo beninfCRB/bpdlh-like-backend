@@ -110,4 +110,19 @@ class SubTematikKegiatanController extends ApiController
             $this->sendError($exception->getMessage(), "", 500);
         }
     }
+
+    public function restore($id)
+    {
+        $result = $this->subTematikKegiatanService->restore($id);
+        try {
+            if ($result->success) {
+                $response = $result->data;
+                return $this->sendSuccess($response, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (\Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
 }

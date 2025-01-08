@@ -6,21 +6,18 @@ use Carbon\Carbon;
 use App\Models\UserAkseslh;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Models\UserEksternal;
 use App\Services\EmailPhpService;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Authapi\Register2Request;
 use App\Models\DataPicKelompokMasyarakat;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\RegisterNotification;
-use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\Authapi\RegisterRequest;
 use App\Services\Akseslh\KelompokMasyarakatService;
 use DateTime;
 use App\Models\File as FileTable;
 use App\Models\KelompokMasyarakat;
 use App\Services\FileUploadService;
+use Ramsey\Uuid\Guid\Guid;
 
 class RegisterController extends ApiController
 {
@@ -356,9 +353,12 @@ class RegisterController extends ApiController
             'status_perkawinan_id'              => 'required|exists:status_pernikahans,id',
             'nama_gadis_ibu_kandung'            => 'required',
             'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
+            'pendidikan'                        => 'required|exists:pendidikans,id',
             'nohp_pic'                          => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->whereNull('deleted_at')],
             'email_pic'                         => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')],
             'kode_aktivasi'                     => 'required',
+        ], [
+            'kelompok_masyarakat.not_undefined' => ':attribute tidak valid'
         ]);
 
         if ($validator->fails()) {
@@ -374,35 +374,39 @@ class RegisterController extends ApiController
             ->first();
 
         if (!$record) {
-            return $this->sendError(null, 'Token tidak valid.', 422);
+            return $this->sendError(null, collect(['kode_aktivasi' => ['Token tidak valid.']]), 422);
         } elseif (Carbon::parse($record->expired_at)->isPast()) {
-            return $this->sendError(null, 'Token sudah kedaluwarsa.', 422);
+            return $this->sendError(null, collect(['kode_aktivasi' => ['Token sudah kedaluwarsa.']]), 422);
         }
 
         $input = $validator->validated();
 
-        // Use firstOrCreate for more efficient query
-        $kelompok_masyarakat = \DB::table('kelompok_masyarakats')
-            ->where('kelompok_masyarakat', $input['kelompok_masyarakat'])
-            ->where('provinsi_kelompok_masyarakat_id', $input['provinsi_kelompok_masyarakat_id'])
-            ->where('kabupaten_kelompok_masyarakat_id', $input['kabupaten_kelompok_masyarakat_id'])
-            ->where('kecamatan_kelompok_masyarakat_id', $input['kecamatan_kelompok_masyarakat_id'])
-            ->where('kelurahan_kelompok_masyarakat_id', $input['kelurahan_kelompok_masyarakat_id'])
-            ->first();
+        if (Guid::isValid($input['kelompok_masyarakat'])) {
+            if (!\DB::table('kelompok_masyarakats')->where('id', $input['kelompok_masyarakat'])->first()) return $this->sendError(null, collect(['kelompok_masyarakat' => ['Kelompok Masyarakat Tidak Valid']]), 422);
+        } else {
+            // Use firstOrCreate for more efficient query
+            $kelompok_masyarakat = \DB::table('kelompok_masyarakats')
+                ->where('kelompok_masyarakat', $input['kelompok_masyarakat'])
+                ->where('provinsi_kelompok_masyarakat_id', $input['provinsi_kelompok_masyarakat_id'])
+                ->where('kabupaten_kelompok_masyarakat_id', $input['kabupaten_kelompok_masyarakat_id'])
+                ->where('kecamatan_kelompok_masyarakat_id', $input['kecamatan_kelompok_masyarakat_id'])
+                ->where('kelurahan_kelompok_masyarakat_id', $input['kelurahan_kelompok_masyarakat_id'])
+                ->first();
 
-        if (!$kelompok_masyarakat) {
-            $kelompok_masyarakat = KelompokMasyarakat::create([
-                'jenis_kelompok_masyarakat_id'      =>  $input['jenis_kelompok_masyarakat_id'],
-                'kelompok_masyarakat'               =>  $input['kelompok_masyarakat'],
-                'provinsi_kelompok_masyarakat_id'   =>  $input['provinsi_kelompok_masyarakat_id'],
-                'kabupaten_kelompok_masyarakat_id'  =>  $input['kabupaten_kelompok_masyarakat_id'],
-                'kecamatan_kelompok_masyarakat_id'  =>  $input['kecamatan_kelompok_masyarakat_id'],
-                'kelurahan_kelompok_masyarakat_id'  =>  $input['kelurahan_kelompok_masyarakat_id'],
-                'flag'                              => 1,
-            ]);
+            if (!$kelompok_masyarakat) {
+                $kelompok_masyarakat = KelompokMasyarakat::create([
+                    'jenis_kelompok_masyarakat_id'      =>  $input['jenis_kelompok_masyarakat_id'],
+                    'kelompok_masyarakat'               =>  $input['kelompok_masyarakat'],
+                    'provinsi_kelompok_masyarakat_id'   =>  $input['provinsi_kelompok_masyarakat_id'],
+                    'kabupaten_kelompok_masyarakat_id'  =>  $input['kabupaten_kelompok_masyarakat_id'],
+                    'kecamatan_kelompok_masyarakat_id'  =>  $input['kecamatan_kelompok_masyarakat_id'],
+                    'kelurahan_kelompok_masyarakat_id'  =>  $input['kelurahan_kelompok_masyarakat_id'],
+                    'flag'                              => 1,
+                ]);
+            }
+
+            $input['kelompok_masyarakat'] = $kelompok_masyarakat->id;
         }
-
-        $input['kelompok_masyarakat'] = $kelompok_masyarakat->id;
 
         // Make default password for first login
         $default_password = crypt($input['email_pic'] . Carbon::now()->format('d M Y H:i:s'), $input['email_pic']);
@@ -428,6 +432,7 @@ class RegisterController extends ApiController
                 'status_perkawinan_id'      => $input['status_perkawinan_id'],
                 'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
                 'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],
+                'pendidikan_id'             => $input['pendidikan'],
             ]);
 
             $user_akseslh = UserAkseslh::create([
@@ -466,7 +471,7 @@ class RegisterController extends ApiController
             \DB::commit();
 
             return $this->sendSuccess([
-                'message' => "Proses Registrasi Berhasil, Silahkan periksa email anda",
+                'message' => "Proses Registrasi Berhasil, Silahkan periksa email anda untuk melihat Kata Sandi akun anda",
             ]);
         } catch (\Throwable $th) {
             \DB::rollBack(); // rollback the changes

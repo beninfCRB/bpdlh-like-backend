@@ -22,7 +22,7 @@ class VerifyLogJadwalPembukaan
         if (!$jadwal_pembukaan) return response()->json([
             'code'      => 403,
             'status'    => false,
-            'message'   => 'Pembukaan pengajuan telah ditutup. Proposal tidak dapat diajukan.',
+            'message'   => ['error' => 'Pembukaan pengajuan telah ditutup. Harap menunggu batch berikutnya.'],
         ], 403);
 
         $date = Carbon::now()->timezone('Asia/Jakarta');
@@ -36,7 +36,7 @@ class VerifyLogJadwalPembukaan
         return response()->json([
             'code'      => 403,
             'status'    => false,
-            'message'   => 'Pembukaan pengajuan telah ditutup. Proposal tidak dapat diajukan.',
+            'message'   => ['error' => 'Pembukaan pengajuan telah ditutup. Harap menunggu batch berikutnya.'],
         ], 403);
     }
 }

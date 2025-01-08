@@ -14,10 +14,10 @@ class AuthController extends Controller
     /**
      * Handle an authentication attempt.
      */
-    public function authenticate(Request $request): RedirectResponse
+    public function authenticate(Request $request)
     {
         $credentials = $request->validate([
-            'email'  => ['required'],
+            'email'     => ['required', 'email'],
             'password'  => ['required'],
             'remember'  => 'nullable'
         ]);
@@ -35,7 +35,7 @@ class AuthController extends Controller
             }
 
             // crypt(hash('sha256', $password), $verification_code);
-            if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+            if (Auth::attempt($credentials, isset($request->remember))) {
                 # code...
                 $request->session()->regenerate();
 
@@ -50,9 +50,7 @@ class AuthController extends Controller
             //     return redirect()->intended('home');
             // }
 
-            return back()->withErrors([
-                'username' => 'Akun tidak ditemukan',
-            ]);
+            return redirect()->back()->with(['email' => 'Akun tidak ditemukan']);
         } catch (\Throwable $th) {
             //throw $th;
             return back()->with('error', $th->getMessage());
