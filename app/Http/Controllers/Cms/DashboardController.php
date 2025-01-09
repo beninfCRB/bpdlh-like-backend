@@ -48,10 +48,20 @@ class DashboardController extends Controller
 
     public function download_zip(Request $request)
     {
-        $request->validate(['group' => 'required']);
+        $request->validate([
+            'tanggal_awal_download'     => 'required|date',
+            'tanggal_akhir_download'    => 'required|date',
+            'group'                     => 'required'
+        ]);
+
+        $input = $request->all();
 
         // Ambil file berdasarkan group
-        $files = File::where('group', $request->group)->get();
+        $files = File::where('group', $request->group)
+            ->whereHas('pengajuan_kegiatan', function ($query) use ($input) {
+                $query->whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']]);
+            })
+            ->get();
 
         if ($files->isEmpty()) {
             return response()->json(['message' => 'No files found for this group.'], 404);
