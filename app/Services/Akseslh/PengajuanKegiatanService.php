@@ -474,6 +474,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $result = [
             'id_pengajuan'  => $id,
+            'caping_rab'    => $result->caping_rab,
             'komponen_rab'  => $collectRab->groupBy('jenis_komponen_rab'),
         ];
 
@@ -920,6 +921,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $dataSend = [
                 'id_pengajuan'    => $read->id,
                 'nomor_pengajuan' => $read->nomor_pengajuan,
+                'caping_rab'      => $read->caping_rab,
                 'komponen_rab'    => $rab->groupBy('jenis_komponen_rab')
             ];
 
