@@ -37,7 +37,7 @@ class BannerInformasiService extends AppService implements AppServiceInterface
         $model =   $this->model->newQuery()->latest()->first();
 
         $result = [
-            'deskripsi' => $model ? htmlentities($model->deskripsi) : null
+            'deskripsi' => $model ? htmlentities($model->deskripsi) : ""
         ];
 
         return $this->sendSuccess($result);
