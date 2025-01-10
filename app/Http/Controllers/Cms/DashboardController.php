@@ -56,12 +56,16 @@ class DashboardController extends Controller
 
         $input = $request->all();
 
-        // Ambil file berdasarkan group
-        $files = File::where('group', $request->group)
-            ->whereHas('pengajuan_kegiatan', function ($query) use ($input) {
-                $query->whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']]);
-            })
-            ->get();
+        if (in_array($request->group, ['proposal', 'rab'])) {
+            # code...
+        } else {
+            // Ambil file berdasarkan group
+            $files = File::where('group', $request->group)
+                ->whereHas('pengajuan_kegiatan', function ($query) use ($input) {
+                    $query->whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']]);
+                })
+                ->get();
+        }
 
         if ($files->isEmpty()) {
             return response()->json(['message' => 'No files found for this group.'], 404);
