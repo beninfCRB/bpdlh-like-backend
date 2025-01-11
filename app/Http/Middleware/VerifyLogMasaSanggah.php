@@ -19,11 +19,13 @@ class VerifyLogMasaSanggah
     {
         $jadwal_pembukaan = \DB::table('log_masa_sanggahs')->latest()->first();
 
-        if (!$jadwal_pembukaan) return response()->json([
-            'code'      => 403,
-            'status'    => false,
-            'message'   => 'Masa sanggah belum dibuka atau sudah ditutup.',
-        ], 403);
+        if (!$jadwal_pembukaan) {
+            return response()->json([
+                'code'      => 403,
+                'status'    => false,
+                'message'   => ['error' => 'Masa sanggah belum dibuka atau sudah ditutup.'],
+            ], 403);
+        }
 
         $date = Carbon::now()->timezone('Asia/Jakarta');
         $awal = $jadwal_pembukaan->tanggal_awal . " " . $jadwal_pembukaan->jam_awal;
@@ -37,7 +39,7 @@ class VerifyLogMasaSanggah
         return response()->json([
             'code'      => 403,
             'status'    => false,
-            'message'   => 'Masa sanggah belum dibuka atau sudah ditutup.',
+            'message'   => ['error' => 'Masa sanggah belum dibuka atau sudah ditutup.'],
         ], 403);
     }
 }
