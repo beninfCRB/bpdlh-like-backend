@@ -104,6 +104,11 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('group')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
                         </div>
                         <div class="form-group col-md-3">
                             <button class="btn btn-primary" type="submit">Download</button>

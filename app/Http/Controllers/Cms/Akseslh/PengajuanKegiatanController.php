@@ -145,6 +145,15 @@ class PengajuanKegiatanController extends ApiController
         return $pdf->stream();
     }
 
+    public function export_rab($id)
+    {
+        $data   =   $this->PengajuanKegiatanService->getDataRab($id);
+        // dd($data);
+        $pdf = Pdf::loadView('pdf.rab', compact('data'));
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream();
+    }
+
     public function dokumen($id)
     {
         $data = $this->PengajuanKegiatanService->getDokumen($id);

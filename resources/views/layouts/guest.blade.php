@@ -12,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="url" content="{{ env('APP_URL') }}">
 
-    <link rel="shortcut icon" href="images/favicon_1.ico" />
+    <link rel="shortcut icon" href="{{ asset('template/images/favicon_1.ico') }}" />
 
     <title>{{ config('app.name') }}</title>
 

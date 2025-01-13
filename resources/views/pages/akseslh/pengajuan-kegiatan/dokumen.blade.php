@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
-                        <a href="{{ route('export-proposal', $data->data->id) }}" class="image-popup" title="Screenshot-1"
+                        <a href="{{ route('export-rab', $data->data->id) }}" class="image-popup" title="Screenshot-1"
                             target="_BLANK">
                             <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
                                 alt="work-thumbnail" />
@@ -56,8 +56,8 @@
             @endforelse
 
             @forelse ($data->data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                                                                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
-                                                                                })->first()->document_file as $item)
+                                                                                        $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                                                                                    })->first()->document_file as $item)
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
                         <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup" title="Screenshot-1"
