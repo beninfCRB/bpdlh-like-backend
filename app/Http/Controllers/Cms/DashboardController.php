@@ -58,6 +58,7 @@ class DashboardController extends Controller
 
         if (in_array($request->group, ['proposal', 'rab'])) {
             # code...
+            return back()->withErrors(['group' => 'Document Tidak Tersedia']);
         } else {
             // Ambil file berdasarkan group
             $files = File::where('group', $request->group)
@@ -65,38 +66,38 @@ class DashboardController extends Controller
                     $query->whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']]);
                 })
                 ->get();
-        }
 
-        if ($files->isEmpty()) {
-            return response()->json(['message' => 'No files found for this group.'], 404);
-        }
-
-        // Buat nama file zip
-        $zipFileName = $request->group . '_files_' . time() . '.zip';
-
-        // Tentukan path sementara untuk menyimpan file zip
-        $zipFilePath = storage_path('app/public/' . $zipFileName);
-
-        // Membuat instance ZipArchive
-        $zip = new ZipArchive();
-
-        // Membuka file zip untuk ditulis
-        if ($zip->open($zipFilePath, ZipArchive::CREATE) !== TRUE) {
-            return response()->json(['message' => 'Could not create zip file.'], 500);
-        }
-
-        // Tambahkan file-file ke dalam zip
-        foreach ($files as $file) {
-            $filePath = storage_path('app/public/' . $file->file_path);
-            if (file_exists($filePath)) {
-                $zip->addFile($filePath, $file->real_name);
+            if ($files->isEmpty()) {
+                return back()->withErrors(['group' => 'Document Tidak Tersedia']);
             }
+
+            // Buat nama file zip
+            $zipFileName = $request->group . '_files_' . time() . '.zip';
+
+            // Tentukan path sementara untuk menyimpan file zip
+            $zipFilePath = storage_path('app/public/' . $zipFileName);
+
+            // Membuat instance ZipArchive
+            $zip = new ZipArchive();
+
+            // Membuka file zip untuk ditulis
+            if ($zip->open($zipFilePath, ZipArchive::CREATE) !== TRUE) {
+                return back()->withErrors(['group' => 'Tidak dapat membuat zip file']);
+            }
+
+            // Tambahkan file-file ke dalam zip
+            foreach ($files as $file) {
+                $filePath = storage_path('app/public/' . $file->file_path);
+                if (file_exists($filePath)) {
+                    $zip->addFile($filePath, $file->real_name);
+                }
+            }
+
+            // Menutup file zip
+            $zip->close();
+
+            // Mengembalikan file zip untuk di-download
+            return response()->download($zipFilePath)->deleteFileAfterSend(true);
         }
-
-        // Menutup file zip
-        $zip->close();
-
-        // Mengembalikan file zip untuk di-download
-        return response()->download($zipFilePath)->deleteFileAfterSend(true);
     }
 }

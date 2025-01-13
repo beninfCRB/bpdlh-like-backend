@@ -66,7 +66,8 @@
 
 <body>
     <div class="header">
-        <h1>Template Proposal Small Grant</h1>
+        <h1>Template </h1>
+        <h1> Proposal Small Grant</h1>
     </div>
 
     <div class="section">
@@ -75,24 +76,27 @@
         <div class="content">
             <b>1. Judul Kegiatan</b>
             <br>
-            Bahasa Indonesia: Judul Kegiatan
+            {{ $data->data->judul_pengajuan_kegiatan }}
         </div>
 
         <div class="content">
             <b>2. Pengusul</b>
-            Nama: SMAN 1 Dewantara
             <br>
-            Alamat: Alamat Kegiatan
+            Nama:
+            {{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}
             <br>
-            Penjamin Kegiatan: EKA ALIFAKIH
+            Alamat: {{ $data->data->alamat_kegiatan }}
+            <br>
+            Penjamin Kegiatan: {{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }}
         </div>
 
         <div class="content">
-            <b>3. Nomor Proposal:</b> 01111-2501-00003
+            <b>3. Nomor Proposal:</b> {{ $data->data->nomor_pengajuan }}
         </div>
 
         <div class="content">
-            <b>4. Perkiraan Bulan Pelaksanaan:</b> 2025-02-05
+            <b>4. Perkiraan Bulan Pelaksanaan:</b> {{ date('d-M-Y', strtotime($data->data->tanggal_mulai_kegiatan)) }} -
+            {{ date('d-M-Y', strtotime($data->data->tanggal_akhir_kegiatan)) }}
         </div>
     </div>
 
@@ -101,29 +105,36 @@
 
         <div class="content">
             <b>5. Latar Belakang Kegiatan/Project Background</b>
-            Bahasa Indonesia: Latar Belakang Kegiatan
+            <br>
+            {{ $data->data->proposal_kegiatan }}
         </div>
 
         <div class="content">
             <b>6. Tujuan Kegiatan</b>
-            Bahasa Indonesia: Tujuan Kegiatan
+            <br>
+            {{ $data->data->tujuan_kegiatan }}
         </div>
 
         <div class="content">
             <b>7. Ruang Lingkup Kegiatan/Scope of Work</b>
-            Bahasa Indonesia: Ruang Lingkup Kegiatan
+            <br>
+            {{ $data->data->ruang_lingkup_kegiatan }}
         </div>
     </div>
 
     <div class="signature">
-        Tanggal: 06 Jan 2025 08:43
+        Tanggal: {{ \Carbon\Carbon::now()->format('d-M-Y') }}
+        <br>
         Penanggung Jawab Usulan
+        <br>
         <div class="stamp">
             (tanda tangan dan stempel)
         </div>
+        <br>
         <div class="line">
-            (EKA ALIFAKIH)<br>
-            (SMAN 1 Dewantara)
+            ({{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }})
+            <br>
+            ({{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }})
         </div>
     </div>
 </body>
