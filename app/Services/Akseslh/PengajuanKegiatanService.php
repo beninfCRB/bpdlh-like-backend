@@ -1117,6 +1117,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             }, $data['komponen_rab']);
 
+            if ($total > $model->caping_rab) {
+                return $this->sendError(null, 'Nilai RAB tidak boleh melebihi caping', 422);
+            }
+
             // Menyimpan rab sebelumnya ke tabel log rab
             $rabData = $model->rab_pengajuan_paket_kegiatans->map(function ($dt) use ($model) {
                 return [
