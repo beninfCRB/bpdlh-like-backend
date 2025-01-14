@@ -607,9 +607,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $query->whereHas(
                     'log_tahapan_pengajuan',
                     function ($q) {
+                        $q->where('flag', 2);
                         $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                             $q->where(['deskripsi_kegiatan' => 'Validasi']);
-                        })->where('flag', 2);
+                        });
                     }
                 );
             })->latest()
