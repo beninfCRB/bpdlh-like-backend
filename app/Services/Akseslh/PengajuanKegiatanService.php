@@ -1092,7 +1092,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $retur->update(['tanggal_selesai' => null, 'user_akseslh_id' => null]);
+            $retur->update(['tanggal_selesai' => null, 'user_akseslh_id' => null, 'flag' => 1]);
 
             // Ambil tahapan pengajuan kegiatan terbaru sekali saja
             $id_log = $this->modelTahapanPengajuanKegiatan->firstWhere('deskripsi_kegiatan', 'Pengajuan')->id;
