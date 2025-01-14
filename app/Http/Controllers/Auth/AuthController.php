@@ -35,7 +35,7 @@ class AuthController extends Controller
             }
 
             // crypt(hash('sha256', $password), $verification_code);
-            if (Auth::attempt($credentials, isset($request->remember))) {
+            if (Auth::attempt($credentials)) {
                 # code...
                 $request->session()->regenerate();
 

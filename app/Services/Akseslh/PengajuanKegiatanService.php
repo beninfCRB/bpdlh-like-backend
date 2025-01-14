@@ -602,15 +602,18 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'user_akseslh_id' => $user_id,
             'flag' => 0
         ])
-            ->orWhereHas(
-                'log_tahapan_pengajuan',
-                function ($q) {
-                    $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                        $q->where(['deskripsi_kegiatan' => 'Validasi']);
-                    })->where('flag', 2);
-                }
-            )
-            ->latest()->first();
+            ->orWhere(function ($query) use ($user_id) {
+                $query->where('user_akseslh_id', $user_id);
+                $query->whereHas(
+                    'log_tahapan_pengajuan',
+                    function ($q) {
+                        $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                            $q->where(['deskripsi_kegiatan' => 'Validasi']);
+                        })->where('flag', 2);
+                    }
+                );
+            })->latest()
+            ->first();
 
         $retur = null;
 
