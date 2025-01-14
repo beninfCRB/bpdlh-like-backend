@@ -607,9 +607,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $query->whereHas(
                     'log_tahapan_pengajuan',
                     function ($q) {
+                        $q->where('flag', 2);
                         $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                             $q->where(['deskripsi_kegiatan' => 'Validasi']);
-                        })->where('flag', 2);
+                        });
                     }
                 );
             })->latest()
@@ -1091,7 +1092,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            $retur->update(['tanggal_selesai' => null, 'user_akseslh_id' => null]);
+            $retur->update(['tanggal_selesai' => null, 'user_akseslh_id' => null, 'flag' => 1]);
 
             // Ambil tahapan pengajuan kegiatan terbaru sekali saja
             $id_log = $this->modelTahapanPengajuanKegiatan->firstWhere('deskripsi_kegiatan', 'Pengajuan')->id;
