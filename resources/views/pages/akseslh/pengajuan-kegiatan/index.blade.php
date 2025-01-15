@@ -37,11 +37,12 @@
             <div class="tab-content">
                 <div class="tab-pane active" id="export">
                     <form class="row" role="form" action="{{ route('export-excel-pengajuan') }}" method="POST">
+                        {{-- <form class="row" role="form" onsubmit="exportPengajuanKegiatan(this,event)"> --}}
                         @csrf
                         <div class="form-group col-md-3">
                             <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')"
                                 placeholder="Tanggal Awal" class="form-control" id="tanggal_awal" name="tanggal_awal"
-                                value="{{ old('tanggal_awal') }}" />
+                                value="{{ old('tanggal_awal') }}" required />
                             @error('tanggal_awal')
                                 <span class="error">
                                     {{ $message }}
@@ -51,7 +52,7 @@
                         <div class="form-group col-md-3">
                             <input type="text" placeholder="Tanggal Akhir" onfocus="(this.type='date')"
                                 onblur="(this.type='text')" class="form-control" id="tanggal_akhir" name="tanggal_akhir"
-                                value="{{ old('tanggal_akhir') }}" />
+                                value="{{ old('tanggal_akhir') }}"required />
                             @error('tanggal_akhir')
                                 <span class="error">
                                     {{ $message }}
