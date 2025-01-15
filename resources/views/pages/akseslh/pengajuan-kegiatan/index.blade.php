@@ -36,7 +36,8 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="export">
-                    <form class="row" role="form" action="{{ route('export-excel-pengajuan') }}" method="POST">
+                    {{-- <form class="row" role="form" action="{{ route('export-excel-pengajuan') }}" method="POST"> --}}
+                    <form class="row" role="form" onsubmit="exportPengajuanKegiatan(this,event)">
                         @csrf
                         <div class="form-group col-md-3">
                             <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')"

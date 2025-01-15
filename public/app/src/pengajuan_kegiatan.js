@@ -2,6 +2,7 @@
 
 const numberFormat = new Intl.NumberFormat("id-ID");
 
+import axios from "axios";
 import {
     createData,
     updateData,
@@ -652,6 +653,71 @@ window.deletePaketKegiatan = (input) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
             });
+        }
+    });
+};
+
+window.exportPengajuanKegiatan = (input, evt) => {
+    evt.preventDefault();
+
+    let formData = new FormData();
+    formData.append("tanggal_awal", getValue("tanggal_awal"));
+    formData.append("tanggal_akhir", getValue("tanggal_akhir"));
+
+    beforeLoadingAttr("#saveBtn");
+    Swal.fire({
+        title: "Konfirmasi Penyimpanan",
+        text: "Apakah anda yakin menyimpan data ini ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Simpan",
+        cancelButtonText: "Tidak",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Pastikan tanggal sudah diisi
+            if (!tanggalAwal || !tanggalAkhir) {
+                alert("Harap masukkan tanggal awal dan akhir!");
+                return;
+            }
+
+            createData(route + "/export-excel-pengajuan", formData, {
+                responseType: "blob",
+            })
+                .then((res) => {
+                    let response = res.data;
+                    if (response.success) {
+                        afterLoadingAttr("#saveBtn");
+                        messages("Data berhasil disimpan", "/law");
+                    }
+                })
+                .catch((err) => {
+                    afterLoadingAttr("#saveBtn");
+                    let error = err.response.data;
+                    if (!error.success) {
+                        toastr.error(error.message);
+                    }
+                });
+
+            axios
+                .post(route + "/export-excel-pengajuan", formData, {
+                    responseType: "blob",
+                })
+                .then((response) => {
+                    // Membuat link sementara untuk mendownload file Excel
+                    const url = window.URL.createObjectURL(
+                        new Blob([response.data])
+                    );
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute("download", "users.xlsx");
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch((error) => {
+                    console.error("Error exporting excel:", error);
+                });
         }
     });
 };

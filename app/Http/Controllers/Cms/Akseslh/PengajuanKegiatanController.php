@@ -130,11 +130,12 @@ class PengajuanKegiatanController extends ApiController
     public function export(Request $request)
     {
         $input = $request->validate([
-            'tanggal_awal'  => 'required',
-            'tanggal_akhir'  => 'required|after:tanggal_awal'
+            'tanggal_awal'      => 'required',
+            'tanggal_akhir'     => 'required|after:tanggal_awal'
         ]);
 
-        return Excel::download(new PengajuanKegiatanExport($input), 'pengajuan_kegiatan.xlsx');
+        $excel = Excel::download(new PengajuanKegiatanExport($input), 'pengajuan_kegiatan.xlsx');
+        return $this->sendSuccess(null, 'Success');
     }
 
     public function export_proposal($id)
