@@ -4,6 +4,7 @@
 namespace App\Services\Akseslh;
 
 use Carbon\Carbon;
+use App\Models\Pengembalian;
 use App\Services\AppService;
 use App\Models\File as FileTable;
 use App\Models\PengajuanKegiatan;
@@ -15,10 +16,10 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Models\CatatanLogTahapanPengajuanKegiatan;
-use App\Notifications\PengajuanKegiatanReturNotification;
-use App\Notifications\VerifikasiValidasiNotification;
-use App\Notifications\VerifikasiLaporanDitolakNotification;
 use App\Notifications\VerifikasiLaporanNotification;
+use App\Notifications\VerifikasiValidasiNotification;
+use App\Notifications\PengajuanKegiatanReturNotification;
+use App\Notifications\VerifikasiLaporanDitolakNotification;
 use App\Notifications\VerifikasiValidasiDitolakNotification;
 
 
@@ -31,6 +32,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
     protected $fileUploadService;
     protected $fileTable;
     protected $emailService;
+    protected $modelPengembalian;
 
     public function __construct(
         PengajuanKegiatan $model,
@@ -40,16 +42,18 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         FileUploadService $fileUploadService,
         FileTable $fileTable,
         EmailPhpService $emailPhpService,
+        Pengembalian $modelPengembalian,
         DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan         = $modelLogTahapanPengajuanKegiatan;
         $this->modelCatatanLogTahapanPengajuanKegiatan  = $modelCatatanLogTahapanPengajuanKegiatan;
-        $this->fileUploadService                        =   $fileUploadService;
-        $this->fileTable                                =   $fileTable;
-        $this->emailService = $emailPhpService;
+        $this->fileUploadService                        = $fileUploadService;
+        $this->fileTable                                = $fileTable;
+        $this->emailService                             = $emailPhpService;
         $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
+        $this->modelPengembalian                        = $modelPengembalian;
     }
 
     public function getAll()
@@ -521,8 +525,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             }
 
             if ($data['status'] == 1) {
-                # code...
-
                 // Update data langsung berdasarkan pengajuan_kegiatan_id
                 $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
@@ -546,6 +548,12 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'tanggal_masuk' => date("Y-m-d"),
                     'tanggal_selesai' => date("Y-m-d"),
                     'user_akseslh_id'   => $data['user']->id
+                ]);
+
+                // Save Pengembalian Dana
+                $this->modelPengembalian->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $read->id,
+                    'jumlah_pengembalian'   => $data['jumlah_pengembalian']
                 ]);
 
                 // Save document 
