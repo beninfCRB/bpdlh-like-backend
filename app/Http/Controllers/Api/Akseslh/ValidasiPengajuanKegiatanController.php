@@ -92,8 +92,9 @@ class ValidasiPengajuanKegiatanController extends ApiController
     public function update_termin_1($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'status'        => 'required',
-            'catatan_log'   => 'nullable'
+            'status'                => 'required',
+            'catatan_log'           => 'nullable',
+            'jumlah_pengembalian'   => 'nullable|numeric',
         ]);
 
         $validator->sometimes('surat_pencairan_dana_termin_2', 'required|file|mimes:pdf', function ($input) {

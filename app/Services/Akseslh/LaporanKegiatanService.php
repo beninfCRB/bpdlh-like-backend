@@ -265,28 +265,22 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
-            if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
-                # code...
-                $pengembalian = $this->modelPengembalian->newQuery()->create([
-                    'pengajuan_kegiatan_id'     =>  $data['pengajuan_kegiatan_id'],
-                    'jumlah_pengembalian'       =>  $data['jumlah_pengembalian'],
+            $pengembalian = $read->pengembalian;
+
+            // Save document 
+            if ($data['bukti_pengembalian']->getClientOriginalExtension() == 'pdf') {
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
+            } else {
+                $upload = $this->fileUploadService->handleImage($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
+            }
+
+            if (!empty($upload)) {
+                $document = $this->fileTable->newQuery()->find($upload->id);
+                $document->update([
+                    'fileable_type' => get_class($pengembalian),
+                    'fileable_id'   => $pengembalian->id,
                 ]);
-
-                // Save document 
-                if ($data['bukti_pengembalian']->getClientOriginalExtension() == 'pdf') {
-                    // upload document
-                    $upload = $this->fileUploadService->handleFile($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
-                } else {
-                    $upload = $this->fileUploadService->handleImage($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
-                }
-
-                if (!empty($upload)) {
-                    $document = $this->fileTable->newQuery()->find($upload->id);
-                    $document->update([
-                        'fileable_type' => get_class($pengembalian),
-                        'fileable_id'   => $pengembalian->id,
-                    ]);
-                }
             }
 
             if (isset($data['laporan_akhir'])) {
