@@ -188,12 +188,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $model = $this->model->newQuery()->with(['log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
 
-        if (!$model) return $this->sendError(null, 'Not found');
+        if (!$model) return $this->sendError(null, 'Not found', 422);
 
         // $result = $model->log_tahapan_pengajuan()->orderBy('tahapan_pengajuan_kegiatan')->get();
         $result = $model->log_tahapan_pengajuan()->get();
-
-        // dd($result->orderBy('tahapan_pengajuan_kegiatan.sort'));
 
         $result->transform(function ($items, $key) {
             return [
