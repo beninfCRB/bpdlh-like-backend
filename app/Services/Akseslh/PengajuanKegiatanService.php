@@ -190,10 +190,211 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not found', 422);
 
-        // $result = $model->log_tahapan_pengajuan()->orderBy('tahapan_pengajuan_kegiatan')->get();
+        $total = 0;
+        $total_penyaluran = 0;
+
+        if (isset($model->transaksi_penyaluran)) {
+            # code...
+            foreach ($model->transaksi_penyaluran as $item) {
+                # code...
+                $total_penyaluran += $item->nilai_penyaluran;
+            }
+        }
+
+        foreach ($model->rab_pengajuan_paket_kegiatans as $i) {
+            # code...
+            $total += ($i->qty * $i->harga_unit);
+        }
+
+        $laporan_kegiatan_termin_1 = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
+        })->first()->document_file;
+
+        // Data Verifikator
+        $verifikasi = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+        })->first();
+
+        $nama_verifikator       = $verifikasi->user_akseslh_admin->email ?? null;
+        $tanggal_verifikasi     = $verifikasi->tanggal_selesai ?? null;
+        $catatan_verifikator    = $verifikasi->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null;
+
+        // Data Validator
+        $validator = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where(['deskripsi_kegiatan' => 'Validasi']);
+        })->first();
+
+        $nama_validator     = $validator->user_akseslh_admin->email ?? null;
+        $tanggal_validasi   = $validator->tanggal_selesai ?? null;
+        $catatan_validator  = $validator->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null;
+
+        // Data Verifikator laporan termin 1
+        $verifikator_laporan_tahap_1 = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where(['deskripsi_kegiatan' => 'Verifikasi Laporan Kegiatan Termin 1']);
+        })->first();
+
+        $nama_verifikator_laporan_tahap_1       = $verifikator_laporan_tahap_1->user_akseslh_admin->email ?? null;
+        $tanggal_verifikator_laporan_tahap_1    = $verifikator_laporan_tahap_1->tanggal_selesai ?? null;
+        $catatan_verifikator_laporan_tahap_1    = $verifikator_laporan_tahap_1->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null;
+
+        // Data Master Bank Penyaluran Pertama
+        $transaksi_penyaluran   = $model->transaksi_penyaluran()->latest()->first();
+        $master_data_bank       = $transaksi_penyaluran->master_data_bank->nama_bank ?? null;
+        $nomor_rekening         = $transaksi_penyaluran->nomor_rekening ?? null;
+        $nama_pemilik_rekening  = $transaksi_penyaluran->nama_pemilik_rekening ?? null;
+        $tanggal_penyaluran     = $transaksi_penyaluran->tanggal_penyaluran ?? null;
+        $nilai_penyaluran       = $transaksi_penyaluran->nilai_penyaluran ?? null;
+
+        // Data Master Bank Penyaluran Kedua
+        $transaksi_penyaluran_2   = $model->transaksi_penyaluran()->first();
+        $master_data_bank_2       = $transaksi_penyaluran_2->master_data_bank->nama_bank ?? null;
+        $nomor_rekening_2         = $transaksi_penyaluran_2->nomor_rekening ?? null;
+        $nama_pemilik_rekening_2  = $transaksi_penyaluran_2->nama_pemilik_rekening ?? null;
+        $tanggal_penyaluran_2     = $transaksi_penyaluran_2->tanggal_penyaluran ?? null;
+        $nilai_penyaluran_2       = $transaksi_penyaluran_2->nilai_penyaluran ?? null;
+
+        // Model Dokumen
+        $files              = $model->document;
+        $file_lampiran      = $files->where('group', 'document')->first();
+        $file_sk            = $files->where('group', 'document_sk')->first();
+        $file_perjanjian    = $files->where('group', 'perjanjian_kerjasama')->first();
+
+        // Indikator Laporan Kegiatan
+        $indikator_laporan_kegiatan = $model->indikator_laporan_kegiatan->transform(function ($items, $key) {
+            return [
+                'nilai_laporan' => $items->nilai_laporan,
+                'nama_indikator' => $items->master_data_indikator_laporan->nama_indikator,
+                'satuan' => $items->master_data_indikator_laporan->satuan,
+                'tipe_data' => $items->master_data_indikator_laporan->satuan,
+            ];
+        });
+
+        $laporan_akhir  = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            $q->where(['deskripsi_kegiatan' => 'Laporan Akhir Kegiatan']);
+        })->first()->document_file;
+
+        $prop = [
+            'total' => $total,
+            'total_penyaluran'  => $total_penyaluran,
+            'nama_verifikator'  => $nama_verifikator,
+            'tanggal_verifikasi'    => $tanggal_verifikasi,
+            'catatan_verifikator'   => $catatan_verifikator,
+            'nama_validator'        => $nama_validator,
+            'tanggal_validasi'      => $tanggal_validasi,
+            'catatan_validator'     => $catatan_validator,
+            'master_data_bank'      => $master_data_bank,
+            'nomor_rekening'        => $nomor_rekening,
+            'nama_pemilik_rekening' => $nama_pemilik_rekening,
+            'tanggal_penyaluran'    => $tanggal_penyaluran,
+            'nilai_penyaluran'      => $nilai_penyaluran,
+            'file_lampiran'         => $file_lampiran,
+            'file_sk'               => $file_sk,
+            'file_perjanjian'       => $file_perjanjian,
+            'laporan_kegiatan_termin_1' => $laporan_kegiatan_termin_1,
+            'master_data_bank_2'      => $master_data_bank_2,
+            'nomor_rekening_2'        => $nomor_rekening_2,
+            'nama_pemilik_rekening_2' => $nama_pemilik_rekening_2,
+            'tanggal_penyaluran_2'    => $tanggal_penyaluran_2,
+            'nilai_penyaluran_2'      => $nilai_penyaluran_2,
+            'indikator_laporan_kegiatan' => $indikator_laporan_kegiatan,
+            'nama_verifikator_laporan_tahap_1'  => $nama_verifikator_laporan_tahap_1,
+            'tanggal_verifikator_laporan_tahap_1'    => $tanggal_verifikator_laporan_tahap_1,
+            'catatan_verifikator_laporan_tahap_1'   => $catatan_verifikator_laporan_tahap_1,
+            'laporan_akhir' => $laporan_akhir
+        ];
+
+        $prop = json_decode(json_encode($prop));
+
         $result = $model->log_tahapan_pengajuan()->get();
 
-        $result->transform(function ($items, $key) {
+        $result->transform(function ($items, $key) use ($prop) {
+
+            $detail = null;
+            switch ($items->tahapan_pengajuan_kegiatan->sort) {
+                case 3:
+                    # code...
+                    $detail = [
+                        'kelompok_masyarakat'       => $items->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                        'tematik_kegiatan'          => $items->pengajuan_kegiatan->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                        'sub_tematik_kegiatan'      => $items->pengajuan_kegiatan->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                        'judul_pengajuan_kegiatan'  => $items->pengajuan_kegiatan->judul_pengajuan_kegiatan,
+                        'kegiatan'                  => $items->pengajuan_kegiatan->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->pengajuan_kegiatan->paket_kegiatan->jumlah_peserta . " " . ($items->pengajuan_kegiatan->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                        'jenis_kegiatan'            => $items->pengajuan_kegiatan->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                        'rencana_kegiatan'          => $items->pengajuan_kegiatan->tanggal_mulai_kegiatan,
+                        'jumlah'                    => $items->pengajuan_kegiatan->paket_kegiatan->jumlah_peserta . " " . ($items->pengajuan_kegiatan->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                        'tanggal_pengajuan'         => $items->pengajuan_kegiatan->created_at->format('d M Y H:i'),
+                        'tanggal_akhir_validasi'    => Carbon::parse($items->pengajuan_kegiatan->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                        'kelompok_masyarakat'       => $items->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                        'nama_pic'                  => $items->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                        'email_pic'                 => $items->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                        'lokasi'                    => $items->pengajuan_kegiatan->alamat_kegiatan,
+                        'nomor_pengajuan'           => $items->pengajuan_kegiatan->nomor_pengajuan,
+                        'proposal_kegiatan'         => $items->pengajuan_kegiatan->proposal_kegiatan,
+                        'tujuan_kegiatan'           => $items->pengajuan_kegiatan->tujuan_kegiatan,
+                        'ruang_lingkup_kegiatan'    => $items->pengajuan_kegiatan->ruang_lingkup_kegiatan,
+                        'dana_yang_disetujui'       => $prop->total,
+                        'dana_yang_dicairkan'       => $prop->total_penyaluran,
+                        'sisa_pencairan'            => ($prop->total - $prop->total_penyaluran),
+                        'nama_verifikator'          => $prop->nama_verifikator,
+                        'tanggal_verifikasi'        => $prop->tanggal_verifikasi,
+                        'catatan_verifikator'       => $prop->catatan_verifikator,
+                        'nama_validator'            => $prop->nama_validator,
+                        'tanggal_validasi'          => $prop->tanggal_validasi,
+                        'catatan_validator'         => $prop->catatan_validator,
+                        'lampiran'                  => $prop->file_lampiran,
+                        'sk'                        => $prop->file_sk,
+                    ];
+                    break;
+
+                case 5:
+                    $detail = [
+                        'master_data_bank'          => $prop->master_data_bank,
+                        'nomor_rekening'            => $prop->nomor_rekening,
+                        'nama_pemilik_rekening'     => $prop->nama_pemilik_rekening,
+                        'tanggal_penyaluran'        => $prop->tanggal_penyaluran,
+                        'nilai_penyaluran'          => $prop->nilai_penyaluran,
+                        'dana_yang_disetujui'       => $prop->total,
+                        'dana_yang_dicairkan'       => $prop->total_penyaluran,
+                    ];
+                    break;
+                case 7:
+                    $detail = [
+                        'catatan'                       => $prop->catatan_verifikator_laporan_tahap_1,
+                        'tanggal_realisasi_kegiatan'    => $items->pengajuan_kegiatan->tanggal_mulai_kegiatan,
+                        'indikator_laporan_kegiatan' => $prop->indikator_laporan_kegiatan,
+                        'laporan_kegiatan_termin_1' => $prop->laporan_kegiatan_termin_1,
+                    ];
+                    break;
+
+                case 8:
+                    $detail = [
+                        'master_data_bank'          => $prop->master_data_bank_2,
+                        'nomor_rekening'            => $prop->nomor_rekening_2,
+                        'nama_pemilik_rekening'     => $prop->nama_pemilik_rekening_2,
+                        'tanggal_penyaluran'        => $prop->tanggal_penyaluran_2,
+                        'nilai_penyaluran'          => $prop->nilai_penyaluran_2,
+                        'dana_yang_disetujui'       => $prop->total,
+                        'dana_yang_dicairkan'       => $prop->total_penyaluran,
+                    ];
+                    break;
+                case 9:
+                    $detail = [
+                        'pengembalian_dana' => $items->pengajuan_kegiatan->pengembalian->jumlah_pengembalian,
+                    ];
+                    break;
+
+                case 10:
+                    $detail = [
+                        'laporan_akhir' => $prop->laporan_akhir
+                    ];
+                    break;
+
+                default:
+                    # code...
+                    $detail = null;
+                    break;
+            }
+
             return [
                 'id'                => $items->id,
                 'tahapan_kegiatan'  => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
@@ -203,10 +404,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'user_akseslh'      => $items->user_akseslh_admin->email ?? null,
                 'created_at'        => $items->created_at->format('Y-m-d H:i:s'),
                 'updated_at'        => $items->updated_at->format('Y-m-d H:i:s'),
+                'detail'            => $detail
             ];
         });
-
-        // dd();
 
         return $this->sendSuccess(array_slice($result->sortBy('sort')->values()->all(), 2));
     }

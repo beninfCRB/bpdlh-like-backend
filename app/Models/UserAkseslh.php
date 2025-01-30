@@ -46,4 +46,14 @@ class UserAkseslh extends AppAuthenticatable
     {
         return $this->hasMany(MasterUserJenisKelompok::class, 'user_akseslh_id');
     }
+
+    /**
+     * Get all of the pengajuan_kegiatan for the UserAkseslh
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pengajuan_kegiatan(): HasMany
+    {
+        return $this->hasMany(PengajuanKegiatan::class, 'user_akseslh_id');
+    }
 }
