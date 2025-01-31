@@ -21,6 +21,7 @@ var data_jenis_dokumen = (function () {
                 url: "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json",
             },
             responsive: true,
+            scrollX: true,
             searchDelay: 500,
             processing: true,
             ajax: url_table,

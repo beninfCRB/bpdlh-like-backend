@@ -202,4 +202,14 @@ class PengajuanKegiatan extends AppModel
     {
         return $this->hasOne(Pengembalian::class, 'pengajuan_kegiatan_id');
     }
+
+    /**
+     * Get the tahapan associated with the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function tahapan(): HasOne
+    {
+        return $this->hasOne(TahapanPengajuanKegiatan::class, 'sort', 'flag');
+    }
 }
