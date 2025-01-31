@@ -2,6 +2,7 @@
 
 const numberFormat = new Intl.NumberFormat("id-ID");
 
+import axios from "axios";
 import {
     createData,
     updateData,
@@ -652,6 +653,49 @@ window.deletePaketKegiatan = (input) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
             });
+        }
+    });
+};
+
+window.exportPengajuanKegiatan = (input, evt) => {
+    evt.preventDefault();
+
+    let formData = new FormData();
+    formData.append("tanggal_awal", getValue("tanggal_awal"));
+    formData.append("tanggal_akhir", getValue("tanggal_akhir"));
+
+    beforeLoadingAttr("#saveBtn");
+    Swal.fire({
+        title: "Konfirmasi Pengunduhan Dokumen",
+        text: "Mulai Pengunduhan Dokumen ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Simpan",
+        cancelButtonText: "Tidak",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            createData(route + "/export-excel-pengajuan", formData, {
+                responseType: "blob",
+            })
+                .then((response) => {
+                    const url = window.URL.createObjectURL(
+                        new Blob([response.data])
+                    );
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.setAttribute("download", "users.xlsx");
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch((err) => {
+                    afterLoadingAttr("#saveBtn");
+                    let error = err.response.data;
+                    if (!error.success) {
+                        toastr.error(error.message);
+                    }
+                });
         }
     });
 };

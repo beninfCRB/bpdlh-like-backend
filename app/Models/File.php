@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class File extends AppModel
 {
@@ -43,4 +44,14 @@ class File extends AppModel
     protected $hidden = [
         //
     ];
+
+    /**
+     * Get the pengajuan_kegiatan that owns the File
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pengajuan_kegiatan(): BelongsTo
+    {
+        return $this->belongsTo(PengajuanKegiatan::class, 'fileable_id');
+    }
 }

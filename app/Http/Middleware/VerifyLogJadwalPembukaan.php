@@ -19,11 +19,13 @@ class VerifyLogJadwalPembukaan
     {
         $jadwal_pembukaan = \DB::table('log_jadwal_pembukaans')->latest()->first();
 
-        if (!$jadwal_pembukaan) return response()->json([
-            'code'      => 403,
-            'status'    => false,
-            'message'   => ['error' => 'Pembukaan pengajuan telah ditutup. Harap menunggu batch berikutnya.'],
-        ], 403);
+        if (!$jadwal_pembukaan) {
+            return response()->json([
+                'code'      => 403,
+                'status'    => false,
+                'message'   => ['error' => 'Pembukaan pengajuan telah ditutup. Harap menunggu batch berikutnya.'],
+            ], 403);
+        }
 
         $date = Carbon::now()->timezone('Asia/Jakarta');
         $awal = $jadwal_pembukaan->tanggal_awal . " " . $jadwal_pembukaan->jam_awal;

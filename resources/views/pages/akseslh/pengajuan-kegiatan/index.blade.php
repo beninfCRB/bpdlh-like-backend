@@ -36,49 +36,84 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="export">
-                    <div class="row">
-                        <div class="col-lg-2 col-md"></div>
-                        <div class="col-lg-10 col-md-12 col-sm-12">
-                            <form class="form-inline pull-right" role="form"
-                                action="{{ route('export-excel-pengajuan') }}" method="POST">
-                                @csrf
-                                <div class="form-group m-l-10">
-                                    <label for="tanggal_awal">Tanggal Awal</label>
-                                    <input type="date" class="form-control" id="tanggal_awal" name="tanggal_awal"
-                                        value="{{ old('tanggal_awal') }}" />
-                                    @error('tanggal_awal')
-                                        <span class="error">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="form-group m-l-10">
-                                    <label for="tanggal_akhir">Tanggal Akhir</label>
-                                    <input type="date" class="form-control" id="tanggal_akhir" name="tanggal_akhir"
-                                        value="{{ old('tanggal_akhir') }}" />
-                                    @error('tanggal_akhir')
-                                        <span class="error">
-                                            {{ $message }}
-                                        </span>
-                                    @enderror
-                                </div>
-                                <button type="submit" class="btn btn-success waves-effect waves-light m-l-10">
-                                    Export Excel
-                                </button>
-                            </form>
+                    <form class="row" role="form" action="{{ route('export-excel-pengajuan') }}" method="POST">
+                        {{-- <form class="row" role="form" onsubmit="exportPengajuanKegiatan(this,event)"> --}}
+                        @csrf
+                        <div class="form-group col-md-3">
+                            <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')"
+                                placeholder="Tanggal Awal" class="form-control" id="tanggal_awal" name="tanggal_awal"
+                                value="{{ old('tanggal_awal') }}" required />
+                            @error('tanggal_awal')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
                         </div>
-                    </div>
+                        <div class="form-group col-md-3">
+                            <input type="text" placeholder="Tanggal Akhir" onfocus="(this.type='date')"
+                                onblur="(this.type='text')" class="form-control" id="tanggal_akhir" name="tanggal_akhir"
+                                value="{{ old('tanggal_akhir') }}"required />
+                            @error('tanggal_akhir')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                Export Excel
+                            </button>
+                        </div>
+                    </form>
                 </div>
                 <div class="tab-pane" id="download">
-                    <form class="form-inline" role="form" action="{{ route('download-zip') }}" method="post">
+                    <form class="row" role="form" action="{{ route('download-zip') }}" method="post">
                         @csrf
-                        <select name="group" id="group" class="form-control">
-                            <option value="">-- Pilih --</option>
-                            @foreach ($group as $item)
-                                <option value="{{ $item->group }}">{{ toPascalCase($item->group) }}</option>
-                            @endforeach
-                        </select>
-                        <button class="btn btn-primary" type="submit">Download</button>
+                        <div class="form-group col-md-3">
+                            <label class="sr-only" for="tanggal_awal_download">Tanggal Awal</label>
+                            <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')"
+                                class="form-control" id="tanggal_awal_download" name="tanggal_awal_download"
+                                placeholder="Tanggal Awal" />
+                            @error('tanggal_awal_download')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label class="sr-only" for="tanggal_akhir_download">Tanggal Akhir</label>
+                            <input type="text"onfocus="(this.type='date')" onblur="(this.type='text')"
+                                class="form-control" id="tanggal_akhir_download" name="tanggal_akhir_download"
+                                placeholder="Tanggal Akhir" />
+                            @error('tanggal_akhir_download')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="group" class="sr-only">Group</label>
+                            <select name="group" id="group" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="proposal">Proposal</option>
+                                <option value="rab">RAB</option>
+                                @foreach ($group as $item)
+                                    <option value="{{ $item->group }}">
+                                        {{ toPascalCase($item->group) == 'Document' ? 'Lampiran Proposal' : toPascalCase($item->group) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('group')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-3">
+                            <button class="btn btn-primary" type="submit">Download</button>
+                        </div>
                     </form>
                 </div>
             </div>

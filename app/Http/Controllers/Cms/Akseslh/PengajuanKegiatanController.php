@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Cms\Akseslh;
 
 use App\Exports\PengajuanKegiatanExport;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redis;
 use App\Http\Controllers\ApiController;
 use App\Models\File;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
 use App\Services\Akseslh\UserEksternalService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PengajuanKegiatanController extends ApiController
@@ -131,11 +130,28 @@ class PengajuanKegiatanController extends ApiController
     public function export(Request $request)
     {
         $input = $request->validate([
-            'tanggal_awal'  => 'required',
-            'tanggal_akhir'  => 'required|after:tanggal_awal'
+            'tanggal_awal'      => 'required',
+            'tanggal_akhir'     => 'required|after:tanggal_awal'
         ]);
 
         return Excel::download(new PengajuanKegiatanExport($input), 'pengajuan_kegiatan.xlsx');
+    }
+
+    public function export_proposal($id)
+    {
+        $data   =   $this->PengajuanKegiatanService->getById($id);
+        // dd($data);
+        $pdf = Pdf::loadView('pdf.proposal', compact('data'));
+        return $pdf->stream();
+    }
+
+    public function export_rab($id)
+    {
+        $data   =   $this->PengajuanKegiatanService->getDataRab($id);
+        // dd($data);
+        $pdf = Pdf::loadView('pdf.rab', compact('data'));
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream();
     }
 
     public function dokumen($id)
