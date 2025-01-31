@@ -79,7 +79,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'paket_kegiatan.jenis_kegiatan',
             'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan',
             'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan',
-            'transaksi_penyaluran'
+            'transaksi_penyaluran',
+            'tahapan'
         ])->withTrashed()->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
