@@ -370,11 +370,15 @@ var data_pengajuan_kegiatan = (function () {
                     targets: 17,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        if (full.paket_kegiatan.jenis_kegiatan === null) {
+                        if (full.paket_kegiatan === null) {
                             return "-";
                         } else {
-                            return full.paket_kegiatan.jenis_kegiatan
-                                .jenis_kegiatan;
+                            if (full.paket_kegiatan.jenis_kegiatan === null) {
+                                return "-";
+                            } else {
+                                return full.paket_kegiatan.jenis_kegiatan
+                                    .jenis_kegiatan;
+                            }
                         }
                     },
                 },
