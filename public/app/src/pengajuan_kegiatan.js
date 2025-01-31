@@ -60,7 +60,7 @@ var data_pengajuan_kegiatan = (function () {
                 { data: "ruang_lingkup_kegiatan" },
                 {},
                 {},
-                { data: "flag" },
+                {},
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -517,6 +517,17 @@ var data_pengajuan_kegiatan = (function () {
                                         .nilai_penyaluran;
                             }
                             return numberFormat.format(total);
+                        }
+                    },
+                },
+                {
+                    targets: 31,
+                    orderable: true,
+                    render: function (data, type, full, meta) {
+                        if (full.tahapan === null || full.tahapan == 0) {
+                            return "Draft";
+                        } else {
+                            return full.tahapan.deskripsi_kegiatan;
                         }
                     },
                 },

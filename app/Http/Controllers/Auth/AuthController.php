@@ -50,7 +50,9 @@ class AuthController extends Controller
             //     return redirect()->intended('home');
             // }
 
-            return redirect()->back()->with(['email' => 'Akun tidak ditemukan']);
+            return back()->withErrors([
+                'email' => 'Kredensial yang diberikan tidak cocok dengan catatan kami.',
+            ])->onlyInput('email');
         } catch (\Throwable $th) {
             //throw $th;
             return back()->with('error', $th->getMessage());
