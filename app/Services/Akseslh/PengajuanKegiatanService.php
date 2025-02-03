@@ -380,7 +380,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     break;
                 case 9:
                     $detail = [
-                        'pengembalian_dana' => $items->pengajuan_kegiatan->pengembalian->jumlah_pengembalian,
+                        'pengembalian_dana' => $items->pengajuan_kegiatan->pengembalian->jumlah_pengembalian ?? null,
                     ];
                     break;
 
