@@ -36,7 +36,8 @@
 
                         </div>
                         <div class="col-md-6">
-                            <input type="text" class="form-control" id="nama_pic" value="{{ $data->data->nama_pic }}" />
+                            <input type="text" class="form-control" id="nama_pic" value="{{ $data->data->nama_pic }}"
+                                readonly />
                         </div>
                     </div>
                     <div class="row m-b-15">

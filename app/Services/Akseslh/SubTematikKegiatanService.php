@@ -259,9 +259,8 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
             ->get();
 
         if (!$result) return $this->sendError(null, 'Not Found', 422);
-
         $result->transform(function ($items, $key) {
-            if ($items->sub_tematik_kegiatan) {
+            if ($items->sub_tematik_kegiatan != null) {
                 return [
                     'id'                    => $items->sub_tematik_kegiatan->id ?? null,
                     'tematik_kegiatan_id'   => $items->tematik_kegiatan_id ?? null,
@@ -270,7 +269,13 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
                 ];
             }
         });
+        $result = $result->toArray();
+        $result = array_filter($result, function ($value) {
+            return !is_null($value);
+        });
 
+        // Menyusun ulang array (karena array_filter bisa mengubah indeks)
+        $result = array_values($result);
         return $this->sendSuccess($result);
     }
 }
