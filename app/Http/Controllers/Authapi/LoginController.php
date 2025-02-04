@@ -47,12 +47,14 @@ class LoginController extends ApiController
 
                 if (!$user->password) {
 
-                    return $this->sendError(null, "account is not active yet", 422);
+                    \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Akun dinonaktifkan', \Sentry\Severity::warning());
+                    return $this->sendError(null, ['error' => [['Akun dinonaktifkan']]], 422);
                 }
 
                 if ($user->status_user == 'NON ACTIVE') {
                     # code...
-                    return $this->sendError(null, "account is not active yet", 422);
+                    \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Akun dinonaktifkan', \Sentry\Severity::warning());
+                    return $this->sendError(null, ['error' => [['Akun dinonaktifkan']]], 422);
                 }
 
                 if (Hash::check($input['password'], $user->password)) {
@@ -85,10 +87,12 @@ class LoginController extends ApiController
                     }
                 }
 
-                return $this->sendError(null, "Credential not match", 422);
+                \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Kata sandi salah', \Sentry\Severity::warning());
+                return $this->sendError(null, ['error' => [['Email atau Sandi tidak sesuai']]], 422);
             }
 
-            return $this->sendError(null, "User not found", 422);
+            \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Email Salah', \Sentry\Severity::warning());
+            return $this->sendError(null, ['error' => [['Akun tidak ditemukan']]], 422);
         } catch (\Throwable $th) {
 
             // return error

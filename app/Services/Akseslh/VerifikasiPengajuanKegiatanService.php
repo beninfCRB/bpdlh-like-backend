@@ -31,7 +31,6 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
 
     public function getAllAttr($user)
     {
-        // dd($user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
         $result  = $this->model->newQuery()
             ->whereHas('log_tahapan_pengajuan', function ($q) {
                 $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
@@ -39,7 +38,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                 })->whereNotNull('tanggal_masuk')
                     ->whereNull('tanggal_selesai');
             })
-            ->whereHas('user_akseslh', function ($q) use ($user) {
+            ->orWhereHas('user_akseslh', function ($q) use ($user) {
                 $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
                     $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
                         $q->whereHas('jenis', function ($q) use ($user) {
@@ -51,6 +50,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
             ->where('flag', 1)
             ->orderBy('created_at', 'ASC')
             ->get();
+
         $result->transform(function ($items) {
             return [
                 'id'                        => $items->id,
