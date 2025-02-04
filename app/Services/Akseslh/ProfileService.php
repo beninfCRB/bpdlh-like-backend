@@ -64,7 +64,7 @@ class ProfileService extends AppService implements AppServiceInterface
             "nama_gadis_ibu_kandung" => $model->nama_gadis_ibu_kandung ?? null,
             "jenis_pekerjaan" => $model->jenis_pekerjaan->jenis_pekerjaan ?? null,
             'pendidikan'        => $model->pendidikan->pendidikan ?? null,
-            "foto"  => $model->foto()->whereIn('group', ['foto_ktp', 'foto_selfie'])->get(),
+            "foto"  => $model->foto()->whereIn('group', ['foto_ktp'])->get(),
             'profile_kelompok' => $model->foto()->where('group', ['profil_kelompok'])->first()
         ];
 
