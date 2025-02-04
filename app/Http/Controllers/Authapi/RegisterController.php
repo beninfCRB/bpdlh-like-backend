@@ -338,7 +338,7 @@ class RegisterController extends ApiController
             'kelurahan_kelompok_masyarakat_id'  => 'required',
             'profil_kelompok'                   => 'required|file|mimes:pdf,doc,docx|max:10192',
             'foto_ktp'                          => 'required|file|mimes:png,jpg,jpeg|max:2048',
-            'foto_selfie'                       => 'required|file|mimes:png,jpg,jpeg|max:2048',
+            // 'foto_selfie'                       => 'required|file|mimes:png,jpg,jpeg|max:2048',
             'nama_pic'                          => 'required|max:255|string',
             'nomor_identitas_pic'               => ['required', 'string', 'min:16', 'max:16', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_identitas_pic')->whereNull('deleted_at')],
             'nomor_npwp_pic'                    => 'nullable',
@@ -351,7 +351,7 @@ class RegisterController extends ApiController
             'tanggal_lahir'                     => 'required|date',
             'agama_id'                          => 'required|exists:agamas,id',
             'status_perkawinan_id'              => 'required|exists:status_pernikahans,id',
-            'nama_gadis_ibu_kandung'            => 'required',
+            // 'nama_gadis_ibu_kandung'            => 'required',
             'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
             'pendidikan'                        => 'required|exists:pendidikans,id',
             'nohp_pic'                          => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->whereNull('deleted_at')],
@@ -374,8 +374,10 @@ class RegisterController extends ApiController
             ->first();
 
         if (!$record) {
+            \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Token tidak valid', \Sentry\Severity::warning());
             return $this->sendError(null, collect(['kode_aktivasi' => ['Token tidak valid.']]), 422);
         } elseif (Carbon::parse($record->expired_at)->isPast()) {
+            \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Token kedaluwarsa', \Sentry\Severity::warning());
             return $this->sendError(null, collect(['kode_aktivasi' => ['Token sudah kedaluwarsa.']]), 422);
         }
 
@@ -430,7 +432,7 @@ class RegisterController extends ApiController
                 'tanggal_lahir'             => $input['tanggal_lahir'],
                 'agama_id'                  => $input['agama_id'],
                 'status_perkawinan_id'      => $input['status_perkawinan_id'],
-                'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
+                // 'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
                 'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],
                 'pendidikan_id'             => $input['pendidikan'],
             ]);
@@ -452,7 +454,7 @@ class RegisterController extends ApiController
             $documents = [
                 'profil_kelompok' => 'profil_kelompok',
                 'foto_ktp' => 'foto_ktp',
-                'foto_selfie' => 'foto_selfie',
+                // 'foto_selfie' => 'foto_selfie',
             ];
 
             foreach ($documents as $key => $column) {

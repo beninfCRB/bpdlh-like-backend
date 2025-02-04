@@ -24,10 +24,10 @@ class VerifikasiPengajuanKegiatanController extends ApiController
         parent::__construct($request);
     }
 
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $input = request()->query('flag');
-        $result = $this->verifikasiPengajuanKegiatanService->getAllAttr($input);
+        $user = $request->user();
+        $result = $this->verifikasiPengajuanKegiatanService->getAllAttr($user);
 
         try {
             if ($result->success) {
