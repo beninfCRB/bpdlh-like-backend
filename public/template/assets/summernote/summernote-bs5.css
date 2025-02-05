@@ -812,4 +812,14 @@ html .note-fullscreen-body, body .note-fullscreen-body {
     list-style-position: inside;
 }
 
-/*# sourceMappingURL=summernote.css.map*/
+.note-toolbar {
+    background: rgba(128, 128, 128, 0.1137254902);
+}
+
+.note-btn-group .note-btn {
+    border-color: rgba(0, 0, 0, 0.1960784314);
+    padding: 0.28rem 0.65rem;
+    font-size: 13px;
+}
+
+/*# sourceMappingURL=summernote-bs5.css.map*/

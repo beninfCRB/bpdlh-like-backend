@@ -956,7 +956,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function updateRabTemp($id, $dataKomponenRab)
+    public function updateRabTemp($id, $dataKomponenRab, $user)
     {
         $logJadwalPembukaan = $this->modelLogJadwalPembukaan->newQuery()->latest()->first();
 
@@ -1038,7 +1038,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ];
 
             // Mengirim email ke verifikator
-            $verifikator = UserAkseslh::where('role_user', 'verifikator')->get();
+            // $verifikator = UserAkseslh::where('role_user', 'verifikator')->get();
+            $verifikator = UserAkseslh::where('role_user', 'verifikator')
+                ->whereHas('master_user_jenis_kelompok', function ($q) use ($user) {
+                    $q->where('jenis_kelompok_masyarakat_id', $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis_kelompok_masyarakat_id);
+                })
+                ->get();
 
             foreach ($verifikator as $user) {
                 $this->emailPhpService->verifikasiPengajuanKegiatan($user, 'Verifikasi Pengajuan Kegiatan', $model, null, 'mail.verifikasi-pengajuan-kegiatan');
