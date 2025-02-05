@@ -180,17 +180,6 @@ window.summernoteSetup = (element) => {
                 ["delete", ["deleteRow", "deleteCol", "deleteTable"]],
             ],
         },
-        toolbar: [
-            // [groupName, [list of button]]
-            ["style", ["bold", "italic", "underline", "clear"]],
-            ["font", ["strikethrough", "superscript", "subscript"]],
-            ["fontsize", ["fontsize"]],
-            ["color", ["color"]],
-            ["para", ["ul", "ol", "paragraph", "height"]],
-            ["insert", ["link", "picture", "video", "table", "hr"]],
-            ["fontname", ["fontname"]],
-            ["view", ["fullscreen", "help"]],
-        ],
         callbacks: {
             onImageUpload: function (image) {
                 sendFiles(image[0], element);
