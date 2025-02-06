@@ -17,37 +17,41 @@ class VerifikatorSeeder extends Seeder
     {
         //
         $userEmail = [
+            // [
+            //     "name"  => "Dhonald Julian, S.Sos.",
+            //     "email" => "julianjunot87@gmail.com"
+            // ],
+            // [
+            //     "name"  => "Uus Danu Kusumah, S.Hut, M.E.",
+            //     "email" => "uusdanukusumah@gmail.com"
+            // ],
+            // [
+            //     "name"  => "Hans Nico A. Sinaga, S.Hut, M.P.",
+            //     "email" => "nicosinaga.klhk@gmail.com"
+            // ],
+            // [
+            //     "name"  => "R. Arif Sasongko Wijayanto, SH., MH.",
+            //     "email" => 'arifsw78@gmail.com',
+            // ],
+            // [
+            //     "name"  => "M. Shofwan Setiawan, S.Hut., M.Si",
+            //     "email" => 'shofwansetiawan@gmail.com',
+            // ],
+            // [
+            //     "name"  => "Tedi Bagus Prasetyo Mulyo, S.Hub. Int",
+            //     "email" => 'tedibagus@menlhk.go.id',
+            // ],
+            // [
+            //     "name"  => "Emi Mardiati, S.E.",
+            //     "email" => 'kalpataru.klhk@gmail.com',
+            // ],
+            // [
+            //     "name"  => "Agung Wicaksana, S.Hut.",
+            //     "email" => 'wicaksanaagung02@gmail.com'
+            // ],
             [
-                "name"  => "Dhonald Julian, S.Sos.",
-                "email" => "julianjunot87@gmail.com"
-            ],
-            [
-                "name"  => "Uus Danu Kusumah, S.Hut, M.E.",
-                "email" => "uusdanukusumah@gmail.com"
-            ],
-            [
-                "name"  => "Hans Nico A. Sinaga, S.Hut, M.P.",
-                "email" => "nicosinaga.klhk@gmail.com"
-            ],
-            [
-                "name"  => "R. Arif Sasongko Wijayanto, SH., MH.",
-                "email" => 'arifsw78@gmail.com',
-            ],
-            [
-                "name"  => "M. Shofwan Setiawan, S.Hut., M.Si",
-                "email" => 'shofwansetiawan@gmail.com',
-            ],
-            [
-                "name"  => "Tedi Bagus Prasetyo Mulyo, S.Hub. Int",
-                "email" => 'tedibagus@menlhk.go.id',
-            ],
-            [
-                "name"  => "Emi Mardiati, S.E.",
-                "email" => 'kalpataru.klhk@gmail.com',
-            ],
-            [
-                "name"  => "Agung Wicaksana, S.Hut.",
-                "email" => 'wicaksanaagung02@gmail.com'
+                "name"  => "Sena Pradipta, ST, MT, PhD",
+                "email" => 'syahida.ahmady@yahoo.com'
             ],
         ];
 
