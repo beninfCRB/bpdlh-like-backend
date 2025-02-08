@@ -337,7 +337,7 @@ class RegisterController extends ApiController
             'kecamatan_kelompok_masyarakat_id'  => 'required',
             'kelurahan_kelompok_masyarakat_id'  => 'required',
             'profil_kelompok'                   => 'required|file|mimes:pdf,doc,docx|max:10192',
-            'foto_ktp'                          => 'required|file|mimes:png,jpg,jpeg|max:2048',
+            'foto_ktp'                          => 'required|file|mimes:png,jpg,jpeg|max:10192',
             // 'foto_selfie'                       => 'required|file|mimes:png,jpg,jpeg|max:2048',
             'nama_pic'                          => 'required|max:255|string',
             'nomor_identitas_pic'               => ['required', 'string', 'min:16', 'max:16', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_identitas_pic')->whereNull('deleted_at')],
