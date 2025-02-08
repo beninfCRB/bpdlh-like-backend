@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class, 'restore']);
         Route::post('/sub-tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class, 'restore']);
+        Route::post('/jenis-kelompok-masyarakat/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class, 'restore']);
 
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);

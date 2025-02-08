@@ -150,7 +150,9 @@ class PengajuanKegiatanController extends ApiController
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
-        $result = $this->pengajuanKegiatanService->updateRabTemp($id, $request->komponen_rab);
+        $user = $request->user();
+
+        $result = $this->pengajuanKegiatanService->updateRabTemp($id, $request->komponen_rab, $user);
 
         try {
             //code...
