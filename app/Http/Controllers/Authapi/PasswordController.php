@@ -30,7 +30,7 @@ class PasswordController extends ApiController
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email'                   => 'required|email|exists:user_akseslhs,email',
+            'email'                   => 'required|exists:user_akseslhs,email',
         ]);
 
         if ($validator->fails()) {
@@ -62,7 +62,7 @@ class PasswordController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'token' => 'required',
-            'email' => 'required|email',
+            'email' => 'required',
             'password' => 'required|min:8|confirmed',
         ]);
 
