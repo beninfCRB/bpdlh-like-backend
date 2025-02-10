@@ -169,8 +169,6 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
         $input = $validator->validated();
 
-        $input = $validator->validated();
-
         $input['user_akseslh_id']  = $request->user()->id;
 
         $result = $this->validasiPengajuanKegiatanService->retur_pengajuan_kegiatan($id, $input);

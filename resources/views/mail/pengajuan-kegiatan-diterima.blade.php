@@ -93,14 +93,6 @@
                 terlewati atau berkeinginan untuk merubah tanggal kegiatan.
             </li>
         </ol>
-        {{-- <div class="info">
-            <p><strong>Kelompok Masyarakat:</strong>
-                {{ $data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}</p>
-            <p><strong>Nomor Pengajuan:</strong> {{ $data->nomor_pengajuan }}</p>
-            <p><strong>Paket Kegiatan:</strong>
-                {{ $data->paket_kegiatan->nama_paket_kegiatan . ' ' . $data->paket_kegiatan->jumlah_peserta }}
-            </p>
-        </div> --}}
         <p>
             Demikian kami sampaikan, atas kerjasamanya kami ucapakan terimakasih.
         </p>
