@@ -231,7 +231,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                     $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
                     $informasiPencairanDana->save();
 
-                    $log->tanggal_masuk = $date('Y-m-d');
+                    $log->tanggal_masuk = date('Y-m-d');
                     $log->save();
                 }
 
