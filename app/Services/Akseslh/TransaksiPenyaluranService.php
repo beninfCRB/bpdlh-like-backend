@@ -182,6 +182,10 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
     {
         $result = $this->pengajuanKegiatan->find($data['pengajuan_kegiatan_id']);
 
+        if (!$result) {
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
         $tpk = $result->transaksi_penyaluran->count();
 
         \DB::beginTransaction();
@@ -190,10 +194,121 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
 
             if ($tpk == 0 && $result->flag == 4) {
                 // Jika belum ada penyaluran
-                $this->penyaluran_tahap_1($data);
+                // $this->penyaluran_tahap_1($data);
+                $newData = $this->model->newQuery()->create([
+                    'master_data_bank_id'   =>  $data['master_data_bank_id'],
+                    'pengajuan_kegiatan_id' =>  $data['pengajuan_kegiatan_id'],
+                    'nomor_rekening'        =>  $data['nomor_rekening'],
+                    'nama_pemilik_rekening' =>  $data['nama_pemilik_rekening'],
+                    'nilai_penyaluran'      =>  $data['nilai_penyaluran'],
+                    'tanggal_penyaluran'    =>  $data['tanggal_penyaluran'],
+                    'flag'                  =>  1,
+                    'username'              =>  $data['username'],
+                ]);
+
+                $informasiPencairanDana = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(
+                            'deskripsi_kegiatan',
+                            'Informasi Pencairan Dana'
+                        );
+                    })
+                    ->first();
+
+                $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(
+                            'deskripsi_kegiatan',
+                            'Konfirmasi Pencairan Dana Termin 1'
+                        );
+                    })
+                    ->first();
+
+                if (!$informasiPencairanDana->tanggal_selesai) {
+                    # code...
+                    $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
+                    $informasiPencairanDana->save();
+
+                    $log->tanggal_masuk = $date('Y-m-d');
+                    $log->save();
+                }
+
+                $log->tanggal_selesai = date('Y-m-d');
+                $log->user_akseslh_id = $data['username'];
+                $log->save();
+
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+                    'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['username']
+                ]);
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(
+                            'deskripsi_kegiatan',
+                            'Laporan Kegiatan Termin 1'
+                        );
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+                $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
+
+                $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
+
+                $newData->pengajuan_kegiatan->flag = 5;
+                $newData->pengajuan_kegiatan->save();
             } else if ($tpk == 1 && $result->flag == 7) {
                 // Penyaluran tahap ke 2, dan cek apabila sudah disalurkan 1x
-                $this->penyaluran_tahap_2($data);
+                // $this->penyaluran_tahap_2($data);
+                $newData = $this->model->newQuery()->create([
+                    'master_data_bank_id'   =>  $data['master_data_bank_id'],
+                    'pengajuan_kegiatan_id' =>  $data['pengajuan_kegiatan_id'],
+                    'nomor_rekening'        =>  $data['nomor_rekening'],
+                    'nama_pemilik_rekening' =>  $data['nama_pemilik_rekening'],
+                    'nilai_penyaluran'      =>  $data['nilai_penyaluran'],
+                    'tanggal_penyaluran'    =>  $data['tanggal_penyaluran'],
+                    'flag'                  =>  1,
+                    'username'              =>  $data['username'],
+                ]);
+
+                $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin II');
+                    })
+                    ->first();
+
+                $log->tanggal_selesai = date('Y-m-d');
+                $log->user_akseslh_id = $data['username'];
+                $log->save();
+
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+                    'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['username']
+                ]);
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+                $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
+
+                $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
+
+                $newData->pengajuan_kegiatan->flag = 8;
+                $newData->pengajuan_kegiatan->save();
             } else {
                 // Kondisi ketika sudah disalurkan 2x
                 \DB::rollBack();
