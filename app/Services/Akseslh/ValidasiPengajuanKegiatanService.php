@@ -963,7 +963,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         if (!$read) return $this->sendError(null, 'Not Found', 422);
 
         // Memastikan flag adalah 2
-        if (!in_array($read->flag, [2, '2'])) return $this->sendError(null, 'Not Allowed', 403);
+        if (!in_array($read->flag, [2, '2'])) return $this->sendError(null, 'Not Allowed', 422);
 
         // Menghitung total dari rab_pengajuan_paket_kegiatans dengan eager loading
         $total = $read->rab_pengajuan_paket_kegiatans->sum(function ($items) {
