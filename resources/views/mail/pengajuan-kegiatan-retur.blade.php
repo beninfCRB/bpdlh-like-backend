@@ -68,6 +68,7 @@
             <p>{{ $data['catatan_log'] }}</p>
         </div>
         <p>
+            Mohon melakukan perbaikan RAB pada masa sanggah.
             Informasi lebih lanjut dapat menghubungi kami melalui email <a
                 href="mailto:layanandanamasyarakat@bpdlh.id">layanandanamasyarakat@bpdlh.id</a>.
         </p>
