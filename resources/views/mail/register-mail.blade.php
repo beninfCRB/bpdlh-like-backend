@@ -61,8 +61,7 @@
             Halo {{ $data->nama_pic }},
         </p>
         <p>
-            Terima kasih atas antusiasme Anda pada Layanan Dana Masyarakat untuk Lingkungan. Berikut adalah detail akun
-            yang dapat Anda gunakan untuk login:
+            Registrasi akun telah berhasil. Berikut adalah detail akun yang dapat Anda gunakan untuk login:
         </p>
         <div class="info">
             <p><strong>Email:</strong> {{ $data->user_akseslh->email }}</p>
@@ -70,7 +69,7 @@
         </div>
         <p>
             Harap simpan informasi login ini dengan aman dan tidak membagikannya kepada pihak lain. Jika Anda memiliki
-            pertanyaan lebih lanjut atau memerlukan bantuan kami, jangan ragu untuk menghubungi kami melalui email
+            pertanyaan atau membutuhkan bantuan kami, jangan ragu untuk menghubungi kami melalui email
             <a href="mailto:layanandanamasyarakat@bpdlh.id">
                 layanandanamasyarakat@bpdlh.id.
             </a>
@@ -79,7 +78,6 @@
             Terima kasih,
         </p>
         <div class="footer">
-            Salam,<br>
             Tim Pengelola Layanan Dana Masyarakat untuk Lingkungan<br>
         </div>
     </div>

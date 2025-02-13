@@ -61,8 +61,8 @@
             Yth. Tim Verifikasi,
         </p>
         <p>
-            Sistem telah menerima pengajuan baru pada Layanan Dana Masyrakat untuk Lingkungan, dengan detail pengajuan
-            sebagai berikut:
+            Sistem telah menerima pengajuan usulan kegiatan baru pada Layanan Dana Masyarakat untuk Lingkungan, dengan
+            detail pengajuan sebagai berikut:
         </p>
         <div class="info">
             <p><strong>Kelompok Masyarakat:</strong>
@@ -73,14 +73,10 @@
             </p>
         </div>
         <p>
-            Silahkan cek pengajuan pada link berikut <a
-                href="{{ env('URL_FE') ?? 'https://bpdlh.id/layanan-masyarakat/#/layanan-masyarakat/sign-in' }}">"KLIK
-                DI SINI"</a>.
+            Silahkan cek pengajuan pada <a
+                href="{{ env('URL_FE') ?? 'https://bpdlh.id/layanan-masyarakat/#/layanan-masyarakat/sign-in' }}">link
+                berikut</a>.
         </p>
-        {{-- <div class="footer">
-            Hormat kami,<br>
-            Badan Pengelola Dana Lingkungan Hidup (BPDLH)<br>
-        </div> --}}
     </div>
 </body>
 
