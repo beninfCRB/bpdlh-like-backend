@@ -1072,6 +1072,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Data bukan draft', 422);
         }
 
+        $logJadwalPembukaan = $this->modelLogJadwalPembukaan->newQuery()->latest()->first();
+
         \DB::beginTransaction();
 
         try {
@@ -1129,7 +1131,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $dataSend = [
                 'id_pengajuan'    => $read->id,
                 'nomor_pengajuan' => $read->nomor_pengajuan,
-                'caping_rab'      => $read->caping_rab,
+                'caping_rab'      => $read->caping_rab > 0 ? $read->caping_rab : $logJadwalPembukaan->batas_pengajuan,
                 'komponen_rab'    => $rab->groupBy('jenis_komponen_rab')
             ];
 
