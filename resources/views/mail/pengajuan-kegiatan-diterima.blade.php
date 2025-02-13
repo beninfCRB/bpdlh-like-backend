@@ -67,8 +67,8 @@
             {{ $data['kelompok_masyarakat'] }}.
         </p>
         <p>
-            Berdasarkan hasil penilaian secara menyeluruh atas permohonan Saudara/i pada layanan dana masyarakat untuk
-            lingkungan, dengan ini kami sampaikan bahwa proposal Saudara/i dengan nomor pengajuan
+            Berdasarkan hasil penilaian secara menyeluruh atas permohonan Saudara/i pada Layanan Dana Masyarakat untuk
+            Lingkungan, dengan ini kami sampaikan bahwa bahwa usulan kegiatan Saudara/i dengan nomor pengajuan
             <b>{{ $data['nomor_pengajuan'] }}</b>
             berjudul <b>"{{ $data['judul_pengajuan_kegiatan'] }}"</b> dengan jumlah dana Rp.
             <b>{{ number_format($data['total']) }}</b>

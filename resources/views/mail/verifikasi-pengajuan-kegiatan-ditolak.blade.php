@@ -61,7 +61,7 @@
             Halo {{ $to->nama_pic }},
         </p>
         <p>
-            Mohon maaf pengajuan anda dengan nomor {{ $data['nomor_pengajuan'] }} belum disetujui,
+            Mohon maaf pengajuan usulan kegiatan Anda dengan nomor {{ $data['nomor_pengajuan'] }} belum disetujui,
             dengan catatan sebagai berikut:
         </p>
         <div class="info">
