@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Kode Verifikasi Verifikasi</title>
+    <title>Email Verifikasi Akun</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -62,16 +62,14 @@
         </p>
         <p>
             Terima kasih atas antusiasme Anda pada Layanan Dana Masyarakat untuk Lingkungan. Berikut adalah Kode
-            Verifikasi
-            yang dapat anda gunakan untuk proses registrasi:
+            Verifikasi yang dapat anda gunakan untuk proses registrasi:
         </p>
         <div class="info">
             <p><strong>Kode Verifikasi:</strong> {{ $token }}</p>
         </div>
         <p>
-            Kode Verifikasi berikut hanya berlaku selama 30 menit, Harap tidak membagikannya kepada pihak lain. Jika
-            Anda memiliki
-            pertanyaan lebih lanjut atau memerlukan bantuan kami, jangan ragu untuk menghubungi kami melalui email
+            Kode Verifikasi berikut hanya berlaku selama 30 menit, harap tidak membagikannya kepada pihak lain. Jika
+            Anda memiliki pertanyaan atau membutuhkan bantuan kami, jangan ragu untuk menghubungi kami melalui email
             <a href="mailto:layanandanamasyarakat@bpdlh.id">
                 layanandanamasyarakat@bpdlh.id.
             </a>
@@ -80,7 +78,6 @@
             Terima kasih,
         </p>
         <div class="footer">
-            Salam,<br>
             Tim Pengelola Layanan Dana Masyarakat untuk Lingkungan<br>
         </div>
     </div>
