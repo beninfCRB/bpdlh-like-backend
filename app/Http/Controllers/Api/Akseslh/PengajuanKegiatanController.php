@@ -124,6 +124,9 @@ class PengajuanKegiatanController extends ApiController
         }
 
         try {
+            // Membuat semua notifikasi menjadi sudha dibaca
+            $request->user()->unreadNotifications->markAsRead();
+
             if ($result->success) {
                 return $this->sendSuccess($result->data, $result->message, $result->code);
             }
