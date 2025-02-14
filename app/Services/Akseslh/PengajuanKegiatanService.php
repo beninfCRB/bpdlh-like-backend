@@ -309,7 +309,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $prop = json_decode(json_encode($prop));
 
-        $result = $model->log_tahapan_pengajuan()->get();
+        $result = $model->log_tahapan_pengajuan()
+            ->with(['pengajuan_kegiatan.paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
+            ->get();
 
         $result->transform(function ($items, $key) use ($prop) {
 

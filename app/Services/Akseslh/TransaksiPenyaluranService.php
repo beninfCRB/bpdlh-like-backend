@@ -101,11 +101,17 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
             # code...
             $result  = $this->pengajuanKegiatan->newQuery()
                 ->where('flag', $flag)
+                ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                    $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }])
                 ->orderBy('created_at', 'ASC')
                 ->get();
         } else {
             $result  = $this->pengajuanKegiatan->newQuery()
                 ->where('flag', 4)
+                ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                    $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }])
                 ->orderBy('created_at', 'ASC')
                 ->get();
         }
