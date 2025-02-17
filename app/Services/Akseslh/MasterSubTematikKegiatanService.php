@@ -49,7 +49,7 @@ class MasterSubTematikKegiatanService extends AppService implements AppServiceIn
         $result->transform(function ($items, $key) {
             return [
                 'id'           => $items->id,
-                'tematik'      => $items->tematik_kegiatan->tematik_kegiatan . ' - ' . $items->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'tematik'      => $items->tematik_kegiatan->tematik_kegiatan . ' - ' . $items->sub_tematik_kegiatan()->withTrashed()->first()->sub_tematik_kegiatan,
             ];
         });
 
