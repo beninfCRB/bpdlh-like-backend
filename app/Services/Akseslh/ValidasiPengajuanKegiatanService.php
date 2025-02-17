@@ -97,6 +97,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                                     ->whereNull('tanggal_selesai');
                             }
                         )
+                        ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }])
                         ->orderBy('created_at', 'ASC')
                         ->get();
                     break;
@@ -112,6 +115,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                                     ->whereNull('tanggal_selesai');
                             }
                         )
+                        ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }])
                         ->orderBy('created_at', 'ASC')
                         ->get();
 
@@ -172,6 +178,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                                     ->whereNull('tanggal_selesai');
                             }
                         )
+                        ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }])
                         ->orderBy('created_at', 'ASC')
                         ->get();
 
@@ -239,6 +248,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                                     ->whereNull('tanggal_selesai');
                             }
                         )
+                        ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }])
                         ->orderBy('created_at', 'ASC')
                         ->get();
                     break;
@@ -251,6 +263,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     })->whereNotNull('tanggal_masuk')
                         ->whereNull('tanggal_selesai');
                 })
+                ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                    $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }])
                 ->where('flag', 2)
                 ->orderBy('created_at', 'ASC')
                 ->get();
@@ -304,7 +319,11 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
     public function apiGetBydId($id)
     {
-        $model = $this->model->newQuery()->find($id);
+        $model = $this->model->newQuery()
+            ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
+            ->find($id);
 
         if (!$model)  return $this->sendError(null, 'Not Found');
 
@@ -937,6 +956,14 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
                     })
                     ->update(['tanggal_masuk' => now()]);
+
+                $dataSend['document_sk'] = env('APP_URL') . '/storage/' . $upload->file_path;
+                $dataSend['judul_pengajuan_kegiatan'] = $read->judul_pengajuan_kegiatan;
+                $dataSend['kelompok_masyarakat'] = $read->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat;
+                $dataSend['nama_pic'] = $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic;
+                $dataSend['total'] = $total;
+
+                $this->emailService->pengajuanKegiatanDiterima($read->user_akseslh, 'Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan', $dataSend, null, 'mail.pengajuan-kegiatan-diterima');
             } else {
                 // Kirim email
                 $this->emailService->verifikasiValidasiDitolak(

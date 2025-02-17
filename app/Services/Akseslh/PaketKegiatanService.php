@@ -28,7 +28,9 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->with(['jenis_kegiatan', 'master_sub_tematik_kegiatan.tematik_kegiatan', 'master_sub_tematik_kegiatan.sub_tematik_kegiatan'])->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with(['jenis_kegiatan', 'master_sub_tematik_kegiatan.tematik_kegiatan', 'master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+        }])->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }

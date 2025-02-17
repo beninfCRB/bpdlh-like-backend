@@ -136,6 +136,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     public function getDataProsesKegiatan($user_akseslh_id)
     {
         $result =   $this->model->newQuery()
+            ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
             ->where(['user_akseslh_id' => $user_akseslh_id])
             ->where('flag', '>', 0)
             ->where('flag', '<', 10)
@@ -306,7 +309,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $prop = json_decode(json_encode($prop));
 
-        $result = $model->log_tahapan_pengajuan()->get();
+        $result = $model->log_tahapan_pengajuan()
+            ->with(['pengajuan_kegiatan.paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
+            ->get();
 
         $result->transform(function ($items, $key) use ($prop) {
 
@@ -414,7 +421,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan'])->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
+        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan', 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+        }])->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
 
         if (!$result)  return $this->sendSuccess(null);
 
@@ -1072,6 +1081,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Data bukan draft', 422);
         }
 
+        $logJadwalPembukaan = $this->modelLogJadwalPembukaan->newQuery()->latest()->first();
+
         \DB::beginTransaction();
 
         try {
@@ -1129,7 +1140,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $dataSend = [
                 'id_pengajuan'    => $read->id,
                 'nomor_pengajuan' => $read->nomor_pengajuan,
-                'caping_rab'      => $read->caping_rab,
+                'caping_rab'      => $read->caping_rab > 0 ? $read->caping_rab : $logJadwalPembukaan->batas_pengajuan,
                 'komponen_rab'    => $rab->groupBy('jenis_komponen_rab')
             ];
 

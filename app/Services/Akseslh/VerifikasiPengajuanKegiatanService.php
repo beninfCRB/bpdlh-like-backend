@@ -47,6 +47,9 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                     });
                 });
             })
+            ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
             ->where('flag', 1)
             ->orderBy('created_at', 'ASC')
             ->get();
