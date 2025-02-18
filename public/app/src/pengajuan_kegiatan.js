@@ -80,17 +80,25 @@ var data_pengajuan_kegiatan = (function () {
                         } else {
                             if (
                                 full.user_akseslh.data_pic_kelompok_masyarakat
-                                    .kelompok_masyarakat.jenis
-                                    .jenis_kelompok_masyarakat === null
+                                    .kelompok_masyarakat.jenis === null
                             ) {
                                 return "-";
                             } else {
-                                return (
+                                if (
                                     full.user_akseslh
                                         .data_pic_kelompok_masyarakat
                                         .kelompok_masyarakat.jenis
-                                        .jenis_kelompok_masyarakat ?? "-"
-                                );
+                                        .jenis_kelompok_masyarakat === null
+                                ) {
+                                    return "-";
+                                } else {
+                                    return (
+                                        full.user_akseslh
+                                            .data_pic_kelompok_masyarakat
+                                            .kelompok_masyarakat.jenis
+                                            .jenis_kelompok_masyarakat ?? "-"
+                                    );
+                                }
                             }
                         }
                     },
