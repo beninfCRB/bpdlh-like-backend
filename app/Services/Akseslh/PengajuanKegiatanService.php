@@ -834,25 +834,50 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             })->first();
         }
 
-        $result = [
-            'id'                        => $model->id,
-            'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
-            'provinsi_kegiatan'         => $model->provinsi_kegiatan,
-            'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
-            'kecamatan_kegiatan'        => $model->kecamatan_kegiatan,
-            'kelurahan_kegiatan'        => $model->kelurahan_kegiatan,
-            'alamat_kegiatan'           => $model->alamat_kegiatan,
-            'tanggal_kegiatan'          => $model->tanggal_mulai_kegiatan . ' - ' . $model->tanggal_akhir_kegiatan,
-            'waktu_kegiatan'            => $model->time_mulai_kegiatan . ' - ' . $model->time_akhir_kegiatan,
-            'proposal_kegiatan'         => $model->proposal_kegiatan,
-            'tujuan_kegiatan'           => $model->tujuan_kegiatan,
-            'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
-            'paket_kegiatan_id'         => $model->paket_kegiatan_id,
-            'fileDocument'              => $model->document,
-            'nomor_pengajuan'           => $model->nomor_pengajuan,
-            'status'                    => $retur ? ($retur->flag == 2 ? 'retur' : 'draft') : 'draft',
-            'caping_rab'                => $model->caping_rab
-        ];
+        if ($retur && $retur->flag == 2) {
+            # code...
+            $result = [
+                'id'                        => $model->id,
+                'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
+                'provinsi_kegiatan'         => $model->provinsi_kegiatan,
+                'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
+                'kecamatan_kegiatan'        => $model->kecamatan_kegiatan,
+                'kelurahan_kegiatan'        => $model->kelurahan_kegiatan,
+                'alamat_kegiatan'           => $model->alamat_kegiatan,
+                'tanggal_kegiatan'          => $model->tanggal_mulai_kegiatan . ' - ' . $model->tanggal_akhir_kegiatan,
+                'waktu_kegiatan'            => $model->time_mulai_kegiatan . ' - ' . $model->time_akhir_kegiatan,
+                'proposal_kegiatan'         => $model->proposal_kegiatan,
+                'tujuan_kegiatan'           => $model->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
+                'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                'fileDocument'              => $model->document,
+                'nomor_pengajuan'           => $model->nomor_pengajuan,
+                'status'                    => $retur ? ($retur->flag == 2 ? 'retur' : 'draft') : 'draft',
+                'caping_rab'                => $model->caping_rab
+            ];
+        } else {
+            # code...
+            $result = [
+                'id'                        => $model->id,
+                'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
+                'provinsi_kegiatan'         => $model->provinsi_kegiatan,
+                'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
+                'kecamatan_kegiatan'        => $model->kecamatan_kegiatan,
+                'kelurahan_kegiatan'        => $model->kelurahan_kegiatan,
+                'alamat_kegiatan'           => $model->alamat_kegiatan,
+                'tanggal_kegiatan'          => $model->tanggal_mulai_kegiatan . ' - ' . $model->tanggal_akhir_kegiatan,
+                'waktu_kegiatan'            => $model->time_mulai_kegiatan . ' - ' . $model->time_akhir_kegiatan,
+                'proposal_kegiatan'         => $model->proposal_kegiatan,
+                'tujuan_kegiatan'           => $model->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
+                'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                'fileDocument'              => $model->document,
+                'nomor_pengajuan'           => $model->nomor_pengajuan,
+                'caping_rab'                => $model->caping_rab
+            ];
+        }
+
+
 
         return $this->sendSuccess($result);
     }
