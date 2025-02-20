@@ -54,7 +54,7 @@
                                 <option class='form-control' value=''>- Pilih Data -</option>
                                 @isset($jenisKelompokMasyarakat)
                                     @foreach ($jenisKelompokMasyarakat as $item)
-                                        @if (old('jenis_kelompok_masyarakat_id'))
+                                        @if (old('jenis_kelompok_masyarakat_id') == $item['id'])
                                             <option class='form-control' value="{{ $item['id'] }}" selected>
                                                 {{ $item['jenis_kelompok_masyarakat'] }}
                                             </option>
