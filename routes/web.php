@@ -19,7 +19,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/debug-sentry', function () {
     // dd(date('Y-m-d', strtotime('31-12-9999')), date('Y-m-d'));
     // dd(Uuid::uuid4()->toString());
-    dd(File::where('group', 'document')->get());
+    // dd(File::where('group', 'document')->get());
+    Sentry::captureMessage(
+        "This is a dummy warning message for Sentry",
+        \Sentry\Severity::warning()
+    );
+
+    return response()->json(['message' => 'Dummy message sent to Sentry']);
 });
 
 Route::get('/', function () {
