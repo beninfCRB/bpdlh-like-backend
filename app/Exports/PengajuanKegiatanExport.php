@@ -19,21 +19,26 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
     public function collection()
     {
         // Filter data berdasarkan rentang tanggal
-        return PengajuanKegiatan::with(
+        return PengajuanKegiatan::with([
             'provinsi',
             'kabupaten',
             'kecamatan',
             'kelurahan',
             'rab_pengajuan_paket_kegiatans',
-            'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis',
+            'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis'
+            => function ($q) {
+                $q->withTrashed();
+            },
             'user_akseslh.data_pic_kelompok_masyarakat.provinsi',
             'user_akseslh.data_pic_kelompok_masyarakat.kabupaten',
             'user_akseslh.data_pic_kelompok_masyarakat.kecamatan',
             'user_akseslh.data_pic_kelompok_masyarakat.kelurahan',
             'paket_kegiatan.jenis_kegiatan',
             'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan',
-            'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan'
-        )
+            'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($q) {
+                $q->withTrashed();
+            }
+        ])
             ->whereBetween('created_at', [$this->data['tanggal_awal'], $this->data['tanggal_akhir']])
             ->get();
     }
@@ -79,6 +84,8 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             $pengajuanKegiatan->proposal_kegiatan,
             $pengajuanKegiatan->ruang_lingkup_kegiatan,
             $total_sum,
+            $pengajuanKegiatan->created_at,
+            $pengajuanKegiatan->updated_at
         ];
     }
 
@@ -115,7 +122,9 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'Alamat Kegiatan',
             'Proposal Kegiatan',
             'Ruang Lingkup Kegiatan',
-            'Total RAB'
+            'Total RAB',
+            'Created At',
+            'Updated At'
         ];
     }
 }
