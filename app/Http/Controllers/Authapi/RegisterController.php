@@ -358,12 +358,38 @@ class RegisterController extends ApiController
             'email_pic'                         => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')],
             'kode_aktivasi'                     => 'required',
         ], [
-            'kelompok_masyarakat.not_undefined' => ':attribute tidak valid'
+            'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
         ]);
 
         if ($validator->fails()) {
-            \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            // Menangani file dan mengirim info ke Sentry jika ada masalah
+            $profilFile = $request->file('profil_kelompok');
+            $fotoKtpFile = $request->file('foto_ktp');
+
+            $errorMessage = 'Validate Message: ' . $request->email_pic . ' - Errors: ' . json_encode($validator->errors()->all());
+
+            // Memeriksa apakah file profil_kelompok ada
+            if ($profilFile) {
+                $profilFileType = $profilFile->getClientMimeType();
+                $profilFileSize = $profilFile->getSize(); // ukuran dalam bytes
+                $profilFileSize = number_format(($profilFileSize / 1024 / 1024), 1);
+                $errorMessage .= ' - Profil File: Type: ' . $profilFileType . ', Size: ' . $profilFileSize . ' Mb';
+            }
+
+            // Memeriksa apakah file foto_ktp ada
+            if ($fotoKtpFile) {
+                $fotoKtpFileType = $fotoKtpFile->getClientMimeType();
+                $fotoKtpFileSize = $fotoKtpFile->getSize(); // ukuran dalam bytes
+                $fotoKtpFileSize = number_format(($fotoKtpFileSize / 1024 / 1024), 1);
+                $errorMessage .= ' - Foto KTP File: Type: ' . $fotoKtpFileType . ', Size: ' . $fotoKtpFileSize . ' Mb';
+            }
+
+            // Kirim pesan ke Sentry
+            \Sentry\captureMessage($errorMessage, \Sentry\Severity::warning());
+
             return $this->sendError(null, $validator->getMessageBag(), 422);
+            // \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Errors: ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
+            // return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
         \DB::beginTransaction();
@@ -459,7 +485,11 @@ class RegisterController extends ApiController
 
             foreach ($documents as $key => $column) {
                 if (isset($input[$key])) {
-                    $upload = $this->fileUploadService->handleImage($input[$key])->saveToDb($column);
+                    if ($column == 'foto_ktp') {
+                        $upload = $this->fileUploadService->handleImage($input[$key])->saveToDb($column);
+                    } else {
+                        $upload = $this->fileUploadService->handleFile($input[$key])->saveToDb($column);
+                    }
                     if ($upload) {
                         $document = $this->fileTable->newQuery()->find($upload->id);
                         $document->update([
