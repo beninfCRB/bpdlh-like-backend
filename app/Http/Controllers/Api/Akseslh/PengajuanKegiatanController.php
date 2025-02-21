@@ -83,7 +83,7 @@ class PengajuanKegiatanController extends ApiController
 
         if ($validator->fails()) {
             # code...
-            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
@@ -100,10 +100,12 @@ class PengajuanKegiatanController extends ApiController
 
             // Validasi rentang tanggal dan waktu (optional)
             if (strtotime($input["tanggal_mulai_kegiatan"]) > strtotime($input["tanggal_akhir_kegiatan"])) {
+                \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
                 return $this->sendError(null, 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir.', 422);
             }
 
             if (strtotime($input["time_mulai_kegiatan"]) > strtotime($input["time_akhir_kegiatan"])) {
+                \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
                 return $this->sendError(null, 'Waktu mulai tidak boleh lebih besar dari waktu akhir.', 422);
             }
 
@@ -131,7 +133,7 @@ class PengajuanKegiatanController extends ApiController
                 return $this->sendSuccess($result->data, $result->message, $result->code);
             }
 
-            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (Exception $exception) {
             return $this->sendError(null, $exception->getMessage(), 500);

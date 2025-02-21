@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Sentry\Laravel\Integration;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -43,6 +45,18 @@ class Handler extends ExceptionHandler
                     'data'      => null,
                 ], 401);
             }
+        });
+
+        $this->renderable(function (ThrottleRequestsException $exception, $request) {
+            return response()->json(
+                [
+                    'code' => Response::HTTP_TOO_MANY_REQUESTS, // 429
+                    'success' => false,
+                    'message' => 'Maaf, server sedang sibuk. Silakan coba lagi dalam beberapa saat.',
+                    'data' => null
+                ],
+                Response::HTTP_TOO_MANY_REQUESTS
+            );
         });
 
         $this->reportable(function (\Throwable $e) {
