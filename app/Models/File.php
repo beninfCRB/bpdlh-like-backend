@@ -54,4 +54,14 @@ class File extends AppModel
     {
         return $this->belongsTo(PengajuanKegiatan::class, 'fileable_id');
     }
+
+    /**
+     * Get the data_pic_kelompok_masyarakat that owns the File
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pic_kelompok(): BelongsTo
+    {
+        return $this->belongsTo(DataPicKelompokMasyarakat::class, 'fileable_id');
+    }
 }
