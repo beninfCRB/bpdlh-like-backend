@@ -66,7 +66,7 @@
                 $letters = range('A', 'Z');
                 $total = 0;
             @endphp
-            @foreach ($data->data['komponen_rab'] as $key => $item)
+            @foreach ($result['komponen_rab'] as $key => $item)
                 <tr>
                     <th>{{ $letters[$loop->index] }}</th>
                     <th>{{ $key }}</th>

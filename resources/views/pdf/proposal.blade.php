@@ -76,27 +76,27 @@
         <div class="content">
             <b>1. Judul Kegiatan</b>
             <br>
-            {{ $data->data->judul_pengajuan_kegiatan }}
+            {{ $data->judul_pengajuan_kegiatan }}
         </div>
 
         <div class="content">
             <b>2. Pengusul</b>
             <br>
             Nama:
-            {{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}
+            {{ $data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}
             <br>
-            Alamat: {{ $data->data->alamat_kegiatan }}
+            Alamat: {{ $data->alamat_kegiatan }}
             <br>
-            Penjamin Kegiatan: {{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }}
+            Penjamin Kegiatan: {{ $data->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }}
         </div>
 
         <div class="content">
-            <b>3. Nomor Proposal:</b> {{ $data->data->nomor_pengajuan }}
+            <b>3. Nomor Proposal:</b> {{ $data->nomor_pengajuan }}
         </div>
 
         <div class="content">
-            <b>4. Perkiraan Bulan Pelaksanaan:</b> {{ date('d-M-Y', strtotime($data->data->tanggal_mulai_kegiatan)) }} -
-            {{ date('d-M-Y', strtotime($data->data->tanggal_akhir_kegiatan)) }}
+            <b>4. Perkiraan Bulan Pelaksanaan:</b> {{ date('d-M-Y', strtotime($data->tanggal_mulai_kegiatan)) }} -
+            {{ date('d-M-Y', strtotime($data->tanggal_akhir_kegiatan)) }}
         </div>
     </div>
 
@@ -106,19 +106,19 @@
         <div class="content">
             <b>5. Latar Belakang Kegiatan/Project Background</b>
             <br>
-            {{ $data->data->proposal_kegiatan }}
+            {{ $data->proposal_kegiatan }}
         </div>
 
         <div class="content">
             <b>6. Tujuan Kegiatan</b>
             <br>
-            {{ $data->data->tujuan_kegiatan }}
+            {{ $data->tujuan_kegiatan }}
         </div>
 
         <div class="content">
             <b>7. Ruang Lingkup Kegiatan/Scope of Work</b>
             <br>
-            {{ $data->data->ruang_lingkup_kegiatan }}
+            {{ $data->ruang_lingkup_kegiatan }}
         </div>
     </div>
 
@@ -132,9 +132,9 @@
         </div>
         <br>
         <div class="line">
-            ({{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }})
+            ({{ $data->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }})
             <br>
-            ({{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }})
+            ({{ $data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }})
         </div>
     </div>
 </body>
