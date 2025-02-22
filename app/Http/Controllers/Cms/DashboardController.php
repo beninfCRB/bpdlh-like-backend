@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DataPicKelompokMasyarakat;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -65,9 +66,17 @@ class DashboardController extends Controller
 
         $input = $request->all();
 
-        if (in_array($request->group, ['proposal', 'rab'])) {
+        if (in_array($request->group, ['proposal'])) {
             # code...
-            $data = PengajuanKegiatan::whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']])->get();
+            $loadView = $request->group == 'proposal' ? 'pdf.proposal' : 'pdf.rab';
+            $datas = PengajuanKegiatan::whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']])->get();
+
+            foreach ($datas as $data) {
+                # code...
+                $pdfPath = 'pdfs/' . $data->nomor_pengajuan . '.pdf';
+                $pdf = Pdf::loadView($loadView, compact('data'));
+                Storage::put($pdfPath, $pdf->output());
+            }
 
             // Buat nama file zip
             $zipFileName = $request->group . '_files_' . time() . '.zip';
@@ -84,34 +93,87 @@ class DashboardController extends Controller
             }
 
             // Tambahkan file-file ke dalam zip
-            foreach ($files as $file) {
-                $filePath = storage_path('app/public/' . $file->file_path);
+            foreach ($datas as $data) {
+                $filePath = storage_path('app/public/pdfs/' . $data->nomor_pengajuan . '.pdf');
                 if (file_exists($filePath)) {
-                    $zip->addFile($filePath, $file->real_name);
+                    $zip->addFile($filePath, $data->nomor_pengajuan . '.pdf');
                 }
             }
 
             // Menutup file zip
             $zip->close();
+            foreach ($datas as $data) {
+                # code...
+                $pdfPath = 'pdfs/' . $data->nomor_pengajuan . '.pdf';
+                Storage::delete($pdfPath);
+            }
 
             // Mengembalikan file zip untuk di-download
             return response()->download($zipFilePath)->deleteFileAfterSend(true);
+        } elseif (in_array($request->group, ['rab'])) {
+            # code...
+            $loadView = $request->group == 'proposal' ? 'pdf.proposal' : 'pdf.rab';
+            $datas = PengajuanKegiatan::whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']])->get();
 
-            foreach ($data as $item) {
+            foreach ($datas as $data) {
                 # code...
-                $pdf = Pdf::loadView('pdf.proposal', compact('item'));
+                $rab = null;
+                foreach ($data->rab_pengajuan_paket_kegiatans as $item) {
+                    # code...
+                    $rab[] = [
+                        'id_komponen'           => $item->master_komponen_rab->id,
+                        'jenis_komponen_rab'    => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                        'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
+                        'satuan'                => $item->master_komponen_rab->satuan->satuan,
+                        'harga_unit'            => $item->harga_unit,
+                        'nilai_standar'         => $item->harga_unit,
+                        'qty'                   => $item->qty,
+                    ];
+                }
+                $collectRab = collect($rab);
 
-                // Nama file PDF yang akan disimpan
-                $fileName = 'proposal-small-grant.pdf';
+                $result = [
+                    'komponen_rab'  => $collectRab->groupBy('jenis_komponen_rab'),
+                ];
 
-                // Simpan PDF ke folder 'storage/app/public/pdf'
-                $filePath = 'public/pdf/' . $fileName;
-                Storage::put($filePath, $pdf->output());
+                $pdfPath = 'pdfs/' . $data->nomor_pengajuan . '.pdf';
+                $pdf = Pdf::loadView($loadView, compact('result'));
+                Storage::put($pdfPath, $pdf->output());
             }
 
-            return back()->withErrors(['group' => 'Document Tidak Tersedia']);
-        }
-        if (in_array($request->group, ['foto_ktp', 'profil_kelompok'])) {
+            // Buat nama file zip
+            $zipFileName = $request->group . '_files_' . time() . '.zip';
+
+            // Tentukan path sementara untuk menyimpan file zip
+            $zipFilePath = storage_path('app/public/' . $zipFileName);
+
+            // Membuat instance ZipArchive
+            $zip = new ZipArchive();
+
+            // Membuka file zip untuk ditulis
+            if ($zip->open($zipFilePath, ZipArchive::CREATE) !== TRUE) {
+                return back()->withErrors(['group' => 'Tidak dapat membuat zip file']);
+            }
+
+            // Tambahkan file-file ke dalam zip
+            foreach ($datas as $data) {
+                $filePath = storage_path('app/public/pdfs/' . $data->nomor_pengajuan . '.pdf');
+                if (file_exists($filePath)) {
+                    $zip->addFile($filePath, $data->nomor_pengajuan . '.pdf');
+                }
+            }
+
+            // Menutup file zip
+            $zip->close();
+            foreach ($datas as $data) {
+                # code...
+                $pdfPath = 'pdfs/' . $data->nomor_pengajuan . '.pdf';
+                Storage::delete($pdfPath);
+            }
+
+            // Mengembalikan file zip untuk di-download
+            return response()->download($zipFilePath)->deleteFileAfterSend(true);
+        } elseif (in_array($request->group, ['foto_ktp', 'profil_kelompok'])) {
             // Ambil file berdasarkan group
             $files = File::where('group', $request->group)
                 ->whereHas('pic_kelompok', function ($query) use ($input) {
