@@ -1407,4 +1407,46 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         return $this->sendSuccess($result);
     }
+
+    public function updateDokumen($id, $data)
+    {
+        $result =   $this->model->newQuery()->find($id);
+
+        if (!$result) return $this->sendError(null, 'Not found', 422);
+
+        \DB::beginTransaction();
+
+        try {
+            //             
+            $temp = $result->document()->where('group', 'document')->first();
+            if ($temp) {
+                $this->fileUploadService->deleteFiles($temp->file_path);
+                $temp->delete();
+            }
+
+            $upload = $this->fileUploadService->handleFile($data['document'])->saveToDb('document');
+
+            if ($upload) {
+                $upload->update([
+                    'fileable_type' => get_class($result),
+                    'fileable_id'   => $result->id,
+                ]);
+            }
+
+            $upload_pendukung = $this->fileUploadService->handleFile($data['dokumen_pendukung'])->saveToDb('dokumen_pendukung');
+
+            if ($upload_pendukung) {
+                $upload_pendukung->update([
+                    'fileable_type' => get_class($result),
+                    'fileable_id'   => $result->id,
+                ]);
+            }
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
 }
