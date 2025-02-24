@@ -52,7 +52,19 @@
                                         <th>Nama PIC</th>
                                         <th>Jenis Identitas PIC</th>
                                         <th>No Identitas PIC</th>
+                                        <th>NPWP</th>
                                         <th>Alamat E-Mail</th>
+                                        <th>Provinsi</th>
+                                        <th>Kota/Kabupaten</th>
+                                        <th>Kecamatan</th>
+                                        <th>Kelurahan</th>
+                                        <th>Alamat</th>
+                                        <th>Tempat Lahir</th>
+                                        <th>Tanggal Lahir</th>
+                                        <th>Agama</th>
+                                        <th>Status Perkawinan</th>
+                                        <th>Jenis Pekerjaan</th>
+                                        <th>Pendidikan Terakhir</th>
                                         <th>No HP</th>
                                         <th>Status Akun</th>
                                         <th>Created at</th>
