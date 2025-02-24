@@ -25,6 +25,13 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'kecamatan',
             'kelurahan',
             'rab_pengajuan_paket_kegiatans',
+            'user_akseslh' => function ($q) {
+                $q->withTrashed();
+            },
+            'user_akseslh.data_pic_kelompok_masyarakat' =>
+            function ($q) {
+                $q->withTrashed();
+            },
             'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis'
             => function ($q) {
                 $q->withTrashed();
@@ -37,7 +44,9 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             // 'user_akseslh.data_pic_kelompok_masyarakat.status_perkawinan',
             // 'user_akseslh.data_pic_kelompok_masyarakat.jenis_pekerjaan',
             // 'user_akseslh.data_pic_kelompok_masyarakat.pendidikan',
-            'paket_kegiatan.jenis_kegiatan',
+            'paket_kegiatan.jenis_kegiatan' => function ($q) {
+                $q->withTrashed();
+            },
             'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan',
             'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($q) {
                 $q->withTrashed();

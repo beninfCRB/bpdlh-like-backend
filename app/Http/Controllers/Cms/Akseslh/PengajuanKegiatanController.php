@@ -159,4 +159,26 @@ class PengajuanKegiatanController extends ApiController
         $data = $this->PengajuanKegiatanService->getDokumen($id);
         return view('pages.akseslh.pengajuan-kegiatan.dokumen', compact('data'));
     }
+
+    public function update_dokumen($id, Request $request)
+    {
+        $input  =   $request->validate([
+            'document'          => 'required|file|mimes:pdf|max:10192',
+            'dokumen_pendukung' => 'required|file|mimes:pdf|max:2048'
+        ]);
+
+        $result =   $this->PengajuanKegiatanService->updateDokumen($id, $input);
+
+        try {
+            if ($result->success) {
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('pengajuan-kegiatan.document', $id);
+            }
+
+            return back()->with('error', $result->message);
+        } catch (\Exception $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
+    }
 }

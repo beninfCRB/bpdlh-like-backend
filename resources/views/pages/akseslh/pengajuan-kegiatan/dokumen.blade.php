@@ -14,6 +14,52 @@
         </div>
     </div>
 
+    <!-- Inline Form -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Tambah Dokumen</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="row" role="form"
+                        action="{{ route('pengajuan-kegiatan.document.update', $data->data->id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @method('PUT')
+                        @csrf
+                        <div class="form-group col-md-3">
+                            <input type="file" placeholder="Lampiran Proposal" class="form-control" id="document"
+                                name="document" value="{{ old('document') }}" accept="application/pdf" />
+                            @error('document')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-3">
+                            <input type="file" class="form-control" id="dokumen_pendukung" name="dokumen_pendukung"
+                                value="{{ old('dokumen_pendukung') }}" accept="application/pdf" />
+                            @error('dokumen_pendukung')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- panel-body -->
+            </div>
+            <!-- panel -->
+        </div>
+        <!-- col -->
+    </div>
+    <!-- End row -->
+
     <div class="row port">
         <div class="portfolioContainer">
             @if ($data->data->flag > 0)
@@ -56,8 +102,8 @@
             @endforelse
 
             @forelse ($data->data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                                                                        $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
-                                                                                    })->first()->document_file as $item)
+                                                                                                                                                                                                                                                $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                                                                                                                                                                                                                                            })->first()->document_file as $item)
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
                         <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup" title="Screenshot-1"

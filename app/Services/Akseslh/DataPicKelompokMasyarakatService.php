@@ -33,7 +33,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
 
     public function getAll()
     {
-        $model = $this->model->query()->with(['kelompok_masyarakat.jenis', 'user_akseslh'])->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with(['kelompok_masyarakat.jenis', 'user_akseslh', 'provinsi', 'kabupaten', 'kecamatan', 'kelurahan', 'agama', 'status_perkawinan', 'jenis_pekerjaan', 'pendidikan'])->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
