@@ -26,18 +26,30 @@ var data_pic_kelompok_masyarakat = (function () {
             scrollX: true,
             ajax: url_table,
             columns: [
-                { data: "DT_RowIndex" },
-                {},
-                {},
-                { data: "nama_pic" },
-                { data: "jenis_identitas_pic" },
-                { data: "nomor_identitas_pic" },
-                { data: "email_pic" },
-                { data: "nohp_pic" },
-                {},
-                { data: "created_at" },
-                { data: "updated_at" },
-                {},
+                { data: "DT_RowIndex" }, //0
+                {}, //1
+                {}, //2
+                { data: "nama_pic" }, //3
+                { data: "jenis_identitas_pic" }, //4
+                { data: "nomor_identitas_pic" }, //5
+                { data: "nomor_npwp_pic" }, //6
+                { data: "email_pic" }, //7
+                {}, //8 Provinsi
+                {}, //9 Kota
+                {}, //10 Kecamatan
+                {}, //11 Kelurahan
+                { data: "alamat_pic" }, //12
+                { data: "tempat_lahir" }, //13
+                { data: "tanggal_lahir" }, //14
+                {}, //15 Agama
+                {}, //16 Status Perkawinan
+                {}, //17 Jenis Pekerjaan
+                {}, //18 Pendidikan
+                { data: "nohp_pic" }, //19
+                {}, //20
+                { data: "created_at" }, //21
+                { data: "updated_at" }, //22
+                {}, //23
             ],
             columnDefs: [
                 {
@@ -67,6 +79,86 @@ var data_pic_kelompok_masyarakat = (function () {
                                 return full.kelompok_masyarakat.jenis
                                     .jenis_kelompok_masyarakat;
                             }
+                        }
+                    },
+                },
+                {
+                    targets: 8,
+                    render: function (data, type, full, meta) {
+                        if (full.provinsi === null) {
+                            return "-";
+                        } else {
+                            return full.provinsi.name;
+                        }
+                    },
+                },
+                {
+                    targets: 9,
+                    render: function (data, type, full, meta) {
+                        if (full.kabupaten === null) {
+                            return "-";
+                        } else {
+                            return full.kabupaten.name;
+                        }
+                    },
+                },
+                {
+                    targets: 10,
+                    render: function (data, type, full, meta) {
+                        if (full.kecamatan === null) {
+                            return "-";
+                        } else {
+                            return full.kecamatan.name;
+                        }
+                    },
+                },
+                {
+                    targets: 11,
+                    render: function (data, type, full, meta) {
+                        if (full.kelurahan === null) {
+                            return "-";
+                        } else {
+                            return full.kelurahan.name;
+                        }
+                    },
+                },
+                {
+                    targets: 15,
+                    render: function (data, type, full, meta) {
+                        if (full.agama === null) {
+                            return "-";
+                        } else {
+                            return full.agama.agama;
+                        }
+                    },
+                },
+                {
+                    targets: 16,
+                    render: function (data, type, full, meta) {
+                        if (full.status_perkawinan === null) {
+                            return "-";
+                        } else {
+                            return full.status_perkawinan.status_pernikahan;
+                        }
+                    },
+                },
+                {
+                    targets: 17,
+                    render: function (data, type, full, meta) {
+                        if (full.jenis_pekerjaan === null) {
+                            return "-";
+                        } else {
+                            return full.jenis_pekerjaan.jenis_pekerjaan;
+                        }
+                    },
+                },
+                {
+                    targets: 18,
+                    render: function (data, type, full, meta) {
+                        if (full.pendidikan === null) {
+                            return "-";
+                        } else {
+                            return full.pendidikan.pendidikan;
                         }
                     },
                 },
