@@ -58,6 +58,7 @@ class PengajuanKegiatanController extends ApiController
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
+
         $validator = Validator::make($request->all(), [
             'paket_kegiatan_id'         => 'required|exists:paket_kegiatans,id',
             'lokasi_bidang_folu_id'     => 'nullable|exists:lokasi_bidang_folus,id',
@@ -66,12 +67,12 @@ class PengajuanKegiatanController extends ApiController
             'kabupaten_kegiatan'        => 'required',
             'kecamatan_kegiatan'        => 'required',
             'kelurahan_kegiatan'        => 'required',
-            'alamat_kegiatan'           => 'required',
+            'alamat_kegiatan'           => 'required|string|max:255',
             'tanggal_kegiatan'          => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
             'waktu_kegiatan'            => 'required|string|regex:/^\d{2}:\d{2}(:\d{2})? - \d{2}:\d{2}(:\d{2})?$/',
-            'proposal_kegiatan'         => 'required|max:255',
-            'tujuan_kegiatan'           => 'required|max:255',
-            'ruang_lingkup_kegiatan'    => 'required|max:255',
+            'proposal_kegiatan'         => 'required|string|max:255',
+            'tujuan_kegiatan'           => 'required|string|max:255',
+            'ruang_lingkup_kegiatan'    => 'required|string|max:255',
             'fileDocument'              => 'nullable|file|mimes:pdf|max:10192',
             'nomor_pengajuan'           => 'nullable',
         ]);
