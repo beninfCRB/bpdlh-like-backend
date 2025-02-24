@@ -69,7 +69,18 @@ class DashboardController extends Controller
         if (in_array($request->group, ['proposal'])) {
             # code...
             $loadView = $request->group == 'proposal' ? 'pdf.proposal' : 'pdf.rab';
-            $datas = PengajuanKegiatan::whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']])->get();
+            $datas = PengajuanKegiatan::whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']])
+                ->with(['user_akseslh' => function ($q) {
+                    $q->withTrashed();
+                }, 'user_akseslh.data_pic_kelompok_masyarakat'
+                => function ($q) {
+                    $q->withTrashed();
+                }, 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat'
+                => function ($q) {
+                    $q->withTrashed();
+                }])
+
+                ->get();
 
             foreach ($datas as $data) {
                 # code...
@@ -113,7 +124,11 @@ class DashboardController extends Controller
         } elseif (in_array($request->group, ['rab'])) {
             # code...
             $loadView = $request->group == 'proposal' ? 'pdf.proposal' : 'pdf.rab';
-            $datas = PengajuanKegiatan::whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']])->get();
+            $datas = PengajuanKegiatan::whereBetween('created_at', [$input['tanggal_awal_download'], $input['tanggal_akhir_download']])
+                ->with(['user_akseslh' => function ($q) {
+                    $q->withTrashed();
+                }])
+                ->get();
 
             foreach ($datas as $data) {
                 # code...

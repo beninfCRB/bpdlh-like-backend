@@ -25,6 +25,13 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'kecamatan',
             'kelurahan',
             'rab_pengajuan_paket_kegiatans',
+            'user_akseslh' => function ($q) {
+                $q->withTrashed();
+            },
+            'user_akseslh.data_pic_kelompok_masyarakat' =>
+            function ($q) {
+                $q->withTrashed();
+            },
             'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis'
             => function ($q) {
                 $q->withTrashed();
