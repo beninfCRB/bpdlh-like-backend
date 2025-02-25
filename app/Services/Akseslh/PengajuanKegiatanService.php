@@ -212,7 +212,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $laporan_kegiatan_termin_1 = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
             $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
-        })->first()->document_file;
+        })->first()->document_file ?? null;
 
         // Data Verifikator
         $verifikasi = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
@@ -275,7 +275,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $laporan_akhir  = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
             $q->where(['deskripsi_kegiatan' => 'Laporan Akhir Kegiatan']);
-        })->first()->document_file;
+        })->first()->document_file ?? null;
 
         $prop = [
             'total' => $total,
