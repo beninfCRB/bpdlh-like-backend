@@ -162,7 +162,10 @@ class ProfileService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
 
-        if (!$read) return $this->sendError(null, 'Not Found', 422);
+        if (!$read) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' User tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
 
         \DB::beginTransaction();
 

@@ -94,6 +94,7 @@ class InformasiPencairanDanaController extends ApiController
 
         if ($validator->fails()) {
             # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
@@ -121,6 +122,8 @@ class InformasiPencairanDanaController extends ApiController
             unset($input["tanggal_kegiatan"]);
             unset($input["waktu_kegiatan"]);
         }
+
+        $input['user_akseslh']  = $request->user();
 
         $result = $this->pengajuanKegiatanService->updateInformasiPencairanDana($id, $input);
 

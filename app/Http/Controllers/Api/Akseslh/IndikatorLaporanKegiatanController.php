@@ -92,6 +92,7 @@ class IndikatorLaporanKegiatanController extends ApiController
 
         if ($validator->fails()) {
             # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
@@ -111,6 +112,8 @@ class IndikatorLaporanKegiatanController extends ApiController
             //eliminate unnecessary key 
             unset($input["tanggal_realisasi_kegiatan"]);
         }
+
+        $input['user']  = $request->user();
 
         $result = $this->indikatorLaporanService->update($id, $input);
 
