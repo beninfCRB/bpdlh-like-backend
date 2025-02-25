@@ -32,12 +32,12 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
     public function getAllAttr($user)
     {
         $result  = $this->model->newQuery()
-            ->whereHas('log_tahapan_pengajuan', function ($q) {
-                $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                })->whereNotNull('tanggal_masuk')
-                    ->whereNull('tanggal_selesai');
-            })
+            // ->whereHas('log_tahapan_pengajuan', function ($q) {
+            //     $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+            //         $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
+            //     })->whereNotNull('tanggal_masuk')
+            //         ->whereNull('tanggal_selesai');
+            // })
             ->orWhereHas('user_akseslh', function ($q) use ($user) {
                 $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
                     $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
