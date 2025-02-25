@@ -79,12 +79,11 @@ class DashboardController extends Controller
                 => function ($q) {
                     $q->withTrashed();
                 }])
-
                 ->get();
 
             foreach ($datas as $data) {
                 # code...
-                $pdfPath = 'pdfs/' . $data->nomor_pengajuan . '.pdf';
+                $pdfPath = 'uploads/pdfs/' . $data->nomor_pengajuan . '.pdf';
                 $pdf = Pdf::loadView($loadView, compact('data'));
                 Storage::put($pdfPath, $pdf->output());
             }
@@ -93,7 +92,7 @@ class DashboardController extends Controller
             $zipFileName = $request->group . '_files_' . time() . '.zip';
 
             // Tentukan path sementara untuk menyimpan file zip
-            $zipFilePath = storage_path('app/public/' . $zipFileName);
+            $zipFilePath = storage_path('app/public/uploads' . $zipFileName);
 
             // Membuat instance ZipArchive
             $zip = new ZipArchive();
@@ -105,7 +104,7 @@ class DashboardController extends Controller
 
             // Tambahkan file-file ke dalam zip
             foreach ($datas as $data) {
-                $filePath = storage_path('app/public/pdfs/' . $data->nomor_pengajuan . '.pdf');
+                $filePath = storage_path('app/public/uploads/pdfs/' . $data->nomor_pengajuan . '.pdf');
                 if (file_exists($filePath)) {
                     $zip->addFile($filePath, $data->nomor_pengajuan . '.pdf');
                 }
@@ -115,7 +114,7 @@ class DashboardController extends Controller
             $zip->close();
             foreach ($datas as $data) {
                 # code...
-                $pdfPath = 'pdfs/' . $data->nomor_pengajuan . '.pdf';
+                $pdfPath = 'uploads/pdfs/' . $data->nomor_pengajuan . '.pdf';
                 Storage::delete($pdfPath);
             }
 
@@ -151,7 +150,7 @@ class DashboardController extends Controller
                     'komponen_rab'  => $collectRab->groupBy('jenis_komponen_rab'),
                 ];
 
-                $pdfPath = 'pdfs/' . $data->nomor_pengajuan . '.pdf';
+                $pdfPath = 'uploads/pdfs/' . $data->nomor_pengajuan . '.pdf';
                 $pdf = Pdf::loadView($loadView, compact('result'));
                 Storage::put($pdfPath, $pdf->output());
             }
@@ -160,7 +159,7 @@ class DashboardController extends Controller
             $zipFileName = $request->group . '_files_' . time() . '.zip';
 
             // Tentukan path sementara untuk menyimpan file zip
-            $zipFilePath = storage_path('app/public/' . $zipFileName);
+            $zipFilePath = storage_path('app/public/uploads' . $zipFileName);
 
             // Membuat instance ZipArchive
             $zip = new ZipArchive();
@@ -172,7 +171,7 @@ class DashboardController extends Controller
 
             // Tambahkan file-file ke dalam zip
             foreach ($datas as $data) {
-                $filePath = storage_path('app/public/pdfs/' . $data->nomor_pengajuan . '.pdf');
+                $filePath = storage_path('app/public/uploads/pdfs/' . $data->nomor_pengajuan . '.pdf');
                 if (file_exists($filePath)) {
                     $zip->addFile($filePath, $data->nomor_pengajuan . '.pdf');
                 }
@@ -182,7 +181,7 @@ class DashboardController extends Controller
             $zip->close();
             foreach ($datas as $data) {
                 # code...
-                $pdfPath = 'pdfs/' . $data->nomor_pengajuan . '.pdf';
+                $pdfPath = 'uploads/pdfs/' . $data->nomor_pengajuan . '.pdf';
                 Storage::delete($pdfPath);
             }
 
