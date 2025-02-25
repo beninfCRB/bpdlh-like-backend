@@ -92,7 +92,8 @@ class DashboardController extends Controller
             $zipFileName = $request->group . '_files_' . time() . '.zip';
 
             // Tentukan path sementara untuk menyimpan file zip
-            $zipFilePath = storage_path('app/public/uploads/' . $zipFileName);
+            // $zipFilePath = storage_path('app/public/uploads/' . $zipFileName);
+            $zipFilePath = Storage::path('uploads/' . $zipFileName);
 
             // Membuat instance ZipArchive
             $zip = new ZipArchive();
@@ -104,7 +105,9 @@ class DashboardController extends Controller
 
             // Tambahkan file-file ke dalam zip
             foreach ($datas as $data) {
-                $filePath = storage_path('app/public/uploads/pdfs/' . $data->nomor_pengajuan . '.pdf');
+                // $filePath = storage_path('app/public/uploads/pdfs/' . $data->nomor_pengajuan . '.pdf');
+                $filePath = Storage::path('uploads/pdfs/' . $data->nomor_pengajuan . '.pdf');
+
                 if (file_exists($filePath)) {
                     $zip->addFile($filePath, $data->nomor_pengajuan . '.pdf');
                 }
@@ -159,7 +162,8 @@ class DashboardController extends Controller
             $zipFileName = $request->group . '_files_' . time() . '.zip';
 
             // Tentukan path sementara untuk menyimpan file zip
-            $zipFilePath = storage_path('app/public/uploads/' . $zipFileName);
+            // $zipFilePath = storage_path('app/public/uploads/' . $zipFileName);
+            $zipFilePath = Storage::path('uploads/' . $zipFileName);
 
             // Membuat instance ZipArchive
             $zip = new ZipArchive();
@@ -171,7 +175,8 @@ class DashboardController extends Controller
 
             // Tambahkan file-file ke dalam zip
             foreach ($datas as $data) {
-                $filePath = storage_path('app/public/uploads/pdfs/' . $data->nomor_pengajuan . '.pdf');
+                // $filePath = storage_path('app/public/uploads/pdfs/' . $data->nomor_pengajuan . '.pdf');
+                $filePath = Storage::path('uploads/pdfs/' . $data->nomor_pengajuan . '.pdf');
                 if (file_exists($filePath)) {
                     $zip->addFile($filePath, $data->nomor_pengajuan . '.pdf');
                 }
