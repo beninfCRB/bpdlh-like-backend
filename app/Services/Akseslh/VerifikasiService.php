@@ -203,9 +203,16 @@ class VerifikasiService extends AppService implements AppServiceInterface
     {
         $read = $this->model->newQuery()->find($id);
 
-        if (!$read) return $this->sendError(null, 'Not Found', 422);
+        if (!$read) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
 
-        if ($read->flag != 1) return $this->sendError(null, 'Not Allowed', 403);
+        if ($read->flag != 1) {
+
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Allowed', 403);
+        }
 
         // Menghitung total dari rab_pengajuan_paket_kegiatans dengan eager loading
         $total = $read->rab_pengajuan_paket_kegiatans->sum(function ($items) {

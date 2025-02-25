@@ -140,7 +140,10 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 $query->where('user_akseslh_id', $user->id);
             })->first();
 
-        if (!$model) return $this->sendError(null, 'Not Found', 422);
+        if (!$model) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
 
         \DB::beginTransaction();
 
@@ -233,9 +236,16 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($data['pengajuan_kegiatan_id']);
 
-        if (!$read) return $this->sendError(null, 'Not Found', 422);
+        if (!$read) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
 
-        if ($read->flag != 8 || $read->flag != '8') return $this->sendError(null, 'Not Allowed', 422);
+        if ($read->flag != 8 || $read->flag != '8') {
+
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Allowed', 422);
+        }
 
         \DB::beginTransaction();
 

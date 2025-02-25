@@ -886,9 +886,15 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     {
         $model = $this->model->newQuery()->where(['id' => $id])->first();
 
-        if (!$model) return $this->sendError(null, 'Not found', 422);
+        if (!$model) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not found', 422);
+        }
 
-        if ($model->flag != 3) return $this->sendError(null, 'Data Invalid', 422);
+        if ($model->flag != 3) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Data Invalid', 422);
+        }
 
         \DB::beginTransaction();
 
@@ -1001,14 +1007,17 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         // Memeriksa apakah model ditemukan dan valid
         if (!$model) {
+            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not found', 422);
         }
 
         if ($model->flag != 0) {
+            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Allowed', 422);
         }
 
         if ($model->rab_pengajuan_paket_kegiatans->count() > 0) {
+            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Rab sudah ada', \Sentry\Severity::warning());
             return $this->sendError(null, 'Rab sudah ada', 422);
         }
 
@@ -1263,15 +1272,24 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         // Mengecek data sebelumnya
         $read = PengajuanKegiatan::where(['id' => $data['id_pengajuan'], 'user_akseslh_id' => $data['user_akseslh_id']])->first();
 
-        if (!$read) return $this->sendError(null, 'Not Found', 422);
+        if (!$read) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
 
-        if (!in_array($read->flag, [0, '0'])) return $this->sendError(null, 'Invalid Data', 422);
+        if (!in_array($read->flag, [0, '0'])) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Invalid Data', 422);
+        }
 
         $retur = $read->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
             $q->where('deskripsi_kegiatan', 'Validasi');
         })->first();
 
-        if (!$retur || ($retur && $retur->flag != 2)) return $this->sendError(null, 'Invalid Data', 422);
+        if (!$retur || ($retur && $retur->flag != 2)) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Bukan data retur', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Invalid Data', 422);
+        }
 
         \DB::beginTransaction();
 
@@ -1315,18 +1333,23 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         // Memeriksa apakah model ditemukan dan valid
         if (!$model) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not found', 422);
         }
 
         if ($model->flag != 0) {
-            return $this->sendError(null, 'Not Allowed', 403);
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Allowed', 422);
         }
 
         $retur = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
             $q->where('deskripsi_kegiatan', 'Validasi');
         })->first();
 
-        if (!$retur || ($retur && $retur->flag != 2)) return $this->sendError(null, 'Invalid Data', 422);
+        if (!$retur || ($retur && $retur->flag != 2)) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Bukan data retur', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Invalid Data', 422);
+        }
 
         \DB::beginTransaction();
 
