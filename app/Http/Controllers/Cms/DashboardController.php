@@ -92,7 +92,7 @@ class DashboardController extends Controller
             $zipFileName = $request->group . '_files_' . time() . '.zip';
 
             // Tentukan path sementara untuk menyimpan file zip
-            $zipFilePath = storage_path('app/public/uploads' . $zipFileName);
+            $zipFilePath = storage_path('app/public/uploads/' . $zipFileName);
 
             // Membuat instance ZipArchive
             $zip = new ZipArchive();
@@ -159,7 +159,7 @@ class DashboardController extends Controller
             $zipFileName = $request->group . '_files_' . time() . '.zip';
 
             // Tentukan path sementara untuk menyimpan file zip
-            $zipFilePath = storage_path('app/public/uploads' . $zipFileName);
+            $zipFilePath = storage_path('app/public/uploads/' . $zipFileName);
 
             // Membuat instance ZipArchive
             $zip = new ZipArchive();
