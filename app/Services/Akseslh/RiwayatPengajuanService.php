@@ -49,16 +49,16 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
             ->when($search, function ($query) use ($search) {
                 return $query->where('nomor_pengajuan', 'like', '%' . $search . '%')
                     ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat', function ($query) use ($search) {
-                        return $query->where('kelompok_masyarakat', 'like', '%' . $search . '%');
+                        return $query->where('kelompok_masyarakat', 'like', '%' . $search . '%')->withTrashed();
                     })
                     ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($query) use ($search) {
-                        return $query->where('nama_pic', 'like', '%' . $search . '%');
+                        return $query->where('nama_pic', 'like', '%' . $search . '%')->withTrashed();
                     })
                     ->orWhereHas('paket_kegiatan.jenis_kegiatan', function ($query) use ($search) {
-                        return $query->where('jenis_kegiatan', 'like', '%' . $search . '%');
+                        return $query->where('jenis_kegiatan', 'like', '%' . $search . '%')->withTrashed();
                     })
                     ->orWhereHas('paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan', function ($query) use ($search) {
-                        return $query->where('tematik_kegiatan', 'like', '%' . $search . '%');
+                        return $query->where('tematik_kegiatan', 'like', '%' . $search . '%')->withTrashed();
                     });
             })
             ->when($flag, function ($query) use ($flag) {

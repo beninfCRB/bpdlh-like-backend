@@ -50,9 +50,11 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan',
             'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($q) {
                 $q->withTrashed();
-            }
+            },
+            'tahapan'
         ])
             ->whereBetween('created_at', [$this->data['tanggal_awal'], $this->data['tanggal_akhir']])
+            ->where('flag', '>', 0)
             ->get();
     }
 
@@ -106,6 +108,7 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             $pengajuanKegiatan->proposal_kegiatan,
             $pengajuanKegiatan->ruang_lingkup_kegiatan,
             $total_sum,
+            $pengajuanKegiatan->flag == 20 ? 'Ditolak' : $pengajuanKegiatan->tahapan->deskripsi_kegiatan,
             $pengajuanKegiatan->created_at,
             $pengajuanKegiatan->updated_at
         ];
@@ -154,6 +157,7 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'Proposal Kegiatan',
             'Ruang Lingkup Kegiatan',
             'Total RAB',
+            'Tahapan',
             'Created At',
             'Updated At'
         ];

@@ -211,6 +211,7 @@ class PengajuanKegiatanController extends ApiController
         $input = $validator->validated();
 
         $input['user_akseslh_id']   = $request->user()->id;
+        $input['user']              = $request->user();
 
         $result = $this->pengajuanKegiatanService->revisi_pengajuan_kegiatan_create($input);
 
@@ -245,6 +246,7 @@ class PengajuanKegiatanController extends ApiController
         $input = $validator->validated();
 
         $input['user_akseslh_id']   = $request->user()->id;
+        $input['user']              = $request->user();
 
         $result = $this->pengajuanKegiatanService->revisi_pengajuan_kegiatan_update($id, $input);
 

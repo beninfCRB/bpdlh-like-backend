@@ -103,12 +103,14 @@ class VerifikasiController extends ApiController
 
 		if ($validator->fails()) {
 			# code...
+			\Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
 			return $this->sendError(null, $validator->getMessageBag(), 422);
 		}
 
 		$input  = $validator->validated();
 
-		$input['user_akseslh_id']  = $request->user()->id;
+		$input['user_akseslh_id']  	= $request->user()->id;
+		$input['user_akseslh']		= $request->user();
 
 		$result = $this->VerifikasiService->updateTemp($id, $input);
 
