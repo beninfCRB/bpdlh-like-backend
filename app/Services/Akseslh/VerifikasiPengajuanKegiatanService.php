@@ -38,11 +38,22 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
             //     })->whereNotNull('tanggal_masuk')
             //         ->whereNull('tanggal_selesai');
             // })
-            ->orWhereHas('user_akseslh', function ($q) use ($user) {
-                $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
-                    $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
-                        $q->whereHas('jenis', function ($q) use ($user) {
-                            $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+            // ->whereHas('user_akseslh', function ($q) use ($user) {
+            //     $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+            //         $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+            //             $q->whereHas('jenis', function ($q) use ($user) {
+            //                 $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+            //             });
+            //         });
+            //     });
+            // })
+            ->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
+                $query->whereHas('user_akseslh', function ($q) use ($user) {
+                    $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+                        $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+                            $q->whereHas('jenis', function ($q) use ($user) {
+                                $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+                            });
                         });
                     });
                 });
