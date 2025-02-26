@@ -6,6 +6,7 @@ use App\Exports\PengajuanKegiatanExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Models\File;
+use App\Models\PengajuanKegiatan;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
 use App\Services\Akseslh\UserEksternalService;
@@ -156,7 +157,8 @@ class PengajuanKegiatanController extends ApiController
 
     public function dokumen($id)
     {
-        $data = $this->PengajuanKegiatanService->getDokumen($id);
+        // $data = $this->PengajuanKegiatanService->getDokumen($id);
+        $data = PengajuanKegiatan::find($id);
         return view('pages.akseslh.pengajuan-kegiatan.dokumen', compact('data'));
     }
 

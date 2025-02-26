@@ -22,30 +22,36 @@
                     <h3 class="panel-title">Tambah Dokumen</h3>
                 </div>
                 <div class="panel-body">
-                    <form class="row" role="form"
-                        action="{{ route('pengajuan-kegiatan.document.update', $data->data->id) }}" method="POST"
+                    <form class="form-horizontal row" role="form"
+                        action="{{ route('pengajuan-kegiatan.document.update', $data->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @method('PUT')
                         @csrf
-                        <div class="form-group col-md-3">
-                            <input type="file" placeholder="Lampiran Proposal" class="form-control" id="document"
-                                name="document" value="{{ old('document') }}" accept="application/pdf" />
-                            @error('document')
-                                <span class="error">
-                                    {{ $message }}
-                                </span>
-                            @enderror
+                        <div class="form-group col-md-5">
+                            <label class="col-sm-6 control-label">Lampiran Proposal</label>
+                            <div class="col-sm-6">
+                                <input type="file" placeholder="Lampiran Proposal" class="form-control" id="document"
+                                    name="document" value="{{ old('document') }}" accept="application/pdf" />
+                                @error('document')
+                                    <span class="error">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="form-group col-md-3">
-                            <input type="file" class="form-control" id="dokumen_pendukung" name="dokumen_pendukung"
-                                value="{{ old('dokumen_pendukung') }}" accept="application/pdf" />
-                            @error('dokumen_pendukung')
-                                <span class="error">
-                                    {{ $message }}
-                                </span>
-                            @enderror
+                        <div class="form-group col-md-5">
+                            <label class="col-sm-6 control-label">Dokumen Pendukung</label>
+                            <div class="col-sm-6">
+                                <input type="file" class="form-control" id="dokumen_pendukung" name="dokumen_pendukung"
+                                    value="{{ old('dokumen_pendukung') }}" accept="application/pdf" />
+                                @error('dokumen_pendukung')
+                                    <span class="error">
+                                        {{ $message }}
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <button type="submit" class="btn btn-success waves-effect waves-light">
                                 Simpan
                             </button>
@@ -59,13 +65,28 @@
         <!-- col -->
     </div>
     <!-- End row -->
-
     <div class="row port">
         <div class="portfolioContainer">
-            @if ($data->data->flag > 0)
+            @forelse ($data->user_akseslh->data_pic_kelompok_masyarakat->foto as $item)
+                @if (in_array($item->group, ['profil_kelompok', 'foto_ktp']))
+                    <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
+                        <div class="gal-detail thumb">
+                            <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup"
+                                title="Screenshot-1" target="_BLANK">
+                                <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
+                                    alt="work-thumbnail" />
+                                <h4>{{ $item->group == 'document' ? 'Lampiran Proposal' : toPascalCase($item->group) }}
+                                </h4>
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            @empty
+            @endforelse
+            @if ($data->flag > 0)
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
-                        <a href="{{ route('export-proposal', $data->data->id) }}" class="image-popup" title="Screenshot-1"
+                        <a href="{{ route('export-proposal', $data->id) }}" class="image-popup" title="Screenshot-1"
                             target="_BLANK">
                             <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
                                 alt="work-thumbnail" />
@@ -75,7 +96,7 @@
                 </div>
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
-                        <a href="{{ route('export-rab', $data->data->id) }}" class="image-popup" title="Screenshot-1"
+                        <a href="{{ route('export-rab', $data->id) }}" class="image-popup" title="Screenshot-1"
                             target="_BLANK">
                             <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
                                 alt="work-thumbnail" />
@@ -84,7 +105,7 @@
                     </div>
                 </div>
             @endif
-            @forelse ($data->data->document as $item)
+            @forelse ($data->document as $item)
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
                         <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup" title="Screenshot-1"
@@ -101,9 +122,9 @@
                 </div>
             @endforelse
 
-            @forelse ($data->data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                                                                                                                                                                                                                                $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
-                                                                                                                                                                                                                                            })->first()->document_file as $item)
+            @forelse ($data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                })->first()->document_file as $item)
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
                         <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup" title="Screenshot-1"
