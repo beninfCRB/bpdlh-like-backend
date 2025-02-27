@@ -7,7 +7,6 @@ namespace App\Services\Akseslh;
 use App\Models\Province;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
-use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProvinsiService extends AppService implements AppServiceInterface

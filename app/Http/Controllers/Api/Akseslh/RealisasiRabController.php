@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Services\Akseslh\RealisasiRabService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Validator;
+use App\Services\Akseslh\RealisasiRabService;
 
 class RealisasiRabController extends ApiController
 {
@@ -20,10 +21,9 @@ class RealisasiRabController extends ApiController
 
     public function update($id, Request $request)
     {
-        dd();
         $validator = Validator::make($request->all(), [
             'komponen_rab'                          => 'required|array', // Pastikan 'komponen_rab' adalah array
-            'komponen_rab.*.id_komponen_rab'        => 'required|exists:rab_pengajuan_kegiatans,id', // Pastikan id_komponen ada di tabel master_data_komponen
+            'komponen_rab.*.id_komponen_rab'        => 'required|exists:rab_pengajuan_paket_kegiatans,id', // Pastikan id_komponen ada di tabel master_data_komponen
             'komponen_rab.*.harga_unit_realisasi'   => 'required|numeric|min:0', // Pastikan harga_unit adalah angka dan lebih besar dari 0
             'komponen_rab.*.qty_realisasi'          => 'required|numeric|min:1', // Pastikan qty adalah angka dan lebih besar dari 0
         ]);

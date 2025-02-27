@@ -169,6 +169,7 @@ class PengajuanKegiatanController extends ApiController
     public function update_dokumen($id, Request $request)
     {
         $input  =   $request->validate([
+            'jenis_dokumen'     => 'required',
             'document'          => 'required|file|mimes:pdf|max:10192',
             'dokumen_pendukung' => 'required|file|mimes:pdf|max:2048'
         ]);

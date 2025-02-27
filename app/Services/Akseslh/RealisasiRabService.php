@@ -96,28 +96,45 @@ class RealisasiRabService extends AppService implements AppServiceInterface
 
     public function updateRab($id, $dataKomponenRab, $user)
     {
+        $result = $this->model->newQuery()->find($id);
+
         // Memeriksa apakah model ditemukan dan valid
-        if (!$model) {
+        if (!$result) {
             \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not found', 422);
         }
+
+        // Validasi setiap komponen_rab apakah ada dalam relasi rab_pengajuan_paket_kegiatan
+        $komponenIds = collect($dataKomponenRab['komponen_rab'])->pluck('id_komponen_rab');
+        $validKomponenRabs = $this->modelRabPengajuanPaketKegiatan->newQuery()->where('pengajuan_kegiatan_id', $id)
+            ->whereIn('id', $komponenIds)
+            ->pluck('id')
+            ->toArray();
+
+        // Memeriksa apakah ada komponen yang tidak ada dalam relasi
+        $invalidKomponenRabs = array_diff($komponenIds->toArray(), $validKomponenRabs);
+
+        if (count($invalidKomponenRabs) > 0) {
+            return response()->json(['message' => 'Beberapa id_komponen_rab tidak valid untuk paket kegiatan ini', 'invalid_ids' => $invalidKomponenRabs], 422);
+        }
+
+        dd($result);
 
         \DB::beginTransaction();
 
         try {
             // Menyesuaikan id_komponen_rab ke id kolom tabel
-            // RabPengajuanPaketKegiatan::upsert(
-            $this->modelRabPengajuanPaketKegiatan->upsert(
-                collect($request->komponen_rab)->map(function ($item) {
-                    return [
-                        'id'                    => $item['id_komponen_rab'], // Menyesuaikan 'id' dengan 'id_komponen_rab'
-                        'harga_unit_realisasi'  => $item['harga_unit_realisasi'],
-                        'qty_realisasi'         => $item['qty_realisasi'],
-                    ];
-                })->toArray(),
-                ['id'], // Menentukan kolom yang digunakan untuk update atau insert
-                ['harga_unit_realisasi', 'qty_realisasi'] // Kolom yang akan diupdate
-            );
+            // $this->modelRabPengajuanPaketKegiatan->upsert(
+            //     collect($request->komponen_rab)->map(function ($item) {
+            //         return [
+            //             'id'                    => $item['id_komponen_rab'], // Menyesuaikan 'id' dengan 'id_komponen_rab'
+            //             'harga_unit_realisasi'  => $item['harga_unit_realisasi'],
+            //             'qty_realisasi'         => $item['qty_realisasi'],
+            //         ];
+            //     })->toArray(),
+            //     ['id'], // Menentukan kolom yang digunakan untuk update atau insert
+            //     ['harga_unit_realisasi', 'qty_realisasi'] // Kolom yang akan diupdate
+            // );
 
             $laporan_kegiatan_termin_1 = $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
@@ -171,6 +188,12 @@ class RealisasiRabService extends AppService implements AppServiceInterface
             $read->user_akseslh->unreadNotifications->markAsRead();
 
             $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
+
+            $read->tanggal_mulai_kegiatan = $data['tanggal_mulai_kegiatan'];
+            $read->tanggal_akhir_kegiatan = $data['tanggal_akhir_kegiatan'];
+
+            $read->flag  =  6;
+            $read->save();
 
             \DB::commit();
             return $this->sendSuccess($result);
