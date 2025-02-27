@@ -60,6 +60,10 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
             })
             ->with(['paket_kegiatan.jenis_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'user_akseslh' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }, 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }])
