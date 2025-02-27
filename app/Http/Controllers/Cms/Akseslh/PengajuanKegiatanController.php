@@ -141,16 +141,20 @@ class PengajuanKegiatanController extends ApiController
     public function export_proposal($id)
     {
         $data   =   $this->PengajuanKegiatanService->getById($id);
-        // dd($data);
+        if (!$data->data) return back()->with('error', 'Data tidak ditemukan');
+        $data = $data->data;
+
         $pdf = Pdf::loadView('pdf.proposal', compact('data'));
         return $pdf->stream();
     }
 
     public function export_rab($id)
     {
-        $data   =   $this->PengajuanKegiatanService->getDataRab($id);
-        // dd($data);
-        $pdf = Pdf::loadView('pdf.rab', compact('data'));
+        $result   =   $this->PengajuanKegiatanService->getDataRab($id);
+        if (!$result->data) return back()->with('error', 'Data tidak ditemukan');
+        $result = $result->data;
+
+        $pdf = Pdf::loadView('pdf.rab', compact('result'));
         $pdf->setPaper('A4', 'landscape');
         return $pdf->stream();
     }

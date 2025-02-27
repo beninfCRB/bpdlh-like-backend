@@ -221,7 +221,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $nama_verifikator       = $verifikasi->user_akseslh_admin->email ?? null;
         $tanggal_verifikasi     = $verifikasi->tanggal_selesai ?? null;
-        $catatan_verifikator    = $verifikasi->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null;
+        $catatan_verifikator    = $verifikasi->catatan_log_tahapan_pengajuan_kegiatan()->first() ? $verifikasi->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log : null;
 
         // Data Validator
         $validator = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
@@ -230,7 +230,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $nama_validator     = $validator->user_akseslh_admin->email ?? null;
         $tanggal_validasi   = $validator->tanggal_selesai ?? null;
-        $catatan_validator  = $validator->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null;
+        $catatan_validator  = $validator->catatan_log_tahapan_pengajuan_kegiatan()->first() ? $validator->catatan_log_tahapan_pengajuan_kegiatan()->catatan_log : null;
 
         // Data Verifikator laporan termin 1
         $verifikator_laporan_tahap_1 = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
@@ -239,7 +239,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $nama_verifikator_laporan_tahap_1       = $verifikator_laporan_tahap_1->user_akseslh_admin->email ?? null;
         $tanggal_verifikator_laporan_tahap_1    = $verifikator_laporan_tahap_1->tanggal_selesai ?? null;
-        $catatan_verifikator_laporan_tahap_1    = $verifikator_laporan_tahap_1->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log ?? null;
+        $catatan_verifikator_laporan_tahap_1    = $verifikator_laporan_tahap_1->catatan_log_tahapan_pengajuan_kegiatan()->first() ? $verifikator_laporan_tahap_1->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log : null;
 
         // Data Master Bank Penyaluran Pertama
         $transaksi_penyaluran   = $model->transaksi_penyaluran()->latest()->first();
@@ -275,7 +275,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $laporan_akhir  = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
             $q->where(['deskripsi_kegiatan' => 'Laporan Akhir Kegiatan']);
-        })->first()->document_file ?? null;
+        })->first();
 
         $prop = [
             'total' => $total,
@@ -304,7 +304,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'nama_verifikator_laporan_tahap_1'  => $nama_verifikator_laporan_tahap_1,
             'tanggal_verifikator_laporan_tahap_1'    => $tanggal_verifikator_laporan_tahap_1,
             'catatan_verifikator_laporan_tahap_1'   => $catatan_verifikator_laporan_tahap_1,
-            'laporan_akhir' => $laporan_akhir
+            'laporan_akhir' => $laporan_akhir ? $laporan_akhir->document_file : null
         ];
 
         $prop = json_decode(json_encode($prop));
@@ -474,7 +474,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->with(['user_akseslh' => function ($q) {
+            $q->withTrashed();
+        }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($q) {
+            $q->withTrashed();
+        }])->find($id);
 
         return $this->sendSuccess($result);
     }

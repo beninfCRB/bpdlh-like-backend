@@ -48,7 +48,6 @@
 </head>
 
 <body>
-
     <table>
         <caption>RAB Kegiatan</caption>
         <thead>
