@@ -163,26 +163,28 @@
                     </div>
                 </div>
             @empty
-                <div class="ex-page-content text-center">
-                    <h2>Data Kosong</h2>
-                </div>
             @endforelse
 
-            @forelse ($data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            })->first()->document_file as $item)
-                <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
-                    <div class="gal-detail thumb">
-                        <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup" title="Screenshot-1"
-                            target="_BLANK">
-                            <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
-                                alt="work-thumbnail" />
-                            <h4>{{ $item->group == 'document' ? 'Lampiran Proposal' : toPascalCase($item->group) }}</h4>
-                        </a>
+            @if (
+                $data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                    })->first())
+                @forelse ($data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                            $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');})->first()->document_file as $item)
+                    <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
+                        <div class="gal-detail thumb">
+                            <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup"
+                                title="Screenshot-1" target="_BLANK">
+                                <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
+                                    alt="work-thumbnail" />
+                                <h4>{{ $item->group == 'document' ? 'Lampiran Proposal' : toPascalCase($item->group) }}
+                                </h4>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            @empty
-            @endforelse
+                @empty
+                @endforelse
+            @endif
         </div>
     </div>
     <!-- End row -->
