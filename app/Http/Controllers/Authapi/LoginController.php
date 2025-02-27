@@ -67,7 +67,7 @@ class LoginController extends ApiController
                         // Return token to frontend
                         return $this->sendSuccess([
                             'token'                     => $token,
-                            'jenis_kelompok_masyarakat' => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
+                            'jenis_kelompok_masyarakat' => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat ?? null,
                             'kelompok_masyarakat_id'    => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->id,
                             'kelompok_masyarakat'       => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                             'role_user'                 => $user->role_user,

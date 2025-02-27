@@ -117,6 +117,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('detailInformasiPencairan', [App\Http\Controllers\Api\Akseslh\TransaksiPenyaluranController::class, 'store']);
     });
 
+    // Laporan Termin 1
+    Route::put('realisasiRab/{id}', [App\Http\Controllers\Api\Akseslh\RealisasiRabController::class, 'update']);
+
     Route::get('getDataValidasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'show']);
 
     // Laporan Kegiatan

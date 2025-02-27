@@ -669,6 +669,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         foreach ($result->rab_pengajuan_paket_kegiatans as $item) {
             # code...
             $rab[] = [
+                'id_komponen_rab'       => $item->id,
                 'id_komponen'           => $item->master_komponen_rab->id,
                 'jenis_komponen_rab'    => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
                 'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
