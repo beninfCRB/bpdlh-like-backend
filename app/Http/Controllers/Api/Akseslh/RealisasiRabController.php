@@ -20,6 +20,7 @@ class RealisasiRabController extends ApiController
 
     public function update($id, Request $request)
     {
+        dd();
         $validator = Validator::make($request->all(), [
             'komponen_rab'                          => 'required|array', // Pastikan 'komponen_rab' adalah array
             'komponen_rab.*.id_komponen_rab'        => 'required|exists:rab_pengajuan_kegiatans,id', // Pastikan id_komponen ada di tabel master_data_komponen
