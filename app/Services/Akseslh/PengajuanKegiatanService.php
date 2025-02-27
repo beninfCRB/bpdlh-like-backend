@@ -1197,7 +1197,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $cekData = PengajuanKegiatan::where('user_akseslh_id', $data['user_akseslh_id'])->latest()->first();
 
         if ($cekData && $cekData->flag < 10) {
-            \Sentry\captureMessage('Validate Message: ' . $data->user->email_pic . ' masih ada pengajuan', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' masih ada pengajuan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Masih ada pengajuan yang berlangsung', 422);
         }
 
