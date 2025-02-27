@@ -118,82 +118,18 @@ class RealisasiRabService extends AppService implements AppServiceInterface
             return response()->json(['message' => 'Beberapa id_komponen_rab tidak valid untuk paket kegiatan ini', 'invalid_ids' => $invalidKomponenRabs], 422);
         }
 
-        dd($result);
-
         \DB::beginTransaction();
 
         try {
-            // Menyesuaikan id_komponen_rab ke id kolom tabel
-            // $this->modelRabPengajuanPaketKegiatan->upsert(
-            //     collect($request->komponen_rab)->map(function ($item) {
-            //         return [
-            //             'id'                    => $item['id_komponen_rab'], // Menyesuaikan 'id' dengan 'id_komponen_rab'
-            //             'harga_unit_realisasi'  => $item['harga_unit_realisasi'],
-            //             'qty_realisasi'         => $item['qty_realisasi'],
-            //         ];
-            //     })->toArray(),
-            //     ['id'], // Menentukan kolom yang digunakan untuk update atau insert
-            //     ['harga_unit_realisasi', 'qty_realisasi'] // Kolom yang akan diupdate
-            // );
-
-            $laporan_kegiatan_termin_1 = $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
-                })->first();
-
-            if (empty($laporan_kegiatan_termin_1->tanggal_masuk)) {
-                # code...
-                $konfirmasi_pencairan_dana_termin_1 = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+            foreach ($dataKomponenRab['komponen_rab'] as $item) {
+                $this->modelRabPengajuanPaketKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
-                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
-                    })->first();
-                $laporan_kegiatan_termin_1->tanggal_masuk = $konfirmasi_pencairan_dana_termin_1->tanggal_selesai;
+                    ->where('id', $item['id_komponen_rab'])
+                    ->update([
+                        'harga_unit_realisasi'  => $item['harga_unit_realisasi'],
+                        'qty_realisasi'         => $item['qty_realisasi'],
+                    ]);
             }
-
-            $laporan_kegiatan_termin_1->tanggal_selesai = date('Y-m-d');
-            $laporan_kegiatan_termin_1->save();
-
-            // Create Log Tahapan Pengajuan
-            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
-                'pengajuan_kegiatan_id' => $read->id,
-                'tahapan_pengajuan_kegiatan_id' => $laporan_kegiatan_termin_1->tahapan_pengajuan_kegiatan_id,
-                'tanggal_masuk' => date("Y-m-d"),
-                'tanggal_selesai' => date("Y-m-d")
-            ]);
-
-            if (empty($this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
-                })->first())) {
-
-                $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
-                    ->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1')->first();
-
-                $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
-                    'pengajuan_kegiatan_id'         => $id,
-                    'tahapan_pengajuan_kegiatan_id' => $dataTahapanPengajuanKegiatan->id,
-                ]);
-            }
-
-            $this->modelLogTahapanPengajuanKegiatan->newQuery()
-                ->where('pengajuan_kegiatan_id', $id)
-                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
-                })
-                ->update(['tanggal_masuk' => date("Y-m-d")]);
-
-            $read->user_akseslh->unreadNotifications->markAsRead();
-
-            $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
-
-            $read->tanggal_mulai_kegiatan = $data['tanggal_mulai_kegiatan'];
-            $read->tanggal_akhir_kegiatan = $data['tanggal_akhir_kegiatan'];
-
-            $read->flag  =  6;
-            $read->save();
 
             \DB::commit();
             return $this->sendSuccess($result);

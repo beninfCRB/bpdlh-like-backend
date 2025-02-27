@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\RealisasiRabService;
+use App\Notifications\PengajuanKegiatanNotification;
 
 class RealisasiRabController extends ApiController
 {
