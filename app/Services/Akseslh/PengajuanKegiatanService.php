@@ -669,6 +669,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         foreach ($result->rab_pengajuan_paket_kegiatans as $item) {
             # code...
             $rab[] = [
+                'id_komponen_rab'       => $item->id,
                 'id_komponen'           => $item->master_komponen_rab->id,
                 'jenis_komponen_rab'    => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
                 'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
@@ -1440,29 +1441,49 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
-            //             
-            $temp = $result->document()->where('group', 'document')->first();
-            if ($temp) {
-                $this->fileUploadService->deleteFiles($temp->file_path);
-                $temp->delete();
-            }
+            //         
+            if ($data['jenis_dokumen'] == 'document') {
+                # code...
+                $temp = $result->document()->where('group', 'document')->first();
+                if ($temp) {
+                    $this->fileUploadService->deleteFiles($temp->file_path);
+                    $temp->delete();
+                }
 
-            $upload = $this->fileUploadService->handleFile($data['document'])->saveToDb('document');
+                $upload = $this->fileUploadService->handleFile($data['document'])->saveToDb('document');
 
-            if ($upload) {
-                $upload->update([
-                    'fileable_type' => get_class($result),
-                    'fileable_id'   => $result->id,
-                ]);
-            }
+                if ($upload) {
+                    $upload->update([
+                        'fileable_type' => get_class($result),
+                        'fileable_id'   => $result->id,
+                    ]);
+                }
 
-            $upload_pendukung = $this->fileUploadService->handleFile($data['dokumen_pendukung'])->saveToDb('dokumen_pendukung');
+                $upload_pendukung = $this->fileUploadService->handleFile($data['dokumen_pendukung'])->saveToDb('dokumen_pendukung');
 
-            if ($upload_pendukung) {
-                $upload_pendukung->update([
-                    'fileable_type' => get_class($result),
-                    'fileable_id'   => $result->id,
-                ]);
+                if ($upload_pendukung) {
+                    $upload_pendukung->update([
+                        'fileable_type' => get_class($result),
+                        'fileable_id'   => $result->id,
+                    ]);
+                }
+            } else {
+                $upload = $this->fileUploadService->handleFile($data['document'])->saveToDb($data['jenis_dokumen']);
+                if ($upload) {
+                    $upload->update([
+                        'fileable_type' => get_class($result->user_akseslh->data_pic_kelompok_masyarakat),
+                        'fileable_id'   => $result->user_akseslh->data_pic_kelompok_masyarakat->id,
+                    ]);
+                }
+
+                $upload_pendukung = $this->fileUploadService->handleFile($data['dokumen_pendukung'])->saveToDb('dokumen_pendukung');
+
+                if ($upload_pendukung) {
+                    $upload_pendukung->update([
+                        'fileable_type' => get_class($result->user_akseslh->data_pic_kelompok_masyarakat),
+                        'fileable_id'   => $result->user_akseslh->data_pic_kelompok_masyarakat->id,
+                    ]);
+                }
             }
 
             \DB::commit(); // commit the changes

@@ -17,6 +17,8 @@ class RabPengajuanPaketKegiatan extends AppModel
         'komponen_rab_id',
         'harga_unit',
         'qty',
+        'harga_unit_realisasi',
+        'qty_realisasi',
         'flag',
         'username'
     ];
