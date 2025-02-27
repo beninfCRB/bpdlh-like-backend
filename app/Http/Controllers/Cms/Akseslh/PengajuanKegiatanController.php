@@ -158,13 +158,18 @@ class PengajuanKegiatanController extends ApiController
     public function dokumen($id)
     {
         // $data = $this->PengajuanKegiatanService->getDokumen($id);
-        $data = PengajuanKegiatan::find($id);
+        $data = PengajuanKegiatan::with(['user_akseslh' => function ($q) {
+            $q->withTrashed();
+        }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($q) {
+            $q->withTrashed();
+        }])->find($id);
         return view('pages.akseslh.pengajuan-kegiatan.dokumen', compact('data'));
     }
 
     public function update_dokumen($id, Request $request)
     {
         $input  =   $request->validate([
+            'jenis_dokumen'     => 'required',
             'document'          => 'required|file|mimes:pdf|max:10192',
             'dokumen_pendukung' => 'required|file|mimes:pdf|max:2048'
         ]);

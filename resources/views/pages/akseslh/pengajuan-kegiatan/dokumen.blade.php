@@ -22,7 +22,7 @@
                     <h3 class="panel-title">Tambah Dokumen</h3>
                 </div>
                 <div class="panel-body">
-                    <form class="form-horizontal row" role="form"
+                    {{-- <form class="form-horizontal row" role="form"
                         action="{{ route('pengajuan-kegiatan.document.update', $data->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @method('PUT')
@@ -56,6 +56,52 @@
                                 Simpan
                             </button>
                         </div>
+                    </form> --}}
+                    <form role="form row" action="{{ route('pengajuan-kegiatan.document.update', $data->id) }}"
+                        method="POST" enctype="multipart/form-data">
+                        @method('PUT')
+                        @csrf
+                        <div class="form-group col-md-3">
+                            <label for="jenis_dokumen">Jenis Dokumen</label>
+                            <select name="jenis_dokumen" id="jenis_dokumen" class="form-control">
+                                <option value="">Pilih Dokumen</option>
+                                <option value="profil_kelompok"
+                                    {{ old('jenis_dokumen') == 'profil_kelompok' ? 'selected' : '' }}>Profil Kelompok
+                                </option>
+                                <option value="document" {{ old('jenis_dokumen') == 'document' ? 'selected' : '' }}>Lampiran
+                                    Proposal</option>
+                            </select>
+                            @error('jenis_dokumen')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="document">Dokumen</label>
+                            <input type="file" class="form-control" id="document" name="document"
+                                accept="application/pdf" />
+                            @error('document')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="dokumen_pendukung">Dokumen Pendukung</label>
+                            <input type="file" class="form-control" id="dokumen_pendukung" name="dokumen_pendukung"
+                                accept="application/pdf" />
+                            @error('dokumen_pendukung')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">
+                                Submit
+                            </button>
+                        </div>
                     </form>
                 </div>
                 <!-- panel-body -->
@@ -68,7 +114,7 @@
     <div class="row port">
         <div class="portfolioContainer">
             @forelse ($data->user_akseslh->data_pic_kelompok_masyarakat->foto as $item)
-                @if (in_array($item->group, ['profil_kelompok', 'foto_ktp']))
+                @if (in_array($item->group, ['profil_kelompok', 'foto_ktp', 'dokumen_pendukung']))
                     <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                         <div class="gal-detail thumb">
                             <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup"
@@ -123,8 +169,8 @@
             @endforelse
 
             @forelse ($data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                })->first()->document_file as $item)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            })->first()->document_file as $item)
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
                         <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup" title="Screenshot-1"
