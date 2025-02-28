@@ -115,6 +115,11 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                                     ->whereNull('tanggal_selesai');
                             }
                         )
+                        ->with(['user_akseslh' => function ($query) {
+                            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($q) {
+                            $q->withTrashed();
+                        }])
                         ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])

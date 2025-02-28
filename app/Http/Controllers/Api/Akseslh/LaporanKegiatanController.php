@@ -19,7 +19,7 @@ class LaporanKegiatanController extends ApiController
         parent::__construct($request);
     }
 
-    public function index(Request $request): \Illuminate\Http\JsonResponse
+    public function index(Request $request)
     {
         $result = $this->laporanKegiatanService->apiGetAll();
 
