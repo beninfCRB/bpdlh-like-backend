@@ -190,7 +190,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getLogKegiatan($id)
     {
-        $model = $this->model->newQuery()->with(['log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
+        $model = $this->model->newQuery()->with(['user_akseslh' => function ($q) {
+            $q->withTrashed();
+        }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($q) {
+            $q->withTrashed();
+        }, 'log_tahapan_pengajuan.tahapan_pengajuan_kegiatan'])->find($id);
 
         if (!$model) return $this->sendError(null, 'Not found', 422);
 
@@ -310,7 +314,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $prop = json_decode(json_encode($prop));
 
         $result = $model->log_tahapan_pengajuan()
-            ->with(['pengajuan_kegiatan.paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+            ->with(['pengajuan_kegiatan.user_akseslh' => function ($q) {
+                $q->withTrashed();
+            }, 'pengajuan_kegiatan.user_akseslh.data_pic_kelompok_masyarakat' => function ($q) {
+                $q->withTrashed();
+            }, 'pengajuan_kegiatan.paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }])
             ->get();

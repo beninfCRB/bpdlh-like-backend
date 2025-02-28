@@ -39,7 +39,13 @@ class ProfileService extends AppService implements AppServiceInterface
 
     public function apiGetById($id)
     {
-        $model =   $this->model->newQuery()->find($id);
+        $model =   $this->model->newQuery()
+            ->with(['user_akseslh' => function ($q) {
+                $q->withTrashed();
+            }, 'kelompok_masyarakat' => function ($q) {
+                $q->withTrashed();
+            }])
+            ->find($id);
 
         if (!$model) return $this->sendError(null, 'Not Found', 422);
 
