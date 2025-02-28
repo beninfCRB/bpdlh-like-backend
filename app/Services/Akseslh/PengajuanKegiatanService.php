@@ -230,7 +230,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $nama_validator     = $validator->user_akseslh_admin->email ?? null;
         $tanggal_validasi   = $validator->tanggal_selesai ?? null;
-        $catatan_validator  = $validator->catatan_log_tahapan_pengajuan_kegiatan()->first() ? $validator->catatan_log_tahapan_pengajuan_kegiatan()->catatan_log : null;
+        $catatan_validator  = $validator->catatan_log_tahapan_pengajuan_kegiatan()->first() ? $validator->catatan_log_tahapan_pengajuan_kegiatan()->first()->catatan_log : null;
 
         // Data Verifikator laporan termin 1
         $verifikator_laporan_tahap_1 = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
