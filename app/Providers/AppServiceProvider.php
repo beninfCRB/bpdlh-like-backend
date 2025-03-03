@@ -6,6 +6,7 @@ use Laravel\Sanctum\Sanctum;
 use App\Models\PersonalAccessToken;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        Paginator::useBootstrap();
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
         if (env('APP_ENV') == 'production') {

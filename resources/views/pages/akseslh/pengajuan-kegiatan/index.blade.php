@@ -131,61 +131,161 @@
                     <input type="hidden" name="pengajuan-kegiatan-route" id="pengajuan-kegiatan-route"
                         value="{{ route('pengajuan-kegiatan.index') }}">
                 </div>
-                <div class="panel-body">
-                    <div class="row m-b-10">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-8 text-right">
-
-                        </div>
-                    </div>
+                <div class="panel-body table-rep-plugin">
                     <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <table id="dt_pengajuan_kegiatan" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Jenis Kelompok Masyarakat</th>
-                                        <th>Kelompok Masyarakat</th>
-                                        <th>Nama PIC</th>
-                                        <th>Jenis Identitas PIC</th>
-                                        <th>Nomor Identitas PIC</th>
-                                        <th>Kelurahan PIC</th>
-                                        <th>Kecamatan PIC</th>
-                                        <th>Kabupaten PIC</th>
-                                        <th>Provinsi PIC</th>
-                                        <th>Email</th>
-                                        <th>No. HP</th>
-                                        <th>Status User</th>
-                                        <th>Role User</th>
-                                        <th>Nomor Pengajuan</th>
-                                        <th>Tematik Kegiatan</th>
-                                        <th>Sub Tematik Kegiatan</th>
-                                        <th>Jenis Kegiatan</th>
-                                        <th>Nama Kelurahan Kegiatan</th>
-                                        <th>Nama Kecamatan Kegiatan</th>
-                                        <th>Nama Kabupaten Kegiatan</th>
-                                        <th>Nama Provinsi Kegiatan</th>
-                                        <th>Jumlah Peserta</th>
-                                        <th>Judul Pengajuan Kegiatan</th>
-                                        <th>Alamat Kegiatan</th>
-                                        <th>Tanggal Kegiatan</th>
-                                        <th>Waktu Kegiatan</th>
-                                        <th>Proposal Kegiatan</th>
-                                        <th>Ruang Lingkup Kegiatan</th>
-                                        <th>Total RAB</th>
-                                        <th>Total Dana Dicairkan</th>
-                                        <th>Flag</th>
-                                        <th>Created at</th>
-                                        <th>Updated at</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                            </table>
+                        <div class="col-md-12">
+                            <form role="form" class="form-horizontal" method="GET"
+                                action="{{ route('pengajuan-kegiatan.index') }}">
+                                @csrf
+                                <div class="input-group m-t-10">
+                                    <input type="text" id="search" name="search" class="form-control"
+                                        value="{{ old('search') }}" placeholder="Search" />
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn waves-effect waves-light btn-info">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <a href="{{ route('pengajuan-kegiatan.index') }}"
+                                            class="btn waves-effect waves-light btn-warning">
+                                            reset
+                                        </a>
+                                    </span>
+                                </div>
+                            </form>
                         </div>
                     </div>
+                    <div class="table-responsive m-t-10" data-pattern="priority-columns">
+                        <table id="" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Jenis Kelompok Masyarakat</th>
+                                    <th>Kelompok Masyarakat</th>
+                                    <th>Nama PIC</th>
+                                    <th>Jenis Identitas PIC</th>
+                                    <th>Nomor Identitas PIC</th>
+                                    <th>Kelurahan PIC</th>
+                                    <th>Kecamatan PIC</th>
+                                    <th>Kabupaten PIC</th>
+                                    <th>Provinsi PIC</th>
+                                    <th>Email</th>
+                                    <th>No. HP</th>
+                                    <th>Status User</th>
+                                    <th>Role User</th>
+                                    <th>Nomor Pengajuan</th>
+                                    <th>Tematik Kegiatan</th>
+                                    <th>Sub Tematik Kegiatan</th>
+                                    <th>Jenis Kegiatan</th>
+                                    <th>Nama Kelurahan Kegiatan</th>
+                                    <th>Nama Kecamatan Kegiatan</th>
+                                    <th>Nama Kabupaten Kegiatan</th>
+                                    <th>Nama Provinsi Kegiatan</th>
+                                    <th>Jumlah Peserta</th>
+                                    <th>Judul Pengajuan Kegiatan</th>
+                                    <th>Alamat Kegiatan</th>
+                                    <th>Tanggal Kegiatan</th>
+                                    <th>Waktu Kegiatan</th>
+                                    <th>Proposal Kegiatan</th>
+                                    <th>Ruang Lingkup Kegiatan</th>
+                                    <th>Total RAB</th>
+                                    <th>Total Dana Dicairkan</th>
+                                    <th>Flag</th>
+                                    <th>Created at</th>
+                                    <th>Updated at</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($pengajuan_kegiatan as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration + ($pengajuan_kegiatan->currentPage() - 1) * $pengajuan_kegiatan->perPage() }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->nama_pic ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->jenis_identitas_pic ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->nomor_identitas_pic ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kelurahan->name ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kecamatan->name ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kabupaten->name ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->provinsi->name ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->email_pic ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->nohp_pic ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->status_user ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->role_user ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->nomor_pengajuan ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->paket_kegiatan->jenis_kegiatan->jenis_kegiatan ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->kelurahan->name ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->kecamatan->name ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->kabupaten->name ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->provinsi->name ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->paket_kegiatan->jumlah_peserta < 50 ? $item->paket_kegiatan->jumlah_peserta . ' Hectare' : $item->paket_kegiatan->jumlah_peserta . ' Orang' }}
+                                        </td>
+                                        <td>{{ $item->judul_pengajuan_kegiatan ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->alamat_kegiatan ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->tanggal_mulai_kegiatan . ' - ' . $item->tanggal_akhir_kegiatan }}
+                                        </td>
+                                        <td>{{ $item->time_mulai_kegiatan . ' - ' . $item->time_akhir_kegiatan }}
+                                        </td>
+                                        <td>{{ \Illuminate\Support\Str::words($item->proposal_kegiatan, 5) ?? '-' }}
+                                        </td>
+                                        <td>{{ \Illuminate\Support\Str::words($item->ruang_lingkup_kegiatan, 5) ?? '-' }}
+                                        </td>
+                                        <td>Rp.
+                                            {{ number_format($item->rab_pengajuan_paket_kegiatans->sum(function ($rab) {return $rab->harga_unit * $rab->qty;})) }}
+                                        </td>
+                                        <td>Rp.
+                                            {{ number_format($item->transaksi_penyaluran->sum(function ($rab) {return $rab->nilai_penyaluran;})) }}
+                                        </td>
+                                        <td>{{ $item->tahapan->deskripsi_kegiatan ?? '-' }}</td>
+                                        <td>{{ $item->created_at->format('d-m-Y H:i:s') ?? '-' }}</td>
+                                        <td>{{ $item->updated_at->format('d-m-Y H:i:s') ?? '-' }}</td>
+                                        <td>
+                                            <a href="{{ route('pengajuan-kegiatan.show', $item->id) }}"
+                                                class="btn btn-sm btn-clean btn-icon btn-icon-md" target="_blank"
+                                                title="Lihat Detail">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('pengajuan-kegiatan.document', $item->id) }}"
+                                                target="_blank" class="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                                title="Lihat Dokumen">
+                                                <i class="fa fa-file"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    {{ $pengajuan_kegiatan->links() }}
                 </div>
             </div>
-
 
         </div>
     </div>

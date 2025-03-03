@@ -603,7 +603,7 @@ var data_pengajuan_kegiatan = (function () {
 })();
 
 jQuery(document).ready(function () {
-    data_pengajuan_kegiatan.init();
+    // data_pengajuan_kegiatan.init();
 });
 
 window.generateFormTahapSalur = () => {
