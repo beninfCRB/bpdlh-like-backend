@@ -31,10 +31,36 @@ class PengajuanKegiatanController extends ApiController
         parent::__construct($request);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $group = File::select('group')->distinct()->get();
-        return view("pages.akseslh.pengajuan-kegiatan.index", compact('group'));
+        $query = PengajuanKegiatan::query();
+
+        if ($request->has('search') && !empty($request->search)) {
+            # code...
+            $query->whereHas('user_akseslh', function ($q) use ($request) {
+                $q->where('email', 'like', '%' . $request->search . '%');
+            })
+                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                    $q->where('nama_pic', 'like', '%' . $request->search . '%');
+                })
+                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                    $q->where('nohp_pic', 'like', '%' . $request->search . '%');
+                })
+                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                    $q->where('nomor_identitas_pic', 'like', '%' . $request->search . '%');
+                })
+                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis', function ($q) use ($request) {
+                    $q->where('jenis_kelompok_masyarakat', 'like', '%' . $request->search . '%');
+                })
+                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat', function ($q) use ($request) {
+                    $q->where('kelompok_masyarakat', 'like', '%' . $request->search . '%');
+                })
+                ->orWhere('nomor_pengajuan', 'like', '%' . $request->search . '%');
+        }
+
+        $pengajuan_kegiatan = $query->paginate(10);
+        return view("pages.akseslh.pengajuan-kegiatan.index", compact('group', 'pengajuan_kegiatan'));
     }
 
     public function create()
