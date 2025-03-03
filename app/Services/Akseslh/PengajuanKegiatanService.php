@@ -1201,6 +1201,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function createTemp($data)
     {
+        dd($data['user']->email_pic);
         // Mengecek data sebelumnya
         $cekData = PengajuanKegiatan::where('user_akseslh_id', $data['user_akseslh_id'])->latest()->first();
 

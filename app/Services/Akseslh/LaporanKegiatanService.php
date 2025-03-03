@@ -3,20 +3,22 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Models\Pengembalian;
-use App\Models\PengajuanKegiatan;
-use App\Models\LogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Models\File as FileTable;
-use App\Notifications\LaporanNotification;
+use App\Models\PengajuanKegiatan;
 use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
+use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
+use App\Notifications\LaporanNotification;
+use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 
 
 class LaporanKegiatanService extends AppService implements AppServiceInterface
 {
+    protected $modelTahapanPengajuanKegiatan;
     protected $logTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
@@ -27,6 +29,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
         PengajuanKegiatan $model,
         LogTahapanPengajuanKegiatan $logTahapanPengajuanKegiatan,
         FileUploadService $fileUploadService,
+        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         FileTable $fileTable,
         Pengembalian $modelPengembalian,
         DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
@@ -37,6 +40,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
         $this->fileTable                    =   $fileTable;
         $this->modelPengembalian            = $modelPengembalian;
         $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
+        $this->modelTahapanPengajuanKegiatan            = $modelTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -242,7 +246,6 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
         }
 
         if ($read->flag != 8 || $read->flag != '8') {
-
             \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Allowed', 422);
         }
@@ -267,6 +270,25 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
             $log->tanggal_selesai = date('Y-m-d');
             $log->save();
+
+            $logVerifikasiLaporanAkhir = $this->logTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
+                })
+                ->first();
+
+            if (empty($logVerifikasiLaporanAkhir)) {
+                # code...
+                // Ambil tahapan pengajuan kegiatan terbaru sekali saja
+                $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan')->first();
+                $this->logTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+                    'tahapan_pengajuan_kegiatan_id' => $dataTahapanPengajuanKegiatan->id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                ]);
+                // dd($dataTahapanPengajuanKegiatan);?
+            }
 
             $this->logTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
