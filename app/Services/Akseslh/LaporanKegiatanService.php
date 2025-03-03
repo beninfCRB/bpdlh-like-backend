@@ -241,12 +241,12 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
         $read   =   $this->model->newQuery()->find($data['pengajuan_kegiatan_id']);
 
         if (!$read) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Found', 422);
         }
 
         if ($read->flag != 8 || $read->flag != '8') {
-            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Allowed', 422);
         }
 
@@ -307,13 +307,25 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 $upload = $this->fileUploadService->handleImage($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
             }
 
-            if (!empty($upload)) {
-                $document = $this->fileTable->newQuery()->find($upload->id);
-                $document->update([
-                    'fileable_type' => get_class($pengembalian),
-                    'fileable_id'   => $pengembalian->id,
-                ]);
+            if (empty($pengembalian)) {
+                # code...
+                if (!empty($upload)) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+            } else {
+                if (!empty($upload)) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($pengembalian),
+                        'fileable_id'   => $pengembalian->id,
+                    ]);
+                }
             }
+
 
             if (isset($data['laporan_akhir'])) {
                 # code...
