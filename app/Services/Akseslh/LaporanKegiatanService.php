@@ -278,13 +278,6 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                 })
                 ->first();
 
-            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
-                'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
-                'tahapan_pengajuan_kegiatan_id' => $logVerifikasiLaporanAkhir->tahapan_pengajuan_kegiatan_id,
-                'tanggal_masuk' => date("Y-m-d"),
-                'tanggal_selesai' => date("Y-m-d"),
-            ]);
-
             if (empty($logVerifikasiLaporanAkhir)) {
                 # code...
                 // Ambil tahapan pengajuan kegiatan terbaru sekali saja
@@ -293,13 +286,6 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                     'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
                     'tahapan_pengajuan_kegiatan_id' => $dataTahapanPengajuanKegiatan->id,
                     'tanggal_masuk' => date("Y-m-d"),
-                ]);
-
-                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
-                    'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
-                    'tahapan_pengajuan_kegiatan_id' => $dataTahapanPengajuanKegiatan->id,
-                    'tanggal_masuk' => date("Y-m-d"),
-                    'tanggal_selesai' => date("Y-m-d"),
                 ]);
                 // dd($dataTahapanPengajuanKegiatan);?
             }
