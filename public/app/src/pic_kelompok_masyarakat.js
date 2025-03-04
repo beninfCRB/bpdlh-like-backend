@@ -232,7 +232,7 @@ var data_pic_kelompok_masyarakat = (function () {
 })();
 
 jQuery(document).ready(function () {
-    data_pic_kelompok_masyarakat.init();
+    // data_pic_kelompok_masyarakat.init();
 });
 
 window.deletePICKelompokMasyarakat = (input) => {
