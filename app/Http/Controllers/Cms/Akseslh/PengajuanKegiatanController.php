@@ -66,9 +66,6 @@ class PengajuanKegiatanController extends ApiController
                     ->orWhereHas('tahapan', function ($q) use ($request) {
                         $q->where('deskripsi_kegiatan', 'like', '%' . $request->search . '%');
                     })
-                    ->orWhereHas('provinsi', function ($q) use ($request) {
-                        $q->where('name', 'like', '%' . $request->search . '%');
-                    })
                     ->orWhere('nomor_pengajuan', 'like', '%' . $request->search . '%');
             }
         }
