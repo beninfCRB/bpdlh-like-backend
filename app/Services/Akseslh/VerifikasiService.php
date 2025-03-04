@@ -204,13 +204,13 @@ class VerifikasiService extends AppService implements AppServiceInterface
         $read = $this->model->newQuery()->find($id);
 
         if (!$read) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Found', 422);
         }
 
         if ($read->flag != 1) {
 
-            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Allowed', 403);
         }
 

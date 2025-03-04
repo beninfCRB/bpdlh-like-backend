@@ -35,6 +35,7 @@ class PengajuanKegiatan extends AppModel
         'ruang_lingkup_kegiatan',
         'lokasi_bidang_folu_id',
         'caping_rab',
+        'nomor_sptjm',
         'is_active',
         'username',
         'flag'
