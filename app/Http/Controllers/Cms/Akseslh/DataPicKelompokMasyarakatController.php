@@ -9,6 +9,7 @@ use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\ProvinsiService;
 use Illuminate\Support\Facades\Validator;
 use App\Imports\DataPicKelompokMasyarakatImport;
+use App\Models\DataPicKelompokMasyarakat;
 use App\Services\Akseslh\AgamaService;
 use App\Services\Akseslh\KelompokMasyarakatService;
 use App\Services\Akseslh\DataPicKelompokMasyarakatService;
@@ -55,9 +56,25 @@ class DataPicKelompokMasyarakatController extends ApiController
         parent::__construct($request);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view("pages.akseslh.data-pic-kelompok-masyarakat.index");
+        $query = DataPicKelompokMasyarakat::query();
+
+        if ($request->has('search') && !empty($request->search)) {
+            $query
+                ->where('email_pic', 'like', '%' . $request->search . '%')
+                ->orWhere('nama_pic', 'like', '%' . $request->search . '%')
+                ->orWhere('nohp_pic', 'like', '%' . $request->search . '%')
+                ->orWhere('nomor_identitas_pic', 'like', '%' . $request->search . '%')
+                ->orWhereHas('kelompok_masyarakat.jenis', function ($q) use ($request) {
+                    $q->where('jenis_kelompok_masyarakat', 'like', '%' . $request->search . '%');
+                })
+                ->orWhereHas('kelompok_masyarakat', function ($q) use ($request) {
+                    $q->where('kelompok_masyarakat', 'like', '%' . $request->search . '%');
+                });
+        }
+        $datas = $query->paginate(10);
+        return view("pages.akseslh.data-pic-kelompok-masyarakat.index", compact('datas'));
     }
 
     public function create()
