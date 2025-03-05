@@ -308,7 +308,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'nama_verifikator_laporan_tahap_1'  => $nama_verifikator_laporan_tahap_1,
             'tanggal_verifikator_laporan_tahap_1'    => $tanggal_verifikator_laporan_tahap_1,
             'catatan_verifikator_laporan_tahap_1'   => $catatan_verifikator_laporan_tahap_1,
-            'laporan_akhir' => $laporan_akhir ? $laporan_akhir->document_file : null
+            'laporan_akhir' => $laporan_akhir ? $laporan_akhir->document_file : null,
+            'nama_gadis_ibu_kandung' => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_gadis_ibu_kandung,
         ];
 
         $prop = json_decode(json_encode($prop));
@@ -359,6 +360,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                         'catatan_validator'         => $prop->catatan_validator,
                         'lampiran'                  => $prop->file_lampiran,
                         'sk'                        => $prop->file_sk,
+                    ];
+                    break;
+                case 4:
+                    $detail = [
+                        'nama_gadis_ibu_kandung'    => $prop->nama_gadis_ibu_kandung,
                     ];
                     break;
 
