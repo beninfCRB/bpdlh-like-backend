@@ -309,7 +309,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'tanggal_verifikator_laporan_tahap_1'    => $tanggal_verifikator_laporan_tahap_1,
             'catatan_verifikator_laporan_tahap_1'   => $catatan_verifikator_laporan_tahap_1,
             'laporan_akhir' => $laporan_akhir ? $laporan_akhir->document_file : null,
-            'nama_gadis_ibu_kandung' => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_gadis_ibu_kandung,
+            'nomor_sptjm' => $model->nomor_sptjm,
         ];
 
         $prop = json_decode(json_encode($prop));
@@ -364,7 +364,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     break;
                 case 4:
                     $detail = [
-                        'nama_gadis_ibu_kandung'    => $prop->nama_gadis_ibu_kandung,
+                        'nomor_sptjm'    => $prop->nomor_sptjm,
                     ];
                     break;
 
