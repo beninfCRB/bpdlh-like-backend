@@ -90,11 +90,12 @@ class InformasiPencairanDanaController extends ApiController
             'perjanjian_kerjasama'                  => 'required|file|mimes:pdf,jpg,png',
             'tanggal_kegiatan'                      => 'nullable|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
             'waktu_kegiatan'                        => 'nullable|string|regex:/^\d{2}:\d{2}(:\d{2})? - \d{2}:\d{2}(:\d{2})?$/',
+            'nama_gadis_ibu_kandung'                => 'required',
         ]);
 
         if ($validator->fails()) {
             # code...
-            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 

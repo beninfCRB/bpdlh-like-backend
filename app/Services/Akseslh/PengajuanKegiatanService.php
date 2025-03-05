@@ -308,7 +308,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'nama_verifikator_laporan_tahap_1'  => $nama_verifikator_laporan_tahap_1,
             'tanggal_verifikator_laporan_tahap_1'    => $tanggal_verifikator_laporan_tahap_1,
             'catatan_verifikator_laporan_tahap_1'   => $catatan_verifikator_laporan_tahap_1,
-            'laporan_akhir' => $laporan_akhir ? $laporan_akhir->document_file : null
+            'laporan_akhir' => $laporan_akhir ? $laporan_akhir->document_file : null,
+            'nomor_sptjm' => $model->nomor_sptjm,
         ];
 
         $prop = json_decode(json_encode($prop));
@@ -359,6 +360,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                         'catatan_validator'         => $prop->catatan_validator,
                         'lampiran'                  => $prop->file_lampiran,
                         'sk'                        => $prop->file_sk,
+                    ];
+                    break;
+                case 4:
+                    $detail = [
+                        'nomor_sptjm'    => $prop->nomor_sptjm,
                     ];
                     break;
 
@@ -900,12 +906,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $model = $this->model->newQuery()->where(['id' => $id])->first();
 
         if (!$model) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not found', 422);
         }
 
         if ($model->flag != 3) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
             return $this->sendError(null, 'Data Invalid', 422);
         }
 
@@ -971,7 +977,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
             $model->user_akseslh->unreadNotifications->markAsRead();
-
+            $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung']]);
             $model->flag = 4;
             $model->save();
 
