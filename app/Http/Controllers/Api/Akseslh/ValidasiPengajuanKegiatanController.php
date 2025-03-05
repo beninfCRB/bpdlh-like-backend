@@ -60,7 +60,8 @@ class ValidasiPengajuanKegiatanController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'status'        => 'required',
-            'catatan_log'   => 'nullable'
+            'catatan_log'   => 'nullable',
+            'nomor_sptjm'   => 'required|string',
         ]);
 
         $validator->sometimes('file_sk', 'required|file|mimes:pdf', function ($input) {
@@ -69,12 +70,14 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
         if ($validator->fails()) {
             # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
         $input = $validator->validated();
 
         $input['user_akseslh_id']  = $request->user()->id;
+        $input['user']           = $request->user();
 
         $result = $this->validasiPengajuanKegiatanService->updateTemp($id, $input);
 
