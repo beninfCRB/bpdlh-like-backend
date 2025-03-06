@@ -98,7 +98,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                                     ->whereNull('tanggal_selesai');
                             }
                         )
-                        ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                        ->with(['user_akseslh' => function ($q) {
+                            $q->withTrashed();
+                        }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($q) {
+                            $q->withTrashed();
+                        }, 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($q) {
+                            $q->withTrashed();
+                        }, 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
                         ->orderBy('created_at', 'ASC')
@@ -756,11 +762,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'user_akseslh_id'   => $data['user']->id
                 ]);
 
-                // Save Pengembalian Dana
-                $this->modelPengembalian->newQuery()->create([
-                    'pengajuan_kegiatan_id' => $read->id,
-                    'jumlah_pengembalian'   => $data['jumlah_pengembalian']
-                ]);
+                if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
+                    # code...
+                    $this->modelPengembalian->newQuery()->create([
+                        'pengajuan_kegiatan_id' => $read->id,
+                        'jumlah_pengembalian'   => $data['jumlah_pengembalian']
+                    ]);
+                }
 
                 // Save document 
                 // upload document
