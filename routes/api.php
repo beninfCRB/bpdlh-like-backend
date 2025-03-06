@@ -107,6 +107,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['ensurerole:approver'])->group(function () {
         Route::get('getDataValidasiPengajuan', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'index']);
         Route::put('validasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update']);
+        Route::put('validasiSPTJM/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_sptjm']);
         Route::put('validasiPengajuanKegiatanTermin1/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_termin_1']);
         Route::put('validasiPengajuanKegiatanTahapAkhir/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_tahap_akhir']);
         Route::put('retur-pengajuan-kegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'retur_pengajuan_kegiatan']);

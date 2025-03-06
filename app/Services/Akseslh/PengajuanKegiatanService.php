@@ -310,6 +310,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'catatan_verifikator_laporan_tahap_1'   => $catatan_verifikator_laporan_tahap_1,
             'laporan_akhir' => $laporan_akhir ? $laporan_akhir->document_file : null,
             'nomor_sptjm' => $model->nomor_sptjm,
+            'perjanjian_kerjasama' => $model->document()->where('group', 'perjanjian_kerjasama')->first(),
         ];
 
         $prop = json_decode(json_encode($prop));
@@ -365,6 +366,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 case 4:
                     $detail = [
                         'nomor_sptjm'    => $prop->nomor_sptjm,
+                        'perjanjian_kerjasama'  => $prop->perjanjian_kerjasama,
                     ];
                     break;
 
@@ -969,16 +971,31 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             $logTahapan->update(['tanggal_selesai' => date("Y-m-d")]);
 
+            $logTahapanVerifikasiSPTJM = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
+                })->first();
+
+            if (empty($logTahapanVerifikasiSPTJM)) {
+                # code...
+                $dataTahapanVerifikasiSPTJM = $this->modelTahapanPengajuanKegiatan->where('deskripsi_kegiatan', 'Verifikasi SPTJM')->first();
+                $this->logTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+                    'tahapan_pengajuan_kegiatan_id' => $dataTahapanVerifikasiSPTJM->id,
+                ]);
+            }
+
             $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+                    $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
             $model->user_akseslh->unreadNotifications->markAsRead();
             $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung']]);
-            $model->flag = 4;
+            $model->flag = 11;
             $model->save();
 
             \DB::commit();
