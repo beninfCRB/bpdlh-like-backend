@@ -116,8 +116,6 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
         $input['user']  = $request->user();
 
-        dd($input);
-
         $result = $this->validasiPengajuanKegiatanService->update_sptjm($id, $input);
 
         try {
