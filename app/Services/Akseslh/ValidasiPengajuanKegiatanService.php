@@ -252,17 +252,18 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     $result  = $this->model->newQuery()
                         ->whereHas('log_tahapan_pengajuan', function ($q) {
                             $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                $q->where(['deskripsi_kegiatan' => 'Validasi']);
+                                $q->where(['deskripsi_kegiatan' => 'Verifikasi SPTJM']);
                             })->whereNotNull('tanggal_masuk')
                                 ->whereNull('tanggal_selesai');
                         })
                         ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
-                        ->where('flag', 2)
+                        ->where('flag', 11)
                         ->orderBy('created_at', 'ASC')
                         ->get();
                     $result->transform(function ($items, $key) {
+
                         return [
                             'id'                        => $items->id,
                             'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
@@ -284,7 +285,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'proposal_kegiatan'         => $items->proposal_kegiatan,
                             'tujuan_kegiatan'           => $items->tujuan_kegiatan,
                             'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
-                            'surat_perjanjian'          => $items->document()->where('jenis_dokumen', 'perjanjian_kerjasama')->first()->document_file,
+                            'surat_perjanjian'          => $items->document()->where('group', 'perjanjian_kerjasama')->first(),
                         ];
                     });
 
@@ -620,7 +621,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
                 // Save document 
                 // upload document
-                $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_1'])->saveToDb('surat_pencairan_dana_termin_1');
+                $upload = $this->fileUploadService->handleFile($data['surat_permintaan_nomor_rekening'])->saveToDb('surat_permintaan_nomor_rekening');
 
                 if (!empty($upload)) {
                     $image = $this->fileTable->newQuery()->find($upload->id);
@@ -629,6 +630,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         'fileable_id'   => $read->id,
                     ]);
                 }
+
+                $upload = null;
 
                 $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_1'])->saveToDb('surat_pencairan_dana_termin_1');
 
@@ -642,7 +645,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
                 $read->user_akseslh->unreadNotifications->markAsRead();
 
-                $read->user_akseslh->notify(new VerifikasiLaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']));
+                $read->user_akseslh->notify(new VerifikasiLaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, 0, $data['catatan_log']));
 
                 $read->flag = 4;
                 $idLog->save();
