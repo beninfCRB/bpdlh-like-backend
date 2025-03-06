@@ -981,7 +981,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 # code...
                 $dataTahapanVerifikasiSPTJM = $this->modelTahapanPengajuanKegiatan->where('deskripsi_kegiatan', 'Verifikasi SPTJM')->first();
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
-                    'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+                    'pengajuan_kegiatan_id' => $id,
                     'tahapan_pengajuan_kegiatan_id' => $dataTahapanVerifikasiSPTJM->id,
                 ]);
             }
