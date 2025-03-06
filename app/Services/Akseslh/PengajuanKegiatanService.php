@@ -140,8 +140,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }])
             ->where(['user_akseslh_id' => $user_akseslh_id])
-            ->where('flag', '>', 0)
-            ->where('flag', '<', 10)
+            // ->where('flag', '!=', 10)
+            // ->where('flag', '>', 0)
+            // ->where('flag', '<', 11)
+            ->whereIn('flag', [1, 2, 3, 4, 5, 6, 7, 8, 9, 11])
             ->whereHas('rab_pengajuan_paket_kegiatans')
             ->latest()
             ->first();
