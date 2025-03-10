@@ -99,6 +99,10 @@ class ValidasiPengajuanKegiatanController extends ApiController
             'catatan_log'                       => 'nullable',
         ]);
 
+        $validator->sometimes('catatan_log', 'required', function ($input) {
+            return $input->status == 0;
+        });
+
         $validator->sometimes('surat_permintaan_nomor_rekening', 'required|file|mimes:pdf', function ($input) {
             return $input->status != 0;
         });
