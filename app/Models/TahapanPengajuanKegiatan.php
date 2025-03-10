@@ -16,6 +16,7 @@ class TahapanPengajuanKegiatan extends AppModel
     protected $fillable = [
         'deskripsi_kegiatan',
         'sort',
+        'code_id',
         'flag',
         'username',
     ];

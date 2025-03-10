@@ -45,7 +45,8 @@ class TahapanPengajuanKegiatanController extends ApiController
     {
         $input  =   $request->validate([
             'deskripsi_kegiatan'    => 'required',
-            'sort'                  => 'required'
+            'sort'                  => 'required|numeric',
+            'code_id'               => 'required|numeric',
         ]);
 
         $result =   $this->tahapanPengajuanKegiatanService->create($input);
@@ -67,7 +68,8 @@ class TahapanPengajuanKegiatanController extends ApiController
     {
         $input  =   $request->validate([
             'deskripsi_kegiatan'    => 'required',
-            'sort'                  => 'required',
+            'sort'                  => 'required|numeric',
+            'code_id'               => 'required|numeric',
         ]);
 
         $result =   $this->tahapanPengajuanKegiatanService->update($id, $input);

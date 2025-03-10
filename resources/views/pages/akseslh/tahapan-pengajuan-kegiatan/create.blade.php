@@ -35,9 +35,17 @@
                         </div>
                         <div class="form-group @error('sort') has-error @enderror">
                             <label for="sort">Sort/Urutan <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="sort" name="sort"
-                                value="{{ old('sort') }}" placeholder="Deskripsi Kegiatan">
+                            <input type="number" min="1" class="form-control" id="sort" name="sort"
+                                value="{{ old('sort') }}" placeholder="Sort/Urutan">
                             @error('sort')
+                                {{ $message }}
+                            @enderror
+                        </div>
+                        <div class="form-group @error('code_id') has-error @enderror">
+                            <label for="code_id">Code ID <span class="text-danger">*</span></label>
+                            <input type="number" min="1" class="form-control" id="code_id" name="code_id"
+                                value="{{ old('code_id') }}" placeholder="Code ID">
+                            @error('code_id')
                                 {{ $message }}
                             @enderror
                         </div>
