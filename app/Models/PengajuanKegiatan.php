@@ -211,6 +211,6 @@ class PengajuanKegiatan extends AppModel
      */
     public function tahapan(): HasOne
     {
-        return $this->hasOne(TahapanPengajuanKegiatan::class, 'sort', 'flag');
+        return $this->hasOne(TahapanPengajuanKegiatan::class, 'code_id', 'flag');
     }
 }

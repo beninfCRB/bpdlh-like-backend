@@ -42,6 +42,7 @@
                                         <th>No</th>
                                         <th>Deskripsi Kegiatan</th>
                                         <th>Sort/Urutan</th>
+                                        <th>Code ID</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
                                         <th></th>

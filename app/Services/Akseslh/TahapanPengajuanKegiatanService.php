@@ -28,7 +28,7 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
     public function getAllAttr()
     {
         $result  = $this->model->newQuery()
-            ->orderBy('created_at', 'ASC')
+            ->orderBy('sort', 'ASC')
             ->get();
 
         $result->transform(function ($items, $key) {
@@ -62,8 +62,9 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
         try {
 
             $data = $this->model->newQuery()->create([
-                'deskripsi_kegiatan'     =>  $data['deskripsi_kegiatan'],
+                'deskripsi_kegiatan'    =>  $data['deskripsi_kegiatan'],
                 'sort'                  => $data['sort'],
+                'code_id'               => $data['code_id'],
                 'flag'                  => 1,
             ]);
 
@@ -83,8 +84,9 @@ class TahapanPengajuanKegiatanService extends AppService implements AppServiceIn
 
         try {
 
-            $read->deskripsi_kegiatan    =   $data['deskripsi_kegiatan'];
-            $read->sort    =   $data['sort'];
+            $read->deskripsi_kegiatan   =   $data['deskripsi_kegiatan'];
+            $read->sort                 =   $data['sort'];
+            $read->code_id              =   $data['code_id'];
             $read->save();
 
             \DB::commit(); // commit the changes
