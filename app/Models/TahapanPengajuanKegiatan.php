@@ -38,5 +38,6 @@ class TahapanPengajuanKegiatan extends AppModel
      */
     protected $casts = [
         'sort' => 'integer',
+        'code_id' => 'integer',
     ];
 }
