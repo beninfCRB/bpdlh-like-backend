@@ -425,6 +425,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'id'                => $items->id,
                 'tahapan_kegiatan'  => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
                 'sort'              => $items->tahapan_pengajuan_kegiatan->sort,
+                'code_id'              => $items->tahapan_pengajuan_kegiatan->code_id,
                 'tanggal_masuk'     => $items->tanggal_masuk,
                 'tanggal_selesai'   => $items->tanggal_selesai,
                 'user_akseslh'      => $items->user_akseslh_admin->email ?? null,
@@ -549,7 +550,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $dataSend = array('nomor_pengajuan' => $data['nomor_pengajuan']);
 
             if (isset($data['fileDocument'])) {
-                // Save document 
+                // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
 
@@ -628,7 +629,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $read->save();
 
             if (isset($data['fileDocument'])) {
-                // Save document 
+                // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
 
@@ -925,7 +926,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             //code...
 
             if (isset($data['perjanjian_kerjasama'])) {
-                // Save document 
+                // Save document
 
                 if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
                     // upload document
@@ -1478,7 +1479,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
-            //         
+            //
             if ($data['jenis_dokumen'] == 'document') {
                 # code...
                 $temp = $result->document()->where('group', 'document')->first();
