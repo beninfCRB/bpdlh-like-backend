@@ -61,10 +61,13 @@ class ValidasiPengajuanKegiatanController extends ApiController
         $validator = Validator::make($request->all(), [
             'status'        => 'required',
             'catatan_log'   => 'nullable',
-            'nomor_sptjm'   => 'required|string',
         ]);
 
         $validator->sometimes('file_sk', 'required|file|mimes:pdf', function ($input) {
+            return $input->status != 0;
+        });
+
+        $validator->sometimes('nomor_sptjm', 'required|string', function ($input) {
             return $input->status != 0;
         });
 
