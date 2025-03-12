@@ -519,7 +519,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 $read->flag = 3;
                 $read->save();
 
-                // Save document 
+                // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['file_sk'])->saveToDb('document_sk');
 
@@ -619,7 +619,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'user_akseslh_id'   => $data['user']->id
                 ]);
 
-                // Save document 
+                // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['surat_permintaan_nomor_rekening'])->saveToDb('surat_permintaan_nomor_rekening');
 
@@ -773,7 +773,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     ]);
                 }
 
-                // Save document 
+                // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
 
@@ -1126,8 +1126,10 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             // Update log tahapan berdasarkan status
             $logTahapan->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akseslh_id']]);
 
-            // Update status pengajuan
-            $read->update(['nomor_sptjm' => $data['nomor_sptjm'], 'flag' => $statusUpdate]);
+            if ($data['status'] != 0) {
+                // Update status pengajuan
+                $read->update(['nomor_sptjm' => $data['nomor_sptjm'], 'flag' => $statusUpdate]);
+            }
 
             // Persiapkan data untuk pengiriman notifikasi dan email
             $dataSend = [
