@@ -3,31 +3,35 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\CatatanLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
+use App\Models\PengajuanKegiatan;
 use App\Services\EmailPhpService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\DataPicKelompokMasyarakat;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\CatatanLogTahapanPengajuanKegiatan;
 
 class ProfileService extends AppService implements AppServiceInterface
 {
     protected $emailService;
     protected $modelLogTahapanPengajuanKegiatan;
     protected $modelCatatanLogTahapanPengajuanKegiatan;
+    protected $modelPengajuanKegiatan;
 
     public function __construct(
         DataPicKelompokMasyarakat $model,
         EmailPhpService $emailPhpService,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
-        CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan
+        CatatanLogTahapanPengajuanKegiatan $modelCatatanLogTahapanPengajuanKegiatan,
+        PengajuanKegiatan $modelPengajuanKegiatan
     ) {
         parent::__construct($model);
         $this->emailService = $emailPhpService;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
         $this->modelCatatanLogTahapanPengajuanKegiatan = $modelCatatanLogTahapanPengajuanKegiatan;
+        $this->modelPengajuanKegiatan = $modelPengajuanKegiatan;
     }
 
     public function getAll()
@@ -169,7 +173,19 @@ class ProfileService extends AppService implements AppServiceInterface
         $read   =   $this->model->newQuery()->find($id);
 
         if (!$read) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' User tidak ditemukan', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' User tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        $pengajuan = $this->modelPengajuanKegiatan->newQuery()->find($data['pengajuan_kegiatan_id']);
+
+        if (!$pengajuan) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        if ($pengajuan->flag != 1 || $pengajuan->flag != '1') {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Tolak profil tidak valid', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Found', 422);
         }
 
@@ -200,6 +216,8 @@ class ProfileService extends AppService implements AppServiceInterface
             );
 
             $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
+
+            $pengajuan->update(['flag' => 20]);
 
             $read->user_akseslh->delete();
             $read->delete();
