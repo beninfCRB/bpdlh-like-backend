@@ -1129,6 +1129,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             if ($data['status'] != 0) {
                 // Update status pengajuan
                 $read->update(['nomor_sptjm' => $data['nomor_sptjm'], 'flag' => $statusUpdate]);
+            } else {
+                $read->update(['flag' => $statusUpdate]);
             }
 
             // Persiapkan data untuk pengiriman notifikasi dan email
