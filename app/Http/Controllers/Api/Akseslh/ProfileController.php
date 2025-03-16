@@ -35,9 +35,11 @@ class ProfileController extends ApiController
         }
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
-        $result = $this->profileService->apiGetById($id);
+        $input['user'] = $request->user();
+
+        $result = $this->profileService->apiGetById($id, $input);
 
         try {
             if ($result->success) {
