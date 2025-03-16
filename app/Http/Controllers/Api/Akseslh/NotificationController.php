@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
-use App\Services\Akseslh\NotificationService;
+use stdClass;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
+use App\Services\Akseslh\NotificationService;
+use Illuminate\Support\Facades\DB;
 
 class NotificationController extends ApiController
 {
@@ -19,7 +21,9 @@ class NotificationController extends ApiController
     {
 
         try {
-            $result = $request->user()->unreadNotifications;
+            // $result = $request->user()->unreadNotifications;
+            // $result = Notifica
+            $result = DB::table('notifications')->where(['id' => 'null'])->get();
             return $this->sendSuccess($result);
         } catch (Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
