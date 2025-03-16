@@ -110,13 +110,41 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function getDataPenyerapanDana()
+    public function getDataPenyerapanDana($data = null)
     {
-        $sum_rab = $this->modelRabPengajuanPaketKegiatan->newQuery()->whereHas('pengajuan_kegiatan', function ($query) {
-            $query->whereBetween('flag', [1, 9]);
+        $user = $data['user'];
+
+        $sum_rab = $this->modelRabPengajuanPaketKegiatan->newQuery()->whereHas('pengajuan_kegiatan', function ($query) use ($user) {
+            $query->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
+                $query->whereHas('user_akseslh', function ($q) use ($user) {
+                    $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+                        $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+                            $q->whereHas('jenis', function ($q) use ($user) {
+                                $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+                            });
+                        });
+                    });
+                });
+            })
+                ->whereBetween('flag', [1, 11]);
         })->sum(\DB::raw('qty * harga_unit'));
 
-        $sum_transaksi_penyaluran = $this->modelTransaksiPenyaluran->newQuery()->sum(\DB::raw('nilai_penyaluran'));
+        $sum_transaksi_penyaluran = $this->modelTransaksiPenyaluran->newQuery()
+            ->whereHas('pengajuan_kegiatan', function ($query) use ($user) {
+                $query->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
+                    $query->whereHas('user_akseslh', function ($q) use ($user) {
+                        $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+                            $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+                                $q->whereHas('jenis', function ($q) use ($user) {
+                                    $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+                                });
+                            });
+                        });
+                    });
+                })
+                    ->whereBetween('flag', [1, 11]);
+            })
+            ->sum(\DB::raw('nilai_penyaluran'));
 
         $result = [
             'total_pendanaan'           => (int) $sum_rab,
@@ -126,9 +154,21 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function apiGetAll()
+    public function apiGetAll($user = null)
     {
-        $result = $this->model->newQuery()->get();
+        $result = $this->model->newQuery()
+            ->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
+                $query->whereHas('user_akseslh', function ($q) use ($user) {
+                    $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+                        $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+                            $q->whereHas('jenis', function ($q) use ($user) {
+                                $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+                            });
+                        });
+                    });
+                });
+            })
+            ->get();
 
         return $this->sendSuccess($result);
     }
