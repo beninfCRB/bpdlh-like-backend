@@ -84,6 +84,22 @@ class InformasiPencairanDanaController extends ApiController
             return $this->sendError($exception->getMessage(), "", 500);
         }
     }
+
+    public function deleteDokumen($id)
+    {
+        $result = $this->pengajuanKegiatanService->deleteDokumenSPTJM($id);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            return $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
     public function update($id, Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -119,7 +135,7 @@ class InformasiPencairanDanaController extends ApiController
                 return $this->sendError(null, 'Waktu mulai tidak boleh lebih besar dari waktu akhir.', 422);
             }
 
-            //eliminate unnecessary key 
+            //eliminate unnecessary key
             unset($input["tanggal_kegiatan"]);
             unset($input["waktu_kegiatan"]);
         }
