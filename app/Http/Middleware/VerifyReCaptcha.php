@@ -28,7 +28,7 @@ class VerifyReCaptcha
 
             // if (!$responseBody->success || $responseBody->score < 0.5) {
             if (!$responseBody->success) {
-                \Sentry\captureMessage('Validate Message: ' . $request->email . ' Response Success=' . $responseBody->success . ' Response Score=' . $responseBody->score, \Sentry\Severity::warning());
+                \Sentry\captureMessage('Validate Message: ' . $request->email . ' Response Success=' . $responseBody->success, \Sentry\Severity::warning());
                 return redirect()->back()->with(['error' => 'Invalid reCAPTCHA']);
             }
         }

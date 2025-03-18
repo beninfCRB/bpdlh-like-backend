@@ -70,7 +70,7 @@ class PengajuanKegiatanController extends ApiController
             }
         }
 
-        $pengajuan_kegiatan = $query->paginate(10);
+        $pengajuan_kegiatan = $query->orderBy('created_at', 'DESC')->paginate(10);
         return view("pages.akseslh.pengajuan-kegiatan.index", compact('group', 'pengajuan_kegiatan'));
     }
 
