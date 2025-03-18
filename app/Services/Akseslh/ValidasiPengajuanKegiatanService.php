@@ -20,6 +20,7 @@ use App\Notifications\VerifikasiLaporanNotification;
 use App\Notifications\VerifikasiValidasiNotification;
 use App\Notifications\PengajuanKegiatanReturNotification;
 use App\Notifications\VerifikasiLaporanDitolakNotification;
+use App\Notifications\VerifikasiLaporanSptjmDikembalikan;
 use App\Notifications\VerifikasiValidasiDitolakNotification;
 
 
@@ -97,7 +98,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                                     ->whereNull('tanggal_selesai');
                             }
                         )
-                        ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                        ->with(['user_akseslh' => function ($q) {
+                            $q->withTrashed();
+                        }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($q) {
+                            $q->withTrashed();
+                        }, 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($q) {
+                            $q->withTrashed();
+                        }, 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
                         ->orderBy('created_at', 'ASC')
@@ -241,6 +248,50 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     return $this->sendSuccess($result);
                     break;
 
+                case 11:
+                    $result  = $this->model->newQuery()
+                        ->whereHas('log_tahapan_pengajuan', function ($q) {
+                            $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                                $q->where(['deskripsi_kegiatan' => 'Verifikasi SPTJM']);
+                            })->whereNotNull('tanggal_masuk')
+                                ->whereNull('tanggal_selesai');
+                        })
+                        ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }])
+                        ->where('flag', 11)
+                        ->orderBy('created_at', 'ASC')
+                        ->get();
+                    $result->transform(function ($items, $key) {
+
+                        return [
+                            'id'                        => $items->id,
+                            'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'tematik_kegiatan'          => $items->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                            'sub_tematik_kegiatan'      => $items->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                            'judul_pengajuan_kegiatan'  => $items->judul_pengajuan_kegiatan,
+                            'kegiatan'                  => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                            'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                            'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
+                            'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                            'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                            'tanggal_akhir_validasi'    => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                            'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                            'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                            'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                            'id_pic'                    => $items->user_akseslh->data_pic_kelompok_masyarakat->id,
+                            'lokasi'                    => $items->alamat_kegiatan,
+                            'nomor_pengajuan'           => $items->nomor_pengajuan,
+                            'proposal_kegiatan'         => $items->proposal_kegiatan,
+                            'tujuan_kegiatan'           => $items->tujuan_kegiatan,
+                            'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                            'surat_perjanjian'          => $items->document()->where('group', 'perjanjian_kerjasama')->first(),
+                        ];
+                    });
+
+                    return $this->sendSuccess($result);
+
+                    break;
                 default:
                     # code...
                     $result  = $this->model->newQuery()
@@ -468,7 +519,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 $read->flag = 3;
                 $read->save();
 
-                // Save document 
+                // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['file_sk'])->saveToDb('document_sk');
 
@@ -506,6 +557,146 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function update_sptjm($id, $data)
+    {
+        $read   =   $this->model->newQuery()->find($id);
+
+        // If data not found
+        if (!$read) return $this->sendError(null, 'Not Found', 422);
+
+        // If data flag not equals 11 (Verifikasi SPTJM)
+        if ($read->flag != 11 || $read->flag != '11') return $this->sendError(null, 'Data Invalid', 422);
+
+        \DB::beginTransaction();
+
+        try {
+
+            if (isset($data['catatan_log'])) {
+                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
+                    })->first()->id;
+
+                $this->modelCatatanLogTahapanPengajuanKegiatan->newQuery()
+                    ->create([
+                        'log_tahapan_pengajuan_kegiatan_id' => $idLog,
+                        'catatan_log'           => $data['catatan_log'],
+                        'flag'                  => "11"
+                    ]);
+            }
+
+            if ($data['status'] == 1) {
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
+                    })
+                    ->first();
+
+                $idLog->tanggal_selesai = date('Y-m-d');
+                $idLog->user_akseslh_id = $data['user']->id;
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $read->id,
+                    'tahapan_pengajuan_kegiatan_id' => $idLog->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['user']->id
+                ]);
+
+                // Save document
+                // upload document
+                $upload = $this->fileUploadService->handleFile($data['surat_permintaan_nomor_rekening'])->saveToDb('surat_permintaan_nomor_rekening');
+
+                if (!empty($upload)) {
+                    $image = $this->fileTable->newQuery()->find($upload->id);
+                    $image->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+
+                $upload = null;
+
+                $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_1'])->saveToDb('surat_pencairan_dana_termin_1');
+
+                if (!empty($upload)) {
+                    $image = $this->fileTable->newQuery()->find($upload->id);
+                    $image->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
+                $read->user_akseslh->notify(new VerifikasiLaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, 0, $data['catatan_log']));
+
+                $read->flag = 4;
+                $idLog->save();
+                $read->save();
+            } else {
+
+                // Update data langsung berdasarkan pengajuan_kegiatan_id
+                $idLog = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
+                    })
+                    ->first();
+
+                $idLog->tanggal_masuk = null;
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Informasi Pencairan Dana');
+                    })
+                    ->update(['tanggal_selesai' => null]);
+
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $read->id,
+                    'tahapan_pengajuan_kegiatan_id' => $idLog->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['user']->id
+                ]);
+
+                $dataSend = array(
+                    'nomor_pengajuan' => $read->nomor_pengajuan,
+                    'catatan_log'     => $data['catatan_log'],
+                    'keterangan'      => 'Dikembalikan',
+                    'status'          => '3'
+                );
+
+                $read->user_akseslh->unreadNotifications->markAsRead();
+
+                $read->user_akseslh->notify(new VerifikasiLaporanSptjmDikembalikan($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['catatan_log']));
+
+                $this->emailService->verifikasiLaporanDitolak($read->user_akseslh, 'SPTJM Dikembalikan', $dataSend, null, 'mail.verifikasi-sptjm-retur');
+
+                $read->flag = 3;
+                $idLog->save();
+                $read->save();
+            }
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
@@ -574,13 +765,15 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'user_akseslh_id'   => $data['user']->id
                 ]);
 
-                // Save Pengembalian Dana
-                $this->modelPengembalian->newQuery()->create([
-                    'pengajuan_kegiatan_id' => $read->id,
-                    'jumlah_pengembalian'   => $data['jumlah_pengembalian']
-                ]);
+                if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
+                    # code...
+                    $this->modelPengembalian->newQuery()->create([
+                        'pengajuan_kegiatan_id' => $read->id,
+                        'jumlah_pengembalian'   => $data['jumlah_pengembalian']
+                    ]);
+                }
 
-                // Save document 
+                // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
 
@@ -933,8 +1126,12 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             // Update log tahapan berdasarkan status
             $logTahapan->update(['tanggal_selesai' => now(), 'user_akseslh_id' => $data['user_akseslh_id']]);
 
-            // Update status pengajuan
-            $read->update(['nomor_sptjm' => $data['nomor_sptjm'], 'flag' => $statusUpdate]);
+            if ($data['status'] != 0) {
+                // Update status pengajuan
+                $read->update(['nomor_sptjm' => $data['nomor_sptjm'], 'flag' => $statusUpdate]);
+            } else {
+                $read->update(['flag' => $statusUpdate]);
+            }
 
             // Persiapkan data untuk pengiriman notifikasi dan email
             $dataSend = [

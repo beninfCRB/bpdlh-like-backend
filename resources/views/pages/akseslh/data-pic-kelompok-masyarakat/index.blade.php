@@ -106,26 +106,26 @@
                                         </td>
                                         <td>{{ $item->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat ?? '-' }}
                                         </td>
-                                        <td>{{ $item->nama_pic }}</td>
-                                        <td>{{ $item->jenis_identitas_pic }}</td>
-                                        <td>{{ $item->nomor_identitas_pic }}</td>
-                                        <td>{{ $item->nomor_npwp_pic }}</td>
-                                        <td>{{ $item->email_pic }}</td>
-                                        <td>{{ $item->provinsi->name }}</td>
-                                        <td>{{ $item->kabupaten->name }}</td>
-                                        <td>{{ $item->kecamatan->name }}</td>
-                                        <td>{{ $item->kelurahan->name }}</td>
+                                        <td>{{ $item->nama_pic ?? '-' }}</td>
+                                        <td>{{ $item->jenis_identitas_pic ?? '-' }}</td>
+                                        <td>{{ $item->nomor_identitas_pic ?? '-' }}</td>
+                                        <td>{{ $item->nomor_npwp_pic ?? '-' }}</td>
+                                        <td>{{ $item->email_pic ?? '-' }}</td>
+                                        <td>{{ $item->provinsi->name ?? '-' }}</td>
+                                        <td>{{ $item->kabupaten->name ?? '-' }}</td>
+                                        <td>{{ $item->kecamatan->name ?? '-' }}</td>
+                                        <td>{{ $item->kelurahan->name ?? '-' }}</td>
                                         <td>{{ \Illuminate\Support\Str::words($item->alamat_pic, 5) ?? '-' }}</td>
-                                        <td>{{ $item->tempat_lahir }}</td>
-                                        <td>{{ $item->tanggal_lahir }}</td>
+                                        <td>{{ $item->tempat_lahir ?? '-' }}</td>
+                                        <td>{{ $item->tanggal_lahir ?? '-' }}</td>
                                         <td>{{ $item->agama->agama ?? '-' }}</td>
                                         <td>{{ $item->status_perkawinan->status_pernikahan ?? '-' }}</td>
                                         <td>{{ $item->jenis_pekerjaan->jenis_pekerjaan ?? '-' }}</td>
                                         <td>{{ $item->pendidikan->pendidikan ?? '-' }}</td>
-                                        <td>{{ $item->nohp_pic }}</td>
+                                        <td>{{ $item->nohp_pic ?? '-' }}</td>
                                         <td>{{ $item->user_akseslh->status_user ?? '-' }}</td>
-                                        <td>{{ $item->created_at }}</td>
-                                        <td>{{ $item->updated_at }}</td>
+                                        <td>{{ $item->created_at ?? '-' }}</td>
+                                        <td>{{ $item->updated_at ?? '-' }}</td>
                                         <td>
                                             <a href="{{ route('pic-kelompok-masyarakat.edit', $item->id) }}"
                                                 class="btn btn-warning btn-xs">Edit</a>

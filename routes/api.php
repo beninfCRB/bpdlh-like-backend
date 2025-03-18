@@ -39,12 +39,6 @@ Route::get('pendidikan', [App\Http\Controllers\Api\Akseslh\PendidikanController:
 Route::get('agama', [App\Http\Controllers\Api\Akseslh\AgamaController::class, 'index']);
 Route::get('status-pernikahan', [App\Http\Controllers\Api\Akseslh\StatusPernikahanController::class, 'index']);
 
-// User PIC
-Route::get('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'show']);
-
-Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
-Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
-
 Route::get('getDataBank', [App\Http\Controllers\Api\Akseslh\MasterDataBankController::class, 'index']);
 
 Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
@@ -93,9 +87,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Route::post('informasiPencairanDana', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'store']);
     Route::put('informasiPencairanDana/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'update']);
+    Route::delete('deleteDokumenInformasiPencairanDana/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'deleteDokumen']);
 
     Route::get('downloadSk/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'showSk']);
     Route::get('downloadProposal/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'showProposal']);
+
+    // User PIC
+    Route::get('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'show']);
+
+    Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
+    Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
 
     Route::middleware(['ensurerole:verifikator'])->group(function () {
         Route::get('getDataVerifikasiPengajuan', [App\Http\Controllers\Api\Akseslh\VerifikasiPengajuanKegiatanController::class, 'index']);
@@ -107,6 +108,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['ensurerole:approver'])->group(function () {
         Route::get('getDataValidasiPengajuan', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'index']);
         Route::put('validasiPengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update']);
+        Route::put('validasiSPTJM/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_sptjm']);
         Route::put('validasiPengajuanKegiatanTermin1/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_termin_1']);
         Route::put('validasiPengajuanKegiatanTahapAkhir/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'update_tahap_akhir']);
         Route::put('retur-pengajuan-kegiatan/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'retur_pengajuan_kegiatan']);

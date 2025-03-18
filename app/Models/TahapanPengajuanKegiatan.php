@@ -16,6 +16,7 @@ class TahapanPengajuanKegiatan extends AppModel
     protected $fillable = [
         'deskripsi_kegiatan',
         'sort',
+        'code_id',
         'flag',
         'username',
     ];
@@ -37,5 +38,6 @@ class TahapanPengajuanKegiatan extends AppModel
      */
     protected $casts = [
         'sort' => 'integer',
+        'code_id' => 'integer',
     ];
 }

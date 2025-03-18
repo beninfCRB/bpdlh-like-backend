@@ -31,16 +31,25 @@
                             <label for="deskripsi_kegiatan">Deskripsi Kegiatan <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="deskripsi_kegiatan" name="deskripsi_kegiatan"
                                 value="{{ old('deskripsi_kegiatan', $data->deskripsi_kegiatan) }}"
-                                placeholder="Jenis Kegiatan">
+                                placeholder="Deskripsi Kegiatan">
                             @error('deskripsi_kegiatan')
                                 {{ $message }}
                             @enderror
                         </div>
                         <div class="form-group @error('sort') has-error @enderror">
                             <label for="sort">Sort/Urutan <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="sort" name="sort"
-                                value="{{ old('sort', $data->sort) }}" placeholder="Jenis Kegiatan">
+                            <input type="numeric" min="1" class="form-control" id="sort" name="sort"
+                                value="{{ old('sort', $data->sort) }}" placeholder="Sort/Urutan">
                             @error('sort')
+                                {{ $message }}
+                            @enderror
+                        </div>
+                        <div class="form-group @error('code_id') has-error @enderror">
+                            <label for="code_id">Code ID <span class="text-danger">*</span></label>
+                            <input type="number" min="1" class="form-control" id="code_id" name="code_id"
+                                value="{{ old('code_id') }}" value="{{ old('code_id', $data->code_id) }}"
+                                placeholder="Code ID">
+                            @error('code_id')
                                 {{ $message }}
                             @enderror
                         </div>

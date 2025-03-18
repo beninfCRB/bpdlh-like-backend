@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\TransaksiPenyaluranService;
+use Svg\Tag\Rect;
 
 class DashboardController extends ApiController
 {
@@ -23,33 +24,31 @@ class DashboardController extends ApiController
         parent::__construct($request);
     }
 
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $result = $this->pengajuanKegiatanService->apiGetAll();
+        $user = $request->user();
+        $result = $this->pengajuanKegiatanService->apiGetAll($user);
 
         try {
             if ($result->success) {
                 $data = $result->data;
-                $pengajuanBulanIni                  = $data->where('flag', '>=', 1)->where('flag', '<', 9)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
-                $pengajuanBulanSebelumnya           = $data->where('flag', '>=', 1)->where('flag', '<', 9)->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
-                $pengajuanSelesaiBulanIni           = $data->where('flag', 9)->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
-                $pengajuanSelesaiBulanSebelumnya    = $data->where('flag', 9)->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
+
+                $pengajuanBulanIni                  = $data->where('flag', '>=', 1)->where('flag', '<', 11)->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
+                $pengajuanBulanSebelumnya           = $data->where('flag', '>=', 1)->where('flag', '<', 11)->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
+                $pengajuanSelesaiBulanIni           = $data->where('flag', 11)->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
+                $pengajuanSelesaiBulanSebelumnya    = $data->where('flag', 11)->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
                 $pengajuanDibatalkanBulanIni        = $data->where('flag', 20)->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
                 $pengajuanDibatalkanBulanSebelumnya = $data->where('flag', 20)->whereBetween('updated_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
                 $response = [
-                    'jumlahPengajuanSdhi'                       => $data->where('flag', '>=', 1)->where('flag', '<', 9)->count(),
+                    'jumlahPengajuanSdhi'                       => $data->where('flag', '>=', 1)->where('flag', '<', 11)->count(),
                     'jumlahPengajuanBulanIni'                   => $pengajuanBulanIni,
                     'jumlahPengajuanBulanSebelumnya'            => $pengajuanBulanSebelumnya,
-                    'jumlahPengajuanSelesaiSdhi'                => $data->where('flag', 9)->count(),
+                    'jumlahPengajuanSelesaiSdhi'                => $data->where('flag', 11)->count(),
                     'jumlahPengajuanSelesaiBulanIni'            => $pengajuanSelesaiBulanIni,
                     'jumlahPengajuanSelesaiBulanSebelumnya'     => $pengajuanSelesaiBulanSebelumnya,
                     'jumlahPengajuanDibatalkanSdhi'             => $data->where('flag', 20)->count(),
                     'jumlahPengajuanDibatalkanBulanIni'         => $pengajuanDibatalkanBulanIni,
                     'jumlahPengajuanDibatalkanBulanSebelumnya'  => $pengajuanDibatalkanBulanSebelumnya,
-                    // 'persentasiPengajuan'               => (($pengajuanBulanIni - $pengajuanBulanSebelumnya) / $pengajuanBulanSebelumnya) * 100,
-                    // 'persentasiPengajuanSelesai'        => (($pengajuanSelesaiBulanIni - $pengajuanSelesaiBulanSebelumnya) / $pengajuanSelesaiBulanSebelumnya) * 100,
-                    // 'persentasiDibatalkan'              => (($pengajuanDibatalkanBulanIni - $pengajuanDibatalkanBulanSebelumnya) / $pengajuanDibatalkanBulanSebelumnya) * 100,
-
                 ];
                 return $this->sendSuccess($response, $result->message, $result->code);
             }
@@ -77,9 +76,11 @@ class DashboardController extends ApiController
         }
     }
 
-    public function getDataPenyerapanDana()
+    public function getDataPenyerapanDana(Request $request)
     {
-        $result = $this->pengajuanKegiatanService->getDataPenyerapanDana();
+        $input['user'] = $request->user();
+
+        $result = $this->pengajuanKegiatanService->getDataPenyerapanDana($input);
 
         try {
             if ($result->success) {

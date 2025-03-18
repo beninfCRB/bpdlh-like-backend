@@ -110,13 +110,41 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function getDataPenyerapanDana()
+    public function getDataPenyerapanDana($data = null)
     {
-        $sum_rab = $this->modelRabPengajuanPaketKegiatan->newQuery()->whereHas('pengajuan_kegiatan', function ($query) {
-            $query->whereBetween('flag', [1, 9]);
+        $user = $data['user'];
+
+        $sum_rab = $this->modelRabPengajuanPaketKegiatan->newQuery()->whereHas('pengajuan_kegiatan', function ($query) use ($user) {
+            $query->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
+                $query->whereHas('user_akseslh', function ($q) use ($user) {
+                    $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+                        $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+                            $q->whereHas('jenis', function ($q) use ($user) {
+                                $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+                            });
+                        });
+                    });
+                });
+            })
+                ->whereBetween('flag', [1, 11]);
         })->sum(\DB::raw('qty * harga_unit'));
 
-        $sum_transaksi_penyaluran = $this->modelTransaksiPenyaluran->newQuery()->sum(\DB::raw('nilai_penyaluran'));
+        $sum_transaksi_penyaluran = $this->modelTransaksiPenyaluran->newQuery()
+            ->whereHas('pengajuan_kegiatan', function ($query) use ($user) {
+                $query->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
+                    $query->whereHas('user_akseslh', function ($q) use ($user) {
+                        $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+                            $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+                                $q->whereHas('jenis', function ($q) use ($user) {
+                                    $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+                                });
+                            });
+                        });
+                    });
+                })
+                    ->whereBetween('flag', [1, 11]);
+            })
+            ->sum(\DB::raw('nilai_penyaluran'));
 
         $result = [
             'total_pendanaan'           => (int) $sum_rab,
@@ -126,9 +154,21 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function apiGetAll()
+    public function apiGetAll($user = null)
     {
-        $result = $this->model->newQuery()->get();
+        $result = $this->model->newQuery()
+            ->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
+                $query->whereHas('user_akseslh', function ($q) use ($user) {
+                    $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+                        $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+                            $q->whereHas('jenis', function ($q) use ($user) {
+                                $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+                            });
+                        });
+                    });
+                });
+            })
+            ->get();
 
         return $this->sendSuccess($result);
     }
@@ -140,8 +180,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }])
             ->where(['user_akseslh_id' => $user_akseslh_id])
-            ->where('flag', '>', 0)
-            ->where('flag', '<', 10)
+            // ->where('flag', '!=', 10)
+            // ->where('flag', '>', 0)
+            // ->where('flag', '<', 11)
+            ->whereIn('flag', [1, 2, 3, 4, 5, 6, 7, 8, 9, 11])
             ->whereHas('rab_pengajuan_paket_kegiatans')
             ->latest()
             ->first();
@@ -310,6 +352,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'catatan_verifikator_laporan_tahap_1'   => $catatan_verifikator_laporan_tahap_1,
             'laporan_akhir' => $laporan_akhir ? $laporan_akhir->document_file : null,
             'nomor_sptjm' => $model->nomor_sptjm,
+            'perjanjian_kerjasama' => $model->document()->where('group', 'perjanjian_kerjasama')->first(),
         ];
 
         $prop = json_decode(json_encode($prop));
@@ -365,6 +408,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 case 4:
                     $detail = [
                         'nomor_sptjm'    => $prop->nomor_sptjm,
+                        'perjanjian_kerjasama'  => $prop->perjanjian_kerjasama,
                     ];
                     break;
 
@@ -421,6 +465,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'id'                => $items->id,
                 'tahapan_kegiatan'  => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
                 'sort'              => $items->tahapan_pengajuan_kegiatan->sort,
+                'code_id'              => $items->tahapan_pengajuan_kegiatan->code_id,
                 'tanggal_masuk'     => $items->tanggal_masuk,
                 'tanggal_selesai'   => $items->tanggal_selesai,
                 'user_akseslh'      => $items->user_akseslh_admin->email ?? null,
@@ -969,16 +1014,31 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             $logTahapan->update(['tanggal_selesai' => date("Y-m-d")]);
 
+            $logTahapanVerifikasiSPTJM = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
+                })->first();
+
+            if (empty($logTahapanVerifikasiSPTJM)) {
+                # code...
+                $dataTahapanVerifikasiSPTJM = $this->modelTahapanPengajuanKegiatan->where('deskripsi_kegiatan', 'Verifikasi SPTJM')->first();
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $id,
+                    'tahapan_pengajuan_kegiatan_id' => $dataTahapanVerifikasiSPTJM->id,
+                ]);
+            }
+
             $this->modelLogTahapanPengajuanKegiatan->newQuery()
                 ->where('pengajuan_kegiatan_id', $id)
                 ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                    $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+                    $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
             $model->user_akseslh->unreadNotifications->markAsRead();
             $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung']]);
-            $model->flag = 4;
+            $model->flag = 11;
             $model->save();
 
             \DB::commit();
@@ -1510,5 +1570,40 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
+    }
+
+    public function deleteDokumenSPTJM($id)
+    {
+        $result =   $this->model->newQuery()->find($id);
+
+        if (!$result) {
+            # code...
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        $file = $result->document()->where('group', 'perjanjian_kerjasama')->first();
+
+        if (!$file) {
+            # code...
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        \DB::beginTransaction();
+
+        try {
+            $filePath = $file->file_path;
+
+            $this->fileUploadService->deleteFiles($filePath);
+
+            \DB::table('files')->where('id', $file->id)->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+
+
+        return $this->sendSuccess($result);
     }
 }

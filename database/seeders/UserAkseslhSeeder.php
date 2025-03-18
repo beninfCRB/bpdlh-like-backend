@@ -25,32 +25,31 @@ class UserAkseslhSeeder extends Seeder
     {
         //
         // Make user verifikator
-        $email = 'eoffice.bpdlh@gmail.com';
-        $default_password =
-            crypt($email . Carbon::now()->format('d M Y H:i:s'), $email);
-        $verifikator = UserAkseslh::create([
-            'email'         => $email,
-            'password'      => Hash::make($default_password),
-            'status_user'   => 'ACTIVE',
-            'flag'          => 1,
-            'role_user'     => 'verifikator',
-        ]);
+        // $email = 'eoffice.bpdlh@gmail.com';
+        // $verifikator = UserAkseslh::create([
+        //     'email'         => $email,
+        //     'password'      => Hash::make('password'),
+        //     'status_user'   => 'ACTIVE',
+        //     'flag'          => 1,
+        //     'role_user'     => 'verifikator',
+        // ]);
 
-        // Mengirim email menggunakan PHPMailer
-        $this->emailService->sendEmail($email, 'Register Notification', $verifikator, $default_password, null, 'mail.seeder-register-mail');
+        // $email = 'eka.alifakih@bpdlh.id';
+        // $validator = UserAkseslh::create([
+        //     'email'         => $email,
+        //     'password'      => Hash::make('password'),
+        //     'status_user'   => 'ACTIVE',
+        //     'flag'          => 1,
+        //     'role_user'     => 'approver',
+        // ]);
 
-        $email = 'eka.alifakih@bpdlh.id';
-        $default_password =
-            crypt($email . Carbon::now()->format('d M Y H:i:s'), $email);
         $validator = UserAkseslh::create([
-            'email'         => $email,
-            'password'      => Hash::make($default_password),
+            'email'         => 'pmu@bpdlh.id',
+            'nama_pic'      => 'PMU Bpdlh',
+            'password'      => Hash::make('password'),
             'status_user'   => 'ACTIVE',
             'flag'          => 1,
             'role_user'     => 'approver',
         ]);
-
-        // Mengirim email menggunakan PHPMailer
-        $this->emailService->sendEmail($email, 'Register Notification', $validator, $default_password, null, 'mail.seeder-register-mail');
     }
 }

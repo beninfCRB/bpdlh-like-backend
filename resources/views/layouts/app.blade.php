@@ -51,9 +51,9 @@
     <script src="{{ asset('template/js/modernizr.min.js') }}"></script>
 </head>
 
-<body class="fixed-left">
+<body class="{{ Route::is('home') ? 'widescreen fixed-left-void' : 'fixed-left' }}">
     <!-- Begin page -->
-    <div id="wrapper">
+    <div id="wrapper" class="{{ Route::is('home') ? 'forced enlarged' : '' }}">
         <!-- Top Bar Start -->
         @include('layouts._partials._topbar')
         <!-- Top Bar End -->

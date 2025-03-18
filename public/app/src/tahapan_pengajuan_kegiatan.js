@@ -27,6 +27,7 @@ var tahapan_pengajuan_kegiatan = (function () {
                 { data: "DT_RowIndex" },
                 { data: "deskripsi_kegiatan" },
                 { data: "sort" },
+                { data: "code_id" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},

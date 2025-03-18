@@ -73,7 +73,7 @@ class DataPicKelompokMasyarakatController extends ApiController
                     $q->where('kelompok_masyarakat', 'like', '%' . $request->search . '%');
                 });
         }
-        $datas = $query->paginate(10);
+        $datas = $query->orderBy('created_at', 'DESC')->paginate(10);
         return view("pages.akseslh.data-pic-kelompok-masyarakat.index", compact('datas'));
     }
 
