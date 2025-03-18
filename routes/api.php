@@ -87,6 +87,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Route::post('informasiPencairanDana', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'store']);
     Route::put('informasiPencairanDana/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'update']);
+    Route::delete('deleteDokumenInformasiPencairanDana/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'deleteDokumen']);
 
     Route::get('downloadSk/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'showSk']);
     Route::get('downloadProposal/{id}', [App\Http\Controllers\Api\Akseslh\InformasiPencairanDanaController::class, 'showProposal']);

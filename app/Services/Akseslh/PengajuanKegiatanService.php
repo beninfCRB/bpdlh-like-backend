@@ -1571,4 +1571,39 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }
+
+    public function deleteDokumenSPTJM($id)
+    {
+        $result =   $this->model->newQuery()->find($id);
+
+        if (!$result) {
+            # code...
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        $file = $result->document()->where('group', 'perjanjian_kerjasama')->first();
+
+        if (!$file) {
+            # code...
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        \DB::beginTransaction();
+
+        try {
+            $filePath = $file->file_path;
+
+            $this->fileUploadService->deleteFiles($filePath);
+
+            \DB::table('files')->where('id', $file->id)->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+
+
+        return $this->sendSuccess($result);
+    }
 }
