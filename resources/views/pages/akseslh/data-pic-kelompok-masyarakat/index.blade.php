@@ -129,8 +129,15 @@
                                         <td>
                                             <a href="{{ route('pic-kelompok-masyarakat.edit', $item->id) }}"
                                                 class="btn btn-warning btn-xs">Edit</a>
-                                            <button class="btn btn-danger btn-xs" data-id="{{ $item->id }}"
-                                                onclick="deletePICKelompokMasyarakat({{ $item->id }})">Hapus</button>
+
+                                            {{-- <form action="{{ route('pic-kelompok-masyarakat.destroy', $item->id) }}"
+                                                method="post">
+                                                @csrf
+                                                @method('DELETE')
+
+                                            </form> --}}
+                                            <button class="btn btn-danger btn-xs" data-id="'{{ $item->id }}'"
+                                                onclick="deletePICKelompokMasyarakat('{{ $item->id }}')">Hapus</button>
                                         </td>
                                     </tr>
                                 @endforeach

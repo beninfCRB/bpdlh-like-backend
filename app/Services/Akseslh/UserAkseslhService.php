@@ -118,6 +118,7 @@ class UserAkseslhService extends AppService implements AppServiceInterface
     public function delete($id)
     {
         $read   =   $this->model->newQuery()->find($id);
+
         try {
             $read->delete();
             \DB::commit(); // commit the changes

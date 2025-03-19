@@ -171,8 +171,29 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
     public function delete($id)
     {
         $read   =   $this->model->newQuery()->find($id);
+
+        if (!$read) {
+            # code...
+            return $this->sendError(null, 'Data Not Found', 422);
+        }
+
+        if (!$read->user_akseslh) {
+            # code...
+            return $this->sendError(null, 'Data Not Found', 422);
+        }
+        \DB::beginTransaction();
         try {
+
+            if ($read->user_akseslh->pengajuan_kegiatan->count() > 0) {
+                # code...
+                // Hapus atau Tolak semua pengajuan kegiatan
+                $read->user_akseslh->pengajuan_kegiatan()->update(['flag' => 20]);
+            }
+
+            // Hapus user akseslh
             $read->user_akseslh->delete();
+
+            // Hapus pic
             $read->delete();
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
