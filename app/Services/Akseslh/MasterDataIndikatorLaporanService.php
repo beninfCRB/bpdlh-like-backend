@@ -120,7 +120,7 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
                     'nama_indikator'    => $item->nama_indikator,
                     'satuan'            => $item->satuan,
                     'tipe_data'         => $item->tipe_data,
-                    'nilai'             => null,
+                    'nilai_laporan'     => null,
                 ];
             });
         } else {
@@ -131,15 +131,15 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
                     'nama_indikator'    => $item->master_data_indikator_laporan->nama_indikator,
                     'satuan'            => $item->master_data_indikator_laporan->satuan,
                     'tipe_data'         => $item->master_data_indikator_laporan->tipe_data,
-                    'nilai'             => $item->nilai_laporan,
+                    'nilai_laporan'     => $item->nilai_laporan,
                 ];
             });
         }
 
         $return = [
-            'tanggal_mulai_kegiatan' => $pengajuan->tanggal_mulai_kegiatan,
-            'tanggal_akhir_kegiatan' => $pengajuan->tanggal_akhir_kegiatan,
-            'indikator' => $result,
+            'tanggal_mulai_kegiatan'    => $pengajuan->tanggal_mulai_kegiatan,
+            'tanggal_akhir_kegiatan'    => $pengajuan->tanggal_akhir_kegiatan,
+            'indikator_kegiatan'        => $result,
         ];
 
 
