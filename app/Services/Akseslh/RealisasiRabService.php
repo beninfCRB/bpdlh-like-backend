@@ -3,21 +3,36 @@
 
 namespace App\Services\Akseslh;
 
-
 use App\Models\PengajuanKegiatan;
+use App\Models\TahapanPengajuanKegiatan;
 use App\Models\RabPengajuanPaketKegiatan;
+use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use App\Notifications\LaporanNotification;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class RealisasiRabService extends AppService implements AppServiceInterface
 {
     protected $modelRabPengajuanPaketKegiatan;
+    protected $modelLogTahapanPengajuanKegiatan;
+    protected $modelTahapanPengajuanKegiatan;
+    protected $modelDetailLogTahapanPengajuanKegiatan;
 
-    public function __construct(PengajuanKegiatan $model, RabPengajuanPaketKegiatan $modelRabPengajuanPaketKegiatan)
-    {
+    public function __construct(
+        PengajuanKegiatan $model,
+        RabPengajuanPaketKegiatan $modelRabPengajuanPaketKegiatan,
+        LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
+    ) {
         parent::__construct($model);
         $this->modelRabPengajuanPaketKegiatan = $modelRabPengajuanPaketKegiatan;
+        $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
+        $this->modelTahapanPengajuanKegiatan    = $modelTahapanPengajuanKegiatan;
+        $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
     }
 
     public function getAll()
@@ -121,6 +136,63 @@ class RealisasiRabService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
+
+            $laporan_kegiatan_termin_1 = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
+                })->first();
+
+            if (empty($laporan_kegiatan_termin_1->tanggal_masuk)) {
+                # code...
+                $konfirmasi_pencairan_dana_termin_1 = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Konfirmasi Pencairan Dana Termin 1');
+                    })->first();
+                $laporan_kegiatan_termin_1->tanggal_masuk = $konfirmasi_pencairan_dana_termin_1->tanggal_selesai;
+            }
+
+            $laporan_kegiatan_termin_1->tanggal_selesai = date('Y-m-d');
+            $laporan_kegiatan_termin_1->save();
+
+            // Create Log Tahapan Pengajuan
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id' => $read->id,
+                'tahapan_pengajuan_kegiatan_id' => $laporan_kegiatan_termin_1->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk' => date("Y-m-d"),
+                'tanggal_selesai' => date("Y-m-d")
+            ]);
+
+            if (empty($this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
+                })->first())) {
+
+                $dataTahapanPengajuanKegiatan = $this->modelTahapanPengajuanKegiatan->newQuery()
+                    ->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1')->first();
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id'         => $id,
+                    'tahapan_pengajuan_kegiatan_id' => $dataTahapanPengajuanKegiatan->id,
+                ]);
+            }
+
+            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Kegiatan Termin 1');
+                })
+                ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+            $read->user_akseslh->unreadNotifications->markAsRead();
+
+            $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
+
+            $read->flag  =  6;
+            $read->save();
+
             foreach ($dataKomponenRab['komponen_rab'] as $item) {
                 $this->modelRabPengajuanPaketKegiatan->newQuery()
                     ->where('pengajuan_kegiatan_id', $id)
