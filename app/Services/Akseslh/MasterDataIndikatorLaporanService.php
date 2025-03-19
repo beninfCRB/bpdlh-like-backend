@@ -120,6 +120,7 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
                     'nama_indikator'    => $item->nama_indikator,
                     'satuan'            => $item->satuan,
                     'tipe_data'         => $item->tipe_data,
+                    'nilai'             => null,
                 ];
             });
         } else {
