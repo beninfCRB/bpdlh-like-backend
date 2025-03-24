@@ -108,24 +108,41 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
 
         if (!$pengajuan) return $this->sendError(null, 'Not Found', 422);
 
-        $jenis_kegiatan_id          = $pengajuan->paket_kegiatan->jenis_kegiatan_id;
-        $sub_tematik_kegiatan_id    = $pengajuan->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id;
-        $result = $this->model->newQuery()->where(['jenis_kegiatan_id' => $jenis_kegiatan_id, 'sub_tematik_kegiatan_id' => $sub_tematik_kegiatan_id])->get();
-        $tanggal_awal = $this->modelLogJadwalPembukaan->latest()->first()->tanggal_awal ?? null;
+        if ($pengajuan->indikator_laporan_kegiatan->isEmpty()) {
+            # code...
+            $jenis_kegiatan_id          = $pengajuan->paket_kegiatan->jenis_kegiatan_id;
+            $sub_tematik_kegiatan_id    = $pengajuan->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id;
+            $result = $this->model->newQuery()->where(['jenis_kegiatan_id' => $jenis_kegiatan_id, 'sub_tematik_kegiatan_id' => $sub_tematik_kegiatan_id])->get();
 
-        $result->transform(function ($item, $key) {
-            return [
-                'id'                => $item->id,
-                'nama_indikator'    => $item->nama_indikator,
-                'satuan'            => $item->satuan,
-                'tipe_data'         => $item->tipe_data,
-            ];
-        });
+            $result->transform(function ($item, $key) {
+                return [
+                    'id'                => $item->id,
+                    'nama_indikator'    => $item->nama_indikator,
+                    'satuan'            => $item->satuan,
+                    'tipe_data'         => $item->tipe_data,
+                    'nilai_laporan'     => null,
+                ];
+            });
+        } else {
+            # code...
+            $result = $pengajuan->indikator_laporan_kegiatan->transform(function ($item, $key) {
+                return [
+                    'id'                => $item->master_data_indikator_laporan->id,
+                    'nama_indikator'    => $item->master_data_indikator_laporan->nama_indikator,
+                    'satuan'            => $item->master_data_indikator_laporan->satuan,
+                    'tipe_data'         => $item->master_data_indikator_laporan->tipe_data,
+                    'nilai_laporan'     => $item->nilai_laporan,
+                ];
+            });
+        }
+
         $return = [
-            'tanggal_awal'  => $tanggal_awal,
-            'indikator'     => $result
+            'tanggal_mulai_kegiatan'    => $pengajuan->tanggal_mulai_kegiatan,
+            'tanggal_akhir_kegiatan'    => $pengajuan->tanggal_akhir_kegiatan,
+            'indikator_kegiatan'        => $result,
         ];
 
-        return $this->sendSuccess($result);
+
+        return $this->sendSuccess($return);
     }
 }

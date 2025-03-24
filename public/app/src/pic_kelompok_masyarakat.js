@@ -236,7 +236,10 @@ jQuery(document).ready(function () {
 });
 
 window.deletePICKelompokMasyarakat = (input) => {
-    var deleteRoute = route + "/" + $(input).attr("data-id");
+    // console.log(input);
+    // return;
+    // var deleteRoute = route + "/" + $(input).attr("data-id");
+    var deleteRoute = route + "/" + input;
     Swal.fire({
         title: "Konfirmasi Hapus",
         text: "Anda yakin akan menghapus data ?",
