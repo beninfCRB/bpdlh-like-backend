@@ -151,11 +151,11 @@ class DataPicKelompokMasyarakatController extends ApiController
     {
         $input  =   $request->validate([
             'kelompok_masyarakat_id'            => 'required|exists:kelompok_masyarakats,id',
-            'email_pic'                         => 'nullable|email|max:100|unique:data_pic_kelompok_masyarakats,email_pic,' . $id,
+            'email_pic'                         => ['required', 'email', 'max:100', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')->ignore($id)],
             'nama_pic'                          => 'required|string|max:255',
             'jenis_identitas_pic'               => 'required',
-            'nomor_identitas_pic'               => 'required|max:20|unique:data_pic_kelompok_masyarakats,nomor_identitas_pic,' . $id,
-            'nohp_pic'                          => 'required|max:20|unique:data_pic_kelompok_masyarakats,nohp_pic,' . $id,
+            'nomor_identitas_pic'               => ['required', 'string', 'min:16', 'max:16', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_identitas_pic')->whereNull('deleted_at')->ignore($id)],
+            'nohp_pic'                          => ['required', 'string', 'min:10', 'max:13', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->whereNull('deleted_at')->ignore($id)],
             'alamat_pic'                        => 'required',
             'kelurahan_pic'                     => 'required',
             'kecamatan_pic'                     => 'required',
@@ -165,7 +165,7 @@ class DataPicKelompokMasyarakatController extends ApiController
             'tanggal_lahir'                     => 'required|date',
             'agama_id'                          => 'required|exists:agamas,id',
             'status_perkawinan_id'              => 'required|exists:status_pernikahans,id',
-            'nama_gadis_ibu_kandung'            => 'required',
+            'nama_gadis_ibu_kandung'            => 'nullable',
             'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
             'pendidikan_id'                     => 'required|exists:pendidikans,id',
             'status_user'                       => 'required',
