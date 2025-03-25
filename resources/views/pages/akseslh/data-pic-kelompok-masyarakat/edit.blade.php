@@ -178,8 +178,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group @error('nama_gadis_ibu_kandung') has-error @enderror col-md-4">
-                                        <label for="nama_gadis_ibu_kandung">Nama Gadis Ibu Kandung PIC<span
-                                                class="text-danger">*</span></label>
+                                        <label for="nama_gadis_ibu_kandung">Nama Gadis Ibu Kandung PIC</label>
                                         <input type="text" class="form-control" id="nama_gadis_ibu_kandung"
                                             name="nama_gadis_ibu_kandung" placeholder="Nama Gadis Ibu Kandung"
                                             value="{{ old('nama_gadis_ibu_kandung', $data->nama_gadis_ibu_kandung) }}">
