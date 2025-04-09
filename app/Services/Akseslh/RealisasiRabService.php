@@ -158,7 +158,7 @@ class RealisasiRabService extends AppService implements AppServiceInterface
 
             // Create Log Tahapan Pengajuan
             $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
-                'pengajuan_kegiatan_id' => $read->id,
+                'pengajuan_kegiatan_id' => $result->id,
                 'tahapan_pengajuan_kegiatan_id' => $laporan_kegiatan_termin_1->tahapan_pengajuan_kegiatan_id,
                 'tanggal_masuk' => date("Y-m-d"),
                 'tanggal_selesai' => date("Y-m-d")
@@ -186,12 +186,12 @@ class RealisasiRabService extends AppService implements AppServiceInterface
                 })
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
-            $read->user_akseslh->unreadNotifications->markAsRead();
+            $result->user_akseslh->unreadNotifications->markAsRead();
 
-            $read->user_akseslh->notify(new LaporanNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
+            $result->user_akseslh->notify(new LaporanNotification($result->nomor_pengajuan, $result->user_akseslh->data_pic_kelompok_masyarakat->nama_pic));
 
-            $read->flag  =  6;
-            $read->save();
+            $result->flag  =  6;
+            $result->save();
 
             foreach ($dataKomponenRab['komponen_rab'] as $item) {
                 $this->modelRabPengajuanPaketKegiatan->newQuery()
