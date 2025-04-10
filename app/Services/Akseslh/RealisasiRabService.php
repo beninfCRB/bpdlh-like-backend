@@ -119,6 +119,11 @@ class RealisasiRabService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Not found', 422);
         }
 
+        if ($result->flag != 5) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Pengajuan tidak dalam tahapan yang benar', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Invalid data', 422);
+        }
+
         // Validasi setiap komponen_rab apakah ada dalam relasi rab_pengajuan_paket_kegiatan
         $komponenIds = collect($dataKomponenRab['komponen_rab'])->pluck('id_komponen_rab');
         $validKomponenRabs = $this->modelRabPengajuanPaketKegiatan->newQuery()->where('pengajuan_kegiatan_id', $id)
