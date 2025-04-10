@@ -116,7 +116,6 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 ->get();
         }
 
-        dd($result);
 
         $result->transform(function ($items, $key) {
             $total = 0;

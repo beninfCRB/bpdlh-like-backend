@@ -60,9 +60,14 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
 
     public function map($pengajuanKegiatan): array
     {
-        $total_sum = number_format($pengajuanKegiatan->rab_pengajuan_paket_kegiatans->reduce(function ($carry, $rab) {
+        $total_sum = $pengajuanKegiatan->rab_pengajuan_paket_kegiatans->reduce(function ($carry, $rab) {
             return $carry + ($rab->harga_unit * $rab->qty);
-        }, 0));
+        }, 0);
+
+        $penyaluran = $pengajuanKegiatan->transaksi_penyaluran()->sum('nilai_penyaluran');
+
+        $pengembalian = $pengajuanKegiatan->pengembalian()->sum('jumlah_pengembalian');
+        $pengembalian = $pengembalian ? $pengembalian : 0;
 
         $nomor_identitas_pic = '`' . $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->nomor_identitas_pic;
 
@@ -107,7 +112,10 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             $pengajuanKegiatan->alamat_kegiatan,
             $pengajuanKegiatan->proposal_kegiatan,
             $pengajuanKegiatan->ruang_lingkup_kegiatan,
-            $total_sum,
+            number_format($total_sum),
+            number_format($penyaluran),
+            number_format($pengembalian),
+            number_format($penyaluran - $pengembalian),
             $pengajuanKegiatan->flag == 20 ? 'Ditolak' : $pengajuanKegiatan->tahapan->deskripsi_kegiatan,
             $pengajuanKegiatan->created_at,
             $pengajuanKegiatan->updated_at
@@ -157,6 +165,9 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'Proposal Kegiatan',
             'Ruang Lingkup Kegiatan',
             'Total RAB',
+            'Total Dana Dicairkan',
+            'Dana Dikembalikan',
+            'Realisasi RAB',
             'Tahapan',
             'Created At',
             'Updated At'
