@@ -21,9 +21,9 @@ class NotificationController extends ApiController
     {
 
         try {
-            $result = $request->user()->unreadNotifications;
+            // $result = $request->user()->unreadNotifications;
 
-            // $result = DB::table('notifications')->where(['id' => 'null'])->get();
+            $result = DB::table('notifications')->where(['id' => 'null'])->get();
             return $this->sendSuccess($result);
         } catch (Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
