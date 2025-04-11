@@ -71,7 +71,17 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
 
         $nomor_identitas_pic = '`' . $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->nomor_identitas_pic;
 
-        $jumlah = $pengajuanKegiatan->paket_kegiatan->jumlah_peserta < 50 ? $pengajuanKegiatan->paket_kegiatan->jumlah_peserta . ' Hectare' : $pengajuanKegiatan->paket_kegiatan->jumlah_peserta . ' Orang';
+        if ($pengajuanKegiatan->paket_kegiatan) {
+            if ($pengajuanKegiatan->paket_kegiatan->jumlah_peserta) {
+                # code...
+                $jumlah = $pengajuanKegiatan->paket_kegiatan->jumlah_peserta < 50 ? $pengajuanKegiatan->paket_kegiatan->jumlah_peserta . ' Hectare' : $pengajuanKegiatan->paket_kegiatan->jumlah_peserta . ' Orang';
+            } else {
+                $jumlah = null;
+            }
+        } else {
+            $jumlah = null;
+        }
+
         return [
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
