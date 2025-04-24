@@ -875,7 +875,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             'flag' => 0
         ])
             ->orWhere(function ($query) use ($user_id) {
-                $query->where('user_akseslh_id', $user_id);
+                $query->where(['user_akseslh_id' => $user_id, 'flag' => 0]);
                 $query->whereHas(
                     'log_tahapan_pengajuan',
                     function ($q) {
