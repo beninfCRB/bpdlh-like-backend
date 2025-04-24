@@ -162,6 +162,19 @@
                         </li>
                     </ul>
                 </li>
+                <li class="has_sub">
+                    <a href="#" class="waves-effect"><i class="md md-mail"></i>
+                        <span>
+                            Email Blast
+                            <i class="md md-add pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#" class="">Status Email Blast</a>
+                        </li>
+                    </ul>
+                </li>
                 <li>
                     <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"><i
                             class="md md-view-list"></i><span> Pengajuan Kegiatan
