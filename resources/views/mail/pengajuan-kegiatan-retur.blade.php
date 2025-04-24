@@ -62,7 +62,7 @@
         </p>
         <p>
             Mohon maaf berdasarkan hasil verifikasi dan validasi, pengajuan dengan nomor {{ $data['nomor_pengajuan'] }}
-            perlu melakukan perbaikan RAB, dengan catatn sebagai berikut:
+            perlu melakukan perbaikan RAB, dengan catatan sebagai berikut:
         </p>
         <div class="info">
             <p>{{ $data['catatan_log'] }}</p>
