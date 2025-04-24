@@ -282,16 +282,16 @@ class VerifikasiService extends AppService implements AppServiceInterface
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
                     ->update(['tanggal_masuk' => now()]);
-                $this->emailService->verifikasiPengajuanKegiatan($read->user_akseslh, 'Pengajuan Kegiatan Terverifikasi', $dataSend, '', 'mail.verifikasi-pengajuan-kegiatan-diterima');
+                // $this->emailService->verifikasiPengajuanKegiatan($read->user_akseslh, 'Pengajuan Kegiatan Terverifikasi', $dataSend, '', 'mail.verifikasi-pengajuan-kegiatan-diterima');
             } else {
                 // Kirim email
-                $this->emailService->verifikasiValidasiDitolak(
-                    $read->user_akseslh,
-                    'Pengajuan Ditolak',
-                    $dataSend,
-                    null,
-                    'mail.verifikasi-pengajuan-kegiatan-ditolak'
-                );
+                // $this->emailService->verifikasiValidasiDitolak(
+                //     $read->user_akseslh,
+                //     'Pengajuan Ditolak',
+                //     $dataSend,
+                //     null,
+                //     'mail.verifikasi-pengajuan-kegiatan-ditolak'
+                // );
             }
 
             \DB::commit(); // commit the changes

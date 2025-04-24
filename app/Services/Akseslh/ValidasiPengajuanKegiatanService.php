@@ -1172,16 +1172,16 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 $dataSend['nama_pic'] = $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic;
                 $dataSend['total'] = $total;
 
-                $this->emailService->pengajuanKegiatanDiterima($read->user_akseslh, 'Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan', $dataSend, null, 'mail.pengajuan-kegiatan-diterima');
+                // $this->emailService->pengajuanKegiatanDiterima($read->user_akseslh, 'Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan', $dataSend, null, 'mail.pengajuan-kegiatan-diterima');
             } else {
                 // Kirim email
-                $this->emailService->verifikasiValidasiDitolak(
-                    $read->user_akseslh,
-                    'Pengajuan Ditolak',
-                    $dataSend,
-                    null,
-                    'mail.verifikasi-pengajuan-kegiatan-ditolak'
-                );
+                // $this->emailService->verifikasiValidasiDitolak(
+                //     $read->user_akseslh,
+                //     'Pengajuan Ditolak',
+                //     $dataSend,
+                //     null,
+                //     'mail.verifikasi-pengajuan-kegiatan-ditolak'
+                // );
             }
 
             \DB::commit(); // commit the changes
