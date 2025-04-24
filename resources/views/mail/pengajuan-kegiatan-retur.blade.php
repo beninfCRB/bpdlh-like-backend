@@ -69,8 +69,7 @@
         </div>
         <p>
             Mohon melakukan perbaikan RAB paling lambat tanggal 25 April 2025.
-            Informasi lebih lanjut dapat menghubungi kami melalui email <a
-                href="mailto:layanandanamasyarakat@bpdlh.id">layanandanamasyarakat@bpdlh.id</a>.
+            Informasi lebih lanjut dapat menghubungi nomor PMU FOLU NC 2&3: 082121730552.
         </p>
         <div class="footer">
             Salam,<br>
