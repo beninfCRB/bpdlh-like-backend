@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Email Pengajuan Kegiatan Belum Dapat Disetujui</title>
+    <title>Pengajuan Perlu Perhatian</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,7 +23,7 @@
         }
 
         h1 {
-            color: #12A3A4;
+            color: #ff0000;
         }
 
         p {
@@ -56,19 +56,19 @@
 
 <body>
     <div class="container">
-        <h1>Pengajuan Kegiatan Belum Dapat Disetujui</h1>
+        <h1>Pengajuan Perlu Perhatian</h1>
         <p>
             Halo {{ $to->nama_pic }},
         </p>
         <p>
-            Mohon maaf pengajuan anda dengan nomor {{ $data['nomor_pengajuan'] }} belum disetujui,
-            dengan catatan sebagai berikut:
+            Mohon maaf berdasarkan hasil verifikasi dan validasi, pengajuan dengan nomor {{ $data['nomor_pengajuan'] }}
+            perlu melakukan perbaikan RAB, dengan catatn sebagai berikut:
         </p>
         <div class="info">
             <p>{{ $data['catatan_log'] }}</p>
         </div>
         <p>
-            Mohon melakukan perbaikan RAB pada masa sanggah.
+            Mohon melakukan perbaikan RAB paling lambat tanggal 25 April 2025.
             Informasi lebih lanjut dapat menghubungi kami melalui email <a
                 href="mailto:layanandanamasyarakat@bpdlh.id">layanandanamasyarakat@bpdlh.id</a>.
         </p>

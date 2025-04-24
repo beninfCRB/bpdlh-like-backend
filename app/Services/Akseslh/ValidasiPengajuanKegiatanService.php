@@ -1267,7 +1267,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             // Kirim email
             $this->emailService->verifikasiValidasiDitolak(
                 $read->user_akseslh,
-                'Pengajuan Ditolak',
+                'Pengajuan Perlu Perhatian',
                 $dataSend,
                 null,
                 'mail.pengajuan-kegiatan-retur'
