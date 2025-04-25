@@ -52,7 +52,7 @@ class SendEmailBlastJob implements ShouldQueue
 
         $dataSend = [
             'nomor_pengajuan' => $pengajuan->nomor_pengajuan,
-            'catatan_log'     => null,
+            'catatan_log'     => "Tes Catatan Log",
             'keterangan'      => null,
             'status'          => null
         ];
@@ -71,7 +71,7 @@ class SendEmailBlastJob implements ShouldQueue
             # code...
             $emailPhpService->verifikasiValidasiDitolak(
                 $pengajuan->user_akseslh,
-                'Pengajuan Ditolak',
+                'Pengajuan Kegiatan Belum Dapat Disetujui',
                 $dataSend,
                 null,
                 'mail.verifikasi-pengajuan-kegiatan-ditolak'
