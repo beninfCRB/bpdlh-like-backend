@@ -18,6 +18,49 @@
         </div>
     </div>
 
+    <!-- Inline Form -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Form Upload</h3>
+                </div>
+                <div class="panel-body">
+                    @if (session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    <form class="form-inline" role="form" action="{{ route('pivot.import.upload') }}"
+                        enctype="multipart/form-data" method="POST">
+                        @csrf
+
+                        <div class="form-group m-l-10">
+                            <label class="sr-only" for="file">Upload File</label>
+                            <input type="file" name="file" class="form-control" id="file" />
+                            @error('file')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-success waves-effect waves-light m-l-10">
+                            Upload
+                        </button>
+
+                        <a href="{{ route('pivot.template.download') }}"
+                            class="btn btn-info waves-effect waves-light m-l-10">
+                            Unduh Template
+                        </a>
+                    </form>
+                </div>
+                <!-- panel-body -->
+            </div>
+            <!-- panel -->
+        </div>
+        <!-- col -->
+    </div>
+    <!-- End row -->
+
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-primary">

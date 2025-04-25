@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\File;
-use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
+use App\Exports\PivotEmailBlastTemplateExport;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +68,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-rab/{id}', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export_rab'])->name('export-rab');
         Route::post('export-excel-transaksi-penyaluran', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'export'])->name('export-excel-transaksi-penyaluran');
         Route::get('/export-pic', [App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class, 'export'])->name('pic-kelompok-masyarakat.export');
+        Route::post('/import-pivot-email-blast', [App\Http\Controllers\Cms\Akseslh\EmailBlastController::class, 'importPivotData'])->name('pivot.import.upload');
+        Route::get('/template-pivot-email-blast', function () {
+            return Excel::download(new PivotEmailBlastTemplateExport, 'template_pivot_email_blast.xlsx');
+        })->name('pivot.template.download');
 
         Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen'])->name('pengajuan-kegiatan.document');
         Route::put('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'update_dokumen'])->name('pengajuan-kegiatan.document.update');

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Cms\Akseslh;
 
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\PivotEmailBlastImport;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\EmailBlastService;
 
@@ -94,6 +96,23 @@ class EmailBlastController extends ApiController
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function importPivotData(Request $request)
+    {
+        try {
+            //code...
+            $request->validate([
+                'file' => 'required|mimes:xlsx,xls',
+            ]);
+
+            Excel::import(new PivotEmailBlastImport, $request->file('file'));
+
+            return back()->with('success', 'Data berhasil diimpor!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return back()->with('error', 'Gagal mengimpor data: ' . $th->getMessage());
         }
     }
 
