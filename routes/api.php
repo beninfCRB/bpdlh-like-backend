@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('test-uhuy', function (Request $request) {
+    return $request->headers->all();
+});
 
 Route::post('register', [App\Http\Controllers\Authapi\RegisterController::class, 'register'])->middleware(['pembukaan']);
 Route::post('registerdua', [App\Http\Controllers\Authapi\RegisterController::class, 'register_2_temp'])->middleware(['pembukaan']);
