@@ -58,43 +58,46 @@
     <div class="container">
         <h1>Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan</h1>
         <p>
-            Yth.
+            Yth. Bapak/Ibu Pengusul Kegiatan Layanan Dana Masyarakat untuk Lingkungan <i>Batch 2</i>,
         </p>
         <p>
-            {{ $data['nama_pic'] }}.
+            Berdasarkan hasil verifikasi dan validasi, dengan ini kami sampaikan bahwa usulan kegiatan Bapak/Ibu dengan
+            nomor pengajuan {{ $data['nomor_pengajuan'] }} berjudul "{{ $data['judul_pengajuan_kegiatan'] }}" dengan
+            jumlah dana Rp.{{ number_format($data['total']) }}
+            <b>disetujui</b> pada periode saat ini, dengan catatan sebagai berikut:
+        </p>
+        <div class="info">
+            <p>{{ $data['catatan_log'] }}</p>
+        </div>
+        <p>
+            Seluruh proses seleksi dan keputusan akhir merupakan kewenangan penuh Tim FOLU NC 2&3 dan Tim Percepatan
+            <i>Small Grant</i>. Keputusan ini bersifat mutlak serta tidak dapat diganggu gugat (<i>final and
+                binding</i>).
         </p>
         <p>
-            {{ $data['kelompok_masyarakat'] }}.
-        </p>
-        <p>
-            Berdasarkan hasil penilaian secara menyeluruh atas permohonan Saudara/i pada Layanan Dana Masyarakat untuk
-            Lingkungan, dengan ini kami sampaikan bahwa bahwa usulan kegiatan Saudara/i dengan nomor pengajuan
-            <b>{{ $data['nomor_pengajuan'] }}</b>
-            berjudul <b>"{{ $data['judul_pengajuan_kegiatan'] }}"</b> dengan jumlah dana Rp.
-            <b>{{ number_format($data['total']) }}</b>
-            telah disetujui melalui Surat
-            Keputusan yang dapat diunduh melalui tautan berikut: <a
-                href="{{ $data['document_sk'] }}">LINK_SK_PENERIMA_DANA</a>.
-            Proses
-            pencairan dana hibah
-            dapat diakses melalui rekening Bank yang telah kami siapkan.
-        </p>
-        <p>
-            Untuk keperluan penyaluran dana lebih lanjut, mohon Saudara/i dapat :
-
+            Untuk tahapan selanjutnya, mohon kesediaan Bapak/Ibu melakukan pengecekan secara berkala pada masing-masing
+            akun pada portal <a href="https://bpdlh.id/layanan-masyarakat">Layanan Dana Masyarakat untuk Lingkungan</a>
+            untuk melengkapi dokumen berikut:
         </p>
         <ol>
             <li>
-                Menandatangani Surat Pernyataan Tanggung Jawab Mutlak (terlampir) dan mengirimkan kembali lewat email
-                ini dan menggunggahnya melalui aplikasi/sistem layanan dana masyarakat untuk lingkungan.
+                Menandatangani dan menunggah Surat Pernyataan Tanggung Jawab Mutlak.
             </li>
             <li>
-                Melakukan pengkinian tanggal kegiatan dalam sistem layanan bilamana kegiatan yang diusulkan telah
-                terlewati atau berkeinginan untuk merubah tanggal kegiatan.
+                Memperbarui tanggal kegiatan apabila tanggal yang diusulkan telah lewat atau jika ingin melakukan
+                penyesuaian tanggal kegiatan.
+            </li>
+            <li>
+                Mengisi kolom nama gadis ibu kandung dan jenis kelamin penanggung jawab (untuk keperluan pembuatan
+                rekening oleh BPDLH).
             </li>
         </ol>
         <p>
-            Demikian kami sampaikan, atas kerjasamanya kami ucapakan terimakasih.
+            Demikian informasi ini kami sampaikan. Atas perhatian dan kerja sama Bapak/Ibu, kami ucapkan terima kasih.
+        </p>
+        <p>
+            Informasi lebih lanjut dapat menghubungi kami melalui email <a
+                href="mailto:layanandanamasyarakat@bpdlh.id">layanandanamasyarakat@bpdlh.id</a>
         </p>
         <div class="footer">
             Hormat kami,<br>
