@@ -20,7 +20,7 @@ class PivotEmailBlastSeeder extends Seeder
 
         foreach ($pengajuans as $pengajuan) {
             PivotEmailBlast::create([
-                'pengajuan_kegiatan_id' => $pengajuan->id,
+                'nomor_pengajuan' => $pengajuan->nomor_pengajuan,
                 'email' => $pengajuan->user_akseslh->email ?? 'test@email.test', // bisa ganti sesuai field user kalau ada
                 'status' => rand(0, 1) ? 'diterima' : 'ditolak',
             ]);

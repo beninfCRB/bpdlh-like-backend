@@ -38,7 +38,7 @@
                                         <th>Nomor Pengajuan Kegiatan</th>
                                         <th>Email Pic</th>
                                         <th>Email</th>
-                                        <th>Status</th>
+                                        <th>Status Pengajuan</th>
                                         <th>Sent at</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>

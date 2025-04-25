@@ -9,10 +9,10 @@ class PivotEmailBlast extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['pengajuan_kegiatan_id', 'email', 'status', 'sent_at'];
+    protected $fillable = ['nomor_pengajuan', 'email', 'status', 'sent_at'];
 
     public function pengajuan()
     {
-        return $this->belongsTo(PengajuanKegiatan::class, 'pengajuan_kegiatan_id');
+        return $this->belongsTo(PengajuanKegiatan::class, 'nomor_pengajuan', 'nomor_pengajuan');
     }
 }

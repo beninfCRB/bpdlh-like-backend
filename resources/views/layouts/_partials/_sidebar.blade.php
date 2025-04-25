@@ -171,7 +171,7 @@
                     </a>
                     <ul class="list-unstyled">
                         <li>
-                            <a href="#" class="">Status Email Blast</a>
+                            <a href="{{ route('email-blast.index') }}" class="">Status Email Blast</a>
                         </li>
                     </ul>
                 </li>
