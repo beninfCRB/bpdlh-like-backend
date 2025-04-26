@@ -1460,7 +1460,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             }, $data['komponen_rab']);
 
             if ($total > $model->caping_rab) {
-                return $this->sendError(null, 'Nilai RAB tidak boleh melebihi caping', 422);
+                \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' total ' . $total . ' melebihi caping ' . $model->caping_rab, \Sentry\Severity::warning());
+                // \DB::rollBack();
+                // return $this->sendError(null, 'Nilai RAB tidak boleh melebihi caping', 422);
             }
 
             // Menyimpan rab sebelumnya ke tabel log rab
