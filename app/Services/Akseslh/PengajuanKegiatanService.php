@@ -1412,12 +1412,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         // Memeriksa apakah model ditemukan dan valid
         if (!$model) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not found', 422);
         }
 
         if ($model->flag != 0) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Allowed', 422);
         }
 
@@ -1426,7 +1426,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         })->first();
 
         if (!$retur || ($retur && $retur->flag != 2)) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Bukan data retur', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Bukan data retur', \Sentry\Severity::warning());
             return $this->sendError(null, 'Invalid Data', 422);
         }
 
@@ -1459,47 +1459,50 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             }, $data['komponen_rab']);
 
-            if ($total > $model->caping_rab) {
-                \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' total ' . $total . ' melebihi caping ' . $model->caping_rab, \Sentry\Severity::warning());
-                // \DB::rollBack();
-                // return $this->sendError(null, 'Nilai RAB tidak boleh melebihi caping', 422);
-            }
+            if ($total <= (int)$model->caping_rab) {
 
-            // Menyimpan rab sebelumnya ke tabel log rab
-            $rabData = $model->rab_pengajuan_paket_kegiatans->map(function ($dt) use ($model) {
-                return [
-                    'id'                    => Uuid::uuid4()->toString(),
-                    'pengajuan_kegiatan_id' => $model->id,
-                    'komponen_rab_id'       => $dt->komponen_rab_id,
-                    'harga_unit'            => $dt->harga_unit,
-                    'qty'                   => $dt->qty,
-                    'created_at'            => Carbon::now(),
-                    'updated_at'            => Carbon::now(),
+                // Menyimpan rab sebelumnya ke tabel log rab
+                $rabData = $model->rab_pengajuan_paket_kegiatans->map(function ($dt) use ($model) {
+                    return [
+                        'id'                    => Uuid::uuid4()->toString(),
+                        'pengajuan_kegiatan_id' => $model->id,
+                        'komponen_rab_id'       => $dt->komponen_rab_id,
+                        'harga_unit'            => $dt->harga_unit,
+                        'qty'                   => $dt->qty,
+                        'created_at'            => Carbon::now(),
+                        'updated_at'            => Carbon::now(),
+                    ];
+                });
+
+                // Insert Ke log Rab Pengajuan Kegiatan
+                $this->modelLogRabPengajuanKegiatan->insert($rabData->toArray());
+
+                // Menghapus RAB Sebelumnya
+                $model->rab_pengajuan_paket_kegiatans()->forceDelete();
+
+                // Menyimpan RAB pengajuan paket kegiatan
+                $model->rab_pengajuan_paket_kegiatans()->createMany($dataKomponenRabInput);
+
+                // Update status flag
+                $model->update(['flag' => 2]);
+
+                // Persiapkan data untuk response
+                $result = [
+                    'nomor_pengajuan'   => $model->nomor_pengajuan,
+                    'sebesar'           => $total ?? null,
+                    'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
                 ];
-            });
 
-            // Insert Ke log Rab Pengajuan Kegiatan
-            $this->modelLogRabPengajuanKegiatan->insert($rabData->toArray());
-
-            // Menghapus RAB Sebelumnya
-            $model->rab_pengajuan_paket_kegiatans()->forceDelete();
-
-            // Menyimpan RAB pengajuan paket kegiatan
-            $model->rab_pengajuan_paket_kegiatans()->createMany($dataKomponenRabInput);
-
-            // Update status flag
-            $model->update(['flag' => 2]);
-
-            // Persiapkan data untuk response
-            $result = [
-                'nomor_pengajuan'   => $model->nomor_pengajuan,
-                'sebesar'           => $total ?? null,
-                'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
-            ];
-
-            \DB::commit();
-            return $this->sendSuccess($result);
+                \DB::commit();
+                return $this->sendSuccess($result);
+            } else {
+                # code...
+                \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' total ' . $total . ' melebihi caping ' . $model->caping_rab, \Sentry\Severity::warning());
+                \DB::rollBack();
+                return $this->sendError(null, 'Nilai RAB tidak boleh melebihi caping', 422);
+            }
         } catch (\Exception $exception) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' ' . $exception->getMessage(), \Sentry\Severity::warning());
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : 'Internal Server Error', 500);
         }
