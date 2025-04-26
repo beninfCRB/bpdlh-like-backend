@@ -1412,12 +1412,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         // Memeriksa apakah model ditemukan dan valid
         if (!$model) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not found', 422);
         }
 
         if ($model->flag != 0) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Allowed', 422);
         }
 
@@ -1426,7 +1426,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         })->first();
 
         if (!$retur || ($retur && $retur->flag != 2)) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Bukan data retur', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Bukan data retur', \Sentry\Severity::warning());
             return $this->sendError(null, 'Invalid Data', 422);
         }
 
@@ -1497,11 +1497,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 return $this->sendSuccess($result);
             } else {
                 # code...
-                \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' total ' . $total . ' melebihi caping ' . $model->caping_rab, \Sentry\Severity::warning());
+                \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' total ' . $total . ' melebihi caping ' . $model->caping_rab, \Sentry\Severity::warning());
                 \DB::rollBack();
                 return $this->sendError(null, 'Nilai RAB tidak boleh melebihi caping', 422);
             }
         } catch (\Exception $exception) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' ' . $exception->getMessage(), \Sentry\Severity::warning());
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : 'Internal Server Error', 500);
         }
