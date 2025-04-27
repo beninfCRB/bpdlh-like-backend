@@ -52,7 +52,7 @@ class SendEmailBlastJob implements ShouldQueue
 
         $dataSend = [
             'nomor_pengajuan' => $pengajuan->nomor_pengajuan,
-            'catatan_log'     => $this->log->catatan_log,
+            'catatan_log'     => $this->log->catatan_log ?? null,
             'keterangan'      => null,
             'status'          => null
         ];
