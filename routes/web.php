@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\File;
-use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
+use App\Exports\PivotEmailBlastTemplateExport;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +68,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-rab/{id}', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export_rab'])->name('export-rab');
         Route::post('export-excel-transaksi-penyaluran', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'export'])->name('export-excel-transaksi-penyaluran');
         Route::get('/export-pic', [App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class, 'export'])->name('pic-kelompok-masyarakat.export');
+        Route::post('/import-pivot-email-blast', [App\Http\Controllers\Cms\Akseslh\EmailBlastController::class, 'importPivotData'])->name('pivot.import.upload');
+        Route::get('/template-pivot-email-blast', function () {
+            return Excel::download(new PivotEmailBlastTemplateExport, 'template_pivot_email_blast.xlsx');
+        })->name('pivot.template.download');
 
         Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen'])->name('pengajuan-kegiatan.document');
         Route::put('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'update_dokumen'])->name('pengajuan-kegiatan.document.update');
@@ -95,6 +101,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('status-pernikahan', App\Http\Controllers\Cms\Akseslh\StatusPernikahanController::class);
         Route::resource('agama', App\Http\Controllers\Cms\Akseslh\AgamaController::class);
         Route::resource('log-masa-sanggah', App\Http\Controllers\Cms\Akseslh\LogMasaSanggahController::class);
+        Route::resource('email-blast', App\Http\Controllers\Cms\Akseslh\EmailBlastController::class);
 
         Route::post('/tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class, 'restore']);
         Route::post('/sub-tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class, 'restore']);
@@ -112,6 +119,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-tahapan-pengajuan-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TahapanPengajuanKegiatanController::class, 'getAll'])->name('data-tahapan-pengajuan-kegiatan');
         Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKelompokMasyarakatController::class, 'getAll'])->name('data-jenis-kelompok-masyarakat');
         Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll'])->name('data-kelompok-masyarakat');
+        Route::get('/data-email-blast', [App\Http\Controllers\Datatable\Akseslh\EmailBlastController::class, 'getAll'])->name('data-email-blast');
         Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
         Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\DataPicKelompokMasyarakatController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
         Route::get('/data-user-akseslh', [App\Http\Controllers\Datatable\Akseslh\UserAkseslhController::class, 'getAll'])->name('data-user-akseslh');
