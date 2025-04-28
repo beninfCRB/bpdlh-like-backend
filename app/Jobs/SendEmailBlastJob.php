@@ -67,6 +67,8 @@ class SendEmailBlastJob implements ShouldQueue
         if ($this->log->status === 'diterima') {
             # code...
             $emailPhpService->pengajuanKegiatanDiterima($pengajuan->user_akseslh, 'Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan', $dataSend, null, 'mail.pengajuan-kegiatan-diterima');
+        } elseif ($this->log->status === 'tolak_profil') {
+            $emailPhpService->profileDitolak($pengajuan->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
         } else {
             # code...
             $emailPhpService->verifikasiValidasiDitolak(

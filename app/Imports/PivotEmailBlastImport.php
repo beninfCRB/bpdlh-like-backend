@@ -25,7 +25,7 @@ class PivotEmailBlastImport implements ToCollection
             Validator::make($data, [
                 'email' => 'required|email',
                 'nomor_pengajuan' => 'required|string',
-                'status' => 'required|in:diterima,ditolak',
+                'status' => 'required|in:diterima,ditolak,tolak_profil',
             ])->validate();
 
             PivotEmailBlast::create($data);
