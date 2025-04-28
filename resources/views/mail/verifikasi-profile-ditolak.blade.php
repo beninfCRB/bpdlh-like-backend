@@ -61,13 +61,12 @@
             Halo {{ $to->nama_pic }},
         </p>
         <p>
-            Mohon maaf profil anda belum disetujui, dengan catatan sebagai berikut:
+            Mohon maaf akun anda telah dihapus, dengan catatan sebagai berikut:
         </p>
         <div class="info">
             <p>{{ $data['catatan_log'] }}</p>
         </div>
         <p>
-            Silakan melakukan registrasi ulang.
             Informasi lebih lanjut dapat menghubungi kami melalui email <a
                 href="mailto:layanandanamasyarakat@bpdlh.id">layanandanamasyarakat@bpdlh.id</a>.
         </p>
