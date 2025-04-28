@@ -18,7 +18,7 @@ class EmailBlastService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->with(['pengajuan.user_akseslh'])->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->with(['pengajuan.user_akseslh'])->orderBy('sent_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
