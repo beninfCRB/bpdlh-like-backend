@@ -17,6 +17,7 @@ class PivotEmailBlastTemplateExport implements FromArray, WithHeadings
         return [
             ['user@example.com', 'NP-001', 'diterima', 'Contoh catatan'],
             ['another@example.com', 'NP-002', 'ditolak', 'Opsional'],
+            ['another_user@example.com', 'NP-003', 'tolak_profil', 'Opsional'],
         ];
     }
 }
