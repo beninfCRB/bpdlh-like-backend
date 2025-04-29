@@ -1187,6 +1187,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             \DB::commit(); // commit the changes
             return $this->sendSuccess($dataSend);
         } catch (\Exception $exception) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' error: ' . $exception->getMessage(), \Sentry\Severity::warning());
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
