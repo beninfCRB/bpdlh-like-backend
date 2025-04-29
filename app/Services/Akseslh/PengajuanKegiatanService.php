@@ -1037,7 +1037,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
             $model->user_akseslh->unreadNotifications->markAsRead();
-            $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung']]);
+            $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung'], 'jenis_kelamin' => $data['jenis_kelamin']]);
             $model->flag = 11;
             $model->save();
 
