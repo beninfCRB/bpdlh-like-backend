@@ -91,6 +91,8 @@
                                     <th>Status Perkawinan</th>
                                     <th>Jenis Pekerjaan</th>
                                     <th>Pendidikan Terakhir</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>Nama Gadis Ibu Kandung</th>
                                     <th>No HP</th>
                                     <th>Status Akun</th>
                                     <th>Created at</th>
@@ -122,6 +124,8 @@
                                         <td>{{ $item->status_perkawinan->status_pernikahan ?? '-' }}</td>
                                         <td>{{ $item->jenis_pekerjaan->jenis_pekerjaan ?? '-' }}</td>
                                         <td>{{ $item->pendidikan->pendidikan ?? '-' }}</td>
+                                        <td>{{ $item->jenis_kelamin }}</td>
+                                        <td>{{ $item->nama_gadis_ibu_kandung }}</td>
                                         <td>{{ $item->nohp_pic ?? '-' }}</td>
                                         <td>{{ $item->user_akseslh->status_user ?? '-' }}</td>
                                         <td>{{ $item->created_at ?? '-' }}</td>
