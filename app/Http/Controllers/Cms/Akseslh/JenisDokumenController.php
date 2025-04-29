@@ -51,7 +51,7 @@ class JenisDokumenController extends ApiController
         $input  =   $request->validate([
             'tahapan_pengajuan_kegiatan_id' => 'required|exists:tahapan_pengajuan_kegiatans,id',
             'jenis_dokumen'                 => 'required',
-            'dokumen'                       => 'nullable|file|mimes:pdf,docx,xlsx,jpg,png|max:2048'
+            'dokumen'                       => 'nullable|file|mimes:pdf,docx,xlsx,jpg,png|max:30495'
         ]);
 
         $result =   $this->jenisDokumenService->create($input);
@@ -73,7 +73,7 @@ class JenisDokumenController extends ApiController
         $input  =   $request->validate([
             'tahapan_pengajuan_kegiatan_id' => 'required|exists:tahapan_pengajuan_kegiatans,id',
             'jenis_dokumen'                 => 'required',
-            'dokumen'                       => 'nullable|file|mimes:pdf,docx,xlsx,jpg,png|max:2048'
+            'dokumen'                       => 'nullable|file|mimes:pdf,docx,xlsx,jpg,png|max:30495'
         ]);
 
         $result =   $this->jenisDokumenService->update($id, $input);
