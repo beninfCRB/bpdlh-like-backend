@@ -58,6 +58,15 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
     public function update($id, Request $request): \Illuminate\Http\JsonResponse
     {
+        // Memeriksa apakah file file_sk ada
+        if ($fileSk = $request->file('file_sk')) {
+            $fileSkType = $fileSk->getClientMimeType();
+            $fileSkSize = $fileSk->getSize(); // ukuran dalam bytes
+            $fileSkSize = number_format(($fileSkSize / 1024 / 1024), 1);
+            $errorMessage = ' - File SK: Type: ' . $fileSkType . ', Size: ' . $fileSkSize . ' Mb';
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email . ' ' . $errorMessage, \Sentry\Severity::warning());
+        }
+
         // Menambahkan custom rule untuk mengecek apakah inputan sama dengan "undefined"
         Validator::extend('not_undefined', function ($attribute, $value, $parameters, $validator) {
             return $value !== 'undefined'; // Mengembalikan false jika nilai "undefined"
@@ -68,7 +77,7 @@ class ValidasiPengajuanKegiatanController extends ApiController
             'catatan_log'   => 'nullable',
         ]);
 
-        $validator->sometimes('nomor_sptjm', 'required|string|not_undefined', function ($input) {
+        $validator->sometimes('nomor_sptjm', 'required|string|not_undefined|max:10192', function ($input) {
             return $input->status != 0;
         });
 
