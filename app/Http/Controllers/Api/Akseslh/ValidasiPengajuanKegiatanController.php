@@ -58,16 +58,21 @@ class ValidasiPengajuanKegiatanController extends ApiController
 
     public function update($id, Request $request): \Illuminate\Http\JsonResponse
     {
+        // Menambahkan custom rule untuk mengecek apakah inputan sama dengan "undefined"
+        Validator::extend('not_undefined', function ($attribute, $value, $parameters, $validator) {
+            return $value !== 'undefined'; // Mengembalikan false jika nilai "undefined"
+        }, ':attribute wajib diisi');
+
         $validator = Validator::make($request->all(), [
             'status'        => 'required',
             'catatan_log'   => 'nullable',
         ]);
 
-        $validator->sometimes('file_sk', 'required|file|mimes:pdf', function ($input) {
+        $validator->sometimes('nomor_sptjm', 'required|string|not_undefined', function ($input) {
             return $input->status != 0;
         });
 
-        $validator->sometimes('nomor_sptjm', 'required|string', function ($input) {
+        $validator->sometimes('file_sk', 'required|file|mimes:pdf', function ($input) {
             return $input->status != 0;
         });
 
