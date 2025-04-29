@@ -102,12 +102,17 @@ class InformasiPencairanDanaController extends ApiController
 
     public function update($id, Request $request): \Illuminate\Http\JsonResponse
     {
+        // Menambahkan custom rule untuk mengecek apakah inputan sama dengan "undefined"
+        Validator::extend('not_undefined', function ($attribute, $value, $parameters, $validator) {
+            return $value !== 'undefined'; // Mengembalikan false jika nilai "undefined"
+        }, ':attribute wajib diisi');
+
         $validator = Validator::make($request->all(), [
             'perjanjian_kerjasama'                  => 'required|file|mimes:pdf,jpg,png',
             'tanggal_kegiatan'                      => 'nullable|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
             'waktu_kegiatan'                        => 'nullable|string|regex:/^\d{2}:\d{2}(:\d{2})? - \d{2}:\d{2}(:\d{2})?$/',
-            'nama_gadis_ibu_kandung'                => 'required',
-            'jenis_kelamin'                         => 'required|in:laki-laki,perempuan',
+            'nama_gadis_ibu_kandung'                => 'required|not_undefined',
+            'jenis_kelamin'                         => 'required|in:laki-laki,perempuan|not_undefined',
         ]);
 
         if ($validator->fails()) {
