@@ -51,7 +51,8 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($q) {
                 $q->withTrashed();
             },
-            'tahapan'
+            'tahapan',
+            'document'
         ])
             ->whereBetween('created_at', [$this->data['tanggal_awal'], $this->data['tanggal_akhir']])
             ->where('flag', '>', 0)
@@ -99,6 +100,8 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->tempat_lahir ?? null,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->tanggal_lahir ?? null,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->agama->agama ?? null,
+            $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->jenis_kelamin ?? null,
+            $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_gadis_ibu_kandung ?? null,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->status_perkawinan->status_pernikahan ?? null,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->jenis_pekerjaan->jenis_pekerjaan ?? null,
             $pengajuanKegiatan->user_akseslh->data_pic_kelompok_masyarakat->pendidikan->pendidikan ?? null,
@@ -128,7 +131,8 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             number_format($penyaluran - $pengembalian),
             $pengajuanKegiatan->flag == 20 ? 'Ditolak' : $pengajuanKegiatan->tahapan->deskripsi_kegiatan,
             $pengajuanKegiatan->created_at,
-            $pengajuanKegiatan->updated_at
+            $pengajuanKegiatan->updated_at,
+            $pengajuanKegiatan->document()->where('group', 'document_sk')->first() ? env('APP_URL') . '/storage/' . $pengajuanKegiatan->document()->where('group', 'document_sk')->first()->file_path : null
         ];
     }
 
@@ -151,6 +155,8 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'Tempat Lahir',
             'Tanggal Lahir',
             'Agama',
+            'Jenis Kelamin',
+            'Nama Gadis Ibu Kandung',
             'Status Perkawinan',
             'Jenis Pekerjaan',
             'Pendidikan Terakhir',
@@ -180,7 +186,8 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'Realisasi RAB',
             'Tahapan',
             'Created At',
-            'Updated At'
+            'Updated At',
+            'Link File SK'
         ];
     }
 }

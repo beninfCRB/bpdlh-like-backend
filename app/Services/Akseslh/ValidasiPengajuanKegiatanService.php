@@ -281,6 +281,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
                             'email_pic'                 => $items->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
                             'id_pic'                    => $items->user_akseslh->data_pic_kelompok_masyarakat->id,
+                            'jenis_kelamin'             => $items->user_akseslh->data_pic_kelompok_masyarakat->jenis_kelamin,
+                            'nama_gadis_ibu_kandung'    => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_gadis_ibu_kandung,
                             'lokasi'                    => $items->alamat_kegiatan,
                             'nomor_pengajuan'           => $items->nomor_pengajuan,
                             'proposal_kegiatan'         => $items->proposal_kegiatan,

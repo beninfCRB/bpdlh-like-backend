@@ -118,6 +118,10 @@ if (!function_exists('tahapanPengajuanFlag')) {
                 return '10';
                 break;
 
+            case 'Verifikasi SPTJM':
+                return '11';
+                break;
+
             default:
                 # code...
                 return null;
