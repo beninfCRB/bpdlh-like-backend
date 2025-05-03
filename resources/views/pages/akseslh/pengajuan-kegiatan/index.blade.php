@@ -171,6 +171,8 @@
                                     <th>Provinsi PIC</th>
                                     <th>Email</th>
                                     <th>No. HP</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>Nama Gadis Ibu Kandung</th>
                                     <th>Status User</th>
                                     <th>Role User</th>
                                     <th>Nomor Pengajuan</th>
@@ -222,6 +224,10 @@
                                         <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->email_pic ?? '-' }}
                                         </td>
                                         <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->nohp_pic ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->jenis_kelamin ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->nama_gadis_ibu_kandung ?? '-' }}
                                         </td>
                                         <td>{{ $item->user_akseslh->status_user ?? '-' }}
                                         </td>
