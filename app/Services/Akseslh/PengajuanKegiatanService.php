@@ -964,23 +964,53 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         try {
             //code...
+            $detailLogSPTJM = $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $id)
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
+                })->first();
 
-            if (isset($data['perjanjian_kerjasama'])) {
-                // Save document
+            if ($detailLogSPTJM) {
+                # code...
+                if (isset($data['perjanjian_kerjasama'])) {
+                    // Save document
 
-                if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
-                    // upload document
-                    $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-                } else {
-                    $upload = $this->fileUploadService->handleImage($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+                    if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
+                        // upload document
+                        $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+                    } else {
+                        $upload = $this->fileUploadService->handleImage($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+                    }
+
+                    if (!empty($upload)) {
+                        $document = $this->fileTable->newQuery()->find($upload->id);
+                        $document->update([
+                            'fileable_type' => get_class($model),
+                            'fileable_id'   => $model->id,
+                        ]);
+                    }
                 }
+            } else {
+                if (isset($data['perjanjian_kerjasama'])) {
+                    // Save document
 
-                if (!empty($upload)) {
-                    $document = $this->fileTable->newQuery()->find($upload->id);
-                    $document->update([
-                        'fileable_type' => get_class($model),
-                        'fileable_id'   => $model->id,
-                    ]);
+                    if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
+                        // upload document
+                        $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+                    } else {
+                        $upload = $this->fileUploadService->handleImage($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
+                    }
+
+                    if (!empty($upload)) {
+                        $document = $this->fileTable->newQuery()->find($upload->id);
+                        $document->update([
+                            'fileable_type' => get_class($model),
+                            'fileable_id'   => $model->id,
+                        ]);
+                    }
+                } else {
+                    \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['perjanjian_kerjasama' => ['perjanjian kerjasama wajib diisi.']]), 422);
                 }
             }
 
