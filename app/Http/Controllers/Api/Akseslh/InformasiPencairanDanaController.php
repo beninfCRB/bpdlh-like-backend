@@ -108,7 +108,7 @@ class InformasiPencairanDanaController extends ApiController
         }, ':attribute wajib diisi');
 
         $validator = Validator::make($request->all(), [
-            'perjanjian_kerjasama'                  => 'nullables|file|mimes:pdf,jpg,png',
+            'perjanjian_kerjasama'                  => 'nullable|file|mimes:pdf,jpg,png',
             'tanggal_kegiatan'                      => 'nullable|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
             'waktu_kegiatan'                        => 'nullable|string|regex:/^\d{2}:\d{2}(:\d{2})? - \d{2}:\d{2}(:\d{2})?$/',
             'nama_gadis_ibu_kandung'                => 'required|not_undefined',
