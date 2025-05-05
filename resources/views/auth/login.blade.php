@@ -31,18 +31,6 @@
                     </div>
                 </div>
 
-                <div class="form-group ">
-                    <div class="col-xs-12">
-                        <div class="checkbox checkbox-primary">
-                            <input id="remember" type="checkbox" name="remember">
-                            <label for="remember">
-                                Remember me
-                            </label>
-                        </div>
-
-                    </div>
-                </div>
-
                 <div class="form-group text-center m-t-40">
                     <div class="col-xs-12">
                         <button class="btn btn-primary btn-lg w-lg waves-effect waves-light" type="submit">Log
