@@ -1042,7 +1042,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
                 })->first();
 
-            $harusUpload = $detailLogSPTJM || !$fileLamaSPTJM || count($fileLamaSPTJM) === 0;
+            $harusUpload = !$detailLogSPTJM || ($detailLogSPTJM && (!$fileLamaSPTJM || count($fileLamaSPTJM) === 0));
 
             if (isset($data['perjanjian_kerjasama'])) {
                 // Hapus file lama jika ada
