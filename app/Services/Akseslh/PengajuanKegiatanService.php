@@ -1066,7 +1066,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 }
             } elseif ($harusUpload) {
                 // Wajib upload, tapi tidak ada file
-                \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+                \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' File Perjanjian Wajib Diisi', \Sentry\Severity::warning());
                 return $this->sendError(null, collect([
                     'perjanjian_kerjasama' => ['perjanjian kerjasama wajib diisi.']
                 ]), 422);
