@@ -80,6 +80,7 @@ class TransaksiPenyaluranController extends ApiController
             'nama_pemilik_rekening'     => 'required',
             'nilai_penyaluran'          => 'required',
             'tanggal_penyaluran'        => 'required',
+            'surat_keterangan'          => 'nullable|file|mimes:pdf'
         ]);
 
         if ($validator->fails()) {
@@ -90,6 +91,7 @@ class TransaksiPenyaluranController extends ApiController
         $input              = $validator->validated();
 
         $input['username']  = $request->user()->id;
+        $input['user_akseslh'] = $request->user();
 
         $result = $this->transaksiPenyaluranService->create($input);
 

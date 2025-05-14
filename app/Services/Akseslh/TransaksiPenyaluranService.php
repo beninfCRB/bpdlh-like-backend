@@ -3,14 +3,16 @@
 
 namespace App\Services\Akseslh;
 
-use App\Models\DetailLogTahapanPengajuanKegiatan;
 use Carbon\Carbon;
 use App\Services\AppService;
 use App\Models\PengajuanKegiatan;
 use App\Models\TransaksiPenyaluran;
+use App\Services\FileUploadService;
+use App\Models\File as FileTable;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
+use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Notifications\TransaksiPenyaluranNotification;
 
 class TransaksiPenyaluranService extends AppService implements AppServiceInterface
@@ -18,16 +20,22 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
     protected $pengajuanKegiatan;
     protected $modelLogTahapanPengajuanKegiatan;
     protected $modelDetailLogTahapanPengajuanKegiatan;
+    protected $fileUploadService;
+    protected $fileTable;
 
     public function __construct(
         TransaksiPenyaluran $model,
         PengajuanKegiatan $pengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
+        FileUploadService $fileUploadService,
+        FileTable $fileTable,
         DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
-        $this->pengajuanKegiatan = $pengajuanKegiatan;
+        $this->pengajuanKegiatan                        = $pengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan         = $modelLogTahapanPengajuanKegiatan;
+        $this->fileUploadService                        = $fileUploadService;
+        $this->fileTable                                = $fileTable;
         $this->modelDetailLogTahapanPengajuanKegiatan   =   $modelDetailLogTahapanPengajuanKegiatan;
     }
 
@@ -200,8 +208,15 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
         try {
 
             if ($tpk == 0 && $result->flag == 4) {
+
+                if (!isset($data['surat_keterangan'])) {
+                    \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' File keterangan Wajib Diisi', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect([
+                        'surat_keterangan' => ['surat keterangan wajib diisi.']
+                    ]), 422);
+                }
+
                 // Jika belum ada penyaluran
-                // $this->penyaluran_tahap_1($data);
                 $newData = $this->model->newQuery()->create([
                     'master_data_bank_id'   =>  $data['master_data_bank_id'],
                     'pengajuan_kegiatan_id' =>  $data['pengajuan_kegiatan_id'],
@@ -263,6 +278,15 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                         );
                     })
                     ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+                $upload = $this->fileUploadService->handleFile($data['surat_keterangan'])->saveToDb('surat_keterangan');
+
+                if ($upload) {
+                    $upload->update([
+                        'fileable_type' => get_class($newData->pengajuan_kegiatan),
+                        'fileable_id'   => $newData->pengajuan_kegiatan->id,
+                    ]);
+                }
 
                 $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
 
