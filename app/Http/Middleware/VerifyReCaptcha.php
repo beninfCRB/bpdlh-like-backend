@@ -26,8 +26,7 @@ class VerifyReCaptcha
             ]);
             $responseBody = json_decode($response->getBody());
 
-            // if (!$responseBody->success || $responseBody->score < 0.5) {
-            if (!$responseBody->success) {
+            if (!$responseBody->success || $responseBody->score < 0.5) {
                 \Sentry\captureMessage('Validate Message: ' . $request->email . ' Response Success=' . $responseBody->success, \Sentry\Severity::warning());
                 return redirect()->back()->with(['error' => 'Invalid reCAPTCHA']);
             }

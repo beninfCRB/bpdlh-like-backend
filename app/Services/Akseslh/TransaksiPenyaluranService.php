@@ -14,6 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Notifications\TransaksiPenyaluranNotification;
+use App\Services\EmailPhpService;
 
 class TransaksiPenyaluranService extends AppService implements AppServiceInterface
 {
@@ -22,6 +23,8 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
     protected $modelDetailLogTahapanPengajuanKegiatan;
     protected $fileUploadService;
     protected $fileTable;
+    protected $emailService;
+
 
     public function __construct(
         TransaksiPenyaluran $model,
@@ -29,6 +32,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
         FileUploadService $fileUploadService,
         FileTable $fileTable,
+        EmailPhpService $emailPhpService,
         DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
     ) {
         parent::__construct($model);
@@ -36,6 +40,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
         $this->modelLogTahapanPengajuanKegiatan         = $modelLogTahapanPengajuanKegiatan;
         $this->fileUploadService                        = $fileUploadService;
         $this->fileTable                                = $fileTable;
+        $this->emailService                             = $emailPhpService;
         $this->modelDetailLogTahapanPengajuanKegiatan   =   $modelDetailLogTahapanPengajuanKegiatan;
     }
 
@@ -283,14 +288,32 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
 
                 if ($upload) {
                     $upload->update([
-                        'fileable_type' => get_class($newData->pengajuan_kegiatan),
-                        'fileable_id'   => $newData->pengajuan_kegiatan->id,
+                        'fileable_type' => get_class($newData),
+                        'fileable_id'   => $newData->id,
                     ]);
                 }
 
                 $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
 
                 $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
+
+                $dataSend = [
+                    'nomor_pengajuan'   => $newData->pengajuan_kegiatan->nomor_pengajuan,
+                    'nomor_rekening'    => $newData->nomor_rekening,
+                ];
+
+                $statusEmail = $this->emailService->transaksiPenyaluran($newData->pengajuan_kegiatan->user_akseslh, 'Pemberitahuan Pencairan Dana Termin I', $dataSend, null, 'mail.pencairan-dana-termin-1');
+
+                if ($statusEmail !== true) {
+                    # code...
+                    \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . '  email gagal dikirim ' . $statusEmail, \Sentry\Severity::warning());
+
+                    \DB::rollBack(); // rollback the changes
+
+                    return $this->sendError(null, collect([
+                        'email' => ['Email gagal dikirim ' . $statusEmail]
+                    ]), 422);
+                }
 
                 $newData->pengajuan_kegiatan->flag = 5;
                 $newData->pengajuan_kegiatan->save();
@@ -334,9 +357,31 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                     })
                     ->update(['tanggal_masuk' => date("Y-m-d")]);
 
+                $upload = $this->fileUploadService->handleFile($data['surat_keterangan'])->saveToDb('surat_keterangan');
+
+                if ($upload) {
+                    $upload->update([
+                        'fileable_type' => get_class($newData),
+                        'fileable_id'   => $newData->id,
+                    ]);
+                }
+
                 $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
 
                 $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
+
+                $statusEmail = $this->emailService->transaksiPenyaluran($newData->pengajuan_kegiatan->user_akseslh, 'Pemberitahuan Pencairan Dana Termin I', $dataSend, null, 'mail.pencairan-dana-termin-1');
+
+                if ($statusEmail !== true) {
+                    # code...
+                    \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . '  email gagal dikirim ' . $statusEmail, \Sentry\Severity::warning());
+
+                    \DB::rollBack(); // rollback the changes
+
+                    return $this->sendError(null, collect([
+                        'email' => ['Email gagal dikirim.']
+                    ]), 422);
+                }
 
                 $newData->pengajuan_kegiatan->flag = 8;
                 $newData->pengajuan_kegiatan->save();
@@ -345,6 +390,8 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 \DB::rollBack();
                 return $this->sendError(null, 'Data Invalid', 422);
             }
+
+
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess(null);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\File;
 use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -51,5 +52,11 @@ class TransaksiPenyaluran extends AppModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(UserAkseslh::class, 'username');
+    }
+
+    public function document()
+    {
+        return $this->morphMany(File::class, 'fileable')
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
     }
 }

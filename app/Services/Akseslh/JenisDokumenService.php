@@ -10,19 +10,23 @@ use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\File as FileTable;
+use App\Models\PengajuanKegiatan;
 
 class JenisDokumenService extends AppService implements AppServiceInterface
 {
     protected $fileTable;
     protected $fileUploadService;
+    protected $modelPengajuanKegiatan;
 
     public function __construct(
         JenisDokumen $model,
+        PengajuanKegiatan $modelPengajuanKegiatan,
         FileUploadService $fileUploadService,
         FileTable $fileTable
     ) {
         $this->fileUploadService    =   $fileUploadService;
         $this->fileTable            =   $fileTable;
+        $this->modelPengajuanKegiatan = $modelPengajuanKegiatan;
         parent::__construct($model);
     }
 
@@ -33,8 +37,9 @@ class JenisDokumenService extends AppService implements AppServiceInterface
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
 
-    public function apiGetAll($flag = null)
+    public function apiGetAll($flag = null, $user)
     {
+
         $result  = $this->model->newQuery()
             ->with(['tahapan_pengajuan_kegiatan', 'document_file'])
             ->orderBy('created_at', 'ASC')
@@ -49,6 +54,34 @@ class JenisDokumenService extends AppService implements AppServiceInterface
                 'dokumen'                       => $items->document_file()->first() ?? null,
             ];
         });
+
+        $dokumen = $this->modelPengajuanKegiatan->newQuery()->where('user_akseslh_id', $user->id)->latest()->first();
+        if ($dokumen) {
+            # code...
+            $dokumenDokumenSK = $dokumen->document()->where('group', 'document_sk')->first();
+            if ($dokumenDokumenSK) {
+                $result = $result->push([
+                    'id'    => $dokumenDokumenSK->id,
+                    'tahapan_pengajuan_kegiatan'    => 'Surat Keputusan (SK) penetapan penerima manfaat  layanan dana masyarakat',
+                    'jenis_dokumen'                 => 'Surat Keputusan (SK) penetapan penerima manfaat  layanan dana masyarakat',
+                    'dokumen_url'                   => env('APP_URL') . '/storage/' . $dokumenDokumenSK->file_path,
+                    'dokumen'                       => $dokumenDokumenSK,
+                ]);
+            }
+            if (isset($dokumen->transaksi_penyaluran) && $dokumen->transaksi_penyaluran->count() > 0) {
+                foreach ($dokumen->transaksi_penyaluran as $item) {
+                    # code...
+                    $dok = $item->document()->where('group', 'surat_keterangan')->first();
+                    $result = $result->push([
+                        'id'                            => $dok->id,
+                        'tahapan_pengajuan_kegiatan'    => 'Surat Keterangan Penyaluran Dana',
+                        'jenis_dokumen'                 => 'Surat Keterangan Penyaluran Dana',
+                        'dokumen_url'                   => env('APP_URL') . '/storage/' . $dok->file_path,
+                        'dokumen'                       => $dok,
+                    ]);
+                }
+            }
+        }
 
         return $this->sendSuccess($result);
     }

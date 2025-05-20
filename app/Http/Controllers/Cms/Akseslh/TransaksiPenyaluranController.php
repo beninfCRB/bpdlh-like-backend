@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
-use App\Exports\TransaksiPenyaluranExport;
-use App\Http\Controllers\ApiController;
-use App\Services\Akseslh\TransaksiPenyaluranService;
 use Illuminate\Http\Request;
+use App\Models\PengajuanKegiatan;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\ApiController;
+use App\Exports\TransaksiPenyaluranExport;
+use App\Imports\TransaksiPenyaluranImport;
+use App\Exports\TemplateTransaksiPenyaluranExport;
+use App\Services\Akseslh\TransaksiPenyaluranService;
 
 class TransaksiPenyaluranController extends ApiController
 {
@@ -28,6 +31,35 @@ class TransaksiPenyaluranController extends ApiController
         ]);
 
         return Excel::download(new TransaksiPenyaluranExport($input), 'transaksi_penyaluran.xlsx');
+    }
+
+    public function template(Request $request)
+    {
+        return Excel::download(new TemplateTransaksiPenyaluranExport(), 'template_transaksi_penyaluran.xlsx');
+    }
+
+    public function import_view()
+    {
+        $datas = PengajuanKegiatan::with('transaksi_penyaluran')->whereIn('flag', [4, 7])->has('transaksi_penyaluran')->paginate(10);
+        return view('pages.akseslh.transaksi-penyaluran.import', compact('datas'));
+    }
+
+    public function import(Request $request)
+    {
+        try {
+            //code...
+            $request->validate([
+                'file'      => 'required|mimes:xlsx,xls',
+                'termin'    => 'required|numeric',
+            ]);
+
+            Excel::import(new TransaksiPenyaluranImport, $request->file('file'));
+
+            return back()->with('success', 'Data berhasil diimpor!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return back()->with('error', 'Gagal mengimpor data: ' . $th->getMessage());
+        }
     }
 
     public function index()

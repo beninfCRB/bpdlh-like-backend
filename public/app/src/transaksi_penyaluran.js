@@ -75,9 +75,13 @@ var data_transaksi_penyaluran = (function () {
                     searchable: true,
                     orderable: true,
                     render: function (data, type, full, meta) {
-                        return full.pengajuan_kegiatan.user_akseslh
-                            .data_pic_kelompok_masyarakat.kelompok_masyarakat
-                            .kelompok_masyarakat;
+                        if (full.pengajuan_kegiatan.user_akseslh === null) {
+                            return "-";
+                        } else {
+                            return full.pengajuan_kegiatan.user_akseslh
+                                .data_pic_kelompok_masyarakat
+                                .kelompok_masyarakat.kelompok_masyarakat;
+                        }
                     },
                 },
                 {
@@ -85,9 +89,14 @@ var data_transaksi_penyaluran = (function () {
                     searchable: true,
                     orderable: true,
                     render: function (data, type, full, meta) {
-                        return full.pengajuan_kegiatan.user_akseslh
-                            .data_pic_kelompok_masyarakat.kelompok_masyarakat
-                            .jenis.jenis_kelompok_masyarakat;
+                        if (full.pengajuan_kegiatan.user_akseslh === null) {
+                            return "-";
+                        } else {
+                            return full.pengajuan_kegiatan.user_akseslh
+                                .data_pic_kelompok_masyarakat
+                                .kelompok_masyarakat.jenis
+                                .jenis_kelompok_masyarakat;
+                        }
                     },
                 },
                 {
@@ -155,9 +164,11 @@ function calculateTotal(data) {
         });
     } else {
         // Jika tidak, hitung total dari baris yang ada di DataTable
-        table.rows().every(function () {
-            var data = this.data();
-            total += parseFloat(data.nilai_penyaluran) || 0; // Pastikan nilai diubah ke float
+        var table = $("#dt_transaksi_penyaluran").DataTable();
+        // Menggunakan API DataTables untuk mendapatkan data dari semua baris
+        var rows = table.rows().data();
+        rows.each(function (item) {
+            total += parseFloat(item.nilai_penyaluran) || 0; // Pastikan nilai diubah ke float
         });
     }
     // Perbarui nilai total di footer
