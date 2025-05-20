@@ -1,11 +1,10 @@
 <?php
 
-use App\Models\File;
-use Ramsey\Uuid\Uuid;
-use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Exports\PivotEmailBlastTemplateExport;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('akseslh')->group(function () {
 
+        // Import & Download
         Route::post('pic-kelompok-masyarakat/import', [App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class, 'import'])
             ->name('pic-kelompok-masyarakat.import');
 
@@ -72,6 +72,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/template-pivot-email-blast', function () {
             return Excel::download(new PivotEmailBlastTemplateExport, 'template_pivot_email_blast.xlsx');
         })->name('pivot.template.download');
+
+        Route::get('/transaksi-penyaluran-export-template', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'template'])->name('transaksi-penyaluran.export-template');
+        Route::post('/transaksi-penyaluran-import', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import'])->name('transaksi-penyaluran.import');
 
         Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen'])->name('pengajuan-kegiatan.document');
         Route::put('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'update_dokumen'])->name('pengajuan-kegiatan.document.update');
@@ -106,6 +109,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class, 'restore']);
         Route::post('/sub-tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class, 'restore']);
         Route::post('/jenis-kelompok-masyarakat/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class, 'restore']);
+
+        Route::get('/transaksi-penyaluran-import', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_view'])->name('transaksi-penyaluran.import-view');
+        Route::get('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_edit'])->name('transaksi-penyaluran.import-edit');
+        Route::put('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_update'])->name('transaksi-penyaluran.import-update');
 
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);

@@ -46,8 +46,6 @@ Route::get('status-pernikahan', [App\Http\Controllers\Api\Akseslh\StatusPernikah
 
 Route::get('getDataBank', [App\Http\Controllers\Api\Akseslh\MasterDataBankController::class, 'index']);
 
-Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
-
 Route::get('getRiwayatPengajuan', [App\Http\Controllers\Api\Akseslh\RiwayatPengajuanController::class, 'index']);
 Route::get('getDetailRiwayatPengajuan/{id}', [App\Http\Controllers\Api\Akseslh\RiwayatPengajuanController::class, 'show']);
 Route::get('getLogKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\DashboardPenerimaManfaatController::class, 'getLogKegiatan']);
@@ -60,6 +58,8 @@ Route::put('indikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\IndikatorL
 Route::get('banner-informasi', [App\Http\Controllers\Api\Akseslh\BannerInformasiController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
 
