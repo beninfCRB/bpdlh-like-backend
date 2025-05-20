@@ -174,3 +174,21 @@ function calculateTotal(data) {
     // Perbarui nilai total di footer
     $("#total-transaksi-pencairan").text(total.toLocaleString()); // Format total jika diperlukan
 }
+
+window.formatMoney = (input) => {
+    const formatter = new Intl.NumberFormat("id-ID", {
+        style: "currency",
+
+        minimumFractionDigits: 0,
+    });
+
+    // Hapus semua karakter yang bukan angka
+    let value = input.value.replace(/[^0-9]/g, "");
+
+    // Format angka dengan `Intl.NumberFormat`
+    if (value) {
+        input.value = formatter.format(value);
+    } else {
+        input.value = "";
+    }
+};

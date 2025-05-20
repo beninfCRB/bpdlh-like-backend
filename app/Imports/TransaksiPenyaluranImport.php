@@ -15,7 +15,11 @@ class TransaksiPenyaluranImport implements ToCollection
     public function collection(Collection $collection)
     {
         //
+        // Ambil semua data bank dari database
+        $master_data_bank = MasterDataBank::all();
+
         foreach ($collection as $item) {
+            \Log::warning($item);
             // Pastikan $item memiliki data yang cukup
             if (count($item) < 6) {
                 continue; // Lewati jika data tidak lengkap
@@ -38,9 +42,9 @@ class TransaksiPenyaluranImport implements ToCollection
                 if ($bank) {
                     $pengajuan_kegiatan->transaksi_penyaluran()->create([
                         'master_data_bank_id'   => $bank->id,
-                        'nomor_rekening'        => $item[2],
+                        'nomor_rekening'        => (string) $item[2],
                         'nama_pemilik_rekening' => $item[3],
-                        'tanggal_penyaluran'    => \Carbon\Carbon::parse($item[4]), // Pastikan tanggal valid
+                        'tanggal_penyaluran'    => \Carbon\Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($item[4])), // Pastikan tanggal valid
                         'nilai_penyaluran'      => (float) $item[5],
                     ]);
                 } else {

@@ -422,6 +422,108 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
         }
     }
 
+    public function updateImport($id, $data)
+    {
+        $read   =   $this->model->newQuery()->find($id);
+
+        \DB::beginTransaction();
+
+        try {
+            $data['nilai_penyaluran'] = str_replace(',', '', $data['nilai_penyaluran']);
+
+            $informasiPencairanDana = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where(
+                        'deskripsi_kegiatan',
+                        'Informasi Pencairan Dana'
+                    );
+                })
+                ->first();
+
+            $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where(
+                        'deskripsi_kegiatan',
+                        'Konfirmasi Pencairan Dana Termin 1'
+                    );
+                })
+                ->first();
+
+            if (!$informasiPencairanDana->tanggal_selesai) {
+                # code...
+                $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
+                $informasiPencairanDana->save();
+
+                $log->tanggal_masuk = date('Y-m-d');
+                $log->save();
+            }
+
+            $log->tanggal_selesai = date('Y-m-d');
+            $log->user_akseslh_id = $data['username'];
+            $log->save();
+
+            $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                'pengajuan_kegiatan_id' => $data['pengajuan_kegiatan_id'],
+                'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+                'tanggal_masuk' => date("Y-m-d"),
+                'tanggal_selesai' => date("Y-m-d"),
+                'user_akseslh_id'   => $data['username']
+            ]);
+
+            $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                ->where('pengajuan_kegiatan_id', $data['pengajuan_kegiatan_id'])
+                ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                    $q->where(
+                        'deskripsi_kegiatan',
+                        'Laporan Kegiatan Termin 1'
+                    );
+                })
+                ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+            $upload = $this->fileUploadService->handleFile($data['surat_keterangan'])->saveToDb('surat_keterangan');
+
+            if ($upload) {
+                $upload->update([
+                    'fileable_type' => get_class($read),
+                    'fileable_id'   => $read->id,
+                ]);
+            }
+
+            $read->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
+
+            $read->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($read->pengajuan_kegiatan->nomor_pengajuan, $read->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
+
+            $dataSend = [
+                'nomor_pengajuan'   => $read->pengajuan_kegiatan->nomor_pengajuan,
+                'nomor_rekening'    => $read->nomor_rekening,
+            ];
+
+            $statusEmail = $this->emailService->transaksiPenyaluran($read->pengajuan_kegiatan->user_akseslh, 'Pemberitahuan Pencairan Dana Termin I', $dataSend, null, 'mail.pencairan-dana-termin-1');
+
+            if ($statusEmail !== true) {
+                # code...
+                \Sentry\captureMessage('Validate Message: email gagal dikirim ' . $statusEmail, \Sentry\Severity::warning());
+
+                \DB::rollBack(); // rollback the changes
+
+                return $this->sendError(null, collect([
+                    'email' => ['Email gagal dikirim ' . $statusEmail]
+                ]), 422);
+            }
+
+            $read->pengajuan_kegiatan->flag = 5;
+            $read->pengajuan_kegiatan->save();
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
     public function delete($id)
     {
         $read   =   $this->model->newQuery()->find($id);

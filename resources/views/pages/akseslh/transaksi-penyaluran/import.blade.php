@@ -31,6 +31,11 @@
                             {{ session('error') }}
                         </div>
                     @endif
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                     @if ($errors->any())
                         @foreach ($errors->all() as $error)
                             <div class="alert alert-danger">
@@ -87,6 +92,29 @@
                     <h3 class="panel-title">Daftar Transaksi Penyaluran</h3>
                 </div>
                 <div class="panel-body">
+                    <div class="row m-b-10">
+                        <div class="col-md-12">
+                            <form role="form" class="form-horizontal" method="GET"
+                                action="{{ route('transaksi-penyaluran.import-view') }}">
+                                @csrf
+                                <div class="input-group m-t-10">
+                                    <input type="text" id="search" name="search" class="form-control"
+                                        value="{{ old('search') }}" placeholder="Search" />
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn waves-effect waves-light btn-info">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <a href="{{ route('transaksi-penyaluran.import-view') }}"
+                                            class="btn waves-effect waves-light btn-warning">
+                                            reset
+                                        </a>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <table id="t_transaksi_penyaluran" class="table table-striped table-bordered">
@@ -114,25 +142,29 @@
                                                 </td>
                                                 <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->first()->tanggal_penyaluran }}</td>
+                                                <td>{{ $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->tanggal_penyaluran }}
+                                                </td>
                                                 <td>Rp.
-                                                    {{ number_format($item->transaksi_penyaluran()->first()->nilai_penyaluran, 0, ',', '.') }}
+                                                    {{ number_format($item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nilai_penyaluran, 0, ',', '.') }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->first()->master_data_bank->nama_bank }}
+                                                <td>{{ $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->master_data_bank->nama_bank }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->first()->nomor_rekening }}</td>
-                                                <td>{{ $item->transaksi_penyaluran()->first()->nama_pemilik_rekening }}</td>
+                                                <td>{{ $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nomor_rekening }}
+                                                </td>
+                                                <td>{{ $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nama_pemilik_rekening }}
+                                                </td>
                                                 <td class="">
-                                                    <a href="#" class="btn btn-sm btn-icon waves-effect btn-default">
+                                                    <a href="{{ route('transaksi-penyaluran.import-edit', $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->id) }}"
+                                                        class="btn btn-sm btn-icon waves-effect btn-default">
                                                         <i class="fa fa-pencil"></i>
                                                     </a>
-
                                                 </td>
                                             </tr>
                                         @endforeach
                                     @endisset
                                 </tbody>
                             </table>
+                            {{ $datas->links() }}
                         </div>
                     </div>
                 </div>

@@ -9,6 +9,8 @@ use App\Http\Controllers\ApiController;
 use App\Exports\TransaksiPenyaluranExport;
 use App\Imports\TransaksiPenyaluranImport;
 use App\Exports\TemplateTransaksiPenyaluranExport;
+use App\Models\MasterDataBank;
+use App\Models\TransaksiPenyaluran;
 use App\Services\Akseslh\TransaksiPenyaluranService;
 
 class TransaksiPenyaluranController extends ApiController
@@ -38,10 +40,83 @@ class TransaksiPenyaluranController extends ApiController
         return Excel::download(new TemplateTransaksiPenyaluranExport(), 'template_transaksi_penyaluran.xlsx');
     }
 
-    public function import_view()
+    public function import_view(Request $request)
     {
-        $datas = PengajuanKegiatan::with('transaksi_penyaluran')->whereIn('flag', [4, 7])->has('transaksi_penyaluran')->paginate(10);
+        $query = PengajuanKegiatan::query();
+
+        if ($request->has('search') && !empty($request->search)) {
+
+            $search = strtolower(str_replace(' ', '', $request->search));
+
+            if ($search === 'ditolak') {
+                # code...
+                $query->where('flag', 20);
+            } else {
+                $query
+                    ->whereHas('user_akseslh', function ($q) use ($request) {
+                        $q->where('email', 'like', '%' . $request->search . '%');
+                    })
+                    ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                        $q->where('nama_pic', 'like', '%' . $request->search . '%');
+                    })
+                    ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                        $q->where('nohp_pic', 'like', '%' . $request->search . '%');
+                    })
+                    ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                        $q->where('nomor_identitas_pic', 'like', '%' . $request->search . '%');
+                    })
+                    ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis', function ($q) use ($request) {
+                        $q->where('jenis_kelompok_masyarakat', 'like', '%' . $request->search . '%');
+                    })
+                    ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat', function ($q) use ($request) {
+                        $q->where('kelompok_masyarakat', 'like', '%' . $request->search . '%');
+                    })
+                    ->orWhereHas('tahapan', function ($q) use ($request) {
+                        $q->where('deskripsi_kegiatan', 'like', '%' . $request->search . '%');
+                    })
+                    ->orWhere('nomor_pengajuan', 'like', '%' . $request->search . '%');
+            }
+        }
+
+        $datas = $query->with('transaksi_penyaluran')->whereIn('flag', [4, 7])->has('transaksi_penyaluran')->orderBy('created_at', 'DESC')->paginate(10);
+
         return view('pages.akseslh.transaksi-penyaluran.import', compact('datas'));
+    }
+
+    public function import_edit($id, Request $request)
+    {
+        $data = TransaksiPenyaluran::with('pengajuan_kegiatan')->where('id', $id)->first();
+        $master_data_bank = MasterDataBank::all();
+        return view('pages.akseslh.transaksi-penyaluran.import-edit', compact('data', 'master_data_bank'));
+    }
+
+    public function import_update($id, Request $request)
+    {
+        $input  =   $request->validate([
+            'master_data_bank_id'       => 'required|exists:master_data_banks,id',
+            'pengajuan_kegiatan_id'     => 'required|exists:pengajuan_kegiatans,id',
+            'nomor_rekening'            => 'required',
+            'nama_pemilik_rekening'     => 'required',
+            'nilai_penyaluran'          => 'required',
+            'tanggal_penyaluran'        => 'required',
+            'surat_keterangan'          => 'required|file|mimes:pdf'
+        ]);
+
+        $input['username'] = auth()->user()->id;
+
+        $result =   $this->transaksiPenyaluranService->updateImport($id, $input);
+
+        try {
+            if ($result->success) {
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('transaksi-penyaluran.import-view');
+            }
+
+            return back()->with('error', $result->message);
+        } catch (\Exception $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
     }
 
     public function import(Request $request)
