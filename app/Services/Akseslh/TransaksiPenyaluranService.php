@@ -125,6 +125,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                     $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                 }])
+                ->doesntHave('transaksi_penyaluran')
                 ->orderBy('created_at', 'ASC')
                 ->get();
         }
