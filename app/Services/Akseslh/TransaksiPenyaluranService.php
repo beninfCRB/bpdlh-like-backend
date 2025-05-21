@@ -514,8 +514,14 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 ]), 422);
             }
 
+            $read->nomor_rekening        =   $data['nomor_rekening'];
+            $read->nama_pemilik_rekening =   $data['nama_pemilik_rekening'];
+            $read->nilai_penyaluran      =   $data['nilai_penyaluran'];
+            $read->tanggal_penyaluran    =   $data['tanggal_penyaluran'];
+
             $read->pengajuan_kegiatan->flag = 5;
             $read->pengajuan_kegiatan->save();
+            $read->save();
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
