@@ -371,18 +371,23 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
 
                 $newData->pengajuan_kegiatan->user_akseslh->notify(new TransaksiPenyaluranNotification($newData->pengajuan_kegiatan->nomor_pengajuan, $newData->pengajuan_kegiatan->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $data['nilai_penyaluran']));
 
-                $statusEmail = $this->emailService->transaksiPenyaluran($newData->pengajuan_kegiatan->user_akseslh, 'Pemberitahuan Pencairan Dana Termin I', $dataSend, null, 'mail.pencairan-dana-termin-1');
+                $dataSend = [
+                    'nomor_pengajuan'   => $newData->pengajuan_kegiatan->nomor_pengajuan,
+                    'nomor_rekening'    => $newData->nomor_rekening,
+                ];
 
-                if ($statusEmail !== true) {
-                    # code...
-                    \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . '  email gagal dikirim ' . $statusEmail, \Sentry\Severity::warning());
+                // $statusEmail = $this->emailService->transaksiPenyaluran($newData->pengajuan_kegiatan->user_akseslh, 'Pemberitahuan Pencairan Dana Termin I', $dataSend, null, 'mail.pencairan-dana-termin-1');
 
-                    \DB::rollBack(); // rollback the changes
+                // if ($statusEmail !== true) {
+                //     # code...
+                //     \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . '  email gagal dikirim ' . $statusEmail, \Sentry\Severity::warning());
 
-                    return $this->sendError(null, collect([
-                        'email' => ['Email gagal dikirim.']
-                    ]), 422);
-                }
+                //     \DB::rollBack(); // rollback the changes
+
+                //     return $this->sendError(null, collect([
+                //         'email' => ['Email gagal dikirim.']
+                //     ]), 422);
+                // }
 
                 $newData->pengajuan_kegiatan->flag = 8;
                 $newData->pengajuan_kegiatan->save();
