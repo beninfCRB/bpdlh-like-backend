@@ -139,6 +139,8 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
         $return = [
             'tanggal_mulai_kegiatan'    => $pengajuan->tanggal_mulai_kegiatan,
             'tanggal_akhir_kegiatan'    => $pengajuan->tanggal_akhir_kegiatan,
+            'longitude'                => $pengajuan->longitude,
+            'latitude'                 => $pengajuan->latitude,
             'indikator_kegiatan'        => $result,
         ];
 
