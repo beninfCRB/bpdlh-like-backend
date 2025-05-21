@@ -85,6 +85,8 @@ class IndikatorLaporanKegiatanController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'tanggal_realisasi_kegiatan'                            => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
+            'longitude'                                             => 'required|string',
+            'latitude'                                              => 'required|string',
             'indikator_kegiatan'                                    => 'required|array',
             'indikator_kegiatan.*.master_data_indikator_laporan_id' => 'required|exists:master_data_indikator_laporans,id',
             'indikator_kegiatan.*.nilai_laporan'                    => 'required'
@@ -109,7 +111,7 @@ class IndikatorLaporanKegiatanController extends ApiController
                 return $this->sendError(null, 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir.', 422);
             }
 
-            //eliminate unnecessary key 
+            //eliminate unnecessary key
             unset($input["tanggal_realisasi_kegiatan"]);
         }
 

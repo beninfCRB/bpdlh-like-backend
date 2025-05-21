@@ -129,6 +129,7 @@
                 @endif
             @empty
             @endforelse
+
             @if ($data->flag > 0)
                 <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                     <div class="gal-detail thumb">
@@ -170,7 +171,7 @@
                         $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
                     })->first())
                 @forelse ($data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                            $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');})->first()->document_file as $item)
+                                                            $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');})->first()->document_file as $item)
                     <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                         <div class="gal-detail thumb">
                             <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup"
@@ -185,6 +186,24 @@
                 @empty
                 @endforelse
             @endif
+
+            @foreach ($data->transaksi_penyaluran as $item)
+                @if (isset($item->document) && $item->document->count() > 0)
+                    @foreach ($item->document as $doc)
+                        <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
+                            <div class="gal-detail thumb">
+                                <a href="{{ url('') . '/storage/' . $doc->file_path }}" class="image-popup"
+                                    title="Screenshot-1" target="_BLANK">
+                                    <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
+                                        alt="work-thumbnail" />
+                                    <h4>{{ $doc->group == 'document' ? 'Lampiran Proposal' : toPascalCase($doc->group) . ' Termin ' . $loop->iteration }}
+                                    </h4>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            @endforeach
         </div>
     </div>
     <!-- End row -->
