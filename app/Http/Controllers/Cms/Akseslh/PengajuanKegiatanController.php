@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Models\File;
 use App\Models\PengajuanKegiatan;
+use App\Models\TahapanPengajuanKegiatan;
 use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
 use App\Services\Akseslh\UserEksternalService;
@@ -71,7 +72,8 @@ class PengajuanKegiatanController extends ApiController
         }
 
         $pengajuan_kegiatan = $query->orderBy('created_at', 'DESC')->paginate(10);
-        return view("pages.akseslh.pengajuan-kegiatan.index", compact('group', 'pengajuan_kegiatan'));
+        $flag = TahapanPengajuanKegiatan::orderBy('sort')->get();
+        return view("pages.akseslh.pengajuan-kegiatan.index", compact('group', 'pengajuan_kegiatan', 'flag'));
     }
 
     public function create()
@@ -169,7 +171,8 @@ class PengajuanKegiatanController extends ApiController
     {
         $input = $request->validate([
             'tanggal_awal'      => 'required',
-            'tanggal_akhir'     => 'required|after:tanggal_awal'
+            'tanggal_akhir'     => 'required|after:tanggal_awal',
+            'flag'              => 'nullable',
         ]);
 
         return Excel::download(new PengajuanKegiatanExport($input), 'pengajuan_kegiatan.xlsx');
