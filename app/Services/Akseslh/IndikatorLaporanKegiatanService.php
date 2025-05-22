@@ -83,12 +83,12 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
         $read   =   $this->modelPengajuanKegiatan->newQuery()->find($id);
 
         if (!$read) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not found', 422);
         }
 
         if ($read->flag != 5) {
-            \Sentry\captureMessage('Validate Message: ' . $data['user']->email_pic . ' Pengajuan tidak dalam tahapan yang benar', \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Pengajuan tidak dalam tahapan yang benar', \Sentry\Severity::warning());
             return $this->sendError(null, 'Invalid data', 422);
         }
 
