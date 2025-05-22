@@ -52,9 +52,6 @@ Route::get('getLogKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\DashboardPen
 
 Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengajuanKegiatanController::class, 'index']);
 
-Route::get('getDataMasterDataIndikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\MasterDataIndikatorLaporanController::class, 'index']);
-Route::put('indikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\IndikatorLaporanKegiatanController::class, 'update']);
-
 Route::get('banner-informasi', [App\Http\Controllers\Api\Akseslh\BannerInformasiController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -126,6 +123,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Laporan Termin 1
     Route::put('realisasiRab/{id}', [App\Http\Controllers\Api\Akseslh\RealisasiRabController::class, 'update']);
+
+    Route::get('getDataMasterDataIndikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\MasterDataIndikatorLaporanController::class, 'index']);
+    Route::put('indikatorLaporan/{id}', [App\Http\Controllers\Api\Akseslh\IndikatorLaporanKegiatanController::class, 'update']);
 
     Route::get('getDataValidasiPengajuanById/{id}', [App\Http\Controllers\Api\Akseslh\ValidasiPengajuanKegiatanController::class, 'show']);
 
