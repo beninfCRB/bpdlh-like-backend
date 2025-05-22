@@ -59,6 +59,23 @@
                                 </span>
                             @enderror
                         </div>
+                        <div class="form-group col-md-3">
+                            <select name="flag" class="form-control" id="flag">
+                                <option value="">-- Pilih Tahapan --</option>
+                                @isset($flag)
+                                    @foreach ($flag as $item)
+                                        <option value="{{ $item->code_id }}">
+                                            {{ $item->deskripsi_kegiatan }}
+                                        </option>
+                                    @endforeach
+                                @endisset
+                            </select>
+                            @error('flag')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-success waves-effect waves-light">
                                 Export Excel
