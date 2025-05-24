@@ -408,7 +408,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
             'nama_verifikator'          => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh_admin->email,
             'tanggal_verifikasi'        => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->tanggal_selesai,
-            'document'                  => $model->document
+            'document'                  => $model->document,
+            'surat_keterangan'          => $model->transaksi_penyaluran()->latest()->first()->document,
         ];
 
         return $this->sendSuccess($result);
