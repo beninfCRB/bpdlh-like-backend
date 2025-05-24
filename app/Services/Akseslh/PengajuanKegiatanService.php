@@ -407,7 +407,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     break;
                 case 4:
                     $detail = [
-                        'nomor_sptjm'    => $prop->nomor_sptjm,
+                        'nomor_sptjm'           => $prop->nomor_sptjm,
                         'perjanjian_kerjasama'  => $prop->perjanjian_kerjasama,
                     ];
                     break;
@@ -421,6 +421,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                         'nilai_penyaluran'          => $prop->nilai_penyaluran,
                         'dana_yang_disetujui'       => $prop->total,
                         'dana_yang_dicairkan'       => $prop->total_penyaluran,
+                    ];
+                    break;
+                case 6:
+                    $detail = [
+                        'lampiran'                  => $prop->file_lampiran,
+                        'sk'                        => $prop->file_sk,
+                        'surat_keterangan_termin_1' => $items->pengajuan_kegiatan->transaksi_penyaluran()->latest()->first()->document,
                     ];
                     break;
                 case 7:
