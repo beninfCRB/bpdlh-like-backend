@@ -427,7 +427,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     $detail = [
                         'lampiran'                  => $prop->file_lampiran,
                         'sk'                        => $prop->file_sk,
-                        'surat_keterangan_termin_1' => $items->pengajuan_kegiatan->transaksi_penyaluran()->latest()->first()->document,
+                        'surat_keterangan_termin_1' => $items->pengajuan_kegiatan->transaksi_penyaluran()->latest()->first()->document ?? null,
                     ];
                     break;
                 case 7:
