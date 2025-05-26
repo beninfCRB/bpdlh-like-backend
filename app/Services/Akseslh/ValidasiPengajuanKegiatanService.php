@@ -409,7 +409,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             'nama_verifikator'          => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh_admin->email,
             'tanggal_verifikasi'        => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->tanggal_selesai,
             'document'                  => $model->document,
-            'surat_keterangan'          => $model->transaksi_penyaluran()->latest()->first()->document,
+            'surat_keterangan'          => $model->transaksi_penyaluran()->latest()->first()->document ?? null,
         ];
 
         return $this->sendSuccess($result);
