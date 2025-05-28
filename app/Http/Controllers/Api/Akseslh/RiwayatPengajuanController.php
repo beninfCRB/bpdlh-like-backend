@@ -25,9 +25,25 @@ class RiwayatPengajuanController extends ApiController
         $page               = $this->request->query('page', null);
         $perPage            = !empty($_GET['perPage']) ? $_GET['perPage'] : null;
         $tahapanKegiatan    = $request->tahapanKegiatan;
+
+        $input = [];
+
         $fullUrlWithQuery = $request->fullUrl() . " " . request()->fullUrl() . " " . url()->full();
 
-        $result = $this->riwayatPengajuanService->getPaginated($flag, $search, $page, $perPage, $tahapanKegiatan);
+        if ($request->query('tanggalAwalSubmit', null) && $request->query('tanggalAkhirSubmit', null)) {
+            # code...
+            $input["created_at_awal"]    = $request->query('tanggalAwalSubmit', null);
+            $input["created_at_akhir"]    = $request->query('tanggalAkhirSubmit', null);
+        }
+
+        if ($request->query('tanggalAwalKegiatan', null) && $request->query('tanggalAkhirKegiatan', null)) {
+            # code...
+            $input["tanggal_mulai_kegiatan"]    = $request->query('tanggalAwalKegiatan', null);
+            $input["tanggal_akhir_kegiatan"]    = $request->query('tanggalAkhirKegiatan', null);
+        }
+
+
+        $result = $this->riwayatPengajuanService->getPaginated($flag, $search, $page, $perPage, $tahapanKegiatan, $input);
 
         try {
             if ($result->success) {

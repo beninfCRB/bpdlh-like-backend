@@ -41,10 +41,12 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function getPaginated($flag = null, $search = null, $page = null, $perPage = null, $tahapanKegiatan = null)
+    public function getPaginated($flag = null, $search = null, $page = null, $perPage = null, $tahapanKegiatan = null, $input = null)
     {
-        $tahapan = tahapanPengajuanFlag($tahapanKegiatan);
-
+        $createdAtAwal = $input['created_at_awal'] ?? null;
+        $createdAtAkhir = $input['created_at_akhir'] ?? null;
+        $tanggalAwalKegiatan = $input['tanggal_mulai_kegiatan'] ?? null;
+        $tanggalAkhirKegiatan = $input['tanggal_akhir_kegiatan'] ?? null;
         $result  = $this->model->newQuery()
             ->when($search, function ($query) use ($search) {
                 return $query->where('nomor_pengajuan', 'like', '%' . $search . '%')
@@ -81,9 +83,57 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                         break;
                 }
             })
-            ->when($tahapan, function ($query) use ($tahapan) {
-                return $query->where('flag', $tahapan);
+            ->when($tahapanKegiatan, function ($query) use ($tahapanKegiatan) {
+                $query->whereHas('tahapan', function ($query) use ($tahapanKegiatan) {
+                    $query->where('id', $tahapanKegiatan);
+                });
             })
+            // ->when(isset($input['created_at_awal']) && isset($input['created_at_akhir']), function ($query) use ($input) {
+            //     $query->whereBetween('created_at', [Carbon::parse($input['created_at_awal'])->startOfDay(), Carbon::parse($input['created_at_akhir'])->endOfDay()]);
+            // })
+            // ->when(
+            //     isset($input['tanggal_awal_kegiatan']) && isset($input['tanggal_akhir_kegiatan']),
+            //     function ($query) use ($input) {
+            //         $tanggalAwal = $input['tanggal_awal_kegiatan'];
+            //         $tanggalAkhir = $input['tanggal_akhir_kegiatan'];
+            //         $query->where(
+            //             function ($q) use ($tanggalAwal, $tanggalAkhir) {
+            //                 $q->where(function ($sub) use ($tanggalAwal, $tanggalAkhir) {
+            //                     $sub->where('tanggal_awal_kegiatan', '<=', $tanggalAwal)
+            //                         ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhir);
+            //                 });
+            //             }
+            //         );
+            //     }
+            // )
+            ->when(
+                ($createdAtAwal && $createdAtAkhir && $tanggalAwalKegiatan && $tanggalAkhirKegiatan),
+                function ($query) use ($createdAtAwal, $createdAtAkhir, $tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                    // Semua tanggal terisi -> AND
+                    return $query->whereBetween('created_at', [Carbon::parse($createdAtAwal)->startOfDay(), Carbon::parse($createdAtAkhir)->endOfDay()])
+                        ->where(function ($q) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                            $q->where(function ($sub) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                                $sub->where('tanggal_mulai_kegiatan', '<=', $tanggalAwalKegiatan)
+                                    ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhirKegiatan);
+                            });
+                        });
+                },
+                function ($query) use ($createdAtAwal, $createdAtAkhir, $tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                    // Salah satu atau tidak semua terisi -> OR
+                    $query->where(function ($q) use ($createdAtAwal, $createdAtAkhir, $tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                        if ($createdAtAwal && $createdAtAkhir) {
+                            $q->orWhereBetween('created_at', [Carbon::parse($createdAtAwal)->startOfDay(), Carbon::parse($createdAtAkhir)->endOfDay()]);
+                        }
+
+                        if ($tanggalAwalKegiatan && $tanggalAkhirKegiatan) {
+                            $q->orWhere(function ($sub) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                                $sub->where('tanggal_mulai_kegiatan', '<=', $tanggalAwalKegiatan)
+                                    ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhirKegiatan);
+                            });
+                        }
+                    });
+                }
+            )
             ->orderBy('created_at', 'DESC')
             ->paginate((int)$perPage, ['*'], null, $page);
 
