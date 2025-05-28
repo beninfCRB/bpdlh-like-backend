@@ -84,25 +84,50 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                     $query->where('id', $tahapanKegiatan);
                 });
             })
-            ->when(isset($input['created_at_awal']) && isset($input['created_at_akhir']), function ($query) use ($input) {
-                $query->whereBetween('created_at', [Carbon::parse($input['created_at_awal'])->startOfDay(), Carbon::parse($input['created_at_akhir'])->endOfDay()]);
-            })
+            // ->when(isset($input['created_at_awal']) && isset($input['created_at_akhir']), function ($query) use ($input) {
+            //     $query->whereBetween('created_at', [Carbon::parse($input['created_at_awal'])->startOfDay(), Carbon::parse($input['created_at_akhir'])->endOfDay()]);
+            // })
+            // ->when(
+            //     isset($input['tanggal_awal_kegiatan']) && isset($input['tanggal_akhir_kegiatan']),
+            //     function ($query) use ($input) {
+            //         $tanggalAwal = $input['tanggal_awal_kegiatan'];
+            //         $tanggalAkhir = $input['tanggal_akhir_kegiatan'];
+            //         $query->where(
+            //             function ($q) use ($tanggalAwal, $tanggalAkhir) {
+            //                 $q->where(function ($sub) use ($tanggalAwal, $tanggalAkhir) {
+            //                     $sub->where('tanggal_awal_kegiatan', '<=', $tanggalAwal)
+            //                         ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhir);
+            //                 });
+            //             }
+            //         );
+            //     }
+            // )
             ->when(
-                isset($input['tanggal_awal_kegiatan']) && isset($input['tanggal_akhir_kegiatan']),
-                function ($query) use ($input) {
-                    $tanggalAwal = $input['tanggal_awal_kegiatan'];
-                    $tanggalAkhir = $input['tanggal_akhir_kegiatan'];
-
-                    $query->where(
-                        function ($q) use ($tanggalAwal, $tanggalAkhir) {
-                            $q->whereBetween('tanggal_awal_kegiatan', [$tanggalAwal, $tanggalAkhir])
-                                ->orWhereBetween('tanggal_akhir_kegiatan', [$tanggalAwal, $tanggalAkhir])
-                                ->orWhere(function ($sub) use ($tanggalAwal, $tanggalAkhir) {
-                                    $sub->where('tanggal_awal_kegiatan', '<=', $tanggalAwal)
-                                        ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhir);
-                                });
+                ($createdAtAwal && $createdAtAkhir && $tanggalAwalKegiatan && $tanggalAkhirKegiatan),
+                function ($query) use ($createdAtAwal, $createdAtAkhir, $tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                    // Semua tanggal terisi -> AND
+                    return $query->whereBetween('created_at', [Carbon::parse($createdAtAwal)->startOfDay(), Carbon::parse($createdAtAkhir)->endOfDay()])
+                        ->where(function ($q) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                            $q->where(function ($sub) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                                $sub->where('tanggal_awal_kegiatan', '<=', $tanggalAwalKegiatan)
+                                    ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhirKegiatan);
+                            });
+                        });
+                },
+                function ($query) use ($createdAtAwal, $createdAtAkhir, $tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                    // Salah satu atau tidak semua terisi -> OR
+                    $query->where(function ($q) use ($createdAtAwal, $createdAtAkhir, $tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                        if ($createdAtAwal && $createdAtAkhir) {
+                            $q->orWhereBetween('created_at', [Carbon::parse($createdAtAwal)->startOfDay(), Carbon::parse($createdAtAkhir)->endOfDay()]);
                         }
-                    );
+
+                        if ($tanggalAwalKegiatan && $tanggalAkhirKegiatan) {
+                            $q->orWhere(function ($sub) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
+                                $sub->where('tanggal_awal_kegiatan', '<=', $tanggalAwalKegiatan)
+                                    ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhirKegiatan);
+                            });
+                        }
+                    });
                 }
             )
             ->orderBy('created_at', 'DESC')
