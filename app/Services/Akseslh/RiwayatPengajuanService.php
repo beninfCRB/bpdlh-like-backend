@@ -113,7 +113,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
                     return $query->whereBetween('created_at', [Carbon::parse($createdAtAwal)->startOfDay(), Carbon::parse($createdAtAkhir)->endOfDay()])
                         ->where(function ($q) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
                             $q->where(function ($sub) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
-                                $sub->where('tanggal_awal_kegiatan', '<=', $tanggalAwalKegiatan)
+                                $sub->where('tanggal_mulai_kegiatan', '<=', $tanggalAwalKegiatan)
                                     ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhirKegiatan);
                             });
                         });
@@ -127,7 +127,7 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
 
                         if ($tanggalAwalKegiatan && $tanggalAkhirKegiatan) {
                             $q->orWhere(function ($sub) use ($tanggalAwalKegiatan, $tanggalAkhirKegiatan) {
-                                $sub->where('tanggal_awal_kegiatan', '<=', $tanggalAwalKegiatan)
+                                $sub->where('tanggal_mulai_kegiatan', '<=', $tanggalAwalKegiatan)
                                     ->where('tanggal_akhir_kegiatan', '>=', $tanggalAkhirKegiatan);
                             });
                         }
