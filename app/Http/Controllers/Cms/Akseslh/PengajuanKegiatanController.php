@@ -37,7 +37,7 @@ class PengajuanKegiatanController extends ApiController
         $group = File::select('group')->distinct()->get();
         $query = PengajuanKegiatan::query();
 
-        if ($request->has('search') && !empty($request->search)) {
+        if (($request->has('search') && !empty($request->search) || ($request->has('tahapan') && !empty($request->tahapan)))) {
 
             $search = strtolower(str_replace(' ', '', $request->search));
 
@@ -66,6 +66,9 @@ class PengajuanKegiatanController extends ApiController
                     })
                     ->orWhereHas('tahapan', function ($q) use ($request) {
                         $q->where('deskripsi_kegiatan', 'like', '%' . $request->search . '%');
+                    })
+                    ->when($request->tahapan, function ($q) use ($request) {
+                        $q->where('flag', (int) $request->tahapan);
                     })
                     ->orWhere('nomor_pengajuan', 'like', '%' . $request->search . '%');
             }

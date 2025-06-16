@@ -107,7 +107,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
                 $dataIndikator[] = [
                     'master_data_indikator_laporan_id'  => $item['master_data_indikator_laporan_id'],
                     'pengajuan_kegiatan_id'             => $id,
-                    'nilai_laporan'                     => $item['nilai_laporan']
+                    'nilai_laporan'                     => $item['nilai_laporan'] ?? 0
                 ];
             }
 
