@@ -18,6 +18,7 @@
         </div>
     </div>
 
+    {{-- Export dan Download --}}
     <div class="row">
         <div class="col-lg-12">
             <ul class="nav nav-tabs navtab-bg">
@@ -138,6 +139,7 @@
     </div>
     <!-- end row -->
 
+    {{-- Tabel --}}
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-primary">
@@ -155,9 +157,26 @@
                                 action="{{ route('pengajuan-kegiatan.index') }}">
                                 @csrf
                                 <div class="input-group m-t-10">
-                                    <input type="text" id="search" name="search" class="form-control"
-                                        value="{{ old('search') }}" placeholder="Search" />
-                                    <span class="input-group-btn">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" id="search" name="search" class="form-control"
+                                                value="{{ old('search') }}" placeholder="Search" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select name="tahapan" id="tahapan" class="form-control">
+                                                <option value="">-- Pilih Tahapan --</option>
+                                                @isset($flag)
+                                                    @foreach ($flag as $item)
+                                                        <option value="{{ $item->code_id }}"
+                                                            {{ old('tahapan') == $item->code_id ? 'selected' : '' }}>
+                                                            {{ $item->deskripsi_kegiatan }}
+                                                        </option>
+                                                    @endforeach
+                                                @endisset
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <span class="input-group-btn m-l-5">
                                         <button type="submit" class="btn waves-effect waves-light btn-info">
                                             <i class="fa fa-search"></i>
                                         </button>
