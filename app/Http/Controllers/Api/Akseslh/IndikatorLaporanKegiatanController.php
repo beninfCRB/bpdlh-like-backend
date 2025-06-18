@@ -88,7 +88,7 @@ class IndikatorLaporanKegiatanController extends ApiController
             'longitude'                                             => 'required|string',
             'latitude'                                              => 'required|string',
             'indikator_kegiatan'                                    => 'nullable|array',
-            'indikator_kegiatan.*.master_data_indikator_laporan_id' => 'nullable|exists:master_data_indikator_laporans,id',
+            'indikator_kegiatan.*.master_data_indikator_laporan_id' => 'nullable|exists:master_indikators,id',
             'indikator_kegiatan.*.nilai_laporan'                    => 'nullable'
         ]);
 

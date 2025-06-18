@@ -5,6 +5,7 @@ namespace App\Services\Akseslh;
 
 use App\Models\LogJadwalPembukaan;
 use App\Models\MasterDataIndikatorLaporan;
+use App\Models\MasterIndikator;
 use App\Models\PengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
@@ -12,13 +13,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MasterDataIndikatorLaporanService extends AppService implements AppServiceInterface
 {
-    protected $modelPengajuanKegiatan, $modelLogJadwalPembukaan;
+    protected $modelPengajuanKegiatan, $modelLogJadwalPembukaan, $modelMasterIndikator;
 
-    public function __construct(MasterDataIndikatorLaporan $model, PengajuanKegiatan $pengajuanKegiatan, LogJadwalPembukaan $modelLogJadwalPembukaan)
+    public function __construct(MasterDataIndikatorLaporan $model, PengajuanKegiatan $pengajuanKegiatan, LogJadwalPembukaan $modelLogJadwalPembukaan, MasterIndikator $modelMasterIndikator)
     {
         parent::__construct($model);
         $this->modelPengajuanKegiatan = $pengajuanKegiatan;
         $this->modelLogJadwalPembukaan  = $modelLogJadwalPembukaan;
+        $this->modelMasterIndikator     = $modelMasterIndikator;
     }
 
     public function getAll()
@@ -108,7 +110,7 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
 
         if (!$pengajuan) return $this->sendError(null, 'Not Found', 422);
 
-        $result = $this->model->newQuery()->get();
+        $result = $this->modelMasterIndikator->newQuery()->get();
 
         $result->transform(function ($item, $key) {
             return [
