@@ -84,12 +84,12 @@ class IndikatorLaporanKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'tanggal_realisasi_kegiatan'                            => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
-            'longitude'                                             => 'required|string',
-            'latitude'                                              => 'required|string',
-            'indikator_kegiatan'                                    => 'nullable|array',
-            'indikator_kegiatan.*.master_data_indikator_laporan_id' => 'nullable|exists:master_indikators,id',
-            'indikator_kegiatan.*.nilai_laporan'                    => 'nullable'
+            'tanggal_realisasi_kegiatan'                    => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
+            'longitude'                                     => 'required|string',
+            'latitude'                                      => 'required|string',
+            'indikator_kegiatan'                            => 'nullable|array',
+            'indikator_kegiatan.*.master_data_indikator_laporan_id'      => 'nullable|exists:master_indikators,id',
+            'indikator_kegiatan.*.nilai_laporan'            => 'nullable'
         ]);
 
         if ($validator->fails()) {
