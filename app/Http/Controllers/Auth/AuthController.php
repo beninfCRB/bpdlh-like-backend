@@ -23,9 +23,8 @@ class AuthController extends Controller
         ]);
 
         try {
-            //code...
             $user = UserAkseslh::where('email', $credentials['email'])
-                ->whereIn('role_user', ['approver', 'pmu-bpdlh'])
+                ->whereNotIn('role_user', ['maker'])
                 ->first();
 
             if (empty($user)) {
@@ -41,14 +40,6 @@ class AuthController extends Controller
 
                 return redirect()->intended('home');
             }
-
-            // if (md5($credentials['password_new']) == $user->password_new) {
-            //     # code...
-            //     Auth::guard('web')->login($user);
-            //     // $request->session()->regenerate();
-
-            //     return redirect()->intended('home');
-            // }
 
             return back()->withErrors([
                 'email' => 'Kredensial yang diberikan tidak cocok dengan catatan kami.',

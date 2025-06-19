@@ -3,8 +3,6 @@
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Exports\PivotEmailBlastTemplateExport;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,18 +14,6 @@ use Illuminate\Support\Facades\Storage;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/debug-sentry', function () {
-    // dd(date('Y-m-d', strtotime('31-12-9999')), date('Y-m-d'));
-    // dd(Uuid::uuid4()->toString());
-    // dd(File::where('group', 'document')->get());
-    Sentry::captureMessage(
-        "This is a dummy warning message for Sentry",
-        \Sentry\Severity::warning()
-    );
-
-    return response()->json(['message' => 'Dummy message sent to Sentry']);
-});
 
 Route::get('/', function () {
     return redirect()->route('home');
@@ -59,6 +45,50 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('akseslh')->group(function () {
 
+        Route::middleware(['ensureroleweb:approver,administrator'])->group(function () {
+            Route::resource('jenis-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class);
+            Route::resource('kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\KelompokMasyarakatController::class);
+            Route::resource('jenis-kegiatan', App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class);
+            Route::resource('tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class);
+            Route::resource('sub-tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class);
+            Route::resource('master-sub-tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\MasterSubTematikKegiatanController::class);
+            Route::resource('paket-kegiatan', App\Http\Controllers\Cms\Akseslh\PaketKegiatanController::class);
+            Route::resource('jenis-pekerjaan', App\Http\Controllers\Cms\Akseslh\JenisPekerjaanController::class);
+            Route::resource('pendidikan', App\Http\Controllers\Cms\Akseslh\PendidikanController::class);
+            Route::resource('status-pernikahan', App\Http\Controllers\Cms\Akseslh\StatusPernikahanController::class);
+            Route::resource('agama', App\Http\Controllers\Cms\Akseslh\AgamaController::class);
+            Route::resource('tahapan-pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\TahapanPengajuanKegiatanController::class);
+            Route::resource('satuan', App\Http\Controllers\Cms\Akseslh\SatuanController::class);
+            Route::resource('jenis-komponen-rab', App\Http\Controllers\Cms\Akseslh\JenisKomponenRabController::class);
+            Route::resource('master-komponen-rab', App\Http\Controllers\Cms\Akseslh\MasterKomponenRabController::class);
+            Route::resource('master-data-bank', App\Http\Controllers\Cms\Akseslh\MasterDataBankController::class);
+            Route::resource('log-jadwal-pembukaan', App\Http\Controllers\Cms\Akseslh\LogJadwalPembukaanController::class);
+            Route::resource('log-masa-sanggah', App\Http\Controllers\Cms\Akseslh\LogMasaSanggahController::class);
+            Route::resource('jenis-dokumen', App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class);
+            Route::resource('master-data-indikator-laporan', App\Http\Controllers\Cms\Akseslh\MasterDataIndikatorLaporanController::class);
+            Route::resource('master-indikator', App\Http\Controllers\Cms\Akseslh\MasterIndikatorController::class);
+
+            // Restore
+            Route::post('/tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class, 'restore']);
+            Route::post('/sub-tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class, 'restore']);
+            Route::post('/jenis-kelompok-masyarakat/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class, 'restore']);
+        });
+
+        Route::middleware(['ensureroleweb:administrator'])->group(function () {
+            Route::resource('banner-informasi', App\Http\Controllers\Cms\Akseslh\BannerInformasiController::class);
+            Route::resource('email-blast', App\Http\Controllers\Cms\Akseslh\EmailBlastController::class);
+        });
+
+        Route::middleware(['ensureroleweb:administrator,pmu-bpdlh'])->group(function () {
+            Route::resource('transaksi-penyaluran', App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class);
+            Route::get('/transaksi-penyaluran-export-template', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'template'])->name('transaksi-penyaluran.export-template');
+            Route::post('/transaksi-penyaluran-import', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import'])->name('transaksi-penyaluran.import');
+
+            Route::get('/transaksi-penyaluran-import', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_view'])->name('transaksi-penyaluran.import-view');
+            Route::get('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_edit'])->name('transaksi-penyaluran.import-edit');
+            Route::put('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_update'])->name('transaksi-penyaluran.import-update');
+        });
+
         // Import & Download
         Route::post('pic-kelompok-masyarakat/import', [App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class, 'import'])
             ->name('pic-kelompok-masyarakat.import');
@@ -73,46 +103,12 @@ Route::middleware(['auth'])->group(function () {
             return Excel::download(new PivotEmailBlastTemplateExport, 'template_pivot_email_blast.xlsx');
         })->name('pivot.template.download');
 
-        Route::get('/transaksi-penyaluran-export-template', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'template'])->name('transaksi-penyaluran.export-template');
-        Route::post('/transaksi-penyaluran-import', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import'])->name('transaksi-penyaluran.import');
-
         Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen'])->name('pengajuan-kegiatan.document');
         Route::put('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'update_dokumen'])->name('pengajuan-kegiatan.document.update');
 
-        Route::resource('jenis-kegiatan', App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class);
-        Route::resource('jenis-dokumen', App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class);
-        Route::resource('jenis-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class);
-        Route::resource('kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\KelompokMasyarakatController::class);
-        Route::resource('paket-kegiatan', App\Http\Controllers\Cms\Akseslh\PaketKegiatanController::class);
         Route::resource('pic-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class);
         Route::resource('user-akseslh', App\Http\Controllers\Cms\Akseslh\UserAkseslhController::class);
-        Route::resource('tahapan-pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\TahapanPengajuanKegiatanController::class);
-        Route::resource('tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class);
-        Route::resource('sub-tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class);
-        Route::resource('master-sub-tematik-kegiatan', App\Http\Controllers\Cms\Akseslh\MasterSubTematikKegiatanController::class);
-        Route::resource('satuan', App\Http\Controllers\Cms\Akseslh\SatuanController::class);
-        Route::resource('jenis-komponen-rab', App\Http\Controllers\Cms\Akseslh\JenisKomponenRabController::class);
-        Route::resource('master-komponen-rab', App\Http\Controllers\Cms\Akseslh\MasterKomponenRabController::class);
         Route::resource('pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class);
-        Route::resource('master-data-bank', App\Http\Controllers\Cms\Akseslh\MasterDataBankController::class);
-        Route::resource('log-jadwal-pembukaan', App\Http\Controllers\Cms\Akseslh\LogJadwalPembukaanController::class);
-        Route::resource('transaksi-penyaluran', App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class);
-        Route::resource('master-data-indikator-laporan', App\Http\Controllers\Cms\Akseslh\MasterDataIndikatorLaporanController::class);
-        Route::resource('jenis-pekerjaan', App\Http\Controllers\Cms\Akseslh\JenisPekerjaanController::class);
-        Route::resource('pendidikan', App\Http\Controllers\Cms\Akseslh\PendidikanController::class);
-        Route::resource('banner-informasi', App\Http\Controllers\Cms\Akseslh\BannerInformasiController::class);
-        Route::resource('status-pernikahan', App\Http\Controllers\Cms\Akseslh\StatusPernikahanController::class);
-        Route::resource('agama', App\Http\Controllers\Cms\Akseslh\AgamaController::class);
-        Route::resource('log-masa-sanggah', App\Http\Controllers\Cms\Akseslh\LogMasaSanggahController::class);
-        Route::resource('email-blast', App\Http\Controllers\Cms\Akseslh\EmailBlastController::class);
-
-        Route::post('/tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class, 'restore']);
-        Route::post('/sub-tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class, 'restore']);
-        Route::post('/jenis-kelompok-masyarakat/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class, 'restore']);
-
-        Route::get('/transaksi-penyaluran-import', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_view'])->name('transaksi-penyaluran.import-view');
-        Route::get('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_edit'])->name('transaksi-penyaluran.import-edit');
-        Route::put('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_update'])->name('transaksi-penyaluran.import-update');
 
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
@@ -149,5 +145,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-status-pernikahan', [App\Http\Controllers\Datatable\Akseslh\StatusPernikahanController::class, 'getAll'])->name('data-status-pernikahan');
         Route::get('/data-agama', [App\Http\Controllers\Datatable\Akseslh\AgamaController::class, 'getAll'])->name('data-agama');
         Route::get('/data-log-masa-sanggah', [App\Http\Controllers\Datatable\Akseslh\LogMasaSanggahController::class, 'getAll'])->name('data-log-masa-sanggah');
+        Route::get('/data-master-indikator', [App\Http\Controllers\Datatable\Akseslh\MasterIndikatorController::class, 'getAll'])->name('data-master-indikator');
     });
 });

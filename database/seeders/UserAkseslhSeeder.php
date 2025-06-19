@@ -43,13 +43,22 @@ class UserAkseslhSeeder extends Seeder
         //     'role_user'     => 'approver',
         // ]);
 
+        // $validator = UserAkseslh::create([
+        //     'email'         => 'pmu@bpdlh.id',
+        //     'nama_pic'      => 'PMU Bpdlh',
+        //     'password'      => Hash::make('password'),
+        //     'status_user'   => 'ACTIVE',
+        //     'flag'          => 1,
+        //     'role_user'     => 'approver',
+        // ]);
+
         $validator = UserAkseslh::create([
-            'email'         => 'pmu@bpdlh.id',
-            'nama_pic'      => 'PMU Bpdlh',
+            'email'         => 'administrator@bpdlh.id',
+            'nama_pic'      => 'Administrator',
             'password'      => Hash::make('password'),
             'status_user'   => 'ACTIVE',
             'flag'          => 1,
-            'role_user'     => 'approver',
+            'role_user'     => 'administrator',
         ]);
     }
 }
