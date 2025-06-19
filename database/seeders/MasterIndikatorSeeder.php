@@ -17,7 +17,7 @@ class MasterIndikatorSeeder extends Seeder
         //
         $masterIndikator = [
             [
-                'nama_indikator'    => 'Laki - laki',
+                'nama_indikator'    => 'Laki-laki',
                 'satuan'            => 'Orang',
                 'tipe_data'         => 'number'
             ],
@@ -27,29 +27,19 @@ class MasterIndikatorSeeder extends Seeder
                 'tipe_data'         => 'number'
             ],
             [
-                'nama_indikator'    => 'Sampah',
+                'nama_indikator'    => 'Berat',
                 'satuan'            => 'M2',
                 'tipe_data'         => 'number'
             ],
             [
-                'nama_indikator'    => 'Sampah',
-                'satuan'            => 'Kg',
-                'tipe_data'         => 'number'
-            ],
-            [
-                'nama_indikator'    => 'Pohon',
+                'nama_indikator'    => 'Luas',
                 'satuan'            => 'Hektar',
-                'tipe_data'         => 'number'
-            ],
-            [
-                'nama_indikator'    => 'Kwh',
-                'satuan'            => 'Kwh',
                 'tipe_data'         => 'number'
             ],
         ];
         foreach ($masterIndikator as $item) {
             # code...
-            MasterIndikator::create($item);
+            MasterIndikator::updateOrCreate(['nama_indikator' => $item['nama_indikator']], $item);
         }
     }
 }

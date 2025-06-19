@@ -30,6 +30,7 @@ var data_master_data_indikator_laporan = (function () {
                 { data: "nama_indikator" },
                 { data: "satuan" },
                 { data: "tipe_data" },
+                { data: "master_indikator_id" },
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
