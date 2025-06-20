@@ -18,6 +18,7 @@ class MasterDataIndikatorLaporan extends AppModel
         'nama_indikator',
         'satuan',
         'tipe_data',
+        'master_indikator_id',
         'flag',
         'username',
     ];
@@ -40,5 +41,15 @@ class MasterDataIndikatorLaporan extends AppModel
     public function sub_tematik_kegiatan(): BelongsTo
     {
         return $this->belongsTo(SubTematikKegiatan::class, 'sub_tematik_kegiatan_id');
+    }
+
+    /**
+     * Get the sub_tematik_kegiatan that owns the MasterDataIndikatorLaporan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function master_indikator(): BelongsTo
+    {
+        return $this->belongsTo(MasterIndikator::class, 'master_indikator_id');
     }
 }

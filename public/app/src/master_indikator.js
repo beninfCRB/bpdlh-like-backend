@@ -7,12 +7,12 @@ import {
     deleteData,
     showData,
 } from "../api";
-var route = $("#master-data-indikator-laporan-route").val();
+var route = $("#master-indikator-route").val();
 
-var data_master_data_indikator_laporan = (function () {
+var data_master_indikator = (function () {
     var initTable1 = function () {
-        var table = $("#dt_master_data_indikator_laporan");
-        var url_table = $("#data-table-master-data-indikator-laporan").val();
+        var table = $("#dt_master_indikator");
+        var url_table = $("#data-table-master-indikator").val();
 
         // begin first table
         table.DataTable({
@@ -25,12 +25,10 @@ var data_master_data_indikator_laporan = (function () {
             ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
-                {},
-                {},
                 { data: "nama_indikator" },
                 { data: "satuan" },
                 { data: "tipe_data" },
-                { data: "master_indikator_id" },
+                {},
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -42,23 +40,14 @@ var data_master_data_indikator_laporan = (function () {
                     orderable: false,
                 },
                 {
-                    targets: 1,
+                    targets: -4,
+                    searchable: true,
+                    orderable: true,
                     render: function (data, type, full, meta) {
-                        if (full.jenis_kegiatan === null) {
-                            return "-";
+                        if (full.deleted_at === null) {
+                            return "Aktif";
                         } else {
-                            return full.jenis_kegiatan.jenis_kegiatan;
-                        }
-                    },
-                },
-                {
-                    targets: 2,
-                    render: function (data, type, full, meta) {
-                        if (full.sub_tematik_kegiatan === null) {
-                            return "-";
-                        } else {
-                            return full.sub_tematik_kegiatan
-                                .sub_tematik_kegiatan;
+                            return "Tidak Aktif";
                         }
                     },
                 },
@@ -91,20 +80,36 @@ var data_master_data_indikator_laporan = (function () {
                     orderable: false,
                     render: function (data, type, full, meta) {
                         var editRoute = route + "/" + full.id + "/edit";
-
-                        return (
-                            `
-                        <a href="` +
-                            editRoute +
-                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                        var editRoute = route + "/" + full.id + "/edit";
+                        if (full.deleted_at === null) {
+                            return (
+                                `
+                       <a href="` +
+                                editRoute +
+                                `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
                           <i class="fa fa-pencil"></i>
                         </a>
                         <a data-id=` +
-                            full.id +
-                            ` href="#" onclick="deleteMasterDataIndikatorLaporan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                                full.id +
+                                ` href="#" onclick="deleteJenisKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Non Aktifkan">
                           <i class="fa fa-trash"></i>
                         </a>`
-                        );
+                            );
+                        } else {
+                            return (
+                                `
+                       <a href="` +
+                                editRoute +
+                                `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                          <i class="fa fa-pencil"></i>
+                        </a>
+                        <a data-id=` +
+                                full.id +
+                                ` href="#" onclick="restoreJenisKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Aktifkan">
+                          <i class="fa fa-mail-reply"></i>
+                        </a>`
+                            );
+                        }
                     },
                 },
             ],
@@ -120,10 +125,10 @@ var data_master_data_indikator_laporan = (function () {
 })();
 
 jQuery(document).ready(function () {
-    data_master_data_indikator_laporan.init();
+    data_master_indikator.init();
 });
 
-window.deleteMasterDataIndikatorLaporan = (input) => {
+window.deleteMasterIndikator = (input) => {
     var deleteRoute = route + "/" + $(input).attr("data-id");
     Swal.fire({
         title: "Konfirmasi Hapus",
@@ -139,6 +144,28 @@ window.deleteMasterDataIndikatorLaporan = (input) => {
         if (result.value) {
             deleteData(deleteRoute).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
+                window.location.reload();
+            });
+        }
+    });
+};
+
+window.restoreMasterIndikator = (input) => {
+    var restoreRoute = route + "/" + $(input).attr("data-id") + "/restore";
+    Swal.fire({
+        title: "Konfirmasi",
+        text: "Anda yakin ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya",
+        cancelButtonText: "Tidak",
+        reverseButtons: false,
+    }).then((result) => {
+        if (result.value) {
+            updateData(restoreRoute).then((res) => {
+                Swal.fire("Sukses", "Data berhasil aktifkan", "success");
                 window.location.reload();
             });
         }
