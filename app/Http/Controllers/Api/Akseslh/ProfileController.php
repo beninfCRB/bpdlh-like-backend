@@ -52,6 +52,7 @@ class ProfileController extends ApiController
         }
     }
 
+
     public function destroy($id, Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
