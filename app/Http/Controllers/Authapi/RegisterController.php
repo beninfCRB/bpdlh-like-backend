@@ -165,6 +165,7 @@ class RegisterController extends ApiController
             // 'email_pic'                 => 'required|email|unique:data_pic_kelompok_masyarakats,email_pic|unique:user_akseslhs,email',
             'email_pic'                 => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')],
             'kode_aktivasi'             => 'required',
+            'jenis_kelamin'             => 'required|in:laki-laki,perempuan|not_undefined',
         ]);
 
         if ($validator->fails()) {
@@ -270,7 +271,7 @@ class RegisterController extends ApiController
             // Create token for user to access dashboard
             // $token = $user->user_akseslh->createToken("auth")->plainTextToken;
 
-            // Save document 
+            // Save document
             if (isset($input['profil_kelompok']) && $input['profil_kelompok']->getClientOriginalExtension() == 'pdf') {
                 // upload document
                 $upload_profile_kelompok = $this->fileUploadService->handleFile($input['profil_kelompok'])->saveToDb('profil_kelompok');
@@ -284,7 +285,7 @@ class RegisterController extends ApiController
                 ]);
             }
 
-            // Save document 
+            // Save document
             $upload_foto_ktp = $this->fileUploadService->handleImage($input['foto_ktp'])->saveToDb('foto_ktp');
 
             if (!empty($upload_foto_ktp)) {
@@ -295,7 +296,7 @@ class RegisterController extends ApiController
                 ]);
             }
 
-            // Save document 
+            // Save document
             $upload_foto_selfie = $this->fileUploadService->handleImage($input['foto_selfie'])->saveToDb('foto_selfie');
 
             if (!empty($upload_foto_selfie)) {
@@ -357,6 +358,7 @@ class RegisterController extends ApiController
             'nohp_pic'                          => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->whereNull('deleted_at')],
             'email_pic'                         => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')],
             'kode_aktivasi'                     => 'required',
+            'jenis_kelamin'                     => 'required|in:laki-laki,perempuan|not_undefined',
         ], [
             'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
         ]);
@@ -424,7 +426,7 @@ class RegisterController extends ApiController
             if (!$kelompok_masyarakat) {
                 $kelompok_masyarakat = KelompokMasyarakat::create([
                     'jenis_kelompok_masyarakat_id'      =>  $input['jenis_kelompok_masyarakat_id'],
-                    'kelompok_masyarakat'               =>  $input['kelompok_masyarakat'],
+                    'kelompok_masyarakat'               =>  strtoupper($input['kelompok_masyarakat']),
                     'provinsi_kelompok_masyarakat_id'   =>  $input['provinsi_kelompok_masyarakat_id'],
                     'kabupaten_kelompok_masyarakat_id'  =>  $input['kabupaten_kelompok_masyarakat_id'],
                     'kecamatan_kelompok_masyarakat_id'  =>  $input['kecamatan_kelompok_masyarakat_id'],
@@ -442,7 +444,7 @@ class RegisterController extends ApiController
         try {
             $user = DataPicKelompokMasyarakat::create([
                 'kelompok_masyarakat_id'    => $input['kelompok_masyarakat'],
-                'nama_pic'                  => $input['nama_pic'],
+                'nama_pic'                  => strtoupper($input['nama_pic']),
                 'jenis_identitas_pic'       => 'KTP',
                 'nomor_identitas_pic'       => $input['nomor_identitas_pic'],
                 'nomor_npwp_pic'            => $input['nomor_npwp_pic'] ?? null,
@@ -457,6 +459,7 @@ class RegisterController extends ApiController
                 'tempat_lahir'              => $input['tempat_lahir'],
                 'tanggal_lahir'             => $input['tanggal_lahir'],
                 'agama_id'                  => $input['agama_id'],
+                'jenis_kelamin'             => $input['jenis_kelamin'],
                 'status_perkawinan_id'      => $input['status_perkawinan_id'],
                 // 'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
                 'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],

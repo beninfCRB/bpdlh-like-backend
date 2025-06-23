@@ -112,7 +112,6 @@ class InformasiPencairanDanaController extends ApiController
             'tanggal_kegiatan'                      => 'nullable|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
             'waktu_kegiatan'                        => 'nullable|string|regex:/^\d{2}:\d{2}(:\d{2})? - \d{2}:\d{2}(:\d{2})?$/',
             'nama_gadis_ibu_kandung'                => 'required|not_undefined',
-            'jenis_kelamin'                         => 'required|in:laki-laki,perempuan|not_undefined',
         ]);
 
         if ($validator->fails()) {

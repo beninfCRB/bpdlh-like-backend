@@ -970,77 +970,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
-            //code...
-            // $fileLamaSPTJM = $model->document()->where(['group', 'perjanjian_kerjasama'])->get();
-
-            // $detailLogSPTJM = $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()
-            //     ->where('pengajuan_kegiatan_id', $id)
-            //     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-            //         $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
-            //     })->first();
-
-            // if ($detailLogSPTJM) {
-            //     if (isset($data['perjanjian_kerjasama'])) {
-            //         if (isset($fileLamaSPTJM) && count($fileLamaSPTJM) > 0) {
-            //             foreach ($fileLamaSPTJM as $item) {
-            //                 $this->fileUploadService->deleteFile($item->file_path);
-
-            //                 \DB::table('files')->where(['id' => $item->id])->delete();
-            //             }
-            //         }
-
-            //         // Save document
-            //         if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
-            //             // upload document
-            //             $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-            //         } else {
-            //             $upload = $this->fileUploadService->handleImage($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-            //         }
-
-            //         if (!empty($upload)) {
-            //             $document = $this->fileTable->newQuery()->find($upload->id);
-            //             $document->update([
-            //                 'fileable_type' => get_class($model),
-            //                 'fileable_id'   => $model->id,
-            //             ]);
-            //         }
-            //     } else {
-            //         if (!$fileLamaSPTJM) {
-            //             # code...
-            //             \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
-            //             return $this->sendError(null, collect(['perjanjian_kerjasama' => ['perjanjian kerjasama wajib diisi.']]), 422);
-            //         }
-            //     }
-            // } else {
-            //     if (isset($data['perjanjian_kerjasama'])) {
-            //         // Save document
-            //         if (isset($fileLamaSPTJM) && count($fileLamaSPTJM) > 0) {
-            //             foreach ($fileLamaSPTJM as $item) {
-            //                 $this->fileUploadService->deleteFile($item->file_path);
-
-            //                 \DB::table('files')->where(['id' => $item->id])->delete();
-            //             }
-            //         }
-            //         if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
-            //             // upload document
-            //             $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-            //         } else {
-            //             $upload = $this->fileUploadService->handleImage($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-            //         }
-
-            //         if (!empty($upload)) {
-            //             $document = $this->fileTable->newQuery()->find($upload->id);
-            //             $document->update([
-            //                 'fileable_type' => get_class($model),
-            //                 'fileable_id'   => $model->id,
-            //             ]);
-            //         }
-            //     } else {
-            //         \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
-            //         return $this->sendError(null, collect(['perjanjian_kerjasama' => ['perjanjian kerjasama wajib diisi.']]), 422);
-            //     }
-            // }
-
             $fileLamaSPTJM = $model->document()->where(['group' => 'perjanjian_kerjasama'])->get();
 
             $detailLogSPTJM = $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()
@@ -1132,7 +1061,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
             $model->user_akseslh->unreadNotifications->markAsRead();
-            $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung'], 'jenis_kelamin' => $data['jenis_kelamin']]);
+            $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung']]);
             $model->flag = 11;
             $model->save();
 
