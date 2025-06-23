@@ -172,6 +172,8 @@
                                                             {{ $item->deskripsi_kegiatan }}
                                                         </option>
                                                     @endforeach
+                                                    <option value="20" {{ old('tahapan') == 20 ? 'selected' : '' }}>
+                                                        Ditolak</option>
                                                 @endisset
                                             </select>
                                         </div>
