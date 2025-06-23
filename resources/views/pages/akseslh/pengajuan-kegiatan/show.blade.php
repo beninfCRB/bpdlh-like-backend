@@ -15,6 +15,96 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Pengajuan Kegiatan</h1>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped table-bordered">
+
+                        <tbody>
+                            <tr>
+                                <td>Nomor Pengajuan</td>
+                                <td>{{ $data->data->nomor_pengajuan }}</td>
+                            </tr>
+                            <tr>
+                                <td>Kelompok Masyarakat</td>
+                                <td>{{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Kelompok Masyarakat</td>
+                                <td>{{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Judul Pengajuan Kegiatan</td>
+                                <td>{{ $data->data->judul_pengajuan_kegiatan }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tematik Kegiatan</td>
+                                <td>{{ $data->data->paket_kegiatan->master_sub_tematik_kegiatan_id->tematik_kegiatan->tematik_kegiatan ?? null }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Sub Tematik Kegiatan</td>
+                                <td>{{ $data->data->paket_kegiatan->master_sub_tematik_kegiatan_id->sub_tematik_kegiatan->sub_tematik_kegiatan ?? null }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Tanggal Mulai</td>
+                                <td>{{ $data->data->tanggal_mulai_kegiatan }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tanggal Selesai</td>
+                                <td>{{ $data->data->tanggal_akhir_kegiatan }}</td>
+                            </tr>
+                            <tr>
+                                <td>Status Pengajuan</td>
+                                <td>{{ $data->data->status_pengajuan }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Indikator Laporan --}}
+    @if (isset($data->data->indikator_laporan_kegiatan) && count($data->data->indikator_laporan_kegiatan) > 0)
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">Indikator Laporan</h1>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>Nama Indikator</td>
+                                    <td>Satuan</td>
+                                    <td>Nilai</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($data->data->indikator_laporan_kegiatan as $item)
+                                    <tr>
+                                        <td>{{ $item->master_data_indikator_laporan->nama_indikator }}</td>
+                                        <td>{{ $item->master_data_indikator_laporan->satuan }}</td>
+                                        <td>{{ $item->nilai_laporan }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- RAB Pengajuan Kegiatan --}}
     <div class="row">
         <div class="col-md-12">
@@ -32,13 +122,23 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $total = 0;
+                            @endphp
                             @foreach ($data->data->rab_pengajuan_paket_kegiatans as $item)
+                                @php
+                                    $total += $item->qty * $item->harga_unit;
+                                @endphp
                                 <tr>
                                     <td>{{ $item->master_komponen_rab->komponen_rab }}</td>
                                     <td>{{ $item->qty }}</td>
-                                    <td>{{ $item->harga_unit }}</td>
+                                    <td>Rp. {{ number_format($item->harga_unit) }}</td>
                                 </tr>
                             @endforeach
+                            <tr>
+                                <td colspan="2">Total</td>
+                                <td>Rp. {{ number_format($total) }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
