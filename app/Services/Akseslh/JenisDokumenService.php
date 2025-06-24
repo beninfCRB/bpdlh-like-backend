@@ -32,7 +32,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->with(['tahapan_pengajuan_kegiatan', 'document_file'])->orderBy('created_at', 'ASC');
+        $model = $this->model->query()->withTrashed()->with(['tahapan_pengajuan_kegiatan', 'document_file'])->orderBy('created_at', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -41,6 +41,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
     {
 
         $result  = $this->model->newQuery()
+            ->withTrashed()
             ->with(['tahapan_pengajuan_kegiatan', 'document_file'])
             ->orderBy('created_at', 'ASC')
             ->get();
@@ -208,12 +209,16 @@ class JenisDokumenService extends AppService implements AppServiceInterface
     public function delete($id)
     {
         $read   =   $this->model->newQuery()->find($id);
-        $oldDocument    = $read->document_file()->first();
+        // $oldDocument    = $read->document_file()->first();
 
+        \DB::beginTransaction();
         try {
-            $this->fileUploadService->deleteFiles($oldDocument->file_path);
-            \DB::table('files')->where('id', $oldDocument->id)->delete();
-            $oldDocument->delete();
+            // if ($oldDocument) {
+
+            //     $this->fileUploadService->deleteFiles($oldDocument->file_path);
+            //     \DB::table('files')->where('id', $oldDocument->id)->delete();
+            //     $oldDocument->delete();
+            // }
             $read->delete();
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
@@ -227,12 +232,26 @@ class JenisDokumenService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
         $oldDocument    = $read->document_file()->first();
-
+        \DB::beginTransaction();
         try {
             $this->fileUploadService->deleteFiles($oldDocument->file_path);
             \DB::table('files')->where('id', $oldDocument->id)->delete();
             $oldDocument->delete();
 
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function restore($id)
+    {
+        $read   =   $this->model->newQuery()->withTrashed()->find($id);
+        \DB::beginTransaction();
+        try {
+            $read->restore();
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {

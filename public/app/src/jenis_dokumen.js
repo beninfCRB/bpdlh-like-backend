@@ -30,6 +30,7 @@ var data_jenis_dokumen = (function () {
                 {},
                 { data: "jenis_dokumen" },
                 {},
+                {},
                 { data: "created_at" },
                 { data: "updated_at" },
                 {},
@@ -79,6 +80,18 @@ var data_jenis_dokumen = (function () {
                     },
                 },
                 {
+                    targets: -4,
+                    searchable: true,
+                    orderable: true,
+                    render: function (data, type, full, meta) {
+                        if (full.deleted_at === null) {
+                            return "Aktif";
+                        } else {
+                            return "Tidak Aktif";
+                        }
+                    },
+                },
+                {
                     targets: -3,
                     searchable: false,
                     orderable: true,
@@ -107,26 +120,47 @@ var data_jenis_dokumen = (function () {
                     orderable: true,
                     render: function (data, type, full, meta) {
                         var editRoute = route + "/" + full.id + "/edit";
-
-                        return (
+                        if (full.deleted_at === null) {
+                            return (
+                                `
+                           <a href="` +
+                                editRoute +
+                                `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                              <i class="fa fa-pencil"></i>
+                            </a>
+                            <a data-id=` +
+                                full.id +
+                                ` href="#" onclick="deleteDokumen(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus File">
+                              <i class="fa fa-file"></i>
+                            </a>
+                            <a data-id=` +
+                                full.id +
+                                ` href="#" onclick="deleteJenisDokumen(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
+                              <i class="fa fa-trash"></i>
+                            </a>
                             `
-                       <a href="` +
-                            editRoute +
-                            `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                        <a data-id=` +
-                            full.id +
-                            ` href="#" onclick="deleteDokumen(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus File">
-                          <i class="fa fa-file"></i>
-                        </a>
-                        <a data-id=` +
-                            full.id +
-                            ` href="#" onclick="deleteJenisDokumen(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
-                          <i class="fa fa-trash"></i>
-                        </a>
-                        `
-                        );
+                            );
+                        } else {
+                            return (
+                                `
+                           <a href="` +
+                                editRoute +
+                                `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                              <i class="fa fa-pencil"></i>
+                            </a>
+                            <a data-id=` +
+                                full.id +
+                                ` href="#" onclick="deleteDokumen(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus File">
+                              <i class="fa fa-file"></i>
+                            </a>
+                            <a data-id=` +
+                                full.id +
+                                ` href="#" onclick="restoreJenisDokumen(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Aktifkan">
+                              <i class="fa fa-mail-reply"></i>
+                            </a>
+                            `
+                            );
+                        }
                     },
                 },
             ],
@@ -144,6 +178,28 @@ var data_jenis_dokumen = (function () {
 jQuery(document).ready(function () {
     data_jenis_dokumen.init();
 });
+
+window.restoreJenisDokumen = (input) => {
+    var restoreRoute = route + "/" + $(input).attr("data-id") + "/restore";
+    Swal.fire({
+        title: "Konfirmasi",
+        text: "Anda yakin ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus",
+        cancelButtonText: "Tidak",
+        reverseButtons: false,
+    }).then((result) => {
+        if (result.value) {
+            updateData(restoreRoute).then((res) => {
+                Swal.fire("Sukses", "Data berhasil diaktifkan", "success");
+                window.location.reload();
+            });
+        }
+    });
+};
 
 window.deleteJenisDokumen = (input) => {
     var deleteRoute = route + "/" + $(input).attr("data-id");
