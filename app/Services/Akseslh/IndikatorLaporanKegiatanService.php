@@ -110,21 +110,21 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
                 $read->indikator_laporan_kegiatan()->delete();
             }
 
-            $masterDataIndikatorLaporan = $this->modelMasterDataIndikatorLaporan->get();
 
-            $masterIndikator = $this->modelMasterIndikator->firstWhere('id', $data['master_indikator_id']);
+            $masterIndikator = $this->modelMasterIndikator->get();
 
             foreach ($data['indikator_kegiatan'] as $item) {
+                $mi = $masterIndikator->where('id', $item['master_data_indikator_laporan_id'])->first();
 
-                $indikator = $masterDataIndikatorLaporan->firstOrCreate(
-                    ['master_indikator_id' => $item['master_indikator_id']],
+                $indikator = $this->modelMasterDataIndikatorLaporan->updateOrCreate(
+                    ['master_indikator_id' => $item['master_data_indikator_laporan_id']],
                     [
                         'jenis_kegiatan_id'         => $read->paket_kegiatan->jenis_kegiatan->id ?? null,
                         'sub_tematik_kegiatan_id'   => $read->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->id ?? null,
-                        'nama_indikator'            => $masterIndikator->nama_indikator ?? null,
-                        'satuan'                    => $masterIndikator->satuan ?? null,
-                        'tipe_data'                 => $masterIndikator->tipe_data ?? null,
-                        'master_indikator_id'       => $item['master_indikator_id'] ?? null,
+                        'nama_indikator'            => $mi->nama_indikator ?? null,
+                        'satuan'                    => $mi->satuan ?? null,
+                        'tipe_data'                 => $mi->tipe_data ?? null,
+                        'master_indikator_id'       => $item['master_data_indikator_laporan_id'] ?? null,
                         'flag' => 1,
                     ]
                 );

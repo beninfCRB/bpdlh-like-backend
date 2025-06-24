@@ -80,7 +80,6 @@ var data_jenis_kelompok_masyarakat = (function () {
                     orderable: false,
                     render: function (data, type, full, meta) {
                         var editRoute = route + "/" + full.id + "/edit";
-                        var editRoute = route + "/" + full.id + "/edit";
                         if (full.deleted_at === null) {
                             return (
                                 `

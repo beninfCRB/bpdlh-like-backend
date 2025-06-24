@@ -44,6 +44,7 @@
                                         <th>Tahapan Pengajuan Kegiatan</th>
                                         <th>Jenis Dokumen</th>
                                         <th>Url Dokumen</th>
+                                        <th>Status</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
                                         <th></th>
