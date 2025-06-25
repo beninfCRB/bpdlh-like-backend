@@ -13,6 +13,7 @@ use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Models\MasterDataIndikatorLaporan;
 use App\Models\MasterIndikator;
+use App\Models\Testimonial;
 use App\Notifications\LaporanNotification;
 
 class IndikatorLaporanKegiatanService extends AppService implements AppServiceInterface
@@ -23,6 +24,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
     protected $modelDetailLogTahapanPengajuanKegiatan;
     protected $modelMasterDataIndikatorLaporan;
     protected $modelMasterIndikator;
+    protected $modelTestimonial;
 
     public function __construct(
         IndikatorLaporanKegiatan $model,
@@ -31,7 +33,8 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
         DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan,
         MasterDataIndikatorLaporan $modelMasterDataIndikatorLaporan,
-        MasterIndikator $modelMasterIndikator
+        MasterIndikator $modelMasterIndikator,
+        Testimonial $modelTestimonial
     ) {
         parent::__construct($model);
         $this->modelPengajuanKegiatan           = $modelPengajuanKegiatan;
@@ -40,6 +43,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
         $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
         $this->modelMasterDataIndikatorLaporan  = $modelMasterDataIndikatorLaporan;
         $this->modelMasterIndikator             = $modelMasterIndikator;
+        $this->modelTestimonial                 = $modelTestimonial;
     }
 
     public function getAll()
@@ -142,6 +146,15 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
                     return new IndikatorLaporanKegiatan($dataIndikator);
                 })
             );
+
+            if (isset($data['testimonial']) && !empty($data['testimonial'])) {
+                # code...
+                $this->modelTestimonial->newQuery()->create([
+                    'pengajuan_kegiatan_id'             => $id,
+                    'data_pic_kelompok_masyarakat_id'   => $read->user_akseslh->data_pic_kelompok_masyarakat_id,
+                    'testimonial'                       => $data['testimonial'] ?? null,
+                ]);
+            }
 
 
             $read->tanggal_mulai_kegiatan = $data['tanggal_mulai_kegiatan'];
