@@ -89,7 +89,8 @@ class IndikatorLaporanKegiatanController extends ApiController
             'latitude'                                                  => 'required|string',
             'indikator_kegiatan'                                        => 'nullable|array',
             'indikator_kegiatan.*.master_data_indikator_laporan_id'     => 'nullable|exists:master_indikators,id',
-            'indikator_kegiatan.*.nilai_laporan'                        => 'nullable'
+            'indikator_kegiatan.*.nilai_laporan'                        => 'nullable',
+            'testimonial'                                               => 'required|string|max:500',
         ]);
 
         if ($validator->fails()) {
