@@ -114,6 +114,8 @@ Route::middleware(['auth'])->group(function () {
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
 
+        Route::resource('testimonial', App\Http\Controllers\Cms\Akseslh\TestimonialController::class);
+
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
 
