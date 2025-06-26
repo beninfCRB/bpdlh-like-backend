@@ -149,6 +149,10 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
 
             if (isset($data['testimonial']) && !empty($data['testimonial'])) {
                 # code...
+                if (isset($read->testimonial) && $read->testimonial->count() > 0) {
+                    $read->testimonial()->delete();
+                }
+
                 $this->modelTestimonial->newQuery()->create([
                     'pengajuan_kegiatan_id'             => $id,
                     'data_pic_kelompok_masyarakat_id'   => $read->user_akseslh->data_pic_kelompok_masyarakat_id,
@@ -159,8 +163,8 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
 
             $read->tanggal_mulai_kegiatan = $data['tanggal_mulai_kegiatan'];
             $read->tanggal_akhir_kegiatan = $data['tanggal_akhir_kegiatan'];
-            $read->longitude = $data['longitude'];
-            $read->latitude = $data['latitude'];
+            $read->longitude = explode(',', $data['longitude'])[0];
+            $read->latitude = explode(',', $data['latitude'])[0];
 
             $read->save();
 

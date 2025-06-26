@@ -43,9 +43,9 @@ class MasterIndikatorController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string|max:150',
-            'short_id'                      => 'required|numeric|min:0',
-            'code_id'                       => 'required|numeric|min:0',
+            'nama_indikator'     => 'required|string|max:150',
+            'satuan'             => 'required|string',
+            'tipe_data'          => 'required|string',
         ]);
 
         $result =   $this->masterIndikatorService->create($input);
@@ -66,9 +66,9 @@ class MasterIndikatorController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string|max:150',
-            'short_id'                      => 'required|numeric|min:0',
-            'code_id'                      => 'required|numeric|min:0',
+            'nama_indikator'     => 'required|string|max:150',
+            'satuan'             => 'required|string',
+            'tipe_data'          => 'required|string',
         ]);
 
         $result =   $this->masterIndikatorService->update($id, $input);
