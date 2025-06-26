@@ -145,10 +145,6 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">Daftar Pengajuan Kegiatan</h3>
-                    <input type="hidden" name="data-table-pengajuan-kegiatan" id="data-table-pengajuan-kegiatan"
-                        value="{{ route('data-pengajuan-kegiatan') }}">
-                    <input type="hidden" name="pengajuan-kegiatan-route" id="pengajuan-kegiatan-route"
-                        value="{{ route('pengajuan-kegiatan.index') }}">
                 </div>
                 <div class="panel-body table-rep-plugin">
                     <div class="row">
@@ -312,16 +308,27 @@
                                         <td>{{ $item->created_at->format('d-m-Y H:i:s') ?? '-' }}</td>
                                         <td>{{ $item->updated_at->format('d-m-Y H:i:s') ?? '-' }}</td>
                                         <td>
-                                            <a href="{{ route('pengajuan-kegiatan.show', $item->id) }}"
-                                                class="btn btn-sm btn-clean btn-icon btn-icon-md" target="_blank"
-                                                title="Lihat Detail">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
-                                            <a href="{{ route('pengajuan-kegiatan.document', $item->id) }}"
-                                                target="_blank" class="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                                title="Lihat Dokumen">
-                                                <i class="fa fa-file"></i>
-                                            </a>
+                                            <div class="btn-group">
+                                                <button type="button"
+                                                    class="btn btn-default dropdown-toggle waves-effect"
+                                                    data-toggle="dropdown" aria-expanded="false">
+                                                    Action <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li>
+                                                        <a href="#">
+                                                            <i class="fa fa-pencil-square-o"></i>
+                                                            Update SPTJM
+                                                        </a>
+                                                    </li>
+                                                    <li><a href="{{ route('pengajuan-kegiatan.show', $item->id) }}"
+                                                            target="_BLANK"><i class="fa fa-eye"></i>Detail Pengajuan</a>
+                                                    </li>
+                                                    <li><a href="{{ route('pengajuan-kegiatan.document', $item->id) }}"
+                                                            target="_BLANK"><i class="fa fa-file"></i>Dokumen
+                                                            Pengajuan</a></li>
+                                                </ul>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -331,7 +338,6 @@
                     {{ $pengajuan_kegiatan->links() }}
                 </div>
             </div>
-
         </div>
     </div>
     <!-- End Row -->

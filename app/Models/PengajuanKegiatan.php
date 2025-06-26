@@ -213,4 +213,14 @@ class PengajuanKegiatan extends AppModel
     {
         return $this->hasOne(TahapanPengajuanKegiatan::class, 'code_id', 'flag');
     }
+
+    /**
+     * Get the tahapan associated with the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function testimonial(): HasOne
+    {
+        return $this->hasOne(Testimonial::class, 'pengajuan_kegiatan_id');
+    }
 }

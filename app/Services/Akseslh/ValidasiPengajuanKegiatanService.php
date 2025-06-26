@@ -771,14 +771,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'user_akseslh_id'   => $data['user']->id
                 ]);
 
-                if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
-                    # code...
-                    $this->modelPengembalian->newQuery()->create([
-                        'pengajuan_kegiatan_id' => $read->id,
-                        'jumlah_pengembalian'   => $data['jumlah_pengembalian']
-                    ]);
-                }
-
                 // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
@@ -824,6 +816,18 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'tanggal_selesai' => date("Y-m-d"),
                     'user_akseslh_id'   => $data['user']->id
                 ]);
+
+                if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
+                    # code...
+                    if (isset($read->pengembalian) && count($read->pengembalian) > 0) {
+                        $read->pengembalian()->delete();
+                    }
+
+                    $this->modelPengembalian->newQuery()->create([
+                        'pengajuan_kegiatan_id' => $read->id,
+                        'jumlah_pengembalian'   => $data['jumlah_pengembalian']
+                    ]);
+                }
 
                 $dataSend = array(
                     'nomor_pengajuan' => $read->nomor_pengajuan,

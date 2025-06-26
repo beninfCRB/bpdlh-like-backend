@@ -110,23 +110,48 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
 
         if (!$pengajuan) return $this->sendError(null, 'Not Found', 422);
 
-        $result = $this->modelMasterIndikator->newQuery()->get();
+        $indikator = $pengajuan->indikator_laporan_kegiatan;
 
-        $result->transform(function ($item, $key) {
-            return [
-                'id'                => $item->id,
-                'nama_indikator'    => $item->nama_indikator,
-                'satuan'            => $item->satuan,
-                'tipe_data'         => $item->tipe_data,
-                'nilai_laporan'     => null,
-            ];
-        });
+        /**
+         *
+         * every() digunakan untuk memastikan semua item memiliki master_indikator_id yang valid.
+         *Jika ada satu saja item yang master_data_indikator_laporan-nya null atau master_indikator_id-nya null, maka blok else akan dijalankan.
+         */
+        if ($indikator && $indikator->count() > 0 && $indikator->every(function ($item) {
+            return $item->master_data_indikator_laporan && $item->master_data_indikator_laporan->master_indikator_id !== null;
+        })) {
+            # code...
+            $result = $pengajuan->indikator_laporan_kegiatan->map(function ($item, $key) {
+                return [
+                    'id'                => $item->master_data_indikator_laporan->master_indikator_id,
+                    'nama_indikator'    => $item->master_data_indikator_laporan->nama_indikator,
+                    'satuan'            => $item->master_data_indikator_laporan->satuan,
+                    'tipe_data'         => $item->master_data_indikator_laporan->tipe_data,
+                    'nilai_laporan'     => $item->nilai_laporan,
+                ];
+            });
+        } else {
+            $result = $this->modelMasterIndikator->newQuery()->get();
+
+            $result->transform(function ($item, $key) {
+                return [
+                    'id'                => $item->id,
+                    'nama_indikator'    => $item->nama_indikator,
+                    'satuan'            => $item->satuan,
+                    'tipe_data'         => $item->tipe_data,
+                    'nilai_laporan'     => null,
+                ];
+            });
+        }
+
 
         $return = [
             'tanggal_mulai_kegiatan'    => $pengajuan->tanggal_mulai_kegiatan,
             'tanggal_akhir_kegiatan'    => $pengajuan->tanggal_akhir_kegiatan,
-            'longitude'                => $pengajuan->longitude,
-            'latitude'                 => $pengajuan->latitude,
+            'longitude'                 => $pengajuan->longitude,
+            'latitude'                  => $pengajuan->latitude,
+            'testimonial'               => $pengajuan->testimonial->first()->testimonial ?? null,
+            'jumlah_pengembalian'       => $pengajuan->pengembalian()->sum('jumlah_pengembalian') ?? 0,
             'indikator_kegiatan'        => $result,
         ];
 
