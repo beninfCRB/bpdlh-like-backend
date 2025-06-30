@@ -205,10 +205,22 @@
                             </span></a>
                     </li>
                 @endif
-                <li>
-                    <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"><i
-                            class="md md-view-list"></i><span> Pengajuan Kegiatan
-                        </span></a>
+                <li class="has_sub">
+                    <a href="#" class="waves-effect"><i class="md md-view-list"></i><span> Pengajuan Kegiatan<i
+                                class="md md-add pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>List Pengajuan</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('laporan-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>
+                                    Upload Laporan Akhir</span></a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             <div class="clearfix"></div>

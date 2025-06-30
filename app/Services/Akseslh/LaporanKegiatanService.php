@@ -50,6 +50,19 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
 
+    public function getAllLaporanAkhir()
+    {
+        $model = $this->model->query()->where('flag', '8')->orderBy('created_at', 'ASC');
+
+        return DataTables::eloquent($model)
+            ->addColumn('checkbox', function ($row) {
+                return '<input type="checkbox" name="selected_id[]" value="' . $row->id . '">';
+            })
+            ->rawColumns(['checkbox'])
+            ->addIndexColumn()
+            ->make(true);
+    }
+
     public function getAllAttr()
     {
         $result  = $this->model->newQuery()
@@ -153,7 +166,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
         try {
 
-            // Save document 
+            // Save document
             if ($input['file_dokumen']->getClientOriginalExtension() == 'pdf') {
                 // upload document
                 $upload = $this->fileUploadService->handleFile($input['file_dokumen'])->saveToDb($input['jenis_dokumen']);
@@ -299,7 +312,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
             $pengembalian = $read->pengembalian;
 
-            // Save document 
+            // Save document
             if ($data['bukti_pengembalian']->getClientOriginalExtension() == 'pdf') {
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['bukti_pengembalian'])->saveToDb('bukti_pengembalian');
