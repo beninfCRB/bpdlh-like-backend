@@ -119,6 +119,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
 
+        Route::resource('laporan-akhir-kegiatan', App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class);
+
         // Datatable
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
         Route::get('/data-jenis-dokumen', [App\Http\Controllers\Datatable\Akseslh\JenisDokumenController::class, 'getAll'])->name('data-jenis-dokumen');
@@ -126,7 +128,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKelompokMasyarakatController::class, 'getAll'])->name('data-jenis-kelompok-masyarakat');
         Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll'])->name('data-kelompok-masyarakat');
         Route::get('/data-email-blast', [App\Http\Controllers\Datatable\Akseslh\EmailBlastController::class, 'getAll'])->name('data-email-blast');
-        Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
+        Route::get('/data-paket-kegiatan', [App\Htp\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
         Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\DataPicKelompokMasyarakatController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
         Route::get('/data-user-akseslh', [App\Http\Controllers\Datatable\Akseslh\UserAkseslhController::class, 'getAll'])->name('data-user-akseslh');
         Route::get('/data-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TematikKegiatanController::class, 'getAll'])->name('data-tematik-kegiatan');
@@ -149,5 +151,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-agama', [App\Http\Controllers\Datatable\Akseslh\AgamaController::class, 'getAll'])->name('data-agama');
         Route::get('/data-log-masa-sanggah', [App\Http\Controllers\Datatable\Akseslh\LogMasaSanggahController::class, 'getAll'])->name('data-log-masa-sanggah');
         Route::get('/data-master-indikator', [App\Http\Controllers\Datatable\Akseslh\MasterIndikatorController::class, 'getAll'])->name('data-master-indikator');
+        Route::get('/data-laporan-akhir-kegiatan', [App\Http\Controllers\Datatable\Akseslh\LaporanAkhirKegiatanController::class, 'getAll'])->name('data-laporan-akhir-kegiatan');
     });
 });

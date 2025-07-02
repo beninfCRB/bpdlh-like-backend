@@ -150,7 +150,7 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
             'tanggal_akhir_kegiatan'    => $pengajuan->tanggal_akhir_kegiatan,
             'longitude'                 => $pengajuan->longitude,
             'latitude'                  => $pengajuan->latitude,
-            'testimonial'               => $pengajuan->testimonial->first()->testimonial ?? null,
+            'testimonial'               => $pengajuan->testimonial->testimonial ?? null,
             'jumlah_pengembalian'       => $pengajuan->pengembalian()->sum('jumlah_pengembalian') ?? 0,
             'indikator_kegiatan'        => $result,
         ];

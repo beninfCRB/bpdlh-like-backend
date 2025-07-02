@@ -16,7 +16,7 @@ use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 
 
-class LaporanKegiatanService extends AppService implements AppServiceInterface
+class LaporanAkhirKegiatanService extends AppService implements AppServiceInterface
 {
     protected $modelTahapanPengajuanKegiatan;
     protected $logTahapanPengajuanKegiatan;
@@ -52,11 +52,11 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
     public function getAllLaporanAkhir()
     {
-        $model = $this->model->query()->where('flag', '8')->orderBy('created_at', 'ASC');
+        $model = $this->model->query()->where('flag', '8')->with(['user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat'])->orderBy('created_at', 'ASC');
 
         return DataTables::eloquent($model)
             ->addColumn('checkbox', function ($row) {
-                return '<input type="checkbox" name="selected_id[]" value="' . $row->id . '">';
+                return '<input type="checkbox" name="pengajuan_kegiatan_id[]" value="' . $row->id . '">';
             })
             ->rawColumns(['checkbox'])
             ->addIndexColumn()
@@ -98,15 +98,89 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
+            $today = date("Y-m-d");
 
-            $data = $this->model->newQuery()->create([
-                'jenis_kegiatan'       =>  $data['jenis_kegiatan'],
-                'short_id'                      =>  $data['short_id'],
-                'code_id'                      =>  $data['code_id'],
-                'flag'                 => 1,
-            ]);
+            // Ambil semua pengajuan yang dipilih
+            $pengajuanKegiatan = $this->model
+                ->whereIn('id', $data['pengajuan_kegiatan_id'])
+                ->get();
 
-            \DB::commit(); // commit the changes
+            // Ambil tahapan "Verifikasi Laporan Akhir Kegiatan" sekali saja
+            $verifikasiTahapan = $this->modelTahapanPengajuanKegiatan
+                ->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan')
+                ->first();
+
+            // Upload file hanya sekali untuk semua pengajuan
+            $upload = null;
+            if ($data['file']->getClientOriginalExtension() === 'pdf') {
+                $upload = $this->fileUploadService
+                    ->handleFile($data['file']);
+            } else {
+                $upload = $this->fileUploadService
+                    ->handleImage($data['file']);
+            }
+
+            foreach ($pengajuanKegiatan as $pengajuan) {
+                // Ambil log "Laporan Akhir Kegiatan"
+                $logLaporan = $this->logTahapanPengajuanKegiatan
+                    ->where('pengajuan_kegiatan_id', $pengajuan->id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Laporan Akhir Kegiatan');
+                    })
+                    ->first();
+
+                // Simpan detail log tahapan
+                $this->modelDetailLogTahapanPengajuanKegiatan->create([
+                    'pengajuan_kegiatan_id' => $pengajuan->id,
+                    'tahapan_pengajuan_kegiatan_id' => $logLaporan->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => $today,
+                    'tanggal_selesai' => $today,
+                ]);
+
+                // Update tanggal selesai log laporan
+                $logLaporan->update(['tanggal_selesai' => $today]);
+
+                // Cek log "Verifikasi Laporan Akhir Kegiatan"
+                $logVerifikasi = $this->logTahapanPengajuanKegiatan
+                    ->where('pengajuan_kegiatan_id', $pengajuan->id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where('deskripsi_kegiatan', 'Verifikasi Laporan Akhir Kegiatan');
+                    })
+                    ->first();
+
+                // Jika belum ada log verifikasi, buat baru
+                if (!$logVerifikasi && $verifikasiTahapan) {
+                    $this->logTahapanPengajuanKegiatan->create([
+                        'pengajuan_kegiatan_id' => $pengajuan->id,
+                        'tahapan_pengajuan_kegiatan_id' => $verifikasiTahapan->id,
+                        'tanggal_masuk' => $today,
+                        'tanggal_selesai' => $today,
+                    ]);
+                } else {
+                    // Jika sudah ada, pastikan tanggal_masuk terupdate
+                    $this->logTahapanPengajuanKegiatan
+                        ->where('pengajuan_kegiatan_id', $pengajuan->id)
+                        ->where('tahapan_pengajuan_kegiatan_id', $verifikasiTahapan->id)
+                        ->update(['tanggal_masuk' => $today, 'tanggal_selesai' => $today]);
+                }
+
+                // Attach file ke log laporan
+                if ($upload && $logLaporan) {
+                    $uploadBaru = $upload->saveToDb('Laporan Akhir Kegiatan');
+                    $file = $this->fileTable->find($uploadBaru->id);
+                    if ($file) {
+                        $file->update([
+                            'fileable_type' => get_class($logLaporan),
+                            'fileable_id' => $logLaporan->id,
+                        ]);
+                    }
+                }
+
+                // Update status flag pengajuan
+                $pengajuan->update(['flag' => 10]);
+            }
+
+            \DB::commit();
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
