@@ -216,9 +216,9 @@
                                 style="padding: 10px 25px 10px 30px;">> <span>List Pengajuan</span></a>
                         </li>
                         <li>
-                            <a href="{{ route('laporan-kegiatan.index') }}" class="waves-effect"
+                            <a href="{{ route('laporan-akhir-kegiatan.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">> <span>
-                                    Upload Laporan Akhir</span></a>
+                                    Unggah Laporan Akhir</span></a>
                         </li>
                     </ul>
                 </li>

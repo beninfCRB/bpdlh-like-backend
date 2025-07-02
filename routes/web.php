@@ -119,7 +119,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
 
-        Route::resource('laporan-kegiatan', App\Http\Controllers\Cms\Akseslh\LaporanKegiatanController::class);
+        Route::resource('laporan-akhir-kegiatan', App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class);
 
         // Datatable
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
@@ -151,6 +151,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-agama', [App\Http\Controllers\Datatable\Akseslh\AgamaController::class, 'getAll'])->name('data-agama');
         Route::get('/data-log-masa-sanggah', [App\Http\Controllers\Datatable\Akseslh\LogMasaSanggahController::class, 'getAll'])->name('data-log-masa-sanggah');
         Route::get('/data-master-indikator', [App\Http\Controllers\Datatable\Akseslh\MasterIndikatorController::class, 'getAll'])->name('data-master-indikator');
-        Route::get('/data-laporan-kegiatan', [App\Http\Controllers\Datatable\Akseslh\LaporanKegiatanController::class, 'getAll'])->name('data-laporan-kegiatan');
+        Route::get('/data-laporan-akhir-kegiatan', [App\Http\Controllers\Datatable\Akseslh\LaporanAkhirKegiatanController::class, 'getAll'])->name('data-laporan-akhir-kegiatan');
     });
 });
