@@ -1,12 +1,19 @@
 @extends('layouts.app')
 
+@section('script')
+    <script src="{{ asset('app/build/pengajuan_kegiatan.js') }}" type="text/javascript"></script>
+@endsection
+
 @section('title', 'Lihat Data Pengajuan Kegiatan')
 
 @section('content')
     <!-- Page-Title -->
     <div class="row">
         <div class="col-sm-12">
-            <h4 class="pull-left page-title">KELOLA DATA PENGAJUAN KEGIATAN</h4>
+            <h4 class="pull-left page-title">KELOLA DATA PENGAJUAN KEGIATAN
+                <input type="hidden" name="pengajuan-kegiatan-route" id="pengajuan-kegiatan-route"
+                    value="{{ route('pengajuan-kegiatan.index') }}">
+            </h4>
             <ol class="breadcrumb pull-right">
                 <li><a href="#">Data Master</a></li>
                 <li><a href="{{ route('pengajuan-kegiatan.index') }}">Pengajuan Kegiatan</a></li>
@@ -30,6 +37,15 @@
                                 <td>{{ $data->data->nomor_pengajuan }}</td>
                             </tr>
                             <tr>
+                                <td>Nomor SPTJM</td>
+                                <td>{{ $data->data->nomor_sptjm }}
+                                    @if (auth()->user()->role_user == 'administrator' || auth()->user()->role_user == 'approver')
+                                        <button class="btn btn-sm btn-primary" onclick="showModal()">Update
+                                            SPTJM</button>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Kelompok Masyarakat</td>
                                 <td>{{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}
                                 </td>
@@ -45,12 +61,12 @@
                             </tr>
                             <tr>
                                 <td>Tematik Kegiatan</td>
-                                <td>{{ $data->data->paket_kegiatan->master_sub_tematik_kegiatan_id->tematik_kegiatan->tematik_kegiatan ?? null }}
+                                <td>{{ $data->data->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan ?? null }}
                                 </td>
                             </tr>
                             <tr>
                                 <td>Sub Tematik Kegiatan</td>
-                                <td>{{ $data->data->paket_kegiatan->master_sub_tematik_kegiatan_id->sub_tematik_kegiatan->sub_tematik_kegiatan ?? null }}
+                                <td>{{ $data->data->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan ?? null }}
                                 </td>
                             </tr>
                             <tr>
@@ -63,7 +79,7 @@
                             </tr>
                             <tr>
                                 <td>Status Pengajuan</td>
-                                <td>{{ $data->data->status_pengajuan }}</td>
+                                <td>{{ $data->data->tahapan->deskripsi_kegiatan }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -71,6 +87,36 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal Update SPTJM --}}
+    <!-- sample modal content -->
+    <div id="modalUpdateSPTJM" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalUpdateSPTJMLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="" method="post">
+                    <div class="modal-header">
+                        <button type="button" class="close" onclick="hideModal()" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="modalUpdateSPTJMLabel">Modal Heading</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nomor_sptjm">Nomor SPTJM</label>
+                            <input type="text" class="form-control" id="nomor_sptjm" name="nomor_sptjm"
+                                placeholder="Nomor SPTJM" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" onclick="hideModal()"
+                            id="close-button">Close</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light"
+                            onclick="updateSPTJM(this, event)" id="save-button" data-id="{{ $data->data->id }}">Save
+                            changes</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     {{-- Indikator Laporan --}}
     @if (isset($data->data->indikator_laporan_kegiatan) && count($data->data->indikator_laporan_kegiatan) > 0)

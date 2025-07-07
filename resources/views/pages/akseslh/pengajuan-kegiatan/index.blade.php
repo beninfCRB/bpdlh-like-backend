@@ -308,27 +308,17 @@
                                         <td>{{ $item->created_at->format('d-m-Y H:i:s') ?? '-' }}</td>
                                         <td>{{ $item->updated_at->format('d-m-Y H:i:s') ?? '-' }}</td>
                                         <td>
-                                            <div class="btn-group">
-                                                <button type="button"
-                                                    class="btn btn-default dropdown-toggle waves-effect"
-                                                    data-toggle="dropdown" aria-expanded="false">
-                                                    Action <span class="caret"></span>
-                                                </button>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li>
-                                                        <a href="#">
-                                                            <i class="fa fa-pencil-square-o"></i>
-                                                            Update SPTJM
-                                                        </a>
-                                                    </li>
-                                                    <li><a href="{{ route('pengajuan-kegiatan.show', $item->id) }}"
-                                                            target="_BLANK"><i class="fa fa-eye"></i>Detail Pengajuan</a>
-                                                    </li>
-                                                    <li><a href="{{ route('pengajuan-kegiatan.document', $item->id) }}"
-                                                            target="_BLANK"><i class="fa fa-file"></i>Dokumen
-                                                            Pengajuan</a></li>
-                                                </ul>
-                                            </div>
+                                            <a href="{{ route('pengajuan-kegiatan.show', $item->id) }}" target="_BLANK"
+                                                class="btn btn-icon waves-effect btn-default m-b-5" data-toggle="tooltip"
+                                                data-placement="left" title="Detail Pengajuan"><i
+                                                    class="fa fa-eye"></i></a>
+                                            <a href="{{ route('pengajuan-kegiatan.document', $item->id) }}"
+                                                target="_BLANK" class="btn btn-icon waves-effect btn-default m-b-5"
+                                                data-toggle="tooltip" data-placement="left"
+                                                title="Dokumen
+                                                Pengajuan"><i
+                                                    class="fa fa-file"></i></a>
+
                                         </td>
                                     </tr>
                                 @endforeach

@@ -1601,6 +1601,25 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         }
     }
 
+    public function updateSptjm($id, $data)
+    {
+        $read   =   $this->model->newQuery()->find($id);
+
+        \DB::beginTransaction();
+
+        try {
+
+            $read->nomor_sptjm    =   $data['nomor_sptjm'];
+            $read->save();
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
     public function deleteDokumenSPTJM($id)
     {
         $result =   $this->model->newQuery()->find($id);

@@ -106,6 +106,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'dokumen'])->name('pengajuan-kegiatan.document');
         Route::put('pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'update_dokumen'])->name('pengajuan-kegiatan.document.update');
+        Route::post('pengajuan-kegiatan/{id}/update-sptjm', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'update_sptjm'])->name('pengajuan-kegiatan.update-sptjm');
 
         Route::resource('pic-kelompok-masyarakat', App\Http\Controllers\Cms\Akseslh\DataPicKelompokMasyarakatController::class);
         Route::resource('user-akseslh', App\Http\Controllers\Cms\Akseslh\UserAkseslhController::class);
