@@ -124,12 +124,55 @@ class RealisasiRabService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Invalid data', 422);
         }
 
+        $idNaraSumber = $result->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Nara Sumber'); // Nara Sumber
+        })->pluck('id')->first();
+
+        $idFasilitator = $result->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Fasilitator'); // Fasilitator
+        })->pluck('id')->first();
+
+        $idModerator = $result->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Moderator'); // Moderator
+        })->pluck('id')->first();
+
         $totalDataKomponenRab  = 0;
         $totalRab = 0;
+        $jasaProfesi = 0;
 
         foreach ($dataKomponenRab['komponen_rab'] as $item) {
             # code...
+            if ($item['id_komponen_rab'] == $idNaraSumber) {
+                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 4) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen_rab'] == $idFasilitator) {
+                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 10) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen_rab'] == $idModerator) {
+                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 2) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
             $totalDataKomponenRab += $item['harga_unit_realisasi'] * $item['qty_realisasi'];
+        }
+
+        if ($jasaProfesi < 3) {
+            # code...
+            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Jasa profesi harus minimal 3', \Sentry\Severity::warning());
+            return $this->sendError(null, collect(['message' => ['Jasa profesi harus minimal 3']]), 422);
         }
 
         foreach ($result->rab_pengajuan_paket_kegiatans as $item) {
@@ -139,7 +182,7 @@ class RealisasiRabService extends AppService implements AppServiceInterface
 
         if ($totalDataKomponenRab > $totalRab) {
             # code...
-            return response()->json(['message' => 'Realisasi tidak boleh lebih besar dari RAB'], 422);
+            return $this->sendError(null, collect(['message' => ['Realisasi tidak boleh lebih dari RAB']]), 422);
         }
 
         // Validasi setiap komponen_rab apakah ada dalam relasi rab_pengajuan_paket_kegiatan
@@ -153,7 +196,7 @@ class RealisasiRabService extends AppService implements AppServiceInterface
         $invalidKomponenRabs = array_diff($komponenIds->toArray(), $validKomponenRabs);
 
         if (count($invalidKomponenRabs) > 0) {
-            return response()->json(['message' => 'Beberapa id_komponen_rab tidak valid untuk paket kegiatan ini', 'invalid_ids' => $invalidKomponenRabs], 422);
+            return $this->sendError(null, collect(['message' => ['Komponen RAB tidak valid']]), 422);
         }
 
 
