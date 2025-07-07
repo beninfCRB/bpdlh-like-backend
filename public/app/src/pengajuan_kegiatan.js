@@ -722,3 +722,58 @@ window.exportPengajuanKegiatan = (input, evt) => {
         }
     });
 };
+
+window.showModal = () => {
+    $("#modalUpdateSPTJM").modal({
+        keyboard: true,
+        show: true,
+        backdrop: true,
+    });
+};
+
+window.hideModal = () => {
+    $("#save-button").attr("disabled", false);
+    $("#modalUpdateSPTJM").modal("hide");
+};
+
+window.updateSPTJM = (input, evt) => {
+    evt.preventDefault();
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    input.disabled = true;
+
+    let formData = new FormData();
+    formData.append("nomor_sptjm", getValue("nomor_sptjm"));
+
+    updateData(
+        route + "/" + $(input).attr("data-id") + "/update-sptjm",
+        formData
+    )
+        .then((response) => {
+            console.log(response.data.message);
+
+            Swal.fire("Sukses", response.data.message, "success");
+            hideModal();
+            window.location.reload();
+        })
+        .catch((err) => {
+            input.disabled = false;
+            let error = err.response.data;
+            if (!error.success) {
+                Toast.fire({
+                    icon: "warning",
+                    title: error.data.nomor_sptjm[0],
+                });
+            }
+        });
+};
