@@ -39,7 +39,9 @@
                             <tr>
                                 <td>Nomor SPTJM</td>
                                 <td>{{ $data->data->nomor_sptjm }}
-                                    @if (auth()->user()->role_user == 'administrator' || auth()->user()->role_user == 'approver')
+                                    @if (
+                                        (auth()->user()->role_user == 'administrator' || auth()->user()->role_user == 'approver') &&
+                                            ($data->data->flag > 3 && $data->data->flag < 10))
                                         <button class="btn btn-sm btn-primary" onclick="showModal()">Update
                                             SPTJM</button>
                                     @endif
@@ -79,7 +81,8 @@
                             </tr>
                             <tr>
                                 <td>Status Pengajuan</td>
-                                <td>{{ $data->data->tahapan->deskripsi_kegiatan }}</td>
+                                <td>{{ $data->data->flag == 20 ? 'Ditolak' : $data->data->tahapan->deskripsi_kegiatan }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
