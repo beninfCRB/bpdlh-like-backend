@@ -155,6 +155,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'proposal_kegiatan'         => $items->proposal_kegiatan,
                             'tujuan_kegiatan'           => $items->tujuan_kegiatan,
                             'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                            'capaian_output'            => $items->capaian_output,
+                            'capaian_outcome'           => $items->capaian_outcome,
+                            'kendala_kegiatan'          => $items->kendala_kegiatan,
                             'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                             })->first()->user_akseslh_admin->email,
