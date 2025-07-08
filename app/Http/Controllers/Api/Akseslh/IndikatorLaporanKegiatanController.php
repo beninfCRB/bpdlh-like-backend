@@ -99,7 +99,7 @@ class IndikatorLaporanKegiatanController extends ApiController
         if ($validator->fails()) {
             # code...
             \Sentry\captureMessage('Validate Message: ' . $request->user()->email . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
-            return $this->sendError(null, $validator->getMessageBag(), 422);
+            return $this->sendError($request->all(), $validator->getMessageBag(), 422);
         }
 
         $input  = $validator->validated();
