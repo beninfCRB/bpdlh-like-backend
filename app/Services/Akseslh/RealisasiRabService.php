@@ -124,6 +124,16 @@ class RealisasiRabService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Invalid data', 422);
         }
 
+        $idTransportasi = $result->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Transportasi'); // Transportasi
+        })->pluck('id')->first();
+
+        $idKonsumsi = $result->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Konsumsi'); // Konsumsi
+        })->pluck('id')->first();
+
+        $jumlah_peserta = $result->paket_kegiatan->jumlah_peserta;
+
         $idNaraSumber = $result->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Nara Sumber'); // Nara Sumber
         })->pluck('id')->first();
@@ -164,6 +174,22 @@ class RealisasiRabService extends AppService implements AppServiceInterface
                     return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
                 }
                 $jasaProfesi++;
+            }
+
+            if ($item['id_komponen_rab'] == $idTransportasi) {
+                # code...
+                if ($item['qty_realisasi'] < $jumlah_peserta) {
+                    # code...
+                    return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                }
+            }
+
+            if ($item['id_komponen_rab'] == $idKonsumsi) {
+                # code...
+                if ($item['qty_realisasi'] < $jumlah_peserta) {
+                    # code...
+                    return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                }
             }
 
             $totalDataKomponenRab += $item['harga_unit_realisasi'] * $item['qty_realisasi'];
