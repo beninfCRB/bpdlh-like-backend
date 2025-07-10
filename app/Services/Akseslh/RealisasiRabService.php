@@ -182,6 +182,11 @@ class RealisasiRabService extends AppService implements AppServiceInterface
                     # code...
                     return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
                 }
+
+                if ($item['qty_realisasi'] > $jumlah_peserta) {
+                    # code...
+                    return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                }
             }
 
             if ($item['id_komponen_rab'] == $idKonsumsi) {
@@ -189,6 +194,11 @@ class RealisasiRabService extends AppService implements AppServiceInterface
                 if ($item['qty_realisasi'] < $jumlah_peserta) {
                     # code...
                     return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                }
+
+                if ($item['qty_realisasi'] < $jumlah_peserta) {
+                    # code...
+                    return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
                 }
             }
 
