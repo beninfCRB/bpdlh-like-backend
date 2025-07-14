@@ -196,7 +196,7 @@ class RealisasiRabService extends AppService implements AppServiceInterface
                     return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
                 }
 
-                if ($item['qty_realisasi'] < $jumlah_peserta) {
+                if ($item['qty_realisasi'] > $jumlah_peserta) {
                     # code...
                     return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
                 }
