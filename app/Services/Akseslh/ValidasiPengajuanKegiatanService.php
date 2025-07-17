@@ -823,7 +823,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
                 if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
                     # code...
-                    if (isset($read->pengembalian) && count($read->pengembalian) > 0) {
+                    if (isset($read->pengembalian) && $read->pengembalian->count() > 0) {
                         $read->pengembalian()->delete();
                     }
 
