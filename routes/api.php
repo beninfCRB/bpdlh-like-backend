@@ -80,6 +80,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::get('getDataRab/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'getDataRab']);
+    Route::get('getDataRealisasiRab/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'getDataRealisasiRab']);
     Route::get('getDraftPengajuan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'show']);
 
     Route::get('getLokasiBidangFolu', [App\Http\Controllers\Api\Akseslh\LokasiBidangFoluController::class, 'index']);
