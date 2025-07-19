@@ -196,6 +196,23 @@ class PengajuanKegiatanController extends ApiController
         }
     }
 
+    public function getDataRealisasiRab($id)
+    {
+        $result = $this->pengajuanKegiatanService->getDataRealisasiRab($id);
+
+        try {
+            //code...
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            //throw $th;
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
     public function revisi_pengajuan_kegiatan_create(Request $request)
     {
         $validator = Validator::make($request->all(), [
