@@ -764,6 +764,39 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
+    public function getDataRealisasiRab($id)
+    {
+        $result = $this->model->find($id);
+
+        if (!$result || count($result->rab_pengajuan_paket_kegiatans) <= 0)  return $this->sendError(null, 'Not Found', 422);
+
+        $rab = null;
+        foreach ($result->rab_pengajuan_paket_kegiatans as $item) {
+            # code...
+            $rab[] = [
+                'id_komponen_rab'       => $item->id,
+                'id_komponen'           => $item->master_komponen_rab->id,
+                'jenis_komponen_rab'    => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                'komponen_rab'          => $item->master_komponen_rab->komponen_rab,
+                'satuan'                => $item->master_komponen_rab->satuan->satuan,
+                'harga_unit'            => $item->harga_unit,
+                // 'nilai_standar'         => $item->harga_unit,
+                'qty'                   => $item->qty,
+                'harga_unit_realisasi' => $item->harga_unit_realisasi ?? null,
+                'qty_realisasi'        => $item->qty_realisasi ?? null,
+            ];
+        }
+        $collectRab = collect($rab);
+
+        $result = [
+            'id_pengajuan'  => $id,
+            'caping_rab'    => $result->caping_rab,
+            'komponen_rab'  => $collectRab->groupBy('jenis_komponen_rab'),
+        ];
+
+        return $this->sendSuccess($result);
+    }
+
     private function checkStatusPengajuan($angka, $logTahapanPengajuanKegiatan)
     {
         if ($logTahapanPengajuanKegiatan->count() == 9) {
@@ -970,77 +1003,6 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
-            //code...
-            // $fileLamaSPTJM = $model->document()->where(['group', 'perjanjian_kerjasama'])->get();
-
-            // $detailLogSPTJM = $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()
-            //     ->where('pengajuan_kegiatan_id', $id)
-            //     ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-            //         $q->where('deskripsi_kegiatan', 'Verifikasi SPTJM');
-            //     })->first();
-
-            // if ($detailLogSPTJM) {
-            //     if (isset($data['perjanjian_kerjasama'])) {
-            //         if (isset($fileLamaSPTJM) && count($fileLamaSPTJM) > 0) {
-            //             foreach ($fileLamaSPTJM as $item) {
-            //                 $this->fileUploadService->deleteFile($item->file_path);
-
-            //                 \DB::table('files')->where(['id' => $item->id])->delete();
-            //             }
-            //         }
-
-            //         // Save document
-            //         if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
-            //             // upload document
-            //             $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-            //         } else {
-            //             $upload = $this->fileUploadService->handleImage($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-            //         }
-
-            //         if (!empty($upload)) {
-            //             $document = $this->fileTable->newQuery()->find($upload->id);
-            //             $document->update([
-            //                 'fileable_type' => get_class($model),
-            //                 'fileable_id'   => $model->id,
-            //             ]);
-            //         }
-            //     } else {
-            //         if (!$fileLamaSPTJM) {
-            //             # code...
-            //             \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
-            //             return $this->sendError(null, collect(['perjanjian_kerjasama' => ['perjanjian kerjasama wajib diisi.']]), 422);
-            //         }
-            //     }
-            // } else {
-            //     if (isset($data['perjanjian_kerjasama'])) {
-            //         // Save document
-            //         if (isset($fileLamaSPTJM) && count($fileLamaSPTJM) > 0) {
-            //             foreach ($fileLamaSPTJM as $item) {
-            //                 $this->fileUploadService->deleteFile($item->file_path);
-
-            //                 \DB::table('files')->where(['id' => $item->id])->delete();
-            //             }
-            //         }
-            //         if ($data['perjanjian_kerjasama']->getClientOriginalExtension() == 'pdf') {
-            //             // upload document
-            //             $upload = $this->fileUploadService->handleFile($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-            //         } else {
-            //             $upload = $this->fileUploadService->handleImage($data['perjanjian_kerjasama'])->saveToDb('perjanjian_kerjasama');
-            //         }
-
-            //         if (!empty($upload)) {
-            //             $document = $this->fileTable->newQuery()->find($upload->id);
-            //             $document->update([
-            //                 'fileable_type' => get_class($model),
-            //                 'fileable_id'   => $model->id,
-            //             ]);
-            //         }
-            //     } else {
-            //         \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
-            //         return $this->sendError(null, collect(['perjanjian_kerjasama' => ['perjanjian kerjasama wajib diisi.']]), 422);
-            //     }
-            // }
-
             $fileLamaSPTJM = $model->document()->where(['group' => 'perjanjian_kerjasama'])->get();
 
             $detailLogSPTJM = $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()
@@ -1132,7 +1094,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ->update(['tanggal_masuk' => date("Y-m-d")]);
 
             $model->user_akseslh->unreadNotifications->markAsRead();
-            $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung'], 'jenis_kelamin' => $data['jenis_kelamin']]);
+            $model->user_akseslh->data_pic_kelompok_masyarakat->update(['nama_gadis_ibu_kandung' => $data['nama_gadis_ibu_kandung']]);
             $model->flag = 11;
             $model->save();
 
@@ -1193,6 +1155,93 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         if ($model->rab_pengajuan_paket_kegiatans->count() > 0) {
             \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Rab sudah ada', \Sentry\Severity::warning());
             return $this->sendError(null, 'Rab sudah ada', 422);
+        }
+
+        $idTransportasi = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Transportasi'); // Transportasi
+        })->pluck('id')->first();
+
+        $idKonsumsi = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Konsumsi'); // Konsumsi
+        })->pluck('id')->first();
+
+        $jumlah_peserta = $model->paket_kegiatan->jumlah_peserta;
+
+        $idNaraSumber = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Nara Sumber'); // Nara Sumber
+        })->pluck('id')->first();
+
+        $idFasilitator = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Fasilitator'); // Fasilitator
+        })->pluck('id')->first();
+
+        $idModerator = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Moderator'); // Moderator
+        })->pluck('id')->first();
+
+        $totalDataKomponenRab  = 0;
+        $totalRab = 0;
+        $jasaProfesi = 0;
+
+        foreach ($dataKomponenRab['komponen_rab'] as $item) {
+            # code...
+            if ($item['id_komponen_rab'] == $idNaraSumber) {
+                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 4) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen_rab'] == $idFasilitator) {
+                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 10) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen_rab'] == $idModerator) {
+                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 2) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen_rab'] == $idTransportasi) {
+                # code...
+                if ($item['qty_realisasi'] < $jumlah_peserta) {
+                    # code...
+                    return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                }
+
+                if ($item['qty_realisasi'] > $jumlah_peserta) {
+                    # code...
+                    return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                }
+            }
+
+            if ($item['id_komponen_rab'] == $idKonsumsi) {
+                # code...
+                if ($item['qty_realisasi'] < $jumlah_peserta) {
+                    # code...
+                    return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                }
+
+                if ($item['qty_realisasi'] > $jumlah_peserta) {
+                    # code...
+                    return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                }
+            }
+
+            $totalDataKomponenRab += $item['harga_unit_realisasi'] * $item['qty_realisasi'];
+        }
+
+        if ($jasaProfesi < 3) {
+            # code...
+            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Jasa profesi harus minimal 3', \Sentry\Severity::warning());
+            return $this->sendError(null, collect(['message' => ['Jasa profesi harus minimal 3']]), 422);
         }
 
         \DB::beginTransaction();
@@ -1666,6 +1715,25 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess(null);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function updateSptjm($id, $data)
+    {
+        $read   =   $this->model->newQuery()->find($id);
+
+        \DB::beginTransaction();
+
+        try {
+
+            $read->nomor_sptjm    =   $data['nomor_sptjm'];
+            $read->save();
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);

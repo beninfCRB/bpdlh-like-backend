@@ -31,6 +31,9 @@ class PengajuanKegiatan extends AppModel
         'time_mulai_kegiatan',
         'time_akhir_kegiatan',
         'proposal_kegiatan',
+        'capaian_output',
+        'capaian_outcome',
+        'kendala_kegiatan',
         'tujuan_kegiatan',
         'ruang_lingkup_kegiatan',
         'lokasi_bidang_folu_id',
@@ -212,5 +215,15 @@ class PengajuanKegiatan extends AppModel
     public function tahapan(): HasOne
     {
         return $this->hasOne(TahapanPengajuanKegiatan::class, 'code_id', 'flag');
+    }
+
+    /**
+     * Get the tahapan associated with the PengajuanKegiatan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function testimonial(): HasOne
+    {
+        return $this->hasOne(Testimonial::class, 'pengajuan_kegiatan_id');
     }
 }

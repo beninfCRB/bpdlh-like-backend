@@ -155,6 +155,10 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'proposal_kegiatan'         => $items->proposal_kegiatan,
                             'tujuan_kegiatan'           => $items->tujuan_kegiatan,
                             'ruang_lingkup_kegiatan'    => $items->ruang_lingkup_kegiatan,
+                            'capaian_output'            => $items->capaian_output,
+                            'capaian_outcome'           => $items->capaian_outcome,
+                            'kendala_kegiatan'          => $items->kendala_kegiatan,
+                            'testimonial'               => $items->testimonial()->first() ? $items->testimonial()->first()->testimonial : null,
                             'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
                             })->first()->user_akseslh_admin->email,
@@ -771,14 +775,6 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'user_akseslh_id'   => $data['user']->id
                 ]);
 
-                if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
-                    # code...
-                    $this->modelPengembalian->newQuery()->create([
-                        'pengajuan_kegiatan_id' => $read->id,
-                        'jumlah_pengembalian'   => $data['jumlah_pengembalian']
-                    ]);
-                }
-
                 // Save document
                 // upload document
                 $upload = $this->fileUploadService->handleFile($data['surat_pencairan_dana_termin_2'])->saveToDb('surat_pencairan_dana_termin_2');
@@ -824,6 +820,18 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     'tanggal_selesai' => date("Y-m-d"),
                     'user_akseslh_id'   => $data['user']->id
                 ]);
+
+                if (isset($data['jumlah_pengembalian']) && $data['jumlah_pengembalian'] > 0) {
+                    # code...
+                    if (isset($read->pengembalian) && $read->pengembalian->count() > 0) {
+                        $read->pengembalian()->delete();
+                    }
+
+                    $this->modelPengembalian->newQuery()->create([
+                        'pengajuan_kegiatan_id' => $read->id,
+                        'jumlah_pengembalian'   => $data['jumlah_pengembalian']
+                    ]);
+                }
 
                 $dataSend = array(
                     'nomor_pengajuan' => $read->nomor_pengajuan,

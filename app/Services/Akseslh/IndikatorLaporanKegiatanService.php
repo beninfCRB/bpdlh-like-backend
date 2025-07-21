@@ -11,6 +11,9 @@ use App\Models\TahapanPengajuanKegiatan;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\LogTahapanPengajuanKegiatan;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
+use App\Models\MasterDataIndikatorLaporan;
+use App\Models\MasterIndikator;
+use App\Models\Testimonial;
 use App\Notifications\LaporanNotification;
 
 class IndikatorLaporanKegiatanService extends AppService implements AppServiceInterface
@@ -19,19 +22,28 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
     protected $modelLogTahapanPengajuanKegiatan;
     protected $modelTahapanPengajuanKegiatan;
     protected $modelDetailLogTahapanPengajuanKegiatan;
+    protected $modelMasterDataIndikatorLaporan;
+    protected $modelMasterIndikator;
+    protected $modelTestimonial;
 
     public function __construct(
         IndikatorLaporanKegiatan $model,
         PengajuanKegiatan $modelPengajuanKegiatan,
         LogTahapanPengajuanKegiatan $modelLogTahapanPengajuanKegiatan,
         TahapanPengajuanKegiatan $modelTahapanPengajuanKegiatan,
-        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan
+        DetailLogTahapanPengajuanKegiatan $modelDetailLogTahapanPengajuanKegiatan,
+        MasterDataIndikatorLaporan $modelMasterDataIndikatorLaporan,
+        MasterIndikator $modelMasterIndikator,
+        Testimonial $modelTestimonial
     ) {
         parent::__construct($model);
         $this->modelPengajuanKegiatan           = $modelPengajuanKegiatan;
         $this->modelLogTahapanPengajuanKegiatan = $modelLogTahapanPengajuanKegiatan;
         $this->modelTahapanPengajuanKegiatan    = $modelTahapanPengajuanKegiatan;
         $this->modelDetailLogTahapanPengajuanKegiatan   = $modelDetailLogTahapanPengajuanKegiatan;
+        $this->modelMasterDataIndikatorLaporan  = $modelMasterDataIndikatorLaporan;
+        $this->modelMasterIndikator             = $modelMasterIndikator;
+        $this->modelTestimonial                 = $modelTestimonial;
     }
 
     public function getAll()
@@ -102,12 +114,30 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
                 $read->indikator_laporan_kegiatan()->delete();
             }
 
+
+            $masterIndikator = $this->modelMasterIndikator->get();
+
             foreach ($data['indikator_kegiatan'] as $item) {
+                $mi = $masterIndikator->where('id', $item['master_data_indikator_laporan_id'])->first();
+
+                $indikator = $this->modelMasterDataIndikatorLaporan->updateOrCreate(
+                    ['master_indikator_id' => $item['master_data_indikator_laporan_id']],
+                    [
+                        'jenis_kegiatan_id'         => $read->paket_kegiatan->jenis_kegiatan->id ?? null,
+                        'sub_tematik_kegiatan_id'   => $read->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->id ?? null,
+                        'nama_indikator'            => $mi->nama_indikator ?? null,
+                        'satuan'                    => $mi->satuan ?? null,
+                        'tipe_data'                 => $mi->tipe_data ?? null,
+                        'master_indikator_id'       => $item['master_data_indikator_laporan_id'] ?? null,
+                        'flag' => 1,
+                    ]
+                );
+
 
                 $dataIndikator[] = [
-                    'master_data_indikator_laporan_id'  => $item['master_data_indikator_laporan_id'],
+                    'master_data_indikator_laporan_id'  => $indikator->id,
                     'pengajuan_kegiatan_id'             => $id,
-                    'nilai_laporan'                     => $item['nilai_laporan']
+                    'nilai_laporan'                     => $item['nilai_laporan'] ?? 0
                 ];
             }
 
@@ -117,11 +147,27 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
                 })
             );
 
+            if (isset($data['testimonial']) && !empty($data['testimonial'])) {
+                # code...
+                if (isset($read->testimonial) && $read->testimonial->count() > 0) {
+                    $read->testimonial()->delete();
+                }
+
+                $this->modelTestimonial->newQuery()->create([
+                    'pengajuan_kegiatan_id'             => $id,
+                    'data_pic_kelompok_masyarakat_id'   => $read->user_akseslh->data_pic_kelompok_masyarakat_id,
+                    'testimonial'                       => $data['testimonial'] ?? null,
+                ]);
+            }
+
 
             $read->tanggal_mulai_kegiatan = $data['tanggal_mulai_kegiatan'];
             $read->tanggal_akhir_kegiatan = $data['tanggal_akhir_kegiatan'];
-            $read->longitude = $data['longitude'];
-            $read->latitude = $data['latitude'];
+            $read->longitude = explode(',', $data['longitude'])[0];
+            $read->latitude = explode(',', $data['latitude'])[0];
+            $read->capaian_output = $data['capaian_output'];
+            $read->capaian_outcome = $data['capaian_outcome'];
+            $read->kendala_kegiatan = $data['kendala_kegiatan'];
 
             $read->save();
 

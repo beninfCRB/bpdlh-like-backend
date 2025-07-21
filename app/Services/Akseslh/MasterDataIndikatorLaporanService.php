@@ -5,6 +5,7 @@ namespace App\Services\Akseslh;
 
 use App\Models\LogJadwalPembukaan;
 use App\Models\MasterDataIndikatorLaporan;
+use App\Models\MasterIndikator;
 use App\Models\PengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
@@ -12,13 +13,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MasterDataIndikatorLaporanService extends AppService implements AppServiceInterface
 {
-    protected $modelPengajuanKegiatan, $modelLogJadwalPembukaan;
+    protected $modelPengajuanKegiatan, $modelLogJadwalPembukaan, $modelMasterIndikator;
 
-    public function __construct(MasterDataIndikatorLaporan $model, PengajuanKegiatan $pengajuanKegiatan, LogJadwalPembukaan $modelLogJadwalPembukaan)
+    public function __construct(MasterDataIndikatorLaporan $model, PengajuanKegiatan $pengajuanKegiatan, LogJadwalPembukaan $modelLogJadwalPembukaan, MasterIndikator $modelMasterIndikator)
     {
         parent::__construct($model);
         $this->modelPengajuanKegiatan = $pengajuanKegiatan;
         $this->modelLogJadwalPembukaan  = $modelLogJadwalPembukaan;
+        $this->modelMasterIndikator     = $modelMasterIndikator;
     }
 
     public function getAll()
@@ -108,39 +110,61 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
 
         if (!$pengajuan) return $this->sendError(null, 'Not Found', 422);
 
-        if ($pengajuan->indikator_laporan_kegiatan->isEmpty()) {
-            # code...
-            $jenis_kegiatan_id          = $pengajuan->paket_kegiatan->jenis_kegiatan_id;
-            $sub_tematik_kegiatan_id    = $pengajuan->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id;
-            $result = $this->model->newQuery()->where(['jenis_kegiatan_id' => $jenis_kegiatan_id, 'sub_tematik_kegiatan_id' => $sub_tematik_kegiatan_id])->get();
+        // $indikator = $pengajuan->indikator_laporan_kegiatan;
 
-            $result->transform(function ($item, $key) {
-                return [
-                    'id'                => $item->id,
-                    'nama_indikator'    => $item->nama_indikator,
-                    'satuan'            => $item->satuan,
-                    'tipe_data'         => $item->tipe_data,
-                    'nilai_laporan'     => null,
-                ];
-            });
-        } else {
-            # code...
-            $result = $pengajuan->indikator_laporan_kegiatan->transform(function ($item, $key) {
-                return [
-                    'id'                => $item->master_data_indikator_laporan->id,
-                    'nama_indikator'    => $item->master_data_indikator_laporan->nama_indikator,
-                    'satuan'            => $item->master_data_indikator_laporan->satuan,
-                    'tipe_data'         => $item->master_data_indikator_laporan->tipe_data,
-                    'nilai_laporan'     => $item->nilai_laporan,
-                ];
-            });
-        }
+        /**
+         *
+         * every() digunakan untuk memastikan semua item memiliki master_indikator_id yang valid.
+         *Jika ada satu saja item yang master_data_indikator_laporan-nya null atau master_indikator_id-nya null, maka blok else akan dijalankan.
+         */
+        // if ($indikator && $indikator->count() > 0 && $indikator->every(function ($item) {
+        //     return $item->master_data_indikator_laporan && $item->master_data_indikator_laporan->master_indikator_id !== null;
+        // })) {
+        //     # code...
+        //     $result = $pengajuan->indikator_laporan_kegiatan->map(function ($item, $key) {
+        //         return [
+        //             'id'                => $item->master_data_indikator_laporan->master_indikator_id,
+        //             'nama_indikator'    => $item->master_data_indikator_laporan->nama_indikator,
+        //             'satuan'            => $item->master_data_indikator_laporan->satuan,
+        //             'tipe_data'         => $item->master_data_indikator_laporan->tipe_data,
+        //             'nilai_laporan'     => $item->nilai_laporan,
+        //         ];
+        //     });
+        // } else {
+        //     $result = $this->modelMasterIndikator->newQuery()->get();
+
+        //     $result->transform(function ($item, $key) {
+        //         return [
+        //             'id'                => $item->id,
+        //             'nama_indikator'    => $item->nama_indikator,
+        //             'satuan'            => $item->satuan,
+        //             'tipe_data'         => $item->tipe_data,
+        //             'nilai_laporan'     => null,
+        //         ];
+        //     });
+        // }
+        $result = $this->modelMasterIndikator->newQuery()->get();
+
+        $result->transform(function ($item, $key) {
+            return [
+                'id'                => $item->id,
+                'nama_indikator'    => $item->nama_indikator,
+                'satuan'            => $item->satuan,
+                'tipe_data'         => $item->tipe_data,
+                'nilai_laporan'     => null,
+            ];
+        });
 
         $return = [
             'tanggal_mulai_kegiatan'    => $pengajuan->tanggal_mulai_kegiatan,
             'tanggal_akhir_kegiatan'    => $pengajuan->tanggal_akhir_kegiatan,
-            'longitude'                => $pengajuan->longitude,
-            'latitude'                 => $pengajuan->latitude,
+            'longitude'                 => $pengajuan->longitude,
+            'latitude'                  => $pengajuan->latitude,
+            'capaian_output'            => $pengajuan->capaian_output,
+            'capaian_outcome'           => $pengajuan->capaian_outcome,
+            'kendala_kegiatan'          => $pengajuan->kendala_kegiatan,
+            'testimonial'               => $pengajuan->testimonial->testimonial ?? null,
+            'jumlah_pengembalian'       => $pengajuan->pengembalian()->sum('jumlah_pengembalian') ?? 0,
             'indikator_kegiatan'        => $result,
         ];
 

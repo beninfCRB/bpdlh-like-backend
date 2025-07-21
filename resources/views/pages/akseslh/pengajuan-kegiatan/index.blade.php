@@ -18,6 +18,7 @@
         </div>
     </div>
 
+    {{-- Export dan Download --}}
     <div class="row">
         <div class="col-lg-12">
             <ul class="nav nav-tabs navtab-bg">
@@ -138,15 +139,12 @@
     </div>
     <!-- end row -->
 
+    {{-- Tabel --}}
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">Daftar Pengajuan Kegiatan</h3>
-                    <input type="hidden" name="data-table-pengajuan-kegiatan" id="data-table-pengajuan-kegiatan"
-                        value="{{ route('data-pengajuan-kegiatan') }}">
-                    <input type="hidden" name="pengajuan-kegiatan-route" id="pengajuan-kegiatan-route"
-                        value="{{ route('pengajuan-kegiatan.index') }}">
                 </div>
                 <div class="panel-body table-rep-plugin">
                     <div class="row">
@@ -155,9 +153,28 @@
                                 action="{{ route('pengajuan-kegiatan.index') }}">
                                 @csrf
                                 <div class="input-group m-t-10">
-                                    <input type="text" id="search" name="search" class="form-control"
-                                        value="{{ old('search') }}" placeholder="Search" />
-                                    <span class="input-group-btn">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" id="search" name="search" class="form-control"
+                                                value="{{ old('search') }}" placeholder="Search" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select name="tahapan" id="tahapan" class="form-control">
+                                                <option value="">-- Pilih Tahapan --</option>
+                                                @isset($flag)
+                                                    @foreach ($flag as $item)
+                                                        <option value="{{ $item->code_id }}"
+                                                            {{ old('tahapan') == $item->code_id ? 'selected' : '' }}>
+                                                            {{ $item->deskripsi_kegiatan }}
+                                                        </option>
+                                                    @endforeach
+                                                    <option value="20" {{ old('tahapan') == 20 ? 'selected' : '' }}>
+                                                        Ditolak</option>
+                                                @endisset
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <span class="input-group-btn m-l-5">
                                         <button type="submit" class="btn waves-effect waves-light btn-info">
                                             <i class="fa fa-search"></i>
                                         </button>
@@ -291,16 +308,17 @@
                                         <td>{{ $item->created_at->format('d-m-Y H:i:s') ?? '-' }}</td>
                                         <td>{{ $item->updated_at->format('d-m-Y H:i:s') ?? '-' }}</td>
                                         <td>
-                                            <a href="{{ route('pengajuan-kegiatan.show', $item->id) }}"
-                                                class="btn btn-sm btn-clean btn-icon btn-icon-md" target="_blank"
-                                                title="Lihat Detail">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
+                                            <a href="{{ route('pengajuan-kegiatan.show', $item->id) }}" target="_BLANK"
+                                                class="btn btn-icon waves-effect btn-default m-b-5" data-toggle="tooltip"
+                                                data-placement="left" title="Detail Pengajuan"><i
+                                                    class="fa fa-eye"></i></a>
                                             <a href="{{ route('pengajuan-kegiatan.document', $item->id) }}"
-                                                target="_blank" class="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                                title="Lihat Dokumen">
-                                                <i class="fa fa-file"></i>
-                                            </a>
+                                                target="_BLANK" class="btn btn-icon waves-effect btn-default m-b-5"
+                                                data-toggle="tooltip" data-placement="left"
+                                                title="Dokumen
+                                                Pengajuan"><i
+                                                    class="fa fa-file"></i></a>
+
                                         </td>
                                     </tr>
                                 @endforeach
@@ -310,7 +328,6 @@
                     {{ $pengajuan_kegiatan->links() }}
                 </div>
             </div>
-
         </div>
     </div>
     <!-- End Row -->

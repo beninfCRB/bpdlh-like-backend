@@ -51,6 +51,11 @@ class LoginController extends ApiController
                     return $this->sendError(null, ['error' => [['Akun dinonaktifkan']]], 422);
                 }
 
+                if ($user->role_user == 'administrator') {
+                    # code...
+                    return $this->sendError(null, ['error' => [['Akun tidak ditemukan']]], 422);
+                }
+
                 if ($user->status_user == 'NON ACTIVE') {
                     # code...
                     \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Akun dinonaktifkan', \Sentry\Severity::warning());
@@ -75,6 +80,7 @@ class LoginController extends ApiController
 
                         ]);
                     } else {
+
                         return $this->sendSuccess([
                             'token'                     => $token,
                             'jenis_kelompok_masyarakat' => $user->role_user == 'approver' ? 'Validator' : $user->role_user,

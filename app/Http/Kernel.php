@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'ensurerole'    => \App\Http\Middleware\EnsureRoleIsValid::class,
+        'ensureroleweb' => \App\Http\Middleware\EnsureRoleWebIsValid::class,
         'recaptcha' => \App\Http\Middleware\VerifyReCaptcha::class,
         'pembukaan' => \App\Http\Middleware\VerifyLogJadwalPembukaan::class,
         'masa_sanggah'  => \App\Http\Middleware\VerifyLogMasaSanggah::class,

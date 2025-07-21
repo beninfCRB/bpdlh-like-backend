@@ -12,6 +12,7 @@ use App\Services\Akseslh\PengajuanKegiatanService;
 use App\Services\Akseslh\PaketKegiatanService;
 use App\Services\Akseslh\UserEksternalService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PengajuanKegiatanController extends ApiController
@@ -69,6 +70,10 @@ class PengajuanKegiatanController extends ApiController
                     })
                     ->orWhere('nomor_pengajuan', 'like', '%' . $request->search . '%');
             }
+        }
+
+        if ($request->has('tahapan') && !empty($request->tahapan)) {
+            $query->where('flag', (int) $request->tahapan);
         }
 
         $pengajuan_kegiatan = $query->orderBy('created_at', 'DESC')->paginate(10);
@@ -230,6 +235,29 @@ class PengajuanKegiatanController extends ApiController
             return back()->with('error', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function update_sptjm($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'nomor_sptjm' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError($validator->errors(), "Validation Error", 422);
+        }
+
+        $result = $this->PengajuanKegiatanService->updateSptjm($id, $validator->validated());
+
+        try {
+            if (!$result->success) {
+                return $this->sendError($result->data, $result->message, $result->code);
+            }
+            return $this->sendSuccess(null, "Berhasil update sptjm " . $id, 200);
+        } catch (\Exception $exception) {
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 }

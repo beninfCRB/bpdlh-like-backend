@@ -135,7 +135,25 @@ class RealisasiRabService extends AppService implements AppServiceInterface
         $invalidKomponenRabs = array_diff($komponenIds->toArray(), $validKomponenRabs);
 
         if (count($invalidKomponenRabs) > 0) {
-            return response()->json(['message' => 'Beberapa id_komponen_rab tidak valid untuk paket kegiatan ini', 'invalid_ids' => $invalidKomponenRabs], 422);
+            return $this->sendError(null, collect(['message' => ['Komponen RAB tidak valid']]), 422);
+        }
+
+        $totalDataKomponenRab  = 0;
+        $totalRab = 0;
+
+        foreach ($dataKomponenRab['komponen_rab'] as $item) {
+            # code...
+            $totalDataKomponenRab += $item['harga_unit_realisasi'] * $item['qty_realisasi'];
+        }
+
+        foreach ($result->rab_pengajuan_paket_kegiatans as $item) {
+            # code...
+            $totalRab += $item->harga_unit * $item->qty;
+        }
+
+        if ($totalDataKomponenRab > $totalRab) {
+            # code...
+            return $this->sendError(null, collect(['message' => ['Realisasi tidak boleh lebih dari RAB']]), 422);
         }
 
         \DB::beginTransaction();

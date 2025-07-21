@@ -84,18 +84,22 @@ class IndikatorLaporanKegiatanController extends ApiController
     public function update($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'tanggal_realisasi_kegiatan'                            => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
-            'longitude'                                             => 'required|string',
-            'latitude'                                              => 'required|string',
-            'indikator_kegiatan'                                    => 'required|array',
-            'indikator_kegiatan.*.master_data_indikator_laporan_id' => 'required|exists:master_data_indikator_laporans,id',
-            'indikator_kegiatan.*.nilai_laporan'                    => 'required'
+            'tanggal_realisasi_kegiatan'                                => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
+            'longitude'                                                 => 'required|string',
+            'latitude'                                                  => 'required|string',
+            'indikator_kegiatan'                                        => 'nullable|array',
+            'indikator_kegiatan.*.master_data_indikator_laporan_id'     => 'nullable|exists:master_indikators,id',
+            'indikator_kegiatan.*.nilai_laporan'                        => 'nullable',
+            'testimonial'                                               => 'required|string|max:500',
+            'capaian_output'                                            => 'required|string|max:850',
+            'capaian_outcome'                                           => 'required|string|max:850',
+            'kendala_kegiatan'                                         => 'required|string|max:850',
         ]);
 
         if ($validator->fails()) {
             # code...
             \Sentry\captureMessage('Validate Message: ' . $request->user()->email . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
-            return $this->sendError(null, $validator->getMessageBag(), 422);
+            return $this->sendError($request->all(), $validator->getMessageBag(), 422);
         }
 
         $input  = $validator->validated();
