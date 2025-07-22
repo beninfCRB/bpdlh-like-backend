@@ -43,7 +43,6 @@ class DataPicKelompokMasyarakatImport implements ToCollection, WithHeadingRow
 
     public function model(array $row)
     {
-        dd($row);
         return new DataPicKelompokMasyarakat([
             'kelompok_masyarakat_id'    => $row['kelompok_masyarakat_id'],
             'nama_pic'                  => $row['nama_pic'],

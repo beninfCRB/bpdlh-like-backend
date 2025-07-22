@@ -3,71 +3,63 @@
 namespace App\Http\Controllers\Cms\Akseslh;
 
 use App\Http\Controllers\ApiController;
-use App\Services\Akseslh\LaporanAkhirKegiatanService;
+use App\Services\Akseslh\TolakPengajuanDanProfilService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
-class LaporanAkhirKegiatanController extends ApiController
+class TolakPengajuanDanProfilController extends ApiController
 {
-    protected $laporanAkhirKegiatanService;
+    protected $tolakPengajuanDanProfilService;
 
     public function __construct(
-        LaporanAkhirKegiatanService $laporanAkhirKegiatanService,
+        TolakPengajuanDanProfilService $tolakPengajuanDanProfilService,
         Request $request
     ) {
-        $this->laporanAkhirKegiatanService   =   $laporanAkhirKegiatanService;
+        $this->tolakPengajuanDanProfilService   =   $tolakPengajuanDanProfilService;
         parent::__construct($request);
     }
 
     public function index()
     {
-        return view("pages.akseslh.laporan-akhir-kegiatan.index");
+        return view("pages.akseslh.tolak-pengajuan-dan-profil.index");
     }
 
     public function create()
     {
-        return view("pages.akseslh.laporan-kegiatan.create");
+        return view("pages.akseslh.tolak-pengajuan-dan-profil.create");
     }
 
-    public function edit()
+    public function edit($id)
     {
-        return view("pages.akseslh.laporan-akhir-kegiatan.edit");
+        $data   =   $this->tolakPengajuanDanProfilService->getById($id);
+        return view("pages.akseslh.tolak-pengajuan-dan-profil.edit", compact('data'));
     }
 
     public function show($id)
     {
-        $data   =   $this->laporanAkhirKegiatanService->getById($id);
-        return view("pages.akseslh.laporan-kegiatan.show", compact('data'));
+        $data   =   $this->tolakPengajuanDanProfilService->getById($id);
+        return view("pages.akseslh.tolak-pengajuan-dan-profil.show", compact('data'));
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'file'                      => 'required|file|mimes:pdf,docx,xlsx',
-            'pengajuan_kegiatan_id'     => 'required|array',
-            'pengajuan_kegiatan_id.*'   => 'exists:pengajuan_kegiatans,id',
-        ], [
-            'pengajuan_kegiatan_id.required' => 'Pengajuan kegiatan harus dipilih.',
+        $input  =   $request->validate([
+            'jenis_kelompok_masyarakat'     => 'required|string|max:150',
+            'short_id'                      => 'required|numeric|min:0',
+            'code_id'                       => 'required|numeric|min:0',
         ]);
 
-        if ($validator->fails()) {
-            # code...
-            return $this->sendError(null, $validator->errors()->all(), 422);
-        }
-
-        $input = $validator->validated();
-
-        $result =   $this->laporanAkhirKegiatanService->create($input);
+        $result =   $this->tolakPengajuanDanProfilService->create($input);
 
         try {
             if ($result->success) {
-                $response = $result->data;
-                return $this->sendSuccess($response, $result->message, $result->code);
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('tolak-pengajuan-dan-profil.index');
             }
 
-            return $this->sendError($result->data, $result->message, $result->code);
+            return back()->with('error', $result->message);
         } catch (\Exception $exception) {
-            return $this->sendError($exception->getMessage(), "", 500);
+            return back()->with('error', $exception->getMessage());
         }
     }
 
@@ -79,13 +71,13 @@ class LaporanAkhirKegiatanController extends ApiController
             'code_id'                      => 'required|numeric|min:0',
         ]);
 
-        $result =   $this->laporanAkhirKegiatanService->update($id, $input);
+        $result =   $this->tolakPengajuanDanProfilService->update($id, $input);
 
         try {
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('laporan-kegiatan.index');
+                return redirect()->route('tolak-pengajuan-dan-profil.index');
             }
 
             return back()->with('error', $result->message);
@@ -94,9 +86,9 @@ class LaporanAkhirKegiatanController extends ApiController
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): \Illuminate\Http\JsonResponse
     {
-        $result =   $this->laporanAkhirKegiatanService->delete($id);
+        $result =   $this->tolakPengajuanDanProfilService->delete($id);
         try {
             if ($result->success) {
                 $response = $result->data;
@@ -111,7 +103,7 @@ class LaporanAkhirKegiatanController extends ApiController
 
     public function restore($id)
     {
-        $result = $this->laporanAkhirKegiatanService->restore($id);
+        $result = $this->tolakPengajuanDanProfilService->restore($id);
         try {
             if ($result->success) {
                 $response = $result->data;
