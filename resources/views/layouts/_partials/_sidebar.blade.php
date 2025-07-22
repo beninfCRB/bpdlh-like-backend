@@ -220,6 +220,11 @@
                                 style="padding: 10px 25px 10px 30px;">> <span>
                                     Unggah Laporan Akhir</span></a>
                         </li>
+                        <li>
+                            <a href="{{ route('laporan-akhir-kegiatan.edit') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>
+                                    Ubah Laporan Akhir</span></a>
+                        </li>
                     </ul>
                 </li>
             </ul>

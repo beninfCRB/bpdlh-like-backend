@@ -120,7 +120,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
 
-        Route::resource('laporan-akhir-kegiatan', App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class);
+        Route::get('laporan-akhir-kegiatan', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'index'])->name('laporan-akhir-kegiatan.index');
+        Route::post('laporan-akhir-kegiatan', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'store'])->name('laporan-akhir-kegiatan.store');
+        Route::get('laporan-akhir-kegiatan/edit', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'edit'])->name('laporan-akhir-kegiatan.edit');
 
         // Datatable
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');

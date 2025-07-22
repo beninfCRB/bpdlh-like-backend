@@ -29,10 +29,9 @@ class LaporanAkhirKegiatanController extends ApiController
         return view("pages.akseslh.laporan-kegiatan.create");
     }
 
-    public function edit($id)
+    public function edit()
     {
-        $data   =   $this->laporanAkhirKegiatanService->getById($id);
-        return view("pages.akseslh.laporan-kegiatan.edit", compact('data'));
+        return view("pages.akseslh.laporan-akhir-kegiatan.edit");
     }
 
     public function show($id)
