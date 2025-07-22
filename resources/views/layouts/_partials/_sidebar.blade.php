@@ -10,13 +10,9 @@
                         aria-expanded="false">{{ auth()->user()->nama_pic }}
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
+
                         <li>
-                            <a href="javascript:void(0)"><i class="md md-face-unlock"></i> Profile
-                                <div class="ripple-wrapper"></div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
+                            <a href="{{ route('telescope') }}"><i class="md md-settings"></i> Telescope</a>
                         </li>
                         <li>
                             <form action="{{ route('logout') }}" method="post" id="logout-form-sidebar">
@@ -28,8 +24,7 @@
                         </li>
                     </ul>
                 </div>
-
-                <p class="text-muted m-0">{{ auth()->user()->email }}</p>
+                <p class="text-muted m-0">{{ auth()->user()->role_user }}</p>
             </div>
         </div>
         <!--- Divider -->

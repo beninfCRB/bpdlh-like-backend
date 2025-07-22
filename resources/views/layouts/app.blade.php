@@ -14,7 +14,7 @@
 
     <link rel="shortcut icon" href="{{ asset('template/images/favicon_1.ico') }}" />
 
-    <title>{{ config('app.name') }} - @yield('title')</title>
+    <title>{{ Str::words(config('app.name'), 3) }} - @yield('title')</title>
 
     <!-- Base Css Files -->
     <link href="{{ asset('template/css/bootstrap.min.css') }}" rel="stylesheet" />
