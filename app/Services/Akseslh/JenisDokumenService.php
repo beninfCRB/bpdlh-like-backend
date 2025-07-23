@@ -112,7 +112,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->withTrashed()->find($id);
 
         return $this->sendSuccess($result);
     }
