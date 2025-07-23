@@ -977,6 +977,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'paket_kegiatan_id'         => $model->paket_kegiatan_id,
                 'fileDocument'              => $model->document,
                 'nomor_pengajuan'           => $model->nomor_pengajuan,
+                'status'                    => 'draft',
                 'caping_rab'                => $model->caping_rab
             ];
         }

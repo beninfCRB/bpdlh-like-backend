@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tolak Profil dan Pengajuan Kegiatan')
+@section('title', 'Tolak Pengajuan dan Profil')
 
 @section('script')
     {{-- <script src="{{ asset('app/build/laporan_akhir_kegiatan.js') }}" type="text/javascript"></script> --}}
@@ -10,10 +10,10 @@
     <!-- Page-Title -->
     <div class="row">
         <div class="col-sm-12">
-            <h4 class="pull-left page-title">LAPORAN AKHIR KEGIATAN</h4>
+            <h4 class="pull-left page-title">KELOLA PENOLAKAN</h4>
             <ol class="breadcrumb pull-right">
-                <li><a href="#">Pengajuan Kegiatan</a></li>
-                <li class="active">Unggah Laporan Akhir Kegiatan</li>
+                <li><a href="#">Kelola Penolakan</a></li>
+                <li class="active">Tolak Pengajuan dan Profil</li>
             </ol>
         </div>
     </div>
@@ -22,11 +22,11 @@
         <div class="col-md-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Unggah Laporan Akhir Kegiatan</h3>
-                    <input type="hidden" name="data-table-laporan-akhir-kegiatan" id="data-table-laporan-akhir-kegiatan"
-                        value="{{ route('data-laporan-akhir-kegiatan') }}">
-                    <input type="hidden" name="laporan-akhir-kegiatan-route" id="laporan-akhir-kegiatan-route"
-                        value="{{ route('laporan-akhir-kegiatan.index') }}">
+                    <h3 class="panel-title">Unggah Template</h3>
+                    <input type="hidden" name="data-table-tolak-pengajuan-dan-profil"
+                        id="data-table-tolak-pengajuan-dan-profil" value="{{ route('data-tolak-pengajuan-dan-profil') }}">
+                    <input type="hidden" name="tolak-pengajuan-dan-profil-route" id="tolak-pengajuan-dan-profil-route"
+                        value="{{ route('tolak-pengajuan-dan-profil.index') }}">
                 </div>
                 <div class="panel-body">
                     <form action="#" method="post" enctype="multipart/form-data" id="upload-form">
@@ -47,7 +47,7 @@
                     </form>
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
-                            <table id="dt_laporan_akhir_kegiatan" class="table table-striped table-bordered">
+                            <table id="dt_tolak_pengajuan_dan_profil" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
                                         <th>
@@ -55,10 +55,9 @@
                                         </th>
                                         <th>No</th>
                                         <th>Nomor Pengajuan</th>
-                                        <th>Kelompok Masyarakat</th>
-                                        <th>Nama Pic</th>
-                                        <th>Judul Pengajuan</th>
-                                        <th>Status</th>
+                                        <th>Email PIC</th>
+                                        <th>Status Penolakan</th>
+                                        <th>Catatan Penolakan</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
                                     </tr>

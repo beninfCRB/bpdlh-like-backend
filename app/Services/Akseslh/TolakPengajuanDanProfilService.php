@@ -5,21 +5,24 @@ namespace App\Services\Akseslh;
 
 
 use App\Models\PengajuanKegiatan;
+use App\Models\TolakPengajuanDanProfil;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
 
 class TolakPengajuanDanProfilService extends AppService implements AppServiceInterface
 {
+    protected $modelTolakPengajuanDanProfil;
 
-    public function __construct(PengajuanKegiatan $model)
+    public function __construct(PengajuanKegiatan $model, TolakPengajuanDanProfil $modelTolakPengajuanDanProfil)
     {
         parent::__construct($model);
+        $this->modelTolakPengajuanDanProfil = $modelTolakPengajuanDanProfil;
     }
 
     public function getAll()
     {
-        $model = $this->model->query()->withTrashed()->orderBy('short_id', 'ASC');
+        $model = $this->modelTolakPengajuanDanProfil->query()->orderBy('created_at', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
