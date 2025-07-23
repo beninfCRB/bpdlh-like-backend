@@ -160,6 +160,11 @@
                         </li>
                     </ul>
                 </li>
+                <li>
+                    <a href="{{ route('home') }}" class="waves-effect"><i class="md md-assignment-late"></i>
+                        <span class="text-small">Kelola Penolakan</span>
+                    </a>
+                </li>
                 @if (in_array(auth()->user()->role_user, ['administrator', 'pmu-bpdlh']))
                     <li class="has_sub">
                         <a href="#" class="waves-effect"><i class="md md-attach-money"></i>
