@@ -55,10 +55,9 @@
                                         </th>
                                         <th>No</th>
                                         <th>Nomor Pengajuan</th>
-                                        <th>Kelompok Masyarakat</th>
-                                        <th>Nama Pic</th>
-                                        <th>Judul Pengajuan</th>
-                                        <th>Status</th>
+                                        <th>Email PIC</th>
+                                        <th>Status Penolakan</th>
+                                        <th>Catatan Penolakan</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
                                     </tr>
