@@ -69,7 +69,7 @@ class LaporanKegiatanController extends ApiController
     public function uploadDokumenLaporanKegiatan($id)
     {
         $validator = Validator::make($this->request->all(), [
-            'file_dokumen'              => 'required|file|mimes:pdf',
+            'file_dokumen'              => 'required|file|mimes:pdf|max:10240', // 10 mb
             'jenis_dokumen'             => 'required',
         ]);
 
