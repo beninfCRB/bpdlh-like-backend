@@ -161,7 +161,8 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="{{ route('home') }}" class="waves-effect"><i class="md md-assignment-late"></i>
+                    <a href="{{ route('tolak-pengajuan-dan-profil.index') }}" class="waves-effect"><i
+                            class="md md-assignment-late"></i>
                         <span class="text-small">Kelola Penolakan</span>
                     </a>
                 </li>

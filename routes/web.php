@@ -117,6 +117,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('testimonial', App\Http\Controllers\Cms\Akseslh\TestimonialController::class);
 
+        Route::get('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'index'])->name('tolak-pengajuan-dan-profil.index');
+
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
 
@@ -155,5 +157,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-log-masa-sanggah', [App\Http\Controllers\Datatable\Akseslh\LogMasaSanggahController::class, 'getAll'])->name('data-log-masa-sanggah');
         Route::get('/data-master-indikator', [App\Http\Controllers\Datatable\Akseslh\MasterIndikatorController::class, 'getAll'])->name('data-master-indikator');
         Route::get('/data-laporan-akhir-kegiatan', [App\Http\Controllers\Datatable\Akseslh\LaporanAkhirKegiatanController::class, 'getAll'])->name('data-laporan-akhir-kegiatan');
+        Route::get('/data-tolak-pengajuan-dan-profil', [App\Http\Controllers\Datatable\Akseslh\TolakPengajuanDanProfilController::class, 'getAll'])->name('data-tolak-pengajuan-dan-profil');
     });
 });
