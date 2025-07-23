@@ -188,7 +188,7 @@ window.restoreJenisDokumen = (input) => {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Ya, Hapus",
+        confirmButtonText: "Ya, Restore",
         cancelButtonText: "Tidak",
         reverseButtons: false,
     }).then((result) => {
