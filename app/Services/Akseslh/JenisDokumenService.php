@@ -159,7 +159,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
 
     public function update($id, $data)
     {
-        $read           = $this->model->newQuery()->find($id);
+        $read           = $this->model->newQuery()->withTrashed()->find($id);
         $oldDocument    = $read->document_file()->first();
 
         \DB::beginTransaction();
@@ -208,7 +208,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
 
     public function delete($id)
     {
-        $read   =   $this->model->newQuery()->find($id);
+        $read   =   $this->model->newQuery()->withTrashed()->find($id);
         // $oldDocument    = $read->document_file()->first();
 
         \DB::beginTransaction();
@@ -230,7 +230,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
 
     public function deleteDokumen($id)
     {
-        $read   =   $this->model->newQuery()->find($id);
+        $read   =   $this->model->newQuery()->withTrashed()->find($id);
         $oldDocument    = $read->document_file()->first();
         \DB::beginTransaction();
         try {
