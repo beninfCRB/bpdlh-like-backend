@@ -22,21 +22,15 @@ var data_laporan_kegiatan = (function () {
             serverSide: true,
             ajax: url_table,
             columns: [
-                {
-                    data: "checkbox",
-                    name: "checkbox",
-                    orderable: false,
-                    searchable: false,
-                },
                 { data: "DT_RowIndex" },
                 { data: "nomor_pengajuan" },
                 {
-                    data: "user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.kelompok_masyarakat",
+                    data: "email_pic",
                 },
                 {
-                    data: "user_akseslh.data_pic_kelompok_masyarakat.nama_pic",
+                    data: "status_penolakan",
                 },
-                { data: "judul_pengajuan_kegiatan" },
+                { data: "catatan_penlokan" },
                 {}, // status (rendered)
                 { data: "created_at" }, // rendered by dayjs
                 { data: "updated_at" }, // rendered by dayjs

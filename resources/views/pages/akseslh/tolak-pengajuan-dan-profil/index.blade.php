@@ -10,7 +10,7 @@
     <!-- Page-Title -->
     <div class="row">
         <div class="col-sm-12">
-            <h4 class="pull-left page-title">KELOLA PENOLAKAN</h4>
+            <h4 class="pull-left page-title">TOLAK PENGAJUAN DAN PROFIL</h4>
             <ol class="breadcrumb pull-right">
                 <li><a href="#">Kelola Penolakan</a></li>
                 <li class="active">Tolak Pengajuan dan Profil</li>
@@ -37,8 +37,14 @@
                                     <input type="file" id="file-input" name="file" class="form-control"
                                         placeholder="File" />
                                     <span class="input-group-btn">
-                                        <button class="btn waves-effect waves-light btn-success" id="submit-button">
+                                        <button class="btn waves-effect waves-light btn-success" id="unggah-button">
+                                            Unggah
+                                        </button>
+                                        <button class="btn waves-effect waves-light btn-info" id="submit-button">
                                             Submit
+                                        </button>
+                                        <button class="btn waves-effect waves-light btn-primary" id="unduh-button">
+                                            Unduh Template
                                         </button>
                                     </span>
                                 </div>
@@ -50,9 +56,6 @@
                             <table id="dt_tolak_pengajuan_dan_profil" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            <input type="checkbox" name="select-all" id="select-all">
-                                        </th>
                                         <th>No</th>
                                         <th>Nomor Pengajuan</th>
                                         <th>Email PIC</th>
