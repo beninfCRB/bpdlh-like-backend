@@ -1184,7 +1184,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $totalRab = 0;
         $jasaProfesi = 0;
 
-        foreach ($dataKomponenRab['komponen_rab'] as $item) {
+        foreach ($dataKomponenRab as $item) {
             # code...
             if ($item['id_komponen_rab'] == $idNaraSumber) {
                 if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 4) {
