@@ -236,6 +236,12 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
         try {
             $read   =   \DB::table('files')->where('id', $id)->first();
+
+            if (!$read) {
+                # code...
+                return $this->sendError(null, 'Not Found', 422);
+            }
+
             $filePath = $read->file_path;
 
             $this->fileUploadService->deleteFiles($filePath);
