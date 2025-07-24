@@ -1158,92 +1158,92 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Rab sudah ada', 422);
         }
 
-        $idTransportasi = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idTransportasi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Transportasi'); // Transportasi
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
-        $idKonsumsi = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idKonsumsi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Konsumsi'); // Konsumsi
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
         $jumlah_peserta = $model->paket_kegiatan->jumlah_peserta;
 
-        $idNaraSumber = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idNaraSumber = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Nara Sumber'); // Nara Sumber
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
-        $idFasilitator = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idFasilitator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Fasilitator'); // Fasilitator
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
-        $idModerator = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idModerator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Moderator'); // Moderator
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
-        $totalDataKomponenRab  = 0;
-        $totalRab = 0;
         $jasaProfesi = 0;
 
         foreach ($dataKomponenRab as $item) {
             # code...
-            if ($item['id_komponen_rab'] == $idNaraSumber) {
-                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 4) {
+            if ($item['id_komponen'] == $idNaraSumber) {
+                if ($item['qty'] < 1 || $item['qty'] > 4) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
                 }
                 $jasaProfesi++;
             }
 
-            if ($item['id_komponen_rab'] == $idFasilitator) {
-                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 10) {
+            if ($item['id_komponen'] == $idFasilitator) {
+                if ($item['qty'] < 1 || $item['qty'] > 10) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
                 }
                 $jasaProfesi++;
             }
 
-            if ($item['id_komponen_rab'] == $idModerator) {
-                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 2) {
+            if ($item['id_komponen'] == $idModerator) {
+                if ($item['qty'] < 1 || $item['qty'] > 2) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
                 }
                 $jasaProfesi++;
             }
 
-            if ($item['id_komponen_rab'] == $idTransportasi) {
+            // Jika pesera kurang dari 50, berarti paket yang dipilih adalah hektar
+            if ($jumlah_peserta >= 50) {
                 # code...
-                if ($item['qty_realisasi'] < $jumlah_peserta) {
+                if ($item['id_komponen'] == $idTransportasi) {
                     # code...
-                    return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    }
+
+                    if ($item['qty'] > $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    }
                 }
 
-                if ($item['qty_realisasi'] > $jumlah_peserta) {
+                if ($item['id_komponen'] == $idKonsumsi) {
                     # code...
-                    return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    }
+
+                    if ($item['qty'] > $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    }
                 }
             }
-
-            if ($item['id_komponen_rab'] == $idKonsumsi) {
-                # code...
-                if ($item['qty_realisasi'] < $jumlah_peserta) {
-                    # code...
-                    return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
-                }
-
-                if ($item['qty_realisasi'] > $jumlah_peserta) {
-                    # code...
-                    return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
-                }
-            }
-
-            $totalDataKomponenRab += $item['harga_unit_realisasi'] * $item['qty_realisasi'];
         }
 
-        if ($jasaProfesi < 3) {
-            # code...
-            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Jasa profesi harus minimal 3', \Sentry\Severity::warning());
-            return $this->sendError(null, collect(['message' => ['Jasa profesi harus minimal 3']]), 422);
-        }
+        // if ($jasaProfesi < 3) {
+        //     # code...
+        //     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Jasa profesi harus minimal 3', \Sentry\Severity::warning());
+        //     return $this->sendError(null, collect(['message' => ['Jasa profesi harus minimal 3']]), 422);
+        // }
 
         \DB::beginTransaction();
 
@@ -1573,6 +1573,87 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         if (!$retur || ($retur && $retur->flag != 2)) {
             \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Bukan data retur', \Sentry\Severity::warning());
             return $this->sendError(null, 'Invalid Data', 422);
+        }
+
+        $idTransportasi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Transportasi'); // Transportasi
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idKonsumsi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Konsumsi'); // Konsumsi
+        })->pluck('master_komponen_rab_id')->first();
+
+        $jumlah_peserta = $model->paket_kegiatan->jumlah_peserta;
+
+        $idNaraSumber = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Nara Sumber'); // Nara Sumber
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idFasilitator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Fasilitator'); // Fasilitator
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idModerator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Moderator'); // Moderator
+        })->pluck('master_komponen_rab_id')->first();
+
+        $jasaProfesi = 0;
+
+        foreach ($dataKomponenRab as $item) {
+            # code...
+            if ($item['id_komponen'] == $idNaraSumber) {
+                if ($item['qty'] < 1 || $item['qty'] > 4) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen'] == $idFasilitator) {
+                if ($item['qty'] < 1 || $item['qty'] > 10) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen'] == $idModerator) {
+                if ($item['qty'] < 1 || $item['qty'] > 2) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            // Jika pesera kurang dari 50, berarti paket yang dipilih adalah hektar
+            if ($jumlah_peserta >= 50) {
+                # code...
+                if ($item['id_komponen'] == $idTransportasi) {
+                    # code...
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    }
+
+                    if ($item['qty'] > $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    }
+                }
+
+                if ($item['id_komponen'] == $idKonsumsi) {
+                    # code...
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    }
+
+                    if ($item['qty'] > $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    }
+                }
+            }
         }
 
         \DB::beginTransaction();
