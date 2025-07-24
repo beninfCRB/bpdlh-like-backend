@@ -114,7 +114,7 @@ class PengajuanKegiatan extends AppModel
     public function document()
     {
         return $this->morphMany(File::class, 'fileable')
-            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id', 'size']);
     }
 
     /**
