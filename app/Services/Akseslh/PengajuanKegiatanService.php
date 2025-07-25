@@ -1550,6 +1550,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function revisi_pengajuan_kegiatan_update($id, $data)
     {
+        $dataKomponenRab = $data['komponen_rab'];
+
         // Mencari model pengajuan berdasarkan nomor pengajuan
         $model = $this->model->with(['rab_pengajuan_paket_kegiatans', 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat'])
             ->where(['nomor_pengajuan' => $id, 'user_akseslh_id' => $data['user_akseslh_id']])
