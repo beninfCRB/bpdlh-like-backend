@@ -163,3 +163,7 @@ jQuery(document).ready(function () {
             });
     });
 });
+
+function unggah() {
+    alert("Fitur unggah file belum tersedia.");
+}

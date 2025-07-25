@@ -35,9 +35,11 @@
                             <div class="col-md-12">
                                 <div class="input-group m-t-10 m-b-10">
                                     <input type="file" id="file-input" name="file" class="form-control"
-                                        placeholder="File" />
+                                        placeholder="File"
+                                        accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
                                     <span class="input-group-btn">
-                                        <button class="btn waves-effect waves-light btn-success" id="unggah-button">
+                                        <button class="btn waves-effect waves-light btn-success" id="unggah-button"
+                                            onclick="unggah()" type="button">
                                             Unggah
                                         </button>
                                         <button class="btn waves-effect waves-light btn-info" id="submit-button">
