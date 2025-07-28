@@ -1605,7 +1605,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             # code...
             if ($item['id_komponen'] == $idNaraSumber) {
                 if ($item['qty'] < 1 || $item['qty'] > 4) {
-                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
+                    \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
                 }
                 $jasaProfesi++;
@@ -1613,7 +1613,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             if ($item['id_komponen'] == $idFasilitator) {
                 if ($item['qty'] < 1 || $item['qty'] > 10) {
-                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
+                    \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
                 }
                 $jasaProfesi++;
@@ -1621,7 +1621,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             if ($item['id_komponen'] == $idModerator) {
                 if ($item['qty'] < 1 || $item['qty'] > 2) {
-                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
+                    \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
                 }
                 $jasaProfesi++;
