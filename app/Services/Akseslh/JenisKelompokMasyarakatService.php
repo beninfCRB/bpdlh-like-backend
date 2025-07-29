@@ -8,6 +8,7 @@ use App\Models\JenisKelompokMasyarakat;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 
 class JenisKelompokMasyarakatService extends AppService implements AppServiceInterface
@@ -217,19 +218,22 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
 
     public function apiGetAll()
     {
-        $result  = $this->model->newQuery()
-            ->where('flag', true)
-            ->orderBy('short_id', 'ASC')
-            ->get();
+        $result = Cache::remember('jenis_kelompok_masyarakat', now()->adddays(7), function () {
+            $data  = $this->model->newQuery()
+                ->where('flag', true)
+                ->orderBy('short_id', 'ASC')
+                ->get();
 
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                            => $items->id,
-                'jenis_kelompok_masyarakat'     => $items->jenis_kelompok_masyarakat,
-                'short_id'                      => $items->short_id,
-                'flag'                          => $items->flag,
-            ];
+            return $data->transform(function ($items, $key) {
+                return [
+                    'id'                            => $items->id,
+                    'jenis_kelompok_masyarakat'     => $items->jenis_kelompok_masyarakat,
+                    'short_id'                      => $items->short_id,
+                    'flag'                          => $items->flag,
+                ];
+            });
         });
+
 
         return $this->sendSuccess($result);
     }

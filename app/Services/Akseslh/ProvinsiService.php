@@ -7,6 +7,7 @@ namespace App\Services\Akseslh;
 use App\Models\Province;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProvinsiService extends AppService implements AppServiceInterface
@@ -33,7 +34,11 @@ class ProvinsiService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->with(['kota'])->find($id);
+        $cacheKey = 'provinsi_' . $id;
+        $result = Cache::remember($cacheKey, now()->addDays(7), function () use ($id) {
+            // Fetch the province by ID with related cities
+            return $this->model->newQuery()->with(['kota'])->find($id);
+        });
 
         return $this->sendSuccess($result);
     }
@@ -214,16 +219,19 @@ class ProvinsiService extends AppService implements AppServiceInterface
 
     public function apiGetAll()
     {
-        $result  = $this->model->newQuery()
-            ->orderBy('id', 'ASC')
-            ->get();
+        $result = Cache::remember('provinsi', now()->addDays(7), function () {
 
-        $result->transform(function ($items, $key) {
-            return [
-                'id'    => $items->id,
-                'code'  => $items->code,
-                'name'  => $items->name,
-            ];
+            $data  = $this->model->newQuery()
+                ->orderBy('id', 'ASC')
+                ->get();
+
+            return $data->transform(function ($items, $key) {
+                return [
+                    'id'    => $items->id,
+                    'code'  => $items->code,
+                    'name'  => $items->name,
+                ];
+            });
         });
 
         return $this->sendSuccess($result);

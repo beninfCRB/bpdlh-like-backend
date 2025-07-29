@@ -199,7 +199,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
         }
     }
 
-    public function updateTemp($id, $data)
+    public function updateTemp($id, $data, $emailSend = true)
     {
         $read = $this->model->newQuery()->find($id);
 
@@ -270,10 +270,13 @@ class VerifikasiService extends AppService implements AppServiceInterface
 
             // Mark notifications as read and send notification
             $read->user_akseslh->unreadNotifications->markAsRead();
-            $notification = $data['status'] == 0
-                ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
-                : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']);
-            $read->user_akseslh->notify($notification);
+            if ($emailSend) {
+                # code...
+                $notification = $data['status'] == 0
+                    ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
+                    : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log']);
+                $read->user_akseslh->notify($notification);
+            }
 
             if ($data['status'] != 0) {
                 $this->modelLogTahapanPengajuanKegiatan->newQuery()

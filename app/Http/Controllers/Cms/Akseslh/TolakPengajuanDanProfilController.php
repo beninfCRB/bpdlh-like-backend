@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Services\Akseslh\TolakPengajuanDanProfilService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Validator;
+use App\Services\Akseslh\TolakPengajuanDanProfilService;
 
 class TolakPengajuanDanProfilController extends ApiController
 {
@@ -40,26 +41,47 @@ class TolakPengajuanDanProfilController extends ApiController
         return view("pages.akseslh.tolak-pengajuan-dan-profil.show", compact('data'));
     }
 
+    public function proses()
+    {
+        $result = $this->tolakPengajuanDanProfilService->proses();
+        try {
+            if ($result->success) {
+                $response = $result->data;
+                return $this->sendSuccess($response, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (\Exception $exception) {
+            return $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
     public function store(Request $request)
     {
-        $input  =   $request->validate([
-            'jenis_kelompok_masyarakat'     => 'required|string|max:150',
-            'short_id'                      => 'required|numeric|min:0',
-            'code_id'                       => 'required|numeric|min:0',
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx',
         ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError(null, $validator->errors()->all(), 422);
+        }
+
+        $input = $validator->validated();
+
+        $input['username'] = $request->user()->id;
 
         $result =   $this->tolakPengajuanDanProfilService->create($input);
 
         try {
             if ($result->success) {
-                // Contoh menyimpan session flash
-                session()->flash('success', $result->message);
-                return redirect()->route('tolak-pengajuan-dan-profil.index');
+                $response = $result->data;
+                return $this->sendSuccess($response, $result->message, $result->code);
             }
 
-            return back()->with('error', $result->message);
+            return $this->sendError($result->data, $result->message, $result->code);
         } catch (\Exception $exception) {
-            return back()->with('error', $exception->getMessage());
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 

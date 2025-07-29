@@ -3,11 +3,13 @@
 
 namespace App\Services\Akseslh;
 
-
-use App\Models\PengajuanKegiatan;
-use App\Models\TolakPengajuanDanProfil;
+use App\Jobs\TolakPengajuanDanProfilJob;
+use Illuminate\Support\Str;
 use App\Services\AppService;
+use App\Models\PengajuanKegiatan;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Services\AppServiceInterface;
+use App\Models\TolakPengajuanDanProfil;
 use Yajra\DataTables\Facades\DataTables;
 
 class TolakPengajuanDanProfilService extends AppService implements AppServiceInterface
@@ -41,23 +43,75 @@ class TolakPengajuanDanProfilService extends AppService implements AppServiceInt
         return $this->sendSuccess($result);
     }
 
+    private function isHeaderRow($row)
+    {
+        $expected = ['nomor_pengajuan', 'email_pic', 'status_penolakan', 'catatan_penolakan'];
+        $keys = array_map('strtolower', array_keys($row->toArray()));
+        return $keys === $expected;
+    }
+
+    public function proses()
+    {
+        $data = $this->modelTolakPengajuanDanProfil->query()
+            ->where('status', 'pending')
+            ->pluck('id')
+            ->toArray();
+
+        if (empty($data)) {
+            # code...
+            return $this->sendError(null, 'Tidak ada data yang perlu diproses', 422);
+        }
+
+        $chunks = array_chunk($data, 2);
+
+        foreach ($chunks as $chunk) {
+            TolakPengajuanDanProfilJob::dispatch($chunk);
+        }
+
+        return $this->sendSuccess(null, 'Data berhasil diproses', 200);
+    }
+
     public function create($data)
     {
-        \DB::beginTransaction();
+
+        $file = $data['file'];
 
         try {
+            $path = $file->getRealPath();
 
-            $data = $this->model->newQuery()->create([
-                'jenis_kelompok_masyarakat'     =>  $data['jenis_kelompok_masyarakat'],
-                'short_id'                      =>  $data['short_id'],
-                'code_id'                      =>  $data['code_id'],
-                'flag'                          =>  1,
-            ]);
+            $rows = Excel::toCollection(null, $path)[0];
 
-            \DB::commit(); // commit the changes
-            return $this->sendSuccess($data);
+            if ($rows->count() <= 1) {
+                # code...
+                return $this->sendError(null, 'File upload kosong', 422);
+            }
+
+            $dataToInsert = [];
+
+            foreach ($rows as $index => $row) {
+
+                // Skip baris kosong atau baris header
+                if ($index === 0) continue;
+
+                $dataToInsert[] = [
+                    'id' => (string) Str::uuid(),
+                    'nomor_pengajuan' => $row[0] ?? null,
+                    'email_pic' => $row[1] ?? null,
+                    'status_penolakan' => $row[2] ?? null,
+                    'catatan_penolakan' => $row[3] ?? null,
+                    'username'  => $data['username'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            \DB::transaction(function () use ($dataToInsert) {
+                TolakPengajuanDanProfil::insert($dataToInsert);
+            });
+
+            return $this->sendSuccess($data, 'Berhasil mengunggah data', 200);
         } catch (\Exception $exception) {
-            \DB::rollBack(); // rollback the changes
+
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
     }

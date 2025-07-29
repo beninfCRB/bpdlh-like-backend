@@ -1,10 +1,12 @@
 "use strict";
 
-import { createData } from "../api";
+import Swal from "sweetalert2";
+import { createData, getResult } from "../api";
+import axios from "axios";
 
 var route = $("#tolak-pengajuan-dan-profil-route").val();
 
-var data_laporan_kegiatan = (function () {
+var data_tolak_pengajuan_dan_profil = (function () {
     let tableInstance = null;
 
     var initTable1 = function () {
@@ -30,48 +32,42 @@ var data_laporan_kegiatan = (function () {
                 {
                     data: "status_penolakan",
                 },
-                { data: "catatan_penlokan" },
-                {}, // status (rendered)
-                { data: "created_at" }, // rendered by dayjs
-                { data: "updated_at" }, // rendered by dayjs
+                { data: "catatan_penolakan" },
+                { data: "status" },
+                {}, // rendered by dayjs
+                {}, // rendered by dayjs
             ],
             columnDefs: [
                 {
-                    targets: 1,
+                    targets: 0,
                     searchable: false,
                     orderable: false,
-                },
-                {
-                    targets: -3, // status
-                    searchable: true,
-                    orderable: true,
-                    render: function (data, type, full) {
-                        return full.deleted_at === null
-                            ? "Aktif"
-                            : "Tidak Aktif";
-                    },
                 },
                 {
                     targets: -2, // created_at
                     searchable: false,
                     orderable: false,
-                    render: function (data) {
-                        return data ? dayjs(data).format("DD MMM YYYY") : null;
+                    render: function (data, type, full, meta) {
+                        if (full.created_at === null) {
+                            return null;
+                        } else {
+                            return dayjs(full.created_at).format("DD MMM YYYY");
+                        }
                     },
                 },
                 {
                     targets: -1, // updated_at
                     searchable: false,
                     orderable: false,
-                    render: function (data) {
-                        return data ? dayjs(data).format("DD MMM YYYY") : null;
+                    render: function (data, type, full, meta) {
+                        if (full.updated_at === null) {
+                            return null;
+                        } else {
+                            return dayjs(full.updated_at).format("DD MMM YYYY");
+                        }
                     },
                 },
             ],
-            drawCallback: function () {
-                // Rebind select-all checkbox state
-                $("#select-all").prop("checked", false);
-            },
         });
     };
 
@@ -88,29 +84,7 @@ var data_laporan_kegiatan = (function () {
 })();
 
 jQuery(document).ready(function () {
-    data_laporan_kegiatan.init();
-
-    // Select All checkbox
-    $(document).on("click", "#select-all", function () {
-        $('input[name="pengajuan_kegiatan_id[]"]').prop(
-            "checked",
-            this.checked
-        );
-    });
-
-    // Ketika salah satu checkbox item di-klik
-    $(document).on(
-        "click",
-        'input[name="pengajuan_kegiatan_id[]"]',
-        function () {
-            const total = $('input[name="pengajuan_kegiatan_id[]"]').length;
-            const checked = $(
-                'input[name="pengajuan_kegiatan_id[]"]:checked'
-            ).length;
-
-            $("#select-all").prop("checked", total === checked);
-        }
-    );
+    data_tolak_pengajuan_dan_profil.init();
 
     // Handle form submit
     $("#upload-form").on("submit", function (e) {
@@ -119,29 +93,20 @@ jQuery(document).ready(function () {
         const submitButton = $("#submit-button");
         submitButton.prop("disabled", true);
 
-        const selected = $('input[name="pengajuan_kegiatan_id[]"]:checked')
-            .map(function () {
-                return this.value;
-            })
-            .get();
-
-        if (selected.length === 0) {
-            alert("Pilih minimal satu kegiatan terlebih dahulu.");
-            return;
-        }
-
         const file = $("#file-input")[0].files[0];
 
         if (!file) {
-            alert("Silakan pilih file terlebih dahulu.");
+            Swal.fire({
+                title: "Error",
+                text: "Silakan pilih file yang akan diunggah.",
+                icon: "error",
+            });
+            submitButton.prop("disabled", false);
             return;
         }
 
         const formData = new FormData();
         formData.append("file", file);
-        selected.forEach((id) =>
-            formData.append("pengajuan_kegiatan_id[]", id)
-        );
 
         createData(route, formData, {
             headers: {
@@ -149,21 +114,75 @@ jQuery(document).ready(function () {
             },
         })
             .then((response) => {
-                alert(response.data.message);
+                Swal.fire({
+                    title: "Success",
+                    text: "Data berhasil diunggah.",
+                    icon: "success",
+                });
                 $("#file-input").val("");
-                $("#select-all").prop("checked", false);
-                data_laporan_kegiatan.reload();
+                data_tolak_pengajuan_dan_profil.reload();
             })
             .catch((error) => {
-                // alert(error.response.data.message);
-                swal("Error", error.response.data.message, "error");
+                Swal.fire({
+                    title: "Error",
+                    text:
+                        error.response?.data?.message ||
+                        "Terjadi kesalahan saat mengunggah data.",
+                    icon: "error",
+                });
             })
             .finally(() => {
                 submitButton.prop("disabled", false);
             });
     });
-});
 
-function unggah() {
-    alert("Fitur unggah file belum tersedia.");
-}
+    // handle mulai jobs
+    $("#mulai-button").on("click", function () {
+        this.disabled = true; // Disable the button to prevent multiple clicks
+        Swal.fire({
+            title: "Konfirmasi",
+            text: "Anda yakin akan memulai proses penolakan ?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Hapus",
+            cancelButtonText: "Tidak",
+            reverseButtons: false,
+        })
+            .then((result) => {
+                if (result.value) {
+                    this.disabled = true; // Disable the button to prevent multiple clicks
+                    axios
+                        .post(route + "/proses")
+                        .then((res) => {
+                            console.log(res.data.data);
+
+                            Swal.fire(
+                                "Sukses",
+                                "Proses penolakan dimulai",
+                                "success"
+                            );
+                            data_tolak_pengajuan_dan_profil.reload();
+                        })
+                        .catch((error) => {
+                            Swal.fire(
+                                "Error",
+                                error.response?.data?.message ||
+                                    "Terjadi kesalahan saat memulai proses.",
+                                "error"
+                            );
+                        })
+                        .finally(() => {
+                            this.disabled = false; // Re-enable the button after the process
+                        });
+                }
+            })
+            .catch((error) => {
+                alert(error);
+            })
+            .finally(() => {
+                this.disabled = false; // Re-enable the button after the process
+            });
+    });
+});

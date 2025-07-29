@@ -169,7 +169,7 @@ class ProfileService extends AppService implements AppServiceInterface
         }
     }
 
-    public function delete_profile($id, $data)
+    public function delete_profile($id, $data, $emailSend = true)
     {
         $read   =   $this->model->newQuery()->find($id);
 
@@ -216,7 +216,10 @@ class ProfileService extends AppService implements AppServiceInterface
                 'status'            => 20
             );
 
-            $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
+            if ($emailSend) {
+                # code...
+                $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
+            }
 
             $pengajuan->update(['flag' => 20]);
 

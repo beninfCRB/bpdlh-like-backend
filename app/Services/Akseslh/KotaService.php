@@ -34,8 +34,11 @@ class KotaService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->with(['kecamatan'])->find($id);
-
+        $cacheKey = 'kota_' . $id;
+        $result = Cache::remember($cacheKey, now()->addDays(7), function () use ($id) {
+            // Fetch the city by ID with related districts
+            return $this->model->newQuery()->with(['kecamatan'])->find($id);
+        });
         return $this->sendSuccess($result);
     }
 
