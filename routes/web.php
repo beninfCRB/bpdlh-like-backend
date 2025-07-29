@@ -3,6 +3,7 @@
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Exports\PivotEmailBlastTemplateExport;
+use App\Exports\TolakPengajuanDanProfilTemplate;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +119,11 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('testimonial', App\Http\Controllers\Cms\Akseslh\TestimonialController::class);
 
         Route::get('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'index'])->name('tolak-pengajuan-dan-profil.index');
+        Route::post('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'store'])->name('tolak-pengajuan-dan-profil.store');
+        Route::post('tolak-pengajuan-dan-profil/proses', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'proses'])->name('tolak-pengajuan-dan-profil.proses');
+        Route::get('tolak-pengajuan-dan-profil/template', function () {
+            return Excel::download(new TolakPengajuanDanProfilTemplate, 'tolak_pengajuan_dan_profil_template.xlsx');
+        })->name('tolak-pengajuan-dan-profil.template');
 
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');

@@ -3,7 +3,7 @@
 @section('title', 'Tolak Pengajuan dan Profil')
 
 @section('script')
-    {{-- <script src="{{ asset('app/build/laporan_akhir_kegiatan.js') }}" type="text/javascript"></script> --}}
+    <script src="{{ asset('app/build/tolak_pengajuan_dan_profil.js') }}" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -38,16 +38,18 @@
                                         placeholder="File"
                                         accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
                                     <span class="input-group-btn">
-                                        <button class="btn waves-effect waves-light btn-success" id="unggah-button"
-                                            onclick="unggah()" type="button">
-                                            Unggah
-                                        </button>
-                                        <button class="btn waves-effect waves-light btn-info" id="submit-button">
+                                        <button type="submit" class="btn waves-effect waves-light btn-success"
+                                            id="submit-button">
                                             Submit
                                         </button>
-                                        <button class="btn waves-effect waves-light btn-primary" id="unduh-button">
-                                            Unduh Template
+                                        <button type="button" class="btn waves-effect waves-light btn-info"
+                                            id="mulai-button">
+                                            Mulai Proses
                                         </button>
+                                        <a href="{{ route('tolak-pengajuan-dan-profil.template') }}" target="_BLANK"
+                                            class="btn waves-effect waves-light btn-primary" id="unduh-button">
+                                            Unduh Template
+                                        </a>
                                     </span>
                                 </div>
                             </div>
@@ -63,6 +65,7 @@
                                         <th>Email PIC</th>
                                         <th>Status Penolakan</th>
                                         <th>Catatan Penolakan</th>
+                                        <th>Status</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
                                     </tr>
