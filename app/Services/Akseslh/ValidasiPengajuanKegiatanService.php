@@ -1158,7 +1158,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         return $this->sendSuccess($result);
     }
 
-    public function updateTemp($id, $data)
+    public function updateTemp($id, $data, $emailSend = true)
     {
         $read = $this->model->newQuery()->find($id);
 
@@ -1233,10 +1233,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
             // Mark notifications as read and send notification
             $read->user_akseslh->unreadNotifications->markAsRead();
-            $notification = $data['status'] == 0
-                ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
-                : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total);
-            $read->user_akseslh->notify($notification);
+
+            if ($emailSend) {
+                $notification = $data['status'] == 0
+                    ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
+                    : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total);
+                $read->user_akseslh->notify($notification);
+            }
 
             if ($data['status'] != 0) {
                 // upload document

@@ -17,8 +17,8 @@ class TolakPengajuanDanProfilTemplate implements FromArray, WithHeadings
         return [
             ['01211-2507-00027', 'test@email.test', 'pengajuan', 'Contoh catatan'],
             ['01211-2507-00026', 'test@email.test', 'pengajuan', 'Opsional'],
-            ['', 'test@email.test', 'profil', 'Opsional'],
-            ['', 'test@email.test', 'profil', 'Opsional'],
+            ['01211-2507-00025', 'test@email.test', 'profil', 'Opsional'],
+            ['01211-2507-00024', 'test@email.test', 'profil', 'Opsional'],
         ];
     }
 }

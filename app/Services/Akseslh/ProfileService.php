@@ -169,40 +169,7 @@ class ProfileService extends AppService implements AppServiceInterface
         }
     }
 
-    public function delet_profile_job($email, $data)
-    {
-        $read = $this->model->newQuery()->where('email_pic', $email)->first();
-
-        \DB::beginTransaction();
-
-        try {
-
-            $dataSend = array(
-                'nomor_pengajuan'   => null,
-                'catatan_log'       => $data['catatan_log'],
-                'keterangan'        => 'Ditolak',
-                'status'            => 20
-            );
-
-            $result = $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
-
-            if ($result == false) {
-                # code...
-                \DB::rollBack();
-                return $this->sendError(null, 'Email gagal dikirim', 422);
-            }
-
-            $read->user_akseslh->delete();
-            $read->delete();
-            \DB::commit(); // commit the changes
-            return $this->sendSuccess(null);
-        } catch (\Exception $exception) {
-            \DB::rollBack(); // rollback the changes
-            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
-        }
-    }
-
-    public function delete_profile($id, $data)
+    public function delete_profile($id, $data, $emailSend = true)
     {
         $read   =   $this->model->newQuery()->find($id);
 
@@ -249,7 +216,10 @@ class ProfileService extends AppService implements AppServiceInterface
                 'status'            => 20
             );
 
-            $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
+            if ($emailSend) {
+                # code...
+                $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
+            }
 
             $pengajuan->update(['flag' => 20]);
 

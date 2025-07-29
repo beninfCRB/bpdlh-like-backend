@@ -23,6 +23,16 @@ class TolakPengajuanDanProfil extends AppModel
     ];
 
     /**
+     * Get the pic_kelompok_masyarakat that owns the TolakPengajuanDanProfil
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function pic_kelompok_masyarakat(): BelongsTo
+    {
+        return $this->belongsTo(DataPicKelompokMasyarakat::class, 'email_pic', 'email_pic');
+    }
+
+    /**
      * Get the user_akseslh that owns the TolakPengajuanDanProfil
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
