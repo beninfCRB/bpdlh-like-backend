@@ -7,6 +7,7 @@ namespace App\Services\Akseslh;
 use App\Models\City;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 

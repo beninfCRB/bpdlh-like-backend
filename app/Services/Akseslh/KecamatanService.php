@@ -7,7 +7,7 @@ namespace App\Services\Akseslh;
 use App\Models\District;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 
 class KecamatanService extends AppService implements AppServiceInterface
