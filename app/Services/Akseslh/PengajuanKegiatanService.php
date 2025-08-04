@@ -942,6 +942,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             # code...
             $result = [
                 'id'                        => $model->id,
+                'tematik_kegiatan_id'       => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan_id,
+                'sub_tematik_kegiatan_id'   => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id,
                 'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
                 'provinsi_kegiatan'         => $model->provinsi_kegiatan,
                 'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
@@ -963,6 +965,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             # code...
             $result = [
                 'id'                        => $model->id,
+                'tematik_kegiatan_id'       => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan_id,
+                'sub_tematik_kegiatan_id'   => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id,
                 'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
                 'provinsi_kegiatan'         => $model->provinsi_kegiatan,
                 'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
