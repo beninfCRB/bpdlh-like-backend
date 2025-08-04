@@ -389,7 +389,7 @@ class RegisterController extends ApiController
             // Kirim pesan ke Sentry
             \Sentry\captureMessage($errorMessage, \Sentry\Severity::warning());
 
-            return $this->sendError(null, $validator->getMessageBag(), 422);
+            return $this->sendError($request->all(), $validator->getMessageBag(), 422);
             // \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Errors: ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
             // return $this->sendError(null, $validator->getMessageBag(), 422);
         }
