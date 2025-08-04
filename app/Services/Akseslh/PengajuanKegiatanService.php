@@ -1317,7 +1317,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             }
 
             \DB::commit();
-            return $this->sendSuccess($result);
+            return $this->sendSuccess($result, null, 200);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : 'Internal Server Error', 500);
