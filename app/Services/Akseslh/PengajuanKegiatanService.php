@@ -955,7 +955,16 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'proposal_kegiatan'         => $model->proposal_kegiatan,
                 'tujuan_kegiatan'           => $model->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
-                'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                // 'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                'paket_kegiatan'            => [
+                    'id' => $model->paket_kegiatan->jenis_kegiatan->id,
+                    'jenis_kegiatan' => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                    'paket_kegiatan' => [
+                        'jenis_kegiatan_id' => $model->paket_kegiatan->jenis_kegiatan->id,
+                        'id' => $model->paket_kegiatan->id,
+                        'jumlah_peserta' => $model->paket_kegiatan->jumlah_peserta,
+                    ]
+                ],
                 'jumlah_peserta'            => $model->paket_kegiatan->jumlah_peserta,
                 'jenis_kegiatan_id'         => $model->paket_kegiatan->jenis_kegiatan_id,
                 'fileDocument'              => $model->document,
@@ -981,7 +990,16 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'proposal_kegiatan'         => $model->proposal_kegiatan,
                 'tujuan_kegiatan'           => $model->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
-                'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                // 'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                'paket_kegiatan'            => [
+                    'id' => $model->paket_kegiatan->jenis_kegiatan->id,
+                    'jenis_kegiatan' => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                    'paket_kegiatan' => [
+                        'jenis_kegiatan_id' => $model->paket_kegiatan->jenis_kegiatan->id,
+                        'id' => $model->paket_kegiatan->id,
+                        'jumlah_peserta' => $model->paket_kegiatan->jumlah_peserta,
+                    ]
+                ],
                 'jenis_kegiatan_id'         => $model->paket_kegiatan->jenis_kegiatan_id,
                 'fileDocument'              => $model->document,
                 'nomor_pengajuan'           => $model->nomor_pengajuan,
