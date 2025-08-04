@@ -77,9 +77,9 @@ class TolakPengajuanDanProfilService extends AppService implements AppServiceInt
         $file = $data['file'];
 
         try {
-            $path = $file->getRealPath();
+            // $path = $file->getRealPath();
 
-            $rows = Excel::toCollection(null, $path)[0];
+            $rows = Excel::toCollection(null, $file)[0];
 
             if ($rows->count() <= 1) {
                 # code...
