@@ -4,9 +4,10 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\LogJadwalPembukaan;
 use App\Services\AppService;
+use App\Models\LogJadwalPembukaan;
 use App\Services\AppServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -27,17 +28,33 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
 
     public function apiGetAll()
     {
-        $model = $this->model->newQuery()->latest()->first();
+        $result = Cache::remember('range_opening', now()->adddays(7), function () {
+            $model  = $this->model->newQuery()
+                ->latest()
+                ->first();
 
-        $result = [
-            'tanggal_awal'      => $model->tanggal_awal,
-            'jam_awal'          => $model->jam_awal,
-            'tanggal_akhir'     => $model->tanggal_akhir,
-            'jam_akhir'         => $model->jam_akhir,
-            'batas_pengajuan'         => $model->batas_pengajuan,
-        ];
+            return [
+                'tanggal_awal'      => $model->tanggal_awal,
+                'jam_awal'          => $model->jam_awal,
+                'tanggal_akhir'     => $model->tanggal_akhir,
+                'jam_akhir'         => $model->jam_akhir,
+                'batas_pengajuan'   => $model->batas_pengajuan,
+            ];
+        });
 
         return $this->sendSuccess($result);
+
+        // $model = $this->model->newQuery()->latest()->first();
+
+        // $result = [
+        //     'tanggal_awal'      => $model->tanggal_awal,
+        //     'jam_awal'          => $model->jam_awal,
+        //     'tanggal_akhir'     => $model->tanggal_akhir,
+        //     'jam_akhir'         => $model->jam_akhir,
+        //     'batas_pengajuan'         => $model->batas_pengajuan,
+        // ];
+
+        // return $this->sendSuccess($result);
     }
 
     public function getAllAttr()
@@ -91,6 +108,8 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
             ]);
 
             \DB::commit(); // commit the changes
+
+            Cache::forget('range_opening');
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes

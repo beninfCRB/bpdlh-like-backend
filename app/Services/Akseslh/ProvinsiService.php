@@ -37,7 +37,9 @@ class ProvinsiService extends AppService implements AppServiceInterface
         $cacheKey = 'provinsi_' . $id;
         $result = Cache::remember($cacheKey, now()->addDays(7), function () use ($id) {
             // Fetch the province by ID with related cities
-            return $this->model->newQuery()->with(['kota'])->find($id);
+            return $this->model->newQuery()->with(['kota' => function ($query) {
+                $query->orderBy('name', 'ASC');
+            }])->find($id);
         });
 
         return $this->sendSuccess($result);
@@ -222,7 +224,7 @@ class ProvinsiService extends AppService implements AppServiceInterface
         $result = Cache::remember('provinsi', now()->addDays(7), function () {
 
             $data  = $this->model->newQuery()
-                ->orderBy('id', 'ASC')
+                ->orderBy('name', 'ASC')
                 ->get();
 
             return $data->transform(function ($items, $key) {

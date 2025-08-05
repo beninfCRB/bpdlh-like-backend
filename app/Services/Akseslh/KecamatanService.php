@@ -38,7 +38,9 @@ class KecamatanService extends AppService implements AppServiceInterface
         $result = Cache::remember($cacheKey, now()->addDays(7), function () use ($id) {
             // Fetch the district by ID with related villages
 
-            return $this->model->newQuery()->with(['kelurahan'])->find($id);
+            return $this->model->newQuery()->with(['kelurahan' => function ($query) {
+                $query->orderBy('name', 'ASC');
+            }])->find($id);
         });
 
         return $this->sendSuccess($result);
