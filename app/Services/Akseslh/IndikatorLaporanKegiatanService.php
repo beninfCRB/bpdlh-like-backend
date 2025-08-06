@@ -165,6 +165,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
             $read->tanggal_akhir_kegiatan = $data['tanggal_akhir_kegiatan'];
             $read->longitude = explode(',', $data['longitude'])[0];
             $read->latitude = explode(',', $data['latitude'])[0];
+            $read->alamat_kegiatan_realisasi = $data['alamat_kegiatan_realisasi'] ?? null;
             $read->capaian_output = $data['capaian_output'];
             $read->capaian_outcome = $data['capaian_outcome'];
             $read->kendala_kegiatan = $data['kendala_kegiatan'];
