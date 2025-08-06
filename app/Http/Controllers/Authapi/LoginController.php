@@ -71,6 +71,7 @@ class LoginController extends ApiController
                         # code...
                         // Return token to frontend
                         return $this->sendSuccess([
+                            'id'                        => $user->data_pic_kelompok_masyarakat->id,
                             'token'                     => $token,
                             'jenis_kelompok_masyarakat' => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat ?? null,
                             'kelompok_masyarakat_id'    => $user->data_pic_kelompok_masyarakat->kelompok_masyarakat->id,
@@ -82,6 +83,7 @@ class LoginController extends ApiController
                     } else {
 
                         return $this->sendSuccess([
+                            'id'                        => null,
                             'token'                     => $token,
                             'jenis_kelompok_masyarakat' => $user->role_user == 'approver' ? 'Validator' : $user->role_user,
                             'kelompok_masyarakat_id'    => $user->role_user == 'approver' ? 'Validator' : $user->role_user,
