@@ -533,7 +533,7 @@ class RegisterController extends ApiController
 
         // Make default password for first login
         $token =
-            crypt($request->email_pic . Carbon::now()->format('d M Y H:i:s'), rand(1, 100));
+            crypt($request->email_pic . Carbon::now()->format('d M Y H:i:s'), rand(10, 100));
 
         // Membuat objek DateTime dengan waktu sekarang
         $date = new DateTime();

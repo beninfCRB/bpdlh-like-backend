@@ -204,13 +204,24 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
 
         $result->transform(function ($item, $key) use ($dokumen) {
 
-            return [
-                'id'                    => $item->id,
-                'jenis_dokumen'         => $item->jenis_dokumen,
-                'url_dokumen'           => $item->document_file ? env('APP_URL') . '/storage/' . $item->document_file->file_path : null,
-                'template_dokumen'      => $item->document_file ? $item->document_file->real_name : null,
-                'dokumen'               => $dokumen ? $this->mapDokumen($dokumen, $item->jenis_dokumen) : null,
-            ];
+            if (strpos($item->jenis_dokumen, 'http') !== false) {
+                return [
+                    'id'                    => $item->id,
+                    'jenis_dokumen'         => "Quisioner",
+                    'url_dokumen'           => $item->jenis_dokumen,
+                    'template_dokumen'      => "Silahkan klik disini untuk mengisi quisioner",
+                    'dokumen'               => $dokumen ? $this->mapDokumen($dokumen, $item->jenis_dokumen) : null,
+                ];
+            } else {
+
+                return [
+                    'id'                    => $item->id,
+                    'jenis_dokumen'         => $item->jenis_dokumen,
+                    'url_dokumen'           => $item->document_file ? env('APP_URL') . '/storage/' . $item->document_file->file_path : null,
+                    'template_dokumen'      => $item->document_file ? $item->document_file->real_name : null,
+                    'dokumen'               => $dokumen ? $this->mapDokumen($dokumen, $item->jenis_dokumen) : null,
+                ];
+            }
         });
 
         return $this->sendSuccess($result);
