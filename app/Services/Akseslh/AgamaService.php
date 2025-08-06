@@ -7,6 +7,7 @@ namespace App\Services\Akseslh;
 use App\Models\Agama;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 
 class AgamaService extends AppService implements AppServiceInterface
@@ -26,15 +27,17 @@ class AgamaService extends AppService implements AppServiceInterface
 
     public function getAllAttr()
     {
-        $result  = $this->model->newQuery()
-            ->orderBy('created_at', 'ASC')
-            ->get();
+        $result = Cache::remember('agama', now()->adddays(7), function () {
+            $data  = $this->model->newQuery()
+                ->orderBy('created_at', 'ASC')
+                ->get();
 
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                 => $items->id,
-                'agama'     => $items->agama,
-            ];
+            return $data->transform(function ($items, $key) {
+                return [
+                    'id'        => $items->id,
+                    'agama'     => $items->agama,
+                ];
+            });
         });
 
         return $this->sendSuccess($result);

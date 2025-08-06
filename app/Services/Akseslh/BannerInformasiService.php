@@ -4,9 +4,10 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\BannerInformasi;
 use App\Services\AppService;
+use App\Models\BannerInformasi;
 use App\Services\AppServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -34,13 +35,25 @@ class BannerInformasiService extends AppService implements AppServiceInterface
 
     public function apiGetAll()
     {
-        $model =   $this->model->newQuery()->latest()->first();
+        $result = Cache::remember('banner_informasi', now()->adddays(7), function () {
+            $model  = $this->model->newQuery()
+                ->latest()
+                ->first();
 
-        $result = [
-            'deskripsi' => $model ? htmlentities($model->deskripsi) : ""
-        ];
+            return [
+                'deskripsi' => $model ? htmlentities($model->deskripsi) : ""
+            ];
+        });
 
         return $this->sendSuccess($result);
+
+        // $model =   $this->model->newQuery()->latest()->first();
+
+        // $result = [
+        //     'deskripsi' => $model ? htmlentities($model->deskripsi) : ""
+        // ];
+
+        // return $this->sendSuccess($result);
     }
 
     public function getPaginated($search = null, $page = null, $perPage = null, $lang = null)
@@ -69,6 +82,7 @@ class BannerInformasiService extends AppService implements AppServiceInterface
             ]);
 
             \DB::commit(); // commit the changes
+            Cache::forget('banner_informasi');
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -88,6 +102,7 @@ class BannerInformasiService extends AppService implements AppServiceInterface
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('banner_informasi');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes

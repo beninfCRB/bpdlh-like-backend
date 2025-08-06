@@ -82,10 +82,11 @@
                                 class="img-circle" />
                         </a>
                         <ul class="dropdown-menu">
-
-                            <li>
-                                <a href="{{ route('telescope') }}"><i class="md md-settings"></i> Telescope</a>
-                            </li>
+                            @if (auth()->user()->role_user === 'administrator')
+                                <li>
+                                    <a href="{{ route('telescope') }}"><i class="md md-settings"></i> Telescope</a>
+                                </li>
+                            @endif
                             <li>
                                 <form action="{{ route('logout') }}" method="post" id="logout-form">
                                     @csrf

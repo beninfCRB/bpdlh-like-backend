@@ -10,10 +10,11 @@
                         aria-expanded="false">{{ auth()->user()->nama_pic }}
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-
-                        <li>
-                            <a href="{{ route('telescope') }}"><i class="md md-settings"></i> Telescope</a>
-                        </li>
+                        @if (auth()->user()->role_user === 'administrator')
+                            <li>
+                                <a href="{{ route('telescope') }}"><i class="md md-settings"></i> Telescope</a>
+                            </li>
+                        @endif
                         <li>
                             <form action="{{ route('logout') }}" method="post" id="logout-form-sidebar">
                                 @csrf
@@ -160,12 +161,14 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="{{ route('tolak-pengajuan-dan-profil.index') }}" class="waves-effect"><i
-                            class="md md-assignment-late"></i>
-                        <span class="text-small">Kelola Penolakan</span>
-                    </a>
-                </li>
+                @if (in_array(auth()->user()->role_user, ['administrator', 'approver']))
+                    <li>
+                        <a href="{{ route('tolak-pengajuan-dan-profil.index') }}" class="waves-effect"><i
+                                class="md md-assignment-late"></i>
+                            <span class="text-small">Kelola Penolakan</span>
+                        </a>
+                    </li>
+                @endif
                 @if (in_array(auth()->user()->role_user, ['administrator', 'pmu-bpdlh']))
                     <li class="has_sub">
                         <a href="#" class="waves-effect"><i class="md md-attach-money"></i>
@@ -216,16 +219,18 @@
                             <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">> <span>List Pengajuan</span></a>
                         </li>
-                        <li>
-                            <a href="{{ route('laporan-akhir-kegiatan.index') }}" class="waves-effect"
-                                style="padding: 10px 25px 10px 30px;">> <span>
-                                    Unggah Laporan Akhir</span></a>
-                        </li>
-                        <li>
-                            <a href="{{ route('laporan-akhir-kegiatan.edit') }}" class="waves-effect"
-                                style="padding: 10px 25px 10px 30px;">> <span>
-                                    Ubah Laporan Akhir</span></a>
-                        </li>
+                        @if (in_array(auth()->user()->role_user, ['administrator', 'approver']))
+                            <li>
+                                <a href="{{ route('laporan-akhir-kegiatan.index') }}" class="waves-effect"
+                                    style="padding: 10px 25px 10px 30px;">> <span>
+                                        Unggah Laporan Akhir</span></a>
+                            </li>
+                            <li>
+                                <a href="{{ route('laporan-akhir-kegiatan.edit') }}" class="waves-effect"
+                                    style="padding: 10px 25px 10px 30px;">> <span>
+                                        Ubah Laporan Akhir</span></a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             </ul>
