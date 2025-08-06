@@ -167,6 +167,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             })->first()->tanggal_selesai,
                             'longitude'  => $items->longitude,
                             'latitude'  => $items->latitude,
+                            'alamat_kegiatan_realisasi' => $items->alamat_kegiatan_realisasi,
                             'document'                      => $items->document,
                             'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
                                 return [
