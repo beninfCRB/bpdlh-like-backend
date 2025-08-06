@@ -19,7 +19,7 @@ class MasterIndikatorService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->withTrashed()->orderBy('created_at', 'ASC');
+        $model = $this->model->query()->withTrashed()->orderBy('sort', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -48,6 +48,7 @@ class MasterIndikatorService extends AppService implements AppServiceInterface
                 'nama_indikator'     =>  $data['nama_indikator'],
                 'satuan'             =>  $data['satuan'],
                 'tipe_data'          =>  $data['tipe_data'],
+                'sort'               =>  $data['sort'],
                 'flag'               =>  1,
             ]);
 
@@ -70,6 +71,7 @@ class MasterIndikatorService extends AppService implements AppServiceInterface
             $read->nama_indikator    =   $data['nama_indikator'];
             $read->satuan            =   $data['satuan'];
             $read->tipe_data         =   $data['tipe_data'];
+            $read->sort              =   $data['sort'];
             $read->save();
 
             \DB::commit(); // commit the changes
