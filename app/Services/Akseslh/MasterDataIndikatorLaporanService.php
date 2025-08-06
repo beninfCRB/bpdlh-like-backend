@@ -143,7 +143,7 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
         //         ];
         //     });
         // }
-        $result = $this->modelMasterIndikator->newQuery()->get();
+        $result = $this->modelMasterIndikator->newQuery()->orderBy('sort', 'ASC')->get();
 
         $result->transform(function ($item, $key) {
             return [

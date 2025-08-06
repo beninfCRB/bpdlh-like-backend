@@ -46,6 +46,7 @@ class MasterIndikatorController extends ApiController
             'nama_indikator'     => 'required|string|max:150',
             'satuan'             => 'required|string',
             'tipe_data'          => 'required|string',
+            'sort'               => 'required|numeric|min:1',
         ]);
 
         $result =   $this->masterIndikatorService->create($input);
@@ -69,6 +70,7 @@ class MasterIndikatorController extends ApiController
             'nama_indikator'     => 'required|string|max:150',
             'satuan'             => 'required|string',
             'tipe_data'          => 'required|string',
+            'sort'               => 'required|numeric|min:1',
         ]);
 
         $result =   $this->masterIndikatorService->update($id, $input);

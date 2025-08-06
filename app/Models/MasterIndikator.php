@@ -15,6 +15,7 @@ class MasterIndikator extends AppModel
         'nama_indikator',
         'satuan',
         'tipe_data',
+        'sort',
         'flag',
         'username',
     ];
