@@ -113,6 +113,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('user-akseslh', App\Http\Controllers\Cms\Akseslh\UserAkseslhController::class);
         Route::resource('pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class);
 
+        Route::resource('profile-pic', App\Http\Controllers\Cms\Akseslh\ProfilePicController::class);
+
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
 
@@ -133,6 +135,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('laporan-akhir-kegiatan/edit', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'edit'])->name('laporan-akhir-kegiatan.edit');
 
         // Datatable
+        Route::get('/data-profile-pic', [App\Http\Controllers\Datatable\Akseslh\ProfilePicController::class, 'getAll'])->name('data-profile-pic');
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
         Route::get('/data-jenis-dokumen', [App\Http\Controllers\Datatable\Akseslh\JenisDokumenController::class, 'getAll'])->name('data-jenis-dokumen');
         Route::get('/data-tahapan-pengajuan-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TahapanPengajuanKegiatanController::class, 'getAll'])->name('data-tahapan-pengajuan-kegiatan');

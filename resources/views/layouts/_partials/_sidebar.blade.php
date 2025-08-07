@@ -159,6 +159,10 @@
                                 style="padding: 10px 25px 10px 30px;">>
                                 <span>User Akseslh</span></a>
                         </li>
+                        <li>
+                            <a href="{{ route('profile-pic.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Verifikasi Profile PIC</span></a>
+                        </li>
                     </ul>
                 </li>
                 @if (in_array(auth()->user()->role_user, ['administrator', 'approver']))
