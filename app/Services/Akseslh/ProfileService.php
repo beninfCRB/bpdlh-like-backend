@@ -82,6 +82,7 @@ class ProfileService extends AppService implements AppServiceInterface
             "jenis_pekerjaan_id" => $model->jenis_pekerjaan->id ?? null,
             'pendidikan'        => $model->pendidikan->pendidikan ?? null,
             'pendidikan_id'        => $model->pendidikan->id ?? null,
+            'jenis_kelamin' => $model->jenis_kelamin ?? null,
             "foto"  => $model->foto()->whereIn('group', ['foto_ktp'])->get(),
             'profile_kelompok' => $model->foto()->where('group', ['profil_kelompok'])->latest()->first(),
             'verifikator_admin' => $data['user']->master_user_jenis_kelompok->isEmpty() ? true : false
