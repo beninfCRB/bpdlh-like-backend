@@ -42,6 +42,8 @@ class ProfilePic extends AppModel
         'jenis_pekerjaan_id',
         'pendidikan_id',
         'jenis_kelamin',
+        'catatan',
+        'status_verifikasi',
         'flag',
         'username',
     ];

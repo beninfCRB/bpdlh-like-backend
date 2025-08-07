@@ -97,7 +97,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // User PIC
     Route::get('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'show']);
-    Route::put('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'update'])->middleware(['pembukaan']);
+    Route::put('profile/{id}', [App\Http\Controllers\Api\Akseslh\ProfileController::class, 'updateProfilePic'])->middleware(['pembukaan']);
 
     Route::get('getDataDashboardVerifikator', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'index']);
     Route::get('getDataPenyerapanDana', [App\Http\Controllers\Api\Akseslh\DashboardController::class, 'getDataPenyerapanDana']);
