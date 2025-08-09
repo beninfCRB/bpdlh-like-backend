@@ -56,6 +56,7 @@ class ProfileService extends AppService implements AppServiceInterface
         $result = [
             "id" => $model->id,
             "kelompok_masyarakat" => $model->kelompok_masyarakat->kelompok_masyarakat ?? null,
+            "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
             "nama_pic" => $model->nama_pic ?? null,
             "jenis_identitas_pic" => $model->jenis_identitas_pic ?? null,
             "nomor_identitas_pic" => $model->nomor_identitas_pic ?? null,

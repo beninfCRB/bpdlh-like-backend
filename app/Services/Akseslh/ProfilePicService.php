@@ -20,7 +20,7 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->withTrashed()->orderBy('created_at', 'ASC');
+        $model = $this->model->query()->where('status_verifikasi', 'belum_verifikasi')->with('data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis')->orderBy('created_at', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
@@ -34,26 +34,52 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->where('id', $id)->with('data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis')->first();
 
         return $this->sendSuccess($result);
     }
 
     public function create($data)
     {
+        $model = $this->model->newQuery()
+            ->where(['data_pic_kelompok_masyarakat_id' => $data['data_pic_kelompok_masyarakat_id'], 'status_verifikasi' => 'belum_verifikasi'])
+            ->first();
+
+        if ($model) {
+            return $this->sendError(null, 'Permintaan perubahan profil masih tahap verifikasi', 422);
+        }
+
         \DB::beginTransaction();
 
         try {
 
             $data = $this->model->newQuery()->create([
-                'jenis_kelompok_masyarakat'     =>  $data['jenis_kelompok_masyarakat'],
-                'short_id'                      =>  $data['short_id'],
-                'code_id'                      =>  $data['code_id'],
-                'flag'                          =>  1,
+                'data_pic_kelompok_masyarakat_id' =>  $data['data_pic_kelompok_masyarakat_id'],
+                'kelompok_masyarakat_id' =>  $data['kelompok_masyarakat_id'],
+                'kelompok_masyarakat' =>  $data['kelompok_masyarakat'],
+                'nama_pic'              =>  $data['nama_pic'],
+                'jenis_identitas_pic'   =>  $data['jenis_identitas_pic'],
+                'nomor_identitas_pic'   =>  $data['nomor_identitas_pic'],
+                'nomor_npwp_pic'        =>  $data['nomor_npwp_pic'],
+                'email_pic'             =>  $data['email_pic'],
+                'nohp_pic'              =>  $data['nohp_pic'],
+                'alamat_pic'            =>  $data['alamat_pic'],
+                'kelurahan_pic'         =>  $data['kelurahan_pic'],
+                'kecamatan_pic'         =>  $data['kecamatan_pic'],
+                'kabupaten_pic'         =>  $data['kabupaten_pic'],
+                'provinsi_pic'          =>  $data['provinsi_pic'],
+                'tempat_lahir'          =>  $data['tempat_lahir'],
+                'tanggal_lahir'         =>  $data['tanggal_lahir'],
+                'agama_id'              =>  $data['agama_id'],
+                'status_perkawinan_id'  =>  $data['status_perkawinan_id'],
+                'jenis_pekerjaan_id'    =>  $data['jenis_pekerjaan_id'],
+                'pendidikan_id'         =>  $data['pendidikan_id'],
+                'jenis_kelamin'         =>  $data['jenis_kelamin'],
+                'flag'                  =>  1,
             ]);
 
             \DB::commit(); // commit the changes
-            return $this->sendSuccess($data);
+            return $this->sendSuccess(null, 'Permintaan perubahan profil berhasil dikirim', 200);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);

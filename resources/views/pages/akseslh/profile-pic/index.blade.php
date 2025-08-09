@@ -3,7 +3,7 @@
 @section('title', 'Verifikasi Profil PIC')
 
 @section('script')
-    <script src="{{ asset('app/build/profil_pic.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('app/build/profile_pic.js') }}" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -36,9 +36,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Jenis Kelompok Masyarakat</th>
-                                        <th>Short ID</th>
-                                        <th>Code ID</th>
-                                        <th>Status</th>
+                                        <th>Kelompok Masyarakat</th>
+                                        <th>Nama PIC</th>
+                                        <th>Email PIC</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
                                         <th></th>

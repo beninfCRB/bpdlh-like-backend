@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\AppModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProfilePic extends AppModel
@@ -22,6 +23,8 @@ class ProfilePic extends AppModel
      * @var array
      */
     protected $fillable = [
+        'data_pic_kelompok_masyarakat_id',
+        'kelompok_masyarakat',
         'kelompok_masyarakat_id',
         'nama_pic',
         'jenis_identitas_pic',
@@ -47,4 +50,14 @@ class ProfilePic extends AppModel
         'flag',
         'username',
     ];
+
+    /**
+     * Get the data_pic_kelompok_masyarakat that owns the ProfilePic
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function data_pic_kelompok_masyarakat(): BelongsTo
+    {
+        return $this->belongsTo(DataPicKelompokMasyarakat::class, 'data_pic_kelompok_masyarakat_id', 'id');
+    }
 }
