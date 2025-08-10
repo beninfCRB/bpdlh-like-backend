@@ -6,10 +6,10 @@
     <!-- Page-Title -->
     <div class="row">
         <div class="col-sm-12">
-            <h4 class="pull-left page-title">VERIFIKASI PROFILE PIC</h4>
+            <h4 class="pull-left page-title">VERIFIKASI PERUBAHAN PROFILE PIC</h4>
             <ol class="breadcrumb pull-right">
                 <li><a href="#">Data User</a></li>
-                <li class="active">Verifikasi Profile Pic</li>
+                <li class="active">Verifikasi Perubahan Profile Pic</li>
             </ol>
         </div>
     </div>
@@ -183,18 +183,22 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="gal-detail thumb">
-                                        <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
-                                            alt="work-thumbnail" />
-                                        <h4>KTP PIC</h4>
-                                    </div>
+                                    <a href="#">
+                                        <div class="gal-detail thumb">
+                                            <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
+                                                alt="work-thumbnail" />
+                                            <h4>KTP PIC</h4>
+                                        </div>
+                                    </a>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="gal-detail thumb">
-                                        <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
-                                            alt="work-thumbnail" />
-                                        <h4>Profil Kelompok</h4>
-                                    </div>
+                                    <a href="#">
+                                        <div class="gal-detail thumb">
+                                            <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
+                                                alt="work-thumbnail" />
+                                            <h4>Profil Kelompok</h4>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
                         </form>
@@ -208,7 +212,7 @@
             <div class="portlet">
                 <div class="portlet-heading bg-primary">
                     <h3 class="portlet-title">
-                        Primary Heading
+                        Pengajuan Perubahan Profil PIC
                     </h3>
                     <div class="portlet-widgets">
                         <label for="">Ceklis Semua</label>
