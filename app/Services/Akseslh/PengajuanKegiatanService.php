@@ -1321,7 +1321,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $model->rab_pengajuan_paket_kegiatans()->createMany($dataKomponenRabInput);
 
             // Update status flag
-            $model->update(['flag' => 1]);
+            $model->update(['is_active' => 'INACTIVE', 'flag' => 1]);
 
             // Persiapkan data untuk response
             $result = [

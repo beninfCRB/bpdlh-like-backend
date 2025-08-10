@@ -209,7 +209,6 @@ class VerifikasiService extends AppService implements AppServiceInterface
         }
 
         if ($read->flag != 1) {
-
             \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
             return $this->sendError(null, 'Not Allowed', 403);
         }
