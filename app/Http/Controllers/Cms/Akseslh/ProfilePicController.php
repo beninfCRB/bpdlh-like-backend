@@ -109,8 +109,6 @@ class ProfilePicCOntroller extends ApiController
 
         $input['user'] = $request->user();
 
-        return $this->sendSuccess($input, 'Profil berhasil ditolak', 200);
-
         $result =   $this->profileService->delete_profile($id, $input);
 
         try {

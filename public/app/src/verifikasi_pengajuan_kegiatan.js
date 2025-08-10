@@ -149,59 +149,66 @@ jQuery(document).ready(function () {
                     // Pindahkan fokus ke tombol konfirmasi di dalam modal
                     document.querySelector(".swal2-confirm")?.focus();
                 },
-            }).then((response) => {
-                if (response.value) {
-                    createData(
-                        route + "/verifikasi-pengajuan/" + idPengajuan,
-                        formData
-                    )
-                        .then((response) => {
-                            if (response.data.code == 200) {
+            })
+                .then((response) => {
+                    if (response.value) {
+                        createData(
+                            route + "/verifikasi-pengajuan/" + idPengajuan,
+                            formData
+                        )
+                            .then((response) => {
+                                if (response.data.code == 200) {
+                                    Swal.fire({
+                                        title: "Berhasil",
+                                        text: response.data.message,
+                                        icon: "success",
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                }
+                            })
+                            .catch((error) => {
+                                let messages = error.response?.data?.message;
+
+                                // Jika message berbentuk object (bisa jadi hasil dari validasi Laravel)
+                                if (typeof messages === "object") {
+                                    // Gabungkan semua pesan jadi satu string
+                                    messages = Object.values(messages)
+                                        .flat() // Gabungkan array dalam array
+                                        .join("<br>"); // Pakai <br> biar toast bisa tampil multiline
+                                }
+
                                 Swal.fire({
-                                    title: "Berhasil",
-                                    text: response.data.message,
-                                    icon: "success",
-                                }).then(() => {
-                                    window.location.reload();
+                                    toast: true,
+                                    position: "top-end",
+                                    icon: "error",
+                                    html: messages || "Terjadi kesalahan", // pakai html biar <br> berfungsi
+                                    showConfirmButton: false,
+                                    timer: 5000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.addEventListener(
+                                            "mouseenter",
+                                            Swal.stopTimer
+                                        );
+                                        toast.addEventListener(
+                                            "mouseleave",
+                                            Swal.resumeTimer
+                                        );
+                                    },
                                 });
-                            }
-                        })
-                        .catch((error) => {
-                            let messages = error.response?.data?.message;
-
-                            // Jika message berbentuk object (bisa jadi hasil dari validasi Laravel)
-                            if (typeof messages === "object") {
-                                // Gabungkan semua pesan jadi satu string
-                                messages = Object.values(messages)
-                                    .flat() // Gabungkan array dalam array
-                                    .join("<br>"); // Pakai <br> biar toast bisa tampil multiline
-                            }
-
-                            Swal.fire({
-                                toast: true,
-                                position: "top-end",
-                                icon: "error",
-                                html: messages || "Terjadi kesalahan", // pakai html biar <br> berfungsi
-                                showConfirmButton: false,
-                                timer: 5000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.addEventListener(
-                                        "mouseenter",
-                                        Swal.stopTimer
-                                    );
-                                    toast.addEventListener(
-                                        "mouseleave",
-                                        Swal.resumeTimer
-                                    );
-                                },
+                            })
+                            .finally(() => {
+                                $(".btn-status-pengajuan").attr(
+                                    "disabled",
+                                    false
+                                );
                             });
-                        })
-                        .finally(() => {
-                            $(".btn-status-pengajuan").attr("disabled", false);
-                        });
-                }
-            });
+                    }
+                })
+                .finally(() => {
+                    $(".btn-status-pengajuan").attr("disabled", false);
+                });
 
             // return alert("success");
         });
