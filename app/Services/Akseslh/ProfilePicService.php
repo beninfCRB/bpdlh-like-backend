@@ -78,6 +78,30 @@ class ProfilePicService extends AppService implements AppServiceInterface
                 'flag'                  =>  1,
             ]);
 
+            if (isset($data['foto_ktp'])) {
+                # code...
+                $upload = $this->fileUploadService->handleImage('foto_ktp')->saveToDb('foto_ktp');
+                if ($upload) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($data),
+                        'fileable_id'   => $data->id,
+                    ]);
+                }
+            }
+
+            if (isset($data['profil_kelompok'])) {
+                # code...
+                $upload = $this->fileUploadService->handleFile('profil_kelompok')->saveToDb('profil_kelompok');
+                if ($upload) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($data),
+                        'fileable_id'   => $data->id,
+                    ]);
+                }
+            }
+
             \DB::commit(); // commit the changes
             return $this->sendSuccess(null, 'Permintaan perubahan profil berhasil dikirim', 200);
         } catch (\Exception $exception) {

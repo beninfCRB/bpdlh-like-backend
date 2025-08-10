@@ -2,20 +2,25 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
-use App\Http\Controllers\ApiController;
-use App\Services\Akseslh\ProfilePicService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\ApiController;
+use App\Services\Akseslh\ProfileService;
+use Illuminate\Support\Facades\Validator;
+use App\Services\Akseslh\ProfilePicService;
 
 class ProfilePicCOntroller extends ApiController
 {
     protected $profilePicService;
+    protected $profileService;
 
     public function __construct(
         ProfilePicService $profilePicService,
+        ProfileService $profileService,
         Request $request
     ) {
-        $this->profilePicService   =   $profilePicService;
         parent::__construct($request);
+        $this->profilePicService   =   $profilePicService;
+        $this->profileService   =   $profileService;
     }
 
     public function index()
@@ -86,9 +91,45 @@ class ProfilePicCOntroller extends ApiController
         }
     }
 
-    public function destroy($id): \Illuminate\Http\JsonResponse
+    public function tolak_profil($id, Request $request)
     {
-        $result =   $this->profilePicService->delete($id);
+
+        $validator = Validator::make($request->all(), [
+            'pengajuan_kegiatan_id' => 'required',
+            'catatan_log'         => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $input          = $validator->validated();
+
+        $input['user'] = $request->user();
+
+        return $this->sendSuccess($input, 'Profil berhasil ditolak', 200);
+
+        $result =   $this->profileService->delete_profile($id, $input);
+
+        try {
+            if ($result->success) {
+                $response = $result->data;
+                return $this->sendSuccess($response, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (\Exception $exception) {
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function destroy($id, Request $request): \Illuminate\Http\JsonResponse
+    {
+
+        $result =   $this->profileService->delete_profile($id, $input);
+
         try {
             if ($result->success) {
                 $response = $result->data;
