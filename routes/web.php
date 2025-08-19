@@ -120,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('profile-pic', App\Http\Controllers\Cms\Akseslh\ProfilePicController::class);
         Route::put('profile-pic/tolak-profil/{id}', [App\Http\Controllers\Cms\Akseslh\ProfilePicController::class, 'tolak_profil']);
+        Route::put('profile-pic/tolak-pengajuan-perubahan-profil/{id}', [App\Http\Controllers\Cms\Akseslh\ProfilePicController::class, 'tolak_pengajuan_perubahan_profil']);
 
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);

@@ -186,7 +186,7 @@ class EmailPhpService
             $this->mail->AltBody = $altBody;
 
             $this->mail->send();
-            return 'Email berhasil dikirim';
+            return true;
         } catch (Exception $e) {
             return "Email gagal dikirim. Mailer Error: {$this->mail->ErrorInfo}";
         }
