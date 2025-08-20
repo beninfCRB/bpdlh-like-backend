@@ -210,7 +210,7 @@ class LaporanKegiatanService extends AppService implements AppServiceInterface
                     'jenis_dokumen'         => "Quisioner",
                     'url_dokumen'           => $item->jenis_dokumen,
                     'template_dokumen'      => "Silahkan klik disini untuk mengisi quisioner",
-                    'dokumen'               => $dokumen ? $this->mapDokumen($dokumen, $item->jenis_dokumen) : null,
+                    'dokumen'               => $dokumen ? $this->mapDokumen($dokumen, 'Quisioner') : null,
                 ];
             } else {
 

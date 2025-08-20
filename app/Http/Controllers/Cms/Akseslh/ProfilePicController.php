@@ -8,7 +8,7 @@ use App\Services\Akseslh\ProfileService;
 use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\ProfilePicService;
 
-class ProfilePicCOntroller extends ApiController
+class ProfilePicController extends ApiController
 {
     protected $profilePicService;
     protected $profileService;
@@ -89,6 +89,19 @@ class ProfilePicCOntroller extends ApiController
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
         }
+    }
+
+    public function tolak_pengajuan_perubahan_profil($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'profile_field' => 'required|array'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        return $this->sendSuccess($request->all(), 'Berhasil', 200);
     }
 
     public function tolak_profil($id, Request $request)

@@ -2,6 +2,10 @@
 
 @section('title', 'Verifikasi Profil PIC')
 
+@section('script')
+    <script src="{{ asset('app/build/edit_profile_pic.js') }}" type="text/javascript"></script>
+@endsection
+
 @section('content')
     <!-- Page-Title -->
     <div class="row">
@@ -31,11 +35,10 @@
                                 </div>
                             </div>
                             <span class="input-group-btn m-l-5">
-                                <button type="submit" class="btn waves-effect waves-light btn-danger">
+                                <button type="button" onclick="tolakPengajuanPerubahan()"
+                                    class="btn waves-effect waves-light btn-danger">
                                     Tolak Pengajuan Perubahan
                                 </button>
-                            </span>
-                            <span class="input-group-btn">
                                 <button class="btn waves-effect waves-light btn-success">
                                     Terima Pengajuan Perubahan
                                 </button>
@@ -217,7 +220,7 @@
                     <div class="portlet-widgets">
                         <label for="">Ceklis Semua</label>
                         <span class="divider"></span>
-                        <input type="checkbox" name="" id="">
+                        <input type="checkbox" name="ceklis_semua" id="ceklis_semua">
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -233,7 +236,8 @@
                                         class="form-control" value="{{ $data->data->kelompok_masyarakat }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->id != $data->data->kelompok_masyarakat_id)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="kelompok_masyarakat"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -246,21 +250,21 @@
                                         placeholder="Email" value="{{ $data->data->nama_pic }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->nama_pic != $data->data->nama_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="nama_pic" id="">
                                         @endif
                                     </span>
                                 </div>
                             </div>
                             <div
                                 class="form-group {{ $data->data->data_pic_kelompok_masyarakat->email_pic == $data->data->email_pic ? 'has-success' : 'has-error' }}">
-                                <label for="nama_pic">Email PIC <span class="text-danger">*</span></label>
+                                <label for="email_pic">Email PIC <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="text" id="example-input2-group1" name="example-input2-group1"
-                                        class="form-control" placeholder="Email" value="{{ $data->data->email_pic }}"
-                                        readonly />
+                                    <input type="text" id="email_pic" name="email_pic" class="form-control"
+                                        placeholder="Email" value="{{ $data->data->email_pic }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->email_pic != $data->data->email_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="email_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -275,7 +279,8 @@
                                         value="{{ $data->data->jenis_identitas_pic }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->jenis_identitas_pic != $data->data->jenis_identitas_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="jenis_identitas_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -290,7 +295,8 @@
                                         value="{{ $data->data->nomor_identitas_pic }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->nomor_identitas_pic != $data->data->nomor_identitas_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="nomor_identitas_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -303,7 +309,8 @@
                                         value="{{ $data->data->nomor_npwp_pic }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->nomor_npwp_pic != $data->data->nomor_npwp_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="nomor_npwp_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -316,7 +323,7 @@
                                         value="{{ $data->data->nohp_pic }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->nohp_pic != $data->data->nohp_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="nohp_pic" id="">
                                         @endif
                                     </span>
                                 </div>
@@ -330,7 +337,8 @@
                                     <textarea id="alamat_pic" name="alamat_pic" class="form-control" rows="5" readonly>{{ $data->data->alamat_pic }}</textarea>
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->alamat_pic != $data->data->alamat_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="alamat_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -343,7 +351,8 @@
                                         value="{{ $data->data->provinsi->name }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->provinsi_pic != $data->data->provinsi_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="provinsi_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -356,7 +365,8 @@
                                         value="{{ $data->data->kabupaten->name }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->kabupaten_pic != $data->data->kabupaten_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="kabupaten_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -369,7 +379,8 @@
                                         value="{{ $data->data->kecamatan->name }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->kecamatan_pic != $data->data->kecamatan_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="kecamatan_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -382,7 +393,8 @@
                                         value="{{ $data->data->kecamatan->name }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->kelurahan_pic != $data->data->kelurahan_pic)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="kelurahan_pic"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -395,7 +407,8 @@
                                         value="{{ $data->data->tempat_lahir }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->tempat_lahir != $data->data->tempat_lahir)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="tempat_lahir"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -408,7 +421,8 @@
                                         value="{{ $data->data->tanggal_lahir }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->tanggal_lahir != $data->data->tanggal_lahir)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="tanggal_lahir"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -421,7 +435,7 @@
                                         value="{{ $data->data->agama->agama }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->agama_id != $data->data->agama_id)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="agama_id" id="">
                                         @endif
                                     </span>
                                 </div>
@@ -436,7 +450,8 @@
                                         value="{{ $data->data->status_perkawinan->status_pernikahan }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->status_perkawinan_id != $data->data->status_perkawinan_id)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="status_perkawinan_id"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -450,7 +465,8 @@
                                         readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->jenis_pekerjaan_id != $data->data->jenis_pekerjaan_id)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="jenis_pekerjaan_id"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -463,7 +479,8 @@
                                         value="{{ $data->data->pendidikan->pendidikan }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->pendidikan_id != $data->data->pendidikan_id)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="pendidikan_id"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>
@@ -476,7 +493,8 @@
                                         value="{{ $data->data->jenis_kelamin }}" readonly />
                                     <span class="input-group-addon">
                                         @if ($data->data->data_pic_kelompok_masyarakat->jenis_kelamin != $data->data->jenis_kelamin)
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="profile-field" name="jenis_kelamin"
+                                                id="">
                                         @endif
                                     </span>
                                 </div>

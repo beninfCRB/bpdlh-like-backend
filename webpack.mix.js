@@ -51,6 +51,7 @@ mix.js("public/app/app.js", build)
     .js(source + "tolak_pengajuan_dan_profil.js", build)
     .js(source + "profile_pic.js", build)
     .js(source + "verifikasi_pengajuan_kegiatan.js", build)
+    .js(source + "edit_profile_pic.js", build)
     .version();
 
 mix.disableNotifications();
