@@ -100,6 +100,16 @@ class ProfileController extends ApiController
 
         $input          = $validator->validated();
 
+        if (isset($request->profil_kelompok)) {
+            # code...
+            $input['profil_kelompok'] = $request->file('profil_kelompok');
+        }
+
+        if (isset($request->foto_ktp)) {
+            # code...
+            $input['foto_ktp'] = $request->file('foto_ktp');
+        }
+
         $input['data_pic_kelompok_masyarakat_id'] = $id;
 
         $result =   $this->profilePicService->create($input);

@@ -91,17 +91,41 @@ class ProfilePicController extends ApiController
         }
     }
 
-    public function tolak_pengajuan_perubahan_profil($id, Request $request)
+    public function pengajuan_perubahan_profil($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'profile_field' => 'required|array'
+            'status'        => 'required',
         ]);
 
+        $validator->sometimes('profile_field', 'required|array', function ($input) {
+            return $input->status != 0;
+        });
+
+        $validator->sometimes('catatan', 'required|string|max:255', function ($input) {
+            return $input->status == 0;
+        });
+
         if ($validator->fails()) {
-            return $this->sendError(null, $validator->getMessageBag(), 422);
+            return $this->sendError($request->all(), $validator->getMessageBag(), 422);
         }
 
-        return $this->sendSuccess($request->all(), 'Berhasil', 200);
+        $input = $validator->validated();
+
+        $input['profile_field'][] = 'id';
+        $input['profile_field'][] = 'data_pic_kelompok_masyarakat_id';
+
+        $result = $this->profilePicService->pengajuanPerubahanProfil($id, $input);
+
+        try {
+            if ($result->success) {
+                # code...
+                return $this->sendSuccess($result->data, $result->message, 200);
+            }
+            return $this->sendError(null, $result->message, 422);
+        } catch (\Exception $exception) {
+            //throw $th;
+            return $this->sendError(null, $exception->getMessage(), 500);
+        }
     }
 
     public function tolak_profil($id, Request $request)

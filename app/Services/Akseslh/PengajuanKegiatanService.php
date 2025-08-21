@@ -1420,11 +1420,30 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             });
 
+            // Menyiapkan response untuk review pengajuan
+            $review_pengajuan_kegiatan = [
+                'tematik_kegiatan'              => $read->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_tematik_kegiatan'  => $read->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'jenis_kegiatan'                => $read->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'paket_kegiatan'                => $read->paket_kegiatan->nama_paket_kegiatan,
+                'judul_pengajuan_kegiatan'      => $read->judul_pengajuan_kegiatan,
+                'provinsi_kegiatan'             => $read->provinsi->name,
+                'kabupaten_kegiatan'            => $read->kabupaten->name,
+                'kecamatan_kegiatan'            => $read->kecamatan->name,
+                'kelurahan_kegiatan'            => $read->kelurahan->name,
+                'alamat_kegiatan'               => $read->alamat_kegiatan,
+                'proposal_kegiatan'             => $read->proposal_kegiatan,
+                'tujuan_kegiatan'               => $read->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'        => $read->ruang_lingkup_kegiatan,
+                'tanggal_kegiatan'              => $read->tanggal_kegiatan,
+            ];
+
             // Mengelompokkan komponen RAB berdasarkan jenis
             $dataSend = [
                 'id_pengajuan'    => $read->id,
                 'nomor_pengajuan' => $read->nomor_pengajuan,
                 'caping_rab'      => $read->caping_rab > 0 ? $read->caping_rab : $logJadwalPembukaan->batas_pengajuan,
+                'pengajuan_kegiatan'    => $review_pengajuan_kegiatan,
                 'komponen_rab'    => $rab->groupBy('jenis_komponen_rab')
             ];
 
@@ -1499,11 +1518,30 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             });
 
+            // Menyiapkan response untuk review pengajuan
+            $review_pengajuan_kegiatan = [
+                'tematik_kegiatan'              => $newData->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_tematik_kegiatan'  => $newData->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'jenis_kegiatan'                => $newData->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'paket_kegiatan'                => $newData->paket_kegiatan->nama_paket_kegiatan,
+                'judul_pengajuan_kegiatan'      => $newData->judul_pengajuan_kegiatan,
+                'provinsi_kegiatan'             => $newData->provinsi->name,
+                'kabupaten_kegiatan'            => $newData->kabupaten->name,
+                'kecamatan_kegiatan'            => $newData->kecamatan->name,
+                'kelurahan_kegiatan'            => $newData->kelurahan->name,
+                'alamat_kegiatan'               => $newData->alamat_kegiatan,
+                'proposal_kegiatan'             => $newData->proposal_kegiatan,
+                'tujuan_kegiatan'               => $newData->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'        => $newData->ruang_lingkup_kegiatan,
+                'tanggal_kegiatan'              => $newData->tanggal_kegiatan,
+            ];
+
             // Menyiapkan data yang akan dikirim
             $dataSend = [
-                'id_pengajuan'    => $newData->id,
-                'nomor_pengajuan' => $data['nomor_pengajuan'],
-                'komponen_rab'    => $rab->groupBy('jenis_komponen_rab'),
+                'id_pengajuan'          => $newData->id,
+                'nomor_pengajuan'       => $data['nomor_pengajuan'],
+                'pengajuan_kegiatan'    => $review_pengajuan_kegiatan,
+                'komponen_rab'          => $rab->groupBy('jenis_komponen_rab'),
             ];
 
             // Proses PDF (jika dibutuhkan)

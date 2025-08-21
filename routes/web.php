@@ -120,7 +120,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('profile-pic', App\Http\Controllers\Cms\Akseslh\ProfilePicController::class);
         Route::put('profile-pic/tolak-profil/{id}', [App\Http\Controllers\Cms\Akseslh\ProfilePicController::class, 'tolak_profil']);
-        Route::put('profile-pic/tolak-pengajuan-perubahan-profil/{id}', [App\Http\Controllers\Cms\Akseslh\ProfilePicController::class, 'tolak_pengajuan_perubahan_profil']);
+        Route::put('profile-pic/pengajuan-perubahan-profil/{id}', [App\Http\Controllers\Cms\Akseslh\ProfilePicController::class, 'pengajuan_perubahan_profil']);
 
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
@@ -149,7 +149,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-jenis-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\JenisKelompokMasyarakatController::class, 'getAll'])->name('data-jenis-kelompok-masyarakat');
         Route::get('/data-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\KelompokMasyarakatController::class, 'getAll'])->name('data-kelompok-masyarakat');
         Route::get('/data-email-blast', [App\Http\Controllers\Datatable\Akseslh\EmailBlastController::class, 'getAll'])->name('data-email-blast');
-        Route::get('/data-paket-kegiatan', [App\Htp\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
+        Route::get('/data-paket-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PaketKegiatanController::class, 'getAll'])->name('data-paket-kegiatan');
         Route::get('/data-pic-kelompok-masyarakat', [App\Http\Controllers\Datatable\Akseslh\DataPicKelompokMasyarakatController::class, 'getAll'])->name('data-pic-kelompok-masyarakat');
         Route::get('/data-user-akseslh', [App\Http\Controllers\Datatable\Akseslh\UserAkseslhController::class, 'getAll'])->name('data-user-akseslh');
         Route::get('/data-tematik-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TematikKegiatanController::class, 'getAll'])->name('data-tematik-kegiatan');

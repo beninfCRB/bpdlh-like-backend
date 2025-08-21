@@ -3,19 +3,32 @@
 
 namespace App\Services\Akseslh;
 
-
+use App\Models\DataPicKelompokMasyarakat;
 use App\Models\ProfilePic;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\File as FileTable;
+use App\Services\FileUploadService;
+
 
 class ProfilePicService extends AppService implements AppServiceInterface
 {
+    protected $modelDataPicKelompokMasyarakat;
+    protected $fileUploadService;
+    protected $fileTable;
 
-    public function __construct(ProfilePic $model)
-    {
+    public function __construct(
+        ProfilePic $model,
+        FileUploadService $fileUploadService,
+        FileTable $fileTable,
+        DataPicKelompokMasyarakat $modelDataPicKelompokMasyarakat
+    ) {
         parent::__construct($model);
+        $this->fileUploadService                        = $fileUploadService;
+        $this->fileTable                                = $fileTable;
+        $this->modelDataPicKelompokMasyarakat           = $modelDataPicKelompokMasyarakat;
     }
 
     public function getAll()
@@ -34,7 +47,7 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->where('id', $id)->with(['data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis', 'data_pic_kelompok_masyarakat.foto'])->first();
+        $result =   $this->model->newQuery()->where('id', $id)->with(['data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis', 'data_pic_kelompok_masyarakat.foto', 'document'])->first();
 
         return $this->sendSuccess($result);
     }
@@ -53,7 +66,7 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
         try {
 
-            $data = $this->model->newQuery()->create([
+            $read = $this->model->newQuery()->create([
                 'data_pic_kelompok_masyarakat_id' =>  $data['data_pic_kelompok_masyarakat_id'],
                 'kelompok_masyarakat_id' =>  $data['kelompok_masyarakat_id'],
                 'kelompok_masyarakat' =>  $data['kelompok_masyarakat'],
@@ -80,24 +93,24 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
             if (isset($data['foto_ktp'])) {
                 # code...
-                $upload = $this->fileUploadService->handleImage('foto_ktp')->saveToDb('foto_ktp');
+                $upload = $this->fileUploadService->handleImage($data['foto_ktp'])->saveToDb('foto_ktp');
                 if ($upload) {
                     $document = $this->fileTable->newQuery()->find($upload->id);
                     $document->update([
-                        'fileable_type' => get_class($data),
-                        'fileable_id'   => $data->id,
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
                     ]);
                 }
             }
 
             if (isset($data['profil_kelompok'])) {
                 # code...
-                $upload = $this->fileUploadService->handleFile('profil_kelompok')->saveToDb('profil_kelompok');
+                $upload = $this->fileUploadService->handleFile($data['profil_kelompok'])->saveToDb('profil_kelompok');
                 if ($upload) {
                     $document = $this->fileTable->newQuery()->find($upload->id);
                     $document->update([
-                        'fileable_type' => get_class($data),
-                        'fileable_id'   => $data->id,
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
                     ]);
                 }
             }
@@ -131,9 +144,91 @@ class ProfilePicService extends AppService implements AppServiceInterface
         }
     }
 
+    public function pengajuanPerubahanProfil($id, $data)
+    {
+        $foto_ktp = false;
+        $profil_kelompok = false;
+        $nama_pic = false;
+        $email_pic = false;
+
+        if (in_array('foto_ktp', $data['profile_field'])) {
+            $foto_ktp = true;
+
+            // Hapus data foto_ktp
+            $data['profile_field'] = array_diff($data['profile_field'], ['foto_ktp']);
+
+            // kalau mau reset index biar rapi 0,1,2 dst
+            $data['profile_field'] = array_values($data['profile_field']);
+        }
+
+        if (in_array('profile_kelompok', $data['profile_field'])) {
+            $profile_kelompok = true;
+
+            // Hapus data profile_kelompok
+            $data['profile_field'] = array_diff($data['profile_field'], ['profile_kelompok']);
+
+            // kalau mau reset index biar rapi 0,1,2 dst
+            $data['profile_field'] = array_values($data['profile_field']);
+        }
+
+        if (in_array('nama_pic', $data['profile_field'])) {
+            $nama_pic = true;
+        }
+
+        if (in_array('email_pic', $data['profile_field'])) {
+            $email_pic = true;
+        }
+
+        $read   =   $this->model->newQuery()->select($data['profile_field'])->with(['document'])->where('id', $id)->first();
+
+        if (!$read) {
+            return $this->sendError(null, 'Data tidak ditemukan', 422);
+        }
+
+        $read_document = $read->document;
+
+        $data_pic = $this->modelDataPicKelompokMasyarakat->newQuery()->with(['user_akseslh'])->where('id', $read->data_pic_kelompok_masyarakat_id)->first();
+
+        if (!$data_pic) {
+            # code...
+            return $this->sendError(null, 'Data user tidak ditemukan', 422);
+        }
+
+        try {
+
+            if ($nama_pic) {
+                # code...
+                $data_pic->user_akseslh->nama_pic = $read->nama_pic;
+            }
+
+            if ($email_pic) {
+                # code...
+                $data_pic->user_akseslh->email = $read->email_pic;
+            }
+
+            $data_pic->user_akseslh->save();
+
+            if ($foto_ktp) {
+                $document_foto_ktp = $read_document->where('group', 'foto_ktp')->first();
+
+                if ($document_foto_ktp) {
+                    $document_foto_ktp->update([
+                        'fileable_type' => get_class($data_pic),
+                        'fileable_id'   => $data_pic->id,
+                    ]);
+                }
+            }
+
+            return $this->sendSuccess($read, 'Data Ditemukan', 200);
+        } catch (\Exception $exception) {
+            //throw $th;
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
     public function delete($id)
     {
-        $read   =   $this->model->newQuery()->find($id);
         try {
             $read->delete();
             \DB::commit(); // commit the changes

@@ -35,11 +35,10 @@
                                 </div>
                             </div>
                             <span class="input-group-btn m-l-5">
-                                <button type="button" onclick="tolakPengajuanPerubahan()"
-                                    class="btn waves-effect waves-light btn-danger">
+                                <button type="button" class="btn waves-effect waves-light btn-danger" id="btn-tolak">
                                     Tolak Pengajuan Perubahan
                                 </button>
-                                <button class="btn waves-effect waves-light btn-success">
+                                <button type="button" class="btn waves-effect waves-light btn-success" id="btn-terima">
                                     Terima Pengajuan Perubahan
                                 </button>
                             </span>
@@ -70,6 +69,11 @@
                             <div class="form-group">
                                 <label for="kelompok_masyarakat">Kelompok Masyarakat <span
                                         class="text-danger">*</span></label>
+                                <input type="hidden" id="profile_pic_route" name="profile_pic_route"
+                                    value="{{ route('profile-pic.index') }}">
+                                <input type="hidden" id="data_pic_kelompok_masyarakat_id"
+                                    name="data_pic_kelompok_masyarakat_id"
+                                    value="{{ $data->data->data_pic_kelompok_masyarakat_id }}">
                                 <input type="text" class="form-control" id="kelompok_masyarakat"
                                     name="kelompok_masyarakat" placeholder="Nama PIC"
                                     value="{{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}"
@@ -185,24 +189,23 @@
                                     readonly>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <a href="#">
-                                        <div class="gal-detail thumb">
-                                            <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
-                                                alt="work-thumbnail" />
-                                            <h4>KTP PIC</h4>
+                                @forelse ($data->data->data_pic_kelompok_masyarakat->foto as $item)
+                                    @if ($item->group == 'foto_ktp' || $item->group == 'profil_kelompok')
+                                        <div class="col-md-6">
+                                            <a href="#">
+                                                <div class="gal-detail thumb">
+                                                    <img src="{{ asset('template/images/gallery/1.jpg') }}"
+                                                        class="thumb-img" alt="work-thumbnail" />
+                                                    <h4>KTP PIC</h4>
+                                                </div>
+                                            </a>
                                         </div>
-                                    </a>
-                                </div>
-                                <div class="col-md-6">
-                                    <a href="#">
-                                        <div class="gal-detail thumb">
-                                            <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
-                                                alt="work-thumbnail" />
-                                            <h4>Profil Kelompok</h4>
-                                        </div>
-                                    </a>
-                                </div>
+                                    @endif
+                                @empty
+                                    <div class="col-md-12">
+                                        <p><b>Tidak Ada File Upload</b></p>
+                                    </div>
+                                @endforelse
                             </div>
                         </form>
                     </div>
@@ -232,6 +235,8 @@
                                 <label for="kelompok_masyarakat">Kelompok Masyarakat <span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
+                                    <input type="hidden" id="profile_pic_id" name="profile_pic_id"
+                                        value="{{ $data->data->id }}">
                                     <input type="text" id="kelompok_masyarakat" name="kelompok_masyarakat"
                                         class="form-control" value="{{ $data->data->kelompok_masyarakat }}" readonly />
                                     <span class="input-group-addon">
@@ -500,27 +505,31 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="gal-detail thumb">
-                                        <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
-                                            alt="work-thumbnail" />
-                                        <h4>KTP PIC</h4>
+                                @forelse ($data->data->document as $item)
+                                    <div class="col-md-6">
+                                        <a href="{{ config('app.url') . '/storage/' . $item->file_path }}"
+                                            target="_BLANK">
+                                            <div class="gal-detail thumb">
+                                                <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
+                                                    alt="work-thumbnail" />
+                                                <h4>{{ ucwords(str_replace('_', ' ', $item->group)) }}
+                                                    <input type="checkbox" name="foto_ktp" id="foto_ktp"
+                                                        class="pull-right profile-field">
+                                                </h4>
+                                            </div>
+                                        </a>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="gal-detail thumb">
-                                        <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
-                                            alt="work-thumbnail" />
-                                        <h4>Profil Kelompok</h4>
+                                @empty
+                                    <div class="col-md-12">
+                                        <p><b>Tidak Ada File Upload</b>
+                                        </p>
                                     </div>
-                                </div>
+                                @endforelse
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-
         </div> <!-- col-->
-
     </div> <!-- End row -->
 @endsection
