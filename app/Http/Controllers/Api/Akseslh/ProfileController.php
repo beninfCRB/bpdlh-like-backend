@@ -70,8 +70,8 @@ class ProfileController extends ApiController
             'kabupaten_kelompok_masyarakat_id'  => 'required',
             'kecamatan_kelompok_masyarakat_id'  => 'required',
             'kelurahan_kelompok_masyarakat_id'  => 'required',
-            'profil_kelompok'                   => 'nullable|file|mimes:pdf,doc,docx|max:10192',
-            'foto_ktp'                          => 'nullable|file|mimes:png,jpg,jpeg|max:10192',
+            'profil_kelompok'                   => 'required|file|mimes:pdf,doc,docx|max:10192',
+            'foto_ktp'                          => 'required|file|mimes:png,jpg,jpeg|max:10192',
             'nama_pic'                          => 'required|max:255|string',
             'jenis_identitas_pic'               => 'required|in:KTP,SIM,KARTU MAHASISWA',
             'nomor_identitas_pic'               => ['required', 'string', 'min:16', 'max:16', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_identitas_pic')->ignore($id)->whereNull('deleted_at')],
@@ -99,6 +99,16 @@ class ProfileController extends ApiController
         }
 
         $input          = $validator->validated();
+
+        if (isset($request->profil_kelompok)) {
+            # code...
+            $input['profil_kelompok'] = $request->file('profil_kelompok');
+        }
+
+        if (isset($request->foto_ktp)) {
+            # code...
+            $input['foto_ktp'] = $request->file('foto_ktp');
+        }
 
         $input['data_pic_kelompok_masyarakat_id'] = $id;
 
