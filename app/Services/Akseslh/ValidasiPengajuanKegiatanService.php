@@ -179,7 +179,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             }),
                             'laporan_termin_1' => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
-                            })->first()->document_file,
+                            })->first()->document_file()->whereIn('group', ['Laporan Kegiatan (100%)', 'Quisioner'])->get(),
                         ];
                     });
 

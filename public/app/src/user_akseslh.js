@@ -29,6 +29,7 @@ var data_user_akseslh = (function () {
                 { data: "nama_pic" },
                 { data: "email" },
                 { data: "role_user" },
+                {},
                 { data: "status_user" },
                 { data: "created_at" },
                 { data: "updated_at" },
@@ -39,6 +40,20 @@ var data_user_akseslh = (function () {
                     targets: 0,
                     searchable: false,
                     orderable: false,
+                },
+                {
+                    targets: 4,
+                    searchable: true,
+                    orderable: true,
+                    render: function (data, type, full, meta) {
+                        if (full.master_user_jenis_kelompok) {
+                            return full.master_user_jenis_kelompok.map(
+                                (item) => {
+                                    return `<span class="badge badge-info">${item.jenis_kelompok_masyarakat.jenis_kelompok_masyarakat}</span>`;
+                                }
+                            );
+                        }
+                    },
                 },
                 {
                     targets: -3,

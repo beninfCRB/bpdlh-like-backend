@@ -50,6 +50,7 @@
                                         <th>Nama Pic</th>
                                         <th>Email</th>
                                         <th>Role User</th>
+                                        <th>Kelompok Masyarakat</th>
                                         <th>Status User</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
