@@ -1425,7 +1425,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tematik_kegiatan'              => $read->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_tematik_kegiatan'  => $read->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
                 'jenis_kegiatan'                => $read->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
-                'paket_kegiatan'                => $read->paket_kegiatan->nama_paket_kegiatan,
+                'paket_kegiatan'                => $read->paket_kegiatan->deskripsi_paket_kegiatan,
                 'judul_pengajuan_kegiatan'      => $read->judul_pengajuan_kegiatan,
                 'provinsi_kegiatan'             => $read->provinsi->name,
                 'kabupaten_kegiatan'            => $read->kabupaten->name,
@@ -1435,7 +1435,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'proposal_kegiatan'             => $read->proposal_kegiatan,
                 'tujuan_kegiatan'               => $read->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'        => $read->ruang_lingkup_kegiatan,
-                'tanggal_kegiatan'              => $read->tanggal_kegiatan,
+                'tanggal_kegiatan'              => $read->tanggal_mulai_kegiatan . ' - ' . $read->tanggal_akhir_kegiatan,
             ];
 
             // Mengelompokkan komponen RAB berdasarkan jenis
@@ -1523,7 +1523,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'tematik_kegiatan'              => $newData->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_tematik_kegiatan'  => $newData->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
                 'jenis_kegiatan'                => $newData->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
-                'paket_kegiatan'                => $newData->paket_kegiatan->nama_paket_kegiatan,
+                'paket_kegiatan'                => $newData->paket_kegiatan->deskripsi_paket_kegiatan,
                 'judul_pengajuan_kegiatan'      => $newData->judul_pengajuan_kegiatan,
                 'provinsi_kegiatan'             => $newData->provinsi->name,
                 'kabupaten_kegiatan'            => $newData->kabupaten->name,
@@ -1533,7 +1533,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'proposal_kegiatan'             => $newData->proposal_kegiatan,
                 'tujuan_kegiatan'               => $newData->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'        => $newData->ruang_lingkup_kegiatan,
-                'tanggal_kegiatan'              => $newData->tanggal_kegiatan,
+                'tanggal_kegiatan'              => $newData->tanggal_mulai_kegiatan->format('Y-m-d') . ' - ' . $newData->tanggal_akhir_kegiatan->format('Y-m-d H:i:s'),
             ];
 
             // Menyiapkan data yang akan dikirim
