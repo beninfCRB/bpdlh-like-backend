@@ -54,6 +54,7 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
             ]);
 
             \DB::commit(); // commit the changes
+            Cache::forget('jenis_kelompok_masyarakat');
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -75,6 +76,7 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('jenis_kelompok_masyarakat');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -88,6 +90,7 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            Cache::forget('jenis_kelompok_masyarakat');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes

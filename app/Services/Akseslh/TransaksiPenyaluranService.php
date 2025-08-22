@@ -116,6 +116,8 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 ->where('flag', $flag)
                 ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                     $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed();
                 }])
                 ->orderBy('created_at', 'ASC')
                 ->get();
@@ -124,6 +126,8 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 ->where('flag', 4)
                 ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                     $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed();
                 }])
                 ->doesntHave('transaksi_penyaluran')
                 ->orderBy('created_at', 'ASC')

@@ -50,10 +50,14 @@ class VerifikasiPengajuanKegiatanController extends ApiController
                 'user_akseslh.data_pic_kelompok_masyarakat.pendidikan:id,pendidikan',
                 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat:id,jenis_kelompok_masyarakat_id,kelompok_masyarakat',
                 'paket_kegiatan:id,jenis_kegiatan_id,master_sub_tematik_kegiatan_id,jumlah_peserta',
-                'paket_kegiatan.jenis_kegiatan:id,jenis_kegiatan',
+                'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed()->select('id', 'jenis_kegiatan');
+                },
                 'paket_kegiatan.master_sub_tematik_kegiatan:id,tematik_kegiatan_id,sub_tematik_kegiatan_id',
                 'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan:id,tematik_kegiatan',
-                'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan:id,sub_tematik_kegiatan',
+                'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                    $query->withTrashed()->select('id', 'sub_tematik_kegiatan');
+                },
                 'document:fileable_id,id,group,file_name,file_path'
             ]);
 

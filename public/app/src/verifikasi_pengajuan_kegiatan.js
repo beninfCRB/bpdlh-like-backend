@@ -71,6 +71,7 @@ jQuery(document).ready(function () {
         );
 
         jenisKegiatan.text(item.paket_kegiatan.jenis_kegiatan.jenis_kegiatan);
+
         tematik.text(
             item.paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan
                 .tematik_kegiatan +

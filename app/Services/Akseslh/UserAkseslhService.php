@@ -26,7 +26,7 @@ class UserAkseslhService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->whereNull('data_pic_kelompok_masyarakat_id')->whereNotIn('role_user', ['maker'])->orderBy('created_at', 'DESC');
+        $model = $this->model->query()->whereNull('data_pic_kelompok_masyarakat_id')->with(['master_user_jenis_kelompok.jenis_kelompok_masyarakat:id,jenis_kelompok_masyarakat'])->whereNotIn('role_user', ['maker'])->orderBy('created_at', 'DESC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
