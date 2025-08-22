@@ -49,7 +49,9 @@ var data_user_akseslh = (function () {
                         if (full.master_user_jenis_kelompok) {
                             return full.master_user_jenis_kelompok.map(
                                 (item) => {
-                                    return `<span class="badge badge-info">${item.jenis_kelompok_masyarakat.jenis_kelompok_masyarakat}</span>`;
+                                    if (item.jenis_kelompok_masyarakat) {
+                                        return `<span class="badge badge-info">${item.jenis_kelompok_masyarakat.jenis_kelompok_masyarakat}</span>`;
+                                    }
                                 }
                             );
                         }

@@ -129,6 +129,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         }])
                         ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
                         ->where('flag', 6)
                         ->orderBy('created_at', 'ASC')
@@ -267,6 +269,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         ->where('flag', 11)
                         ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                            $query->withTrashed();
                         }])
                         ->orderBy('created_at', 'ASC')
                         ->get();
@@ -316,6 +320,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         )
                         ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                            $query->withTrashed();
                         }])
                         ->orderBy('created_at', 'ASC')
                         ->get();
@@ -331,6 +337,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 })
                 ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                     $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed();
                 }])
                 ->where('flag', 2)
                 ->orderBy('created_at', 'ASC')
@@ -388,6 +396,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         $model = $this->model->newQuery()
             ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed();
             }])
             ->find($id);
 

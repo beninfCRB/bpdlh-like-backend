@@ -37,10 +37,11 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                     $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
                         $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
                             $q->whereHas('jenis', function ($q) use ($user) {
-                                $q->whereIn(
-                                    'jenis_kelompok_masyarakat_id',
-                                    $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray()
-                                );
+                                $q->withTrashed()
+                                    ->whereIn(
+                                        'jenis_kelompok_masyarakat_id',
+                                        $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray()
+                                    );
                             });
                         });
                     });
@@ -65,6 +66,9 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                     $query->withTrashed();
                 },
                 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis' => function ($query) {
                     $query->withTrashed();
                 },
                 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {

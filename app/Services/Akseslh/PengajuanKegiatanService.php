@@ -179,6 +179,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }])
+            ->with(['paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
             ->where(['user_akseslh_id' => $user_akseslh_id])
             // ->where('flag', '!=', 10)
             // ->where('flag', '>', 0)
@@ -215,7 +218,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'nomor_pengajuan'           => $result->nomor_pengajuan,
                 'tematik_kegiatan'          => $result->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $result->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
-                'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan ?? "-",
                 'jumlah'                    => $result->paket_kegiatan->jumlah_peserta . " " . ($result->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
                 'lokasi'                    => $result->alamat_kegiatan ?? 'Alamat',
                 'tahapan_pengajuan'         => $result->flag,
@@ -364,6 +367,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $q->withTrashed();
             }, 'pengajuan_kegiatan.paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'pengajuan_kegiatan.paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }])
             ->get();
 
@@ -487,9 +492,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan', 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
-            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
-        }])->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
+        $result =   $this->model->newQuery()
+            ->with(['log_tahapan_pengajuan', 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed();
+            }])
+            ->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
 
         if (!$result)  return $this->sendSuccess(null);
 
@@ -925,7 +934,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                         });
                     }
                 );
-            })->latest()
+            })
+            ->with(['paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed();
+            }, 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
+            ->latest()
             ->first();
 
         $retur = null;
@@ -1353,7 +1368,18 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     public function updateTemp($id, $data)
     {
         // Eager load paket_kegiatan dan standar_rab_paket_kegiatan untuk menghindari query berulang
-        $read = $this->model->with(['paket_kegiatan.standar_rab_paket_kegiatan.master_komponen_rab.satuan', 'paket_kegiatan.standar_rab_paket_kegiatan.master_komponen_rab.jenis_komponen'])
+        $read = $this->model->with(
+            [
+                'paket_kegiatan.standar_rab_paket_kegiatan.master_komponen_rab.satuan',
+                'paket_kegiatan.standar_rab_paket_kegiatan.master_komponen_rab.jenis_komponen',
+                'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed();
+                },
+                'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                    $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }
+            ],
+        )
             ->where(['nomor_pengajuan' => $id, 'user_akseslh_id' => $data['user_akseslh_id']])
             ->first();
 
@@ -1435,7 +1461,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'proposal_kegiatan'             => $read->proposal_kegiatan,
                 'tujuan_kegiatan'               => $read->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'        => $read->ruang_lingkup_kegiatan,
-                'tanggal_kegiatan'              => $read->tanggal_mulai_kegiatan . ' - ' . $read->tanggal_akhir_kegiatan,
+                'tanggal_kegiatan'              => $read->tanggal_mulai_kegiatan->format('Y-m-d') . ' - ' . $read->tanggal_akhir_kegiatan->format('Y-m-d'),
             ];
 
             // Mengelompokkan komponen RAB berdasarkan jenis

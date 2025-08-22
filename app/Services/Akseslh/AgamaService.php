@@ -69,6 +69,8 @@ class AgamaService extends AppService implements AppServiceInterface
             ]);
 
             \DB::commit(); // commit the changes
+            Cache::forget('agama');
+
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -88,6 +90,8 @@ class AgamaService extends AppService implements AppServiceInterface
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('agama');
+
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -101,6 +105,8 @@ class AgamaService extends AppService implements AppServiceInterface
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            Cache::forget('agama');
+
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
