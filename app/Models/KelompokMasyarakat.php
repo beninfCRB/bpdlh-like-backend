@@ -31,6 +31,6 @@ class KelompokMasyarakat extends AppModel
      */
     public function jenis(): BelongsTo
     {
-        return $this->belongsTo(JenisKelompokMasyarakat::class, 'jenis_kelompok_masyarakat_id');
+        return $this->belongsTo(JenisKelompokMasyarakat::class, 'jenis_kelompok_masyarakat_id')->withTrashed();
     }
 }
