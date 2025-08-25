@@ -1424,7 +1424,14 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     $temp->delete();
                 }
 
-                $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+                if (
+                    $data['fileDocument']->getClientOriginalExtension() == 'pdf'
+                ) {
+                    $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['fileDocument'])->saveToDb('document');
+                }
+
                 if ($upload) {
                     $upload->update([
                         'fileable_type' => get_class($read),
@@ -1521,7 +1528,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             // Jika ada file untuk di-upload
             if (isset($data['fileDocument'])) {
-                $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+                if (
+                    $data['fileDocument']->getClientOriginalExtension() == 'pdf'
+                ) {
+                    $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['fileDocument'])->saveToDb('document');
+                }
 
                 if ($upload) {
                     $upload->update([
