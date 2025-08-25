@@ -39,6 +39,9 @@ class PengajuanKegiatan extends AppModel
         'lokasi_bidang_folu_id',
         'caping_rab',
         'nomor_sptjm',
+        'longitude',
+        'latitude',
+        'alamat_kegiatan_realisasi',
         'is_active',
         'username',
         'flag'
@@ -114,7 +117,7 @@ class PengajuanKegiatan extends AppModel
     public function document()
     {
         return $this->morphMany(File::class, 'fileable')
-            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id']);
+            ->select(['id', 'group', 'visibility', 'file_name', 'file_path', 'fileable_id', 'size']);
     }
 
     /**

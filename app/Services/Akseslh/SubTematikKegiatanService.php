@@ -259,6 +259,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
             ->get();
 
         if (!$result) return $this->sendError(null, 'Not Found', 422);
+
         $result->transform(function ($items, $key) {
             if ($items->sub_tematik_kegiatan != null) {
                 return [

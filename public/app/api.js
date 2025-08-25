@@ -11,6 +11,11 @@ export async function deleteData(url = "", data = {}) {
 export async function updateData(url = "", id, data = {}) {
     return await axios.post(url, id, data);
 }
+
+export async function updatePutData(url = "", data = {}) {
+    return await axios.put(url, data);
+}
+
 export async function showData(url, id) {
     return await axios.get(url, id);
 }
@@ -25,4 +30,5 @@ export default {
     updateData,
     showData,
     getResult,
+    updatePutData,
 };

@@ -138,6 +138,7 @@ jQuery(document).ready(function () {
             .get();
 
         if (selected.length === 0) {
+            submitButton.prop("disabled", false);
             alert("Pilih minimal satu kegiatan terlebih dahulu.");
             return;
         }
@@ -145,6 +146,7 @@ jQuery(document).ready(function () {
         const file = $("#file-input")[0].files[0];
 
         if (!file) {
+            submitButton.prop("disabled", false);
             alert("Silakan pilih file terlebih dahulu.");
             return;
         }

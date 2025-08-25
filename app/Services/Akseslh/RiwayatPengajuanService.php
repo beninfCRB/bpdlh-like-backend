@@ -48,6 +48,11 @@ class RiwayatPengajuanService extends AppService implements AppServiceInterface
         $tanggalAwalKegiatan = $input['tanggal_mulai_kegiatan'] ?? null;
         $tanggalAkhirKegiatan = $input['tanggal_akhir_kegiatan'] ?? null;
         $result  = $this->model->newQuery()
+            ->with(['paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed();
+            }, 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed();
+            }])
             ->when($search, function ($query) use ($search) {
                 return $query->where('nomor_pengajuan', 'like', '%' . $search . '%')
                     ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat', function ($query) use ($search) {

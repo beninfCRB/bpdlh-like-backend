@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\AppAuthenticatable;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\AppModel;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
 
 class DataPicKelompokMasyarakat extends AppModel
 {
@@ -30,8 +29,6 @@ class DataPicKelompokMasyarakat extends AppModel
         'kecamatan_pic',
         'kabupaten_pic',
         'provinsi_pic',
-        'flag',
-        'username',
         'tempat_lahir',
         'tanggal_lahir',
         'agama_id',
@@ -39,7 +36,9 @@ class DataPicKelompokMasyarakat extends AppModel
         'nama_gadis_ibu_kandung',
         'jenis_pekerjaan_id',
         'pendidikan_id',
-        'jenis_kelamin'
+        'jenis_kelamin',
+        'flag',
+        'username',
     ];
 
     /**

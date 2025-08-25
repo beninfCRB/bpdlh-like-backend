@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Cms\Akseslh;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\UserAkseslhService;
-use App\Services\Akseslh\KelompokMasyarakatService;
 
 class UserAkseslhController extends ApiController
 {
@@ -44,7 +44,7 @@ class UserAkseslhController extends ApiController
     public function store(Request $request)
     {
         $input  =   $request->validate([
-            'email'                             => 'required|email|max:100|unique:user_akseslhs,email',
+            'email'                             => ['required', 'email', 'max:100', Rule::unique('user_akseslhs', 'email')->whereNull('deleted_at')],
             'nama_pic'                          => 'required|string|max:255',
             'role_user'                         => 'required',
         ]);

@@ -4,9 +4,10 @@
 namespace App\Services\Akseslh;
 
 
-use App\Models\JenisPekerjaan;
 use App\Services\AppService;
+use App\Models\JenisPekerjaan;
 use App\Services\AppServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -27,15 +28,17 @@ class JenisPekerjaanService extends AppService implements AppServiceInterface
 
     public function getAllAttr()
     {
-        $result  = $this->model->newQuery()
-            ->orderBy('created_at', 'ASC')
-            ->get();
+        $result = Cache::remember('jenis_pekerjaan', now()->adddays(7), function () {
+            $data  = $this->model->newQuery()
+                ->orderBy('created_at', 'ASC')
+                ->get();
 
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                    => $items->id,
-                'jenis_pekerjaan'     => $items->jenis_pekerjaan,
-            ];
+            return $data->transform(function ($items, $key) {
+                return [
+                    'id'                    => $items->id,
+                    'jenis_pekerjaan'     => $items->jenis_pekerjaan,
+                ];
+            });
         });
 
         return $this->sendSuccess($result);
@@ -66,6 +69,8 @@ class JenisPekerjaanService extends AppService implements AppServiceInterface
             ]);
 
             \DB::commit(); // commit the changes
+            Cache::forget('jenis_pekerjaan');
+
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -85,6 +90,8 @@ class JenisPekerjaanService extends AppService implements AppServiceInterface
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('jenis_pekerjaan');
+
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -98,6 +105,8 @@ class JenisPekerjaanService extends AppService implements AppServiceInterface
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            Cache::forget('jenis_pekerjaan');
+
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes

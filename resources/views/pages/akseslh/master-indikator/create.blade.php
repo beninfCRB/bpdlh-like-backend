@@ -58,6 +58,18 @@
                                 </span>
                             @enderror
                         </div>
+
+                        <div class="form-group @error('sort') has-error @enderror">
+                            <label for="sort">Nomor Urut <span class="text-danger">*</span></label>
+                            <input type="numeric" min="1" class="form-control" min=0 id="sort" name="sort"
+                                value="{{ old('sort') }}">
+                            @error('sort')
+                                <span class="error">
+                                    {{ $message }}
+                                </span>
+                            @enderror
+                        </div>
+
                         <div class="row">
                             <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
                             <a href="{{ route('master-indikator.index') }}"

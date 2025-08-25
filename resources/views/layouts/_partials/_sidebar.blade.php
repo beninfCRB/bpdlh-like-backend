@@ -10,14 +10,11 @@
                         aria-expanded="false">{{ auth()->user()->nama_pic }}
                         <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li>
-                            <a href="javascript:void(0)"><i class="md md-face-unlock"></i> Profile
-                                <div class="ripple-wrapper"></div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a>
-                        </li>
+                        @if (auth()->user()->role_user === 'administrator')
+                            <li>
+                                <a href="{{ route('telescope') }}"><i class="md md-settings"></i> Telescope</a>
+                            </li>
+                        @endif
                         <li>
                             <form action="{{ route('logout') }}" method="post" id="logout-form-sidebar">
                                 @csrf
@@ -28,8 +25,7 @@
                         </li>
                     </ul>
                 </div>
-
-                <p class="text-muted m-0">{{ auth()->user()->email }}</p>
+                <p class="text-muted m-0">{{ auth()->user()->role_user }}</p>
             </div>
         </div>
         <!--- Divider -->
@@ -165,6 +161,14 @@
                         </li>
                     </ul>
                 </li>
+                @if (in_array(auth()->user()->role_user, ['administrator', 'approver']))
+                    <li>
+                        <a href="{{ route('tolak-pengajuan-dan-profil.index') }}" class="waves-effect"><i
+                                class="md md-assignment-late"></i>
+                            <span class="text-small">Kelola Penolakan</span>
+                        </a>
+                    </li>
+                @endif
                 @if (in_array(auth()->user()->role_user, ['administrator', 'pmu-bpdlh']))
                     <li class="has_sub">
                         <a href="#" class="waves-effect"><i class="md md-attach-money"></i>
@@ -215,13 +219,38 @@
                             <a href="{{ route('pengajuan-kegiatan.index') }}" class="waves-effect"
                                 style="padding: 10px 25px 10px 30px;">> <span>List Pengajuan</span></a>
                         </li>
+                        @if (in_array(auth()->user()->role_user, ['administrator', 'approver']))
+                            <li>
+                                <a href="{{ route('laporan-akhir-kegiatan.index') }}" class="waves-effect"
+                                    style="padding: 10px 25px 10px 30px;">> <span>
+                                        Unggah Laporan Akhir</span></a>
+                            </li>
+                            <li>
+                                <a href="{{ route('laporan-akhir-kegiatan.edit') }}" class="waves-effect"
+                                    style="padding: 10px 25px 10px 30px;">> <span>
+                                        Ubah Laporan Akhir</span></a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+                <li class="has_sub">
+                    <a href="#" class="waves-effect"><i class="md md-account-balance-wallet"></i><span> Kelola
+                            Verifikasi<i class="md md-add pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled">
                         <li>
-                            <a href="{{ route('laporan-akhir-kegiatan.index') }}" class="waves-effect"
-                                style="padding: 10px 25px 10px 30px;">> <span>
-                                    Unggah Laporan Akhir</span></a>
+                            <a href="{{ route('profile-pic.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Verifikasi Profile PIC</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('verifikasi-pengajuan-kegiatan.index') }}" class="waves-effect"
+                                style="padding: 10px 25px 10px 30px;">> <span>Verifikasi Administrasi
+                                    Pengajuan Kegiatan</span></a>
                         </li>
                     </ul>
                 </li>
+
             </ul>
             <div class="clearfix"></div>
         </div>

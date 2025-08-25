@@ -43,6 +43,7 @@
                                         <th>Nama Indikator</th>
                                         <th>Satuan</th>
                                         <th>Tipe Data</th>
+                                        <th>Nomor Urut</th>
                                         <th>Status</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>

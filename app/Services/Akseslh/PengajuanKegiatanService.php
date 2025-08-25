@@ -179,6 +179,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }])
+            ->with(['paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
             ->where(['user_akseslh_id' => $user_akseslh_id])
             // ->where('flag', '!=', 10)
             // ->where('flag', '>', 0)
@@ -215,7 +218,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'nomor_pengajuan'           => $result->nomor_pengajuan,
                 'tematik_kegiatan'          => $result->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
                 'sub_tematik_kegiatan'      => $result->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
-                'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'jenis_kegiatan'            => $result->paket_kegiatan->jenis_kegiatan->jenis_kegiatan ?? "-",
                 'jumlah'                    => $result->paket_kegiatan->jumlah_peserta . " " . ($result->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
                 'lokasi'                    => $result->alamat_kegiatan ?? 'Alamat',
                 'tahapan_pengajuan'         => $result->flag,
@@ -364,6 +367,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $q->withTrashed();
             }, 'pengajuan_kegiatan.paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'pengajuan_kegiatan.paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }])
             ->get();
 
@@ -487,9 +492,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
     {
-        $result =   $this->model->newQuery()->with(['log_tahapan_pengajuan', 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
-            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
-        }])->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
+        $result =   $this->model->newQuery()
+            ->with(['log_tahapan_pengajuan', 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed();
+            }])
+            ->where(['user_akseslh_id' => $user_akseslh_id])->orderBy('created_at', 'DESC')->get();
 
         if (!$result)  return $this->sendSuccess(null);
 
@@ -925,12 +934,18 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                         });
                     }
                 );
-            })->latest()
+            })
+            ->with(['paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed();
+            }, 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }])
+            ->latest()
             ->first();
 
         $retur = null;
 
-        if (!$model) return $this->sendSuccess(collect([]));
+        if (!$model) return $this->sendSuccess(null, null, 200);
 
         if ($model->log_tahapan_pengajuan) {
             $retur = $model->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
@@ -942,6 +957,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             # code...
             $result = [
                 'id'                        => $model->id,
+                'tematik_kegiatan_id'       => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan_id,
+                'sub_tematik_kegiatan_id'   => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id,
                 'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
                 'provinsi_kegiatan'         => $model->provinsi_kegiatan,
                 'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
@@ -953,7 +970,18 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'proposal_kegiatan'         => $model->proposal_kegiatan,
                 'tujuan_kegiatan'           => $model->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
-                'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                // 'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                'paket_kegiatan'            => [
+                    'id' => $model->paket_kegiatan->jenis_kegiatan->id,
+                    'jenis_kegiatan' => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                    'paket_kegiatan' => [
+                        'jenis_kegiatan_id' => $model->paket_kegiatan->jenis_kegiatan->id,
+                        'id' => $model->paket_kegiatan->id,
+                        'jumlah_peserta' => $model->paket_kegiatan->jumlah_peserta,
+                    ]
+                ],
+                'jumlah_peserta'            => $model->paket_kegiatan->jumlah_peserta,
+                'jenis_kegiatan_id'         => $model->paket_kegiatan->jenis_kegiatan_id,
                 'fileDocument'              => $model->document,
                 'nomor_pengajuan'           => $model->nomor_pengajuan,
                 'status'                    => $retur ? ($retur->flag == 2 ? 'retur' : 'draft') : 'draft',
@@ -963,20 +991,34 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             # code...
             $result = [
                 'id'                        => $model->id,
+                'tematik_kegiatan_id'       => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan_id,
+                'sub_tematik_kegiatan_id'   => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan_id,
                 'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
                 'provinsi_kegiatan'         => $model->provinsi_kegiatan,
                 'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
                 'kecamatan_kegiatan'        => $model->kecamatan_kegiatan,
                 'kelurahan_kegiatan'        => $model->kelurahan_kegiatan,
                 'alamat_kegiatan'           => $model->alamat_kegiatan,
+                'jumlah_peserta'            => $model->paket_kegiatan->jumlah_peserta,
                 'tanggal_kegiatan'          => $model->tanggal_mulai_kegiatan . ' - ' . $model->tanggal_akhir_kegiatan,
                 'waktu_kegiatan'            => $model->time_mulai_kegiatan . ' - ' . $model->time_akhir_kegiatan,
                 'proposal_kegiatan'         => $model->proposal_kegiatan,
                 'tujuan_kegiatan'           => $model->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
-                'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                // 'paket_kegiatan_id'         => $model->paket_kegiatan_id,
+                'paket_kegiatan'            => [
+                    'id' => $model->paket_kegiatan->jenis_kegiatan->id,
+                    'jenis_kegiatan' => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                    'paket_kegiatan' => [
+                        'jenis_kegiatan_id' => $model->paket_kegiatan->jenis_kegiatan->id,
+                        'id' => $model->paket_kegiatan->id,
+                        'jumlah_peserta' => $model->paket_kegiatan->jumlah_peserta,
+                    ]
+                ],
+                'jenis_kegiatan_id'         => $model->paket_kegiatan->jenis_kegiatan_id,
                 'fileDocument'              => $model->document,
                 'nomor_pengajuan'           => $model->nomor_pengajuan,
+                'status'                    => 'draft',
                 'caping_rab'                => $model->caping_rab
             ];
         }
@@ -1157,92 +1199,92 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Rab sudah ada', 422);
         }
 
-        $idTransportasi = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idTransportasi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Transportasi'); // Transportasi
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
-        $idKonsumsi = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idKonsumsi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Konsumsi'); // Konsumsi
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
         $jumlah_peserta = $model->paket_kegiatan->jumlah_peserta;
 
-        $idNaraSumber = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idNaraSumber = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Nara Sumber'); // Nara Sumber
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
-        $idFasilitator = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idFasilitator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Fasilitator'); // Fasilitator
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
-        $idModerator = $model->rab_pengajuan_paket_kegiatans()->whereHas('master_komponen_rab', function ($query) {
+        $idModerator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
             $query->where('komponen_rab', 'Moderator'); // Moderator
-        })->pluck('id')->first();
+        })->pluck('master_komponen_rab_id')->first();
 
-        $totalDataKomponenRab  = 0;
-        $totalRab = 0;
         $jasaProfesi = 0;
 
-        foreach ($dataKomponenRab['komponen_rab'] as $item) {
+        foreach ($dataKomponenRab as $item) {
             # code...
-            if ($item['id_komponen_rab'] == $idNaraSumber) {
-                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 4) {
+            if ($item['id_komponen'] == $idNaraSumber) {
+                if ($item['qty'] < 1 || $item['qty'] > 4) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
                 }
                 $jasaProfesi++;
             }
 
-            if ($item['id_komponen_rab'] == $idFasilitator) {
-                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 10) {
+            if ($item['id_komponen'] == $idFasilitator) {
+                if ($item['qty'] < 1 || $item['qty'] > 10) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
                 }
                 $jasaProfesi++;
             }
 
-            if ($item['id_komponen_rab'] == $idModerator) {
-                if ($item['qty_realisasi'] < 1 || $item['qty_realisasi'] > 2) {
+            if ($item['id_komponen'] == $idModerator) {
+                if ($item['qty'] < 1 || $item['qty'] > 2) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
                     return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
                 }
                 $jasaProfesi++;
             }
 
-            if ($item['id_komponen_rab'] == $idTransportasi) {
+            // Jika pesera kurang dari 50, berarti paket yang dipilih adalah hektar
+            if ($jumlah_peserta >= 50) {
                 # code...
-                if ($item['qty_realisasi'] < $jumlah_peserta) {
+                if ($item['id_komponen'] == $idTransportasi) {
                     # code...
-                    return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    }
+
+                    if ($item['qty'] > $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    }
                 }
 
-                if ($item['qty_realisasi'] > $jumlah_peserta) {
+                if ($item['id_komponen'] == $idKonsumsi) {
                     # code...
-                    return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    }
+
+                    if ($item['qty'] > $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    }
                 }
             }
-
-            if ($item['id_komponen_rab'] == $idKonsumsi) {
-                # code...
-                if ($item['qty_realisasi'] < $jumlah_peserta) {
-                    # code...
-                    return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
-                }
-
-                if ($item['qty_realisasi'] > $jumlah_peserta) {
-                    # code...
-                    return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
-                }
-            }
-
-            $totalDataKomponenRab += $item['harga_unit_realisasi'] * $item['qty_realisasi'];
         }
 
-        if ($jasaProfesi < 3) {
-            # code...
-            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Jasa profesi harus minimal 3', \Sentry\Severity::warning());
-            return $this->sendError(null, collect(['message' => ['Jasa profesi harus minimal 3']]), 422);
-        }
+        // if ($jasaProfesi < 3) {
+        //     # code...
+        //     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Jasa profesi harus minimal 3', \Sentry\Severity::warning());
+        //     return $this->sendError(null, collect(['message' => ['Jasa profesi harus minimal 3']]), 422);
+        // }
 
         \DB::beginTransaction();
 
@@ -1294,7 +1336,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $model->rab_pengajuan_paket_kegiatans()->createMany($dataKomponenRabInput);
 
             // Update status flag
-            $model->update(['flag' => 1]);
+            $model->update(['is_active' => 'INACTIVE', 'flag' => 1]);
 
             // Persiapkan data untuk response
             $result = [
@@ -1316,7 +1358,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             }
 
             \DB::commit();
-            return $this->sendSuccess($result);
+            return $this->sendSuccess($result, null, 200);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : 'Internal Server Error', 500);
@@ -1326,7 +1368,18 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     public function updateTemp($id, $data)
     {
         // Eager load paket_kegiatan dan standar_rab_paket_kegiatan untuk menghindari query berulang
-        $read = $this->model->with(['paket_kegiatan.standar_rab_paket_kegiatan.master_komponen_rab.satuan', 'paket_kegiatan.standar_rab_paket_kegiatan.master_komponen_rab.jenis_komponen'])
+        $read = $this->model->with(
+            [
+                'paket_kegiatan.standar_rab_paket_kegiatan.master_komponen_rab.satuan',
+                'paket_kegiatan.standar_rab_paket_kegiatan.master_komponen_rab.jenis_komponen',
+                'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed();
+                },
+                'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                    $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }
+            ],
+        )
             ->where(['nomor_pengajuan' => $id, 'user_akseslh_id' => $data['user_akseslh_id']])
             ->first();
 
@@ -1371,7 +1424,14 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     $temp->delete();
                 }
 
-                $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+                if (
+                    $data['fileDocument']->getClientOriginalExtension() == 'pdf'
+                ) {
+                    $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['fileDocument'])->saveToDb('document');
+                }
+
                 if ($upload) {
                     $upload->update([
                         'fileable_type' => get_class($read),
@@ -1393,11 +1453,30 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             });
 
+            // Menyiapkan response untuk review pengajuan
+            $review_pengajuan_kegiatan = [
+                'tematik_kegiatan'              => $read->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_tematik_kegiatan'  => $read->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'jenis_kegiatan'                => $read->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'paket_kegiatan'                => $read->paket_kegiatan->deskripsi_paket_kegiatan,
+                'judul_pengajuan_kegiatan'      => $read->judul_pengajuan_kegiatan,
+                'provinsi_kegiatan'             => $read->provinsi->name,
+                'kabupaten_kegiatan'            => $read->kabupaten->name,
+                'kecamatan_kegiatan'            => $read->kecamatan->name,
+                'kelurahan_kegiatan'            => $read->kelurahan->name,
+                'alamat_kegiatan'               => $read->alamat_kegiatan,
+                'proposal_kegiatan'             => $read->proposal_kegiatan,
+                'tujuan_kegiatan'               => $read->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'        => $read->ruang_lingkup_kegiatan,
+                'tanggal_kegiatan'              => $read->tanggal_mulai_kegiatan->format('Y-m-d') . ' - ' . $read->tanggal_akhir_kegiatan->format('Y-m-d'),
+            ];
+
             // Mengelompokkan komponen RAB berdasarkan jenis
             $dataSend = [
                 'id_pengajuan'    => $read->id,
                 'nomor_pengajuan' => $read->nomor_pengajuan,
                 'caping_rab'      => $read->caping_rab > 0 ? $read->caping_rab : $logJadwalPembukaan->batas_pengajuan,
+                'pengajuan_kegiatan'    => $review_pengajuan_kegiatan,
                 'komponen_rab'    => $rab->groupBy('jenis_komponen_rab')
             ];
 
@@ -1449,7 +1528,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             // Jika ada file untuk di-upload
             if (isset($data['fileDocument'])) {
-                $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+                if (
+                    $data['fileDocument']->getClientOriginalExtension() == 'pdf'
+                ) {
+                    $upload = $this->fileUploadService->handleFile($data['fileDocument'])->saveToDb('document');
+                } else {
+                    $upload = $this->fileUploadService->handleImage($data['fileDocument'])->saveToDb('document');
+                }
 
                 if ($upload) {
                     $upload->update([
@@ -1472,11 +1557,30 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             });
 
+            // Menyiapkan response untuk review pengajuan
+            $review_pengajuan_kegiatan = [
+                'tematik_kegiatan'              => $newData->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_tematik_kegiatan'  => $newData->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'jenis_kegiatan'                => $newData->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'paket_kegiatan'                => $newData->paket_kegiatan->deskripsi_paket_kegiatan,
+                'judul_pengajuan_kegiatan'      => $newData->judul_pengajuan_kegiatan,
+                'provinsi_kegiatan'             => $newData->provinsi->name,
+                'kabupaten_kegiatan'            => $newData->kabupaten->name,
+                'kecamatan_kegiatan'            => $newData->kecamatan->name,
+                'kelurahan_kegiatan'            => $newData->kelurahan->name,
+                'alamat_kegiatan'               => $newData->alamat_kegiatan,
+                'proposal_kegiatan'             => $newData->proposal_kegiatan,
+                'tujuan_kegiatan'               => $newData->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'        => $newData->ruang_lingkup_kegiatan,
+                'tanggal_kegiatan'              => $newData->tanggal_mulai_kegiatan->format('Y-m-d') . ' - ' . $newData->tanggal_akhir_kegiatan->format('Y-m-d H:i:s'),
+            ];
+
             // Menyiapkan data yang akan dikirim
             $dataSend = [
-                'id_pengajuan'    => $newData->id,
-                'nomor_pengajuan' => $data['nomor_pengajuan'],
-                'komponen_rab'    => $rab->groupBy('jenis_komponen_rab'),
+                'id_pengajuan'          => $newData->id,
+                'nomor_pengajuan'       => $data['nomor_pengajuan'],
+                'pengajuan_kegiatan'    => $review_pengajuan_kegiatan,
+                'komponen_rab'          => $rab->groupBy('jenis_komponen_rab'),
             ];
 
             // Proses PDF (jika dibutuhkan)
@@ -1549,6 +1653,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
     public function revisi_pengajuan_kegiatan_update($id, $data)
     {
+        $dataKomponenRab = $data['komponen_rab'];
+
         // Mencari model pengajuan berdasarkan nomor pengajuan
         $model = $this->model->with(['rab_pengajuan_paket_kegiatans', 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat'])
             ->where(['nomor_pengajuan' => $id, 'user_akseslh_id' => $data['user_akseslh_id']])
@@ -1572,6 +1678,87 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         if (!$retur || ($retur && $retur->flag != 2)) {
             \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Bukan data retur', \Sentry\Severity::warning());
             return $this->sendError(null, 'Invalid Data', 422);
+        }
+
+        $idTransportasi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Transportasi'); // Transportasi
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idKonsumsi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Konsumsi'); // Konsumsi
+        })->pluck('master_komponen_rab_id')->first();
+
+        $jumlah_peserta = $model->paket_kegiatan->jumlah_peserta;
+
+        $idNaraSumber = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Nara Sumber'); // Nara Sumber
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idFasilitator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Fasilitator'); // Fasilitator
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idModerator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Moderator'); // Moderator
+        })->pluck('master_komponen_rab_id')->first();
+
+        $jasaProfesi = 0;
+
+        foreach ($dataKomponenRab as $item) {
+            # code...
+            if ($item['id_komponen'] == $idNaraSumber) {
+                if ($item['qty'] < 1 || $item['qty'] > 4) {
+                    \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen'] == $idFasilitator) {
+                if ($item['qty'] < 1 || $item['qty'] > 10) {
+                    \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen'] == $idModerator) {
+                if ($item['qty'] < 1 || $item['qty'] > 2) {
+                    \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            // Jika pesera kurang dari 50, berarti paket yang dipilih adalah hektar
+            if ($jumlah_peserta >= 50) {
+                # code...
+                if ($item['id_komponen'] == $idTransportasi) {
+                    # code...
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    }
+
+                    if ($item['qty'] > $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    }
+                }
+
+                if ($item['id_komponen'] == $idKonsumsi) {
+                    # code...
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                    }
+
+                    if ($item['qty'] > $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                    }
+                }
+            }
         }
 
         \DB::beginTransaction();

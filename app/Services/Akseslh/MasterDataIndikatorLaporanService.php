@@ -143,7 +143,7 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
         //         ];
         //     });
         // }
-        $result = $this->modelMasterIndikator->newQuery()->get();
+        $result = $this->modelMasterIndikator->newQuery()->orderBy('sort', 'ASC')->get();
 
         $result->transform(function ($item, $key) {
             return [
@@ -158,6 +158,7 @@ class MasterDataIndikatorLaporanService extends AppService implements AppService
         $return = [
             'tanggal_mulai_kegiatan'    => $pengajuan->tanggal_mulai_kegiatan,
             'tanggal_akhir_kegiatan'    => $pengajuan->tanggal_akhir_kegiatan,
+            'alamat_kegiatan_realisasi' => $pengajuan->alamat_kegiatan_realisasi,
             'longitude'                 => $pengajuan->longitude,
             'latitude'                  => $pengajuan->latitude,
             'capaian_output'            => $pengajuan->capaian_output,

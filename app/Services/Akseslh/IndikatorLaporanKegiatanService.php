@@ -92,7 +92,12 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
 
     public function update($id, $data)
     {
-        $read   =   $this->modelPengajuanKegiatan->newQuery()->find($id);
+        $read   =   $this->modelPengajuanKegiatan->newQuery()->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+            $query->withTrashed();
+        }, 'paket_kegiatan.jenis_kegiatan' =>  function ($query) {
+            $query->withTrashed();
+        }])->find($id);
+
 
         if (!$read) {
             \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
@@ -165,6 +170,7 @@ class IndikatorLaporanKegiatanService extends AppService implements AppServiceIn
             $read->tanggal_akhir_kegiatan = $data['tanggal_akhir_kegiatan'];
             $read->longitude = explode(',', $data['longitude'])[0];
             $read->latitude = explode(',', $data['latitude'])[0];
+            $read->alamat_kegiatan_realisasi = $data['alamat_kegiatan_realisasi'] ?? null;
             $read->capaian_output = $data['capaian_output'];
             $read->capaian_outcome = $data['capaian_outcome'];
             $read->kendala_kegiatan = $data['kendala_kegiatan'];

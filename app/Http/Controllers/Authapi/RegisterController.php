@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers\Authapi;
 
-use Carbon\Carbon;
+use App\Http\Controllers\ApiController;
+use App\Http\Requests\Authapi\RegisterRequest;
+use App\Jobs\RegistrationEmailVerification;
+use App\Jobs\RegistrationPasswordDefault;
+use App\Models\DataPicKelompokMasyarakat;
+use App\Models\File as FileTable;
+use App\Services\FileUploadService;
+use App\Models\KelompokMasyarakat;
 use App\Models\UserAkseslh;
+use App\Services\Akseslh\KelompokMasyarakatService;
+use App\Services\EmailPhpService;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Services\EmailPhpService;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\ApiController;
-use App\Models\DataPicKelompokMasyarakat;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\Authapi\RegisterRequest;
-use App\Services\Akseslh\KelompokMasyarakatService;
-use DateTime;
-use App\Models\File as FileTable;
-use App\Models\KelompokMasyarakat;
-use App\Services\FileUploadService;
 use Ramsey\Uuid\Guid\Guid;
 
 class RegisterController extends ApiController
@@ -389,7 +391,7 @@ class RegisterController extends ApiController
             // Kirim pesan ke Sentry
             \Sentry\captureMessage($errorMessage, \Sentry\Severity::warning());
 
-            return $this->sendError(null, $validator->getMessageBag(), 422);
+            return $this->sendError($request->all(), $validator->getMessageBag(), 422);
             // \Sentry\captureMessage('Validate Message: ' . $request->email_pic . ' Errors: ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
             // return $this->sendError(null, $validator->getMessageBag(), 422);
         }
@@ -477,7 +479,7 @@ class RegisterController extends ApiController
             ]);
 
             //Send email notification
-            $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
+            RegistrationPasswordDefault::dispatch($input['email_pic'], $user, $default_password);
 
             // Upload files in a loop
             $documents = [
@@ -533,7 +535,7 @@ class RegisterController extends ApiController
 
         // Make default password for first login
         $token =
-            crypt($request->email_pic . Carbon::now()->format('d M Y H:i:s'), rand(1, 100));
+            crypt($request->email_pic . Carbon::now()->format('d M Y H:i:s'), rand(10, 100));
 
         // Membuat objek DateTime dengan waktu sekarang
         $date = new DateTime();
@@ -561,7 +563,7 @@ class RegisterController extends ApiController
             if ($insert) {
 
                 //Send email notification
-                $this->emailPhpService->getTokenAktivasi($input['email_pic'], 'Token Verifikasi Email', $token);
+                RegistrationEmailVerification::dispatch($input['email_pic'], $token);
 
                 // Commit Change
                 \DB::commit();

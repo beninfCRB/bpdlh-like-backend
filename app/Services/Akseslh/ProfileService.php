@@ -56,6 +56,7 @@ class ProfileService extends AppService implements AppServiceInterface
         $result = [
             "id" => $model->id,
             "kelompok_masyarakat" => $model->kelompok_masyarakat->kelompok_masyarakat ?? null,
+            "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
             "nama_pic" => $model->nama_pic ?? null,
             "jenis_identitas_pic" => $model->jenis_identitas_pic ?? null,
             "nomor_identitas_pic" => $model->nomor_identitas_pic ?? null,
@@ -64,16 +65,25 @@ class ProfileService extends AppService implements AppServiceInterface
             "nohp_pic" => $model->nohp_pic ?? null,
             "alamat_pic" => $model->alamat_pic ?? null,
             "kelurahan_pic" => $model->kelurahan->name ?? null,
+            "kelurahan_pic_id" => $model->kelurahan->id ?? null,
             "kecamatan_pic" => $model->kecamatan->name ?? null,
+            "kecamatan_pic_id" => $model->kecamatan->id ?? null,
             "kabupaten_pic" => $model->kabupaten->name ?? null,
+            "kabupaten_pic_id" => $model->kabupaten->id ?? null,
             "provinsi_pic" => $model->provinsi->name ?? null,
+            "provinsi_pic_id" => $model->provinsi->id ?? null,
             "tempat_lahir" => $model->tempat_lahir ?? null,
             "tanggal_lahir" => $model->tanggal_lahir ?? null,
             "agama" => $model->agama->agama ?? null,
+            "agama_id" => $model->agama->id ?? null,
             "status_perkawinan" => $model->status_perkawinan->status_pernikahan ?? null,
+            "status_perkawinan_id" => $model->status_perkawinan->id ?? null,
             "nama_gadis_ibu_kandung" => $model->nama_gadis_ibu_kandung ?? null,
             "jenis_pekerjaan" => $model->jenis_pekerjaan->jenis_pekerjaan ?? null,
+            "jenis_pekerjaan_id" => $model->jenis_pekerjaan->id ?? null,
             'pendidikan'        => $model->pendidikan->pendidikan ?? null,
+            'pendidikan_id'        => $model->pendidikan->id ?? null,
+            'jenis_kelamin' => $model->jenis_kelamin ?? null,
             "foto"  => $model->foto()->whereIn('group', ['foto_ktp'])->get(),
             'profile_kelompok' => $model->foto()->where('group', ['profil_kelompok'])->latest()->first(),
             'verifikator_admin' => $data['user']->master_user_jenis_kelompok->isEmpty() ? true : false
@@ -169,7 +179,7 @@ class ProfileService extends AppService implements AppServiceInterface
         }
     }
 
-    public function delete_profile($id, $data)
+    public function delete_profile($id, $data, $emailSend = true)
     {
         $read   =   $this->model->newQuery()->find($id);
 
@@ -216,7 +226,10 @@ class ProfileService extends AppService implements AppServiceInterface
                 'status'            => 20
             );
 
-            $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
+            if ($emailSend) {
+                # code...
+                $this->emailService->profileDitolak($read->user_akseslh, 'Profile Ditolak', $dataSend, null, 'mail.verifikasi-profile-ditolak');
+            }
 
             $pengajuan->update(['flag' => 20]);
 

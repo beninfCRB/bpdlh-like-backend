@@ -129,6 +129,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         }])
                         ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                            $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
                         ->where('flag', 6)
                         ->orderBy('created_at', 'ASC')
@@ -167,6 +169,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             })->first()->tanggal_selesai,
                             'longitude'  => $items->longitude,
                             'latitude'  => $items->latitude,
+                            'alamat_kegiatan_realisasi' => $items->alamat_kegiatan_realisasi,
                             'document'                      => $items->document,
                             'indikator_laporan_kegiatan'    => $items->indikator_laporan_kegiatan->transform(function ($items, $key) {
                                 return [
@@ -178,7 +181,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             }),
                             'laporan_termin_1' => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Laporan Kegiatan Termin 1']);
-                            })->first()->document_file,
+                            })->first()->document_file()->whereIn('group', ['Laporan Kegiatan (100%)', 'Quisioner'])->get(),
                         ];
                     });
 
@@ -266,6 +269,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         ->where('flag', 11)
                         ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                            $query->withTrashed();
                         }])
                         ->orderBy('created_at', 'ASC')
                         ->get();
@@ -315,6 +320,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         )
                         ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                        }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                            $query->withTrashed();
                         }])
                         ->orderBy('created_at', 'ASC')
                         ->get();
@@ -330,6 +337,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 })
                 ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                     $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+                }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed();
                 }])
                 ->where('flag', 2)
                 ->orderBy('created_at', 'ASC')
@@ -387,6 +396,8 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         $model = $this->model->newQuery()
             ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                $query->withTrashed();
             }])
             ->find($id);
 
@@ -1158,7 +1169,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
         return $this->sendSuccess($result);
     }
 
-    public function updateTemp($id, $data)
+    public function updateTemp($id, $data, $emailSend = true)
     {
         $read = $this->model->newQuery()->find($id);
 
@@ -1233,10 +1244,13 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
             // Mark notifications as read and send notification
             $read->user_akseslh->unreadNotifications->markAsRead();
-            $notification = $data['status'] == 0
-                ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
-                : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total);
-            $read->user_akseslh->notify($notification);
+
+            if ($emailSend) {
+                $notification = $data['status'] == 0
+                    ? new VerifikasiValidasiDitolakNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total, $data['catatan_log'])
+                    : new VerifikasiValidasiNotification($read->nomor_pengajuan, $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic, $total);
+                $read->user_akseslh->notify($notification);
+            }
 
             if ($data['status'] != 0) {
                 // upload document

@@ -32,47 +32,79 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
     public function getAllAttr($user)
     {
         $result  = $this->model->newQuery()
-            // ->whereHas('log_tahapan_pengajuan', function ($q) {
-            //     $q->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-            //         $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-            //     })->whereNotNull('tanggal_masuk')
-            //         ->whereNull('tanggal_selesai');
-            // })
-            // ->whereHas('user_akseslh', function ($q) use ($user) {
-            //     $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
-            //         $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
-            //             $q->whereHas('jenis', function ($q) use ($user) {
-            //                 $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
-            //             });
-            //         });
-            //     });
-            // })
             ->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
                 $query->whereHas('user_akseslh', function ($q) use ($user) {
                     $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
                         $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
                             $q->whereHas('jenis', function ($q) use ($user) {
-                                $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+                                $q->withTrashed()
+                                    ->whereIn(
+                                        'jenis_kelompok_masyarakat_id',
+                                        $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray()
+                                    );
                             });
                         });
                     });
-                });
+                })
+                    // tambahan where khusus ketika kondisi true
+                    ->where([
+                        'is_active' => 'ACTIVE',
+                        'flag' => 1
+                    ]);
+            }, function ($query) {
+                // else-nya kalau kondisi when false
+                $query->where(['is_active' => 'INACTIVE', 'flag' => 1]);
             })
-            ->with(['paket_kegiatan.jenis_kegiatan' => function ($query) {
-                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
-            }, 'user_akseslh' => function ($query) {
-                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
-            }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($query) {
-                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
-            }, 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
-                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
-            }])
-            ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
-                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
-            }])
-            ->where('flag', 1)
+            ->with([
+                'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed();
+                },
+                'user_akseslh' => function ($query) {
+                    $query->withTrashed();
+                },
+                'user_akseslh.data_pic_kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis' => function ($query) {
+                    $query->withTrashed();
+                },
+                'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                    $query->withTrashed();
+                }
+            ])
             ->orderBy('created_at', 'ASC')
             ->get();
+
+        // $result  = $this->model->newQuery()
+        //     ->when($user->master_user_jenis_kelompok->isNotEmpty(), function ($query) use ($user) {
+        //         $query->whereHas('user_akseslh', function ($q) use ($user) {
+        //             $q->whereHas('data_pic_kelompok_masyarakat', function ($q) use ($user) {
+        //                 $q->whereHas('kelompok_masyarakat', function ($q) use ($user) {
+        //                     $q->whereHas('jenis', function ($q) use ($user) {
+        //                         $q->whereIn('jenis_kelompok_masyarakat_id', $user->master_user_jenis_kelompok->pluck('jenis_kelompok_masyarakat_id')->toArray());
+        //                     });
+        //                 });
+        //             });
+        //         });
+        //     })
+        //     ->with(['paket_kegiatan.jenis_kegiatan' => function ($query) {
+        //         $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+        //     }, 'user_akseslh' => function ($query) {
+        //         $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+        //     }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($query) {
+        //         $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+        //     }, 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+        //         $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+        //     }])
+        //     ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+        //         $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+        //     }])
+        //     ->where('flag', 1)
+        //     ->orderBy('created_at', 'ASC')
+        //     ->get();
 
         $result->transform(function ($items) {
             return [
@@ -218,6 +250,35 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
         $read   =   $this->model->newQuery()->find($id);
         try {
             $read->delete();
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($read);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function verifikasiPengajuan($id, $data)
+    {
+        $read = $this->model->newQuery()->find($id);
+
+        if (!$read) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        if ($read->flag != 1) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Allowed', 403);
+        }
+
+        \DB::beginTransaction();
+
+        try {
+
+            $read->is_active        =   'ACTIVE';
+            $read->save();
+
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {

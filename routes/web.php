@@ -3,6 +3,7 @@
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
 use App\Exports\PivotEmailBlastTemplateExport;
+use App\Exports\TolakPengajuanDanProfilTemplate;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/sub-tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\SubTematikKegiatanController::class, 'restore']);
             Route::post('/jenis-kelompok-masyarakat/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class, 'restore']);
             Route::post('/jenis-dokumen/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class, 'restore']);
+            Route::post('/jenis-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class, 'restore']);
         });
 
         Route::middleware(['ensureroleweb:administrator'])->group(function () {
@@ -88,6 +90,11 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/transaksi-penyaluran-import', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_view'])->name('transaksi-penyaluran.import-view');
             Route::get('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_edit'])->name('transaksi-penyaluran.import-edit');
             Route::put('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_update'])->name('transaksi-penyaluran.import-update');
+        });
+
+        Route::middleware(['ensureroleweb:administrator,verifikator'])->group(function () {
+            Route::resource('verifikasi-pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\VerifikasiPengajuanKegiatanController::class);
+            Route::put('verifikasi-pengajuan-kegiatan/verifikasi-pengajuan/{id}', [App\Http\Controllers\Cms\Akseslh\VerifikasiPengajuanKegiatanController::class, 'verifikasiPengajuan']);
         });
 
         // Import & Download
@@ -112,17 +119,31 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('user-akseslh', App\Http\Controllers\Cms\Akseslh\UserAkseslhController::class);
         Route::resource('pengajuan-kegiatan', App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class);
 
+        Route::resource('profile-pic', App\Http\Controllers\Cms\Akseslh\ProfilePicController::class);
+        Route::put('profile-pic/tolak-profil/{id}', [App\Http\Controllers\Cms\Akseslh\ProfilePicController::class, 'tolak_profil']);
+        Route::put('profile-pic/pengajuan-perubahan-profil/{id}', [App\Http\Controllers\Cms\Akseslh\ProfilePicController::class, 'pengajuan_perubahan_profil']);
+
         // User Jenis Kelompok
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
 
         Route::resource('testimonial', App\Http\Controllers\Cms\Akseslh\TestimonialController::class);
 
+        Route::get('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'index'])->name('tolak-pengajuan-dan-profil.index');
+        Route::post('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'store'])->name('tolak-pengajuan-dan-profil.store');
+        Route::post('tolak-pengajuan-dan-profil/proses', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'proses'])->name('tolak-pengajuan-dan-profil.proses');
+        Route::get('tolak-pengajuan-dan-profil/template', function () {
+            return Excel::download(new TolakPengajuanDanProfilTemplate, 'tolak_pengajuan_dan_profil_template.xlsx');
+        })->name('tolak-pengajuan-dan-profil.template');
+
         Route::get('standar-rab-paket-kegiatan/{id}', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'edit']);
         Route::post('standar-rab-paket-kegiatan', [App\Http\Controllers\Cms\Akseslh\StandarRabPaketKegiatanController::class, 'store'])->name('standar-rab-paket-kegiatan.store');
 
-        Route::resource('laporan-akhir-kegiatan', App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class);
+        Route::get('laporan-akhir-kegiatan', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'index'])->name('laporan-akhir-kegiatan.index');
+        Route::post('laporan-akhir-kegiatan', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'store'])->name('laporan-akhir-kegiatan.store');
+        Route::get('laporan-akhir-kegiatan/edit', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'edit'])->name('laporan-akhir-kegiatan.edit');
 
         // Datatable
+        Route::get('/data-profile-pic', [App\Http\Controllers\Datatable\Akseslh\ProfilePicController::class, 'getAll'])->name('data-profile-pic');
         Route::get('/data-jenis-kegiatan', [App\Http\Controllers\Datatable\Akseslh\JenisKegiatanController::class, 'getAll'])->name('data-jenis-kegiatan');
         Route::get('/data-jenis-dokumen', [App\Http\Controllers\Datatable\Akseslh\JenisDokumenController::class, 'getAll'])->name('data-jenis-dokumen');
         Route::get('/data-tahapan-pengajuan-kegiatan', [App\Http\Controllers\Datatable\Akseslh\TahapanPengajuanKegiatanController::class, 'getAll'])->name('data-tahapan-pengajuan-kegiatan');
@@ -153,5 +174,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-log-masa-sanggah', [App\Http\Controllers\Datatable\Akseslh\LogMasaSanggahController::class, 'getAll'])->name('data-log-masa-sanggah');
         Route::get('/data-master-indikator', [App\Http\Controllers\Datatable\Akseslh\MasterIndikatorController::class, 'getAll'])->name('data-master-indikator');
         Route::get('/data-laporan-akhir-kegiatan', [App\Http\Controllers\Datatable\Akseslh\LaporanAkhirKegiatanController::class, 'getAll'])->name('data-laporan-akhir-kegiatan');
+        Route::get('/data-tolak-pengajuan-dan-profil', [App\Http\Controllers\Datatable\Akseslh\TolakPengajuanDanProfilController::class, 'getAll'])->name('data-tolak-pengajuan-dan-profil');
     });
 });

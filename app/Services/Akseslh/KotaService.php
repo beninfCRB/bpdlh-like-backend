@@ -7,6 +7,7 @@ namespace App\Services\Akseslh;
 use App\Models\City;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -34,8 +35,13 @@ class KotaService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->with(['kecamatan'])->find($id);
-
+        $cacheKey = 'kota_' . $id;
+        $result = Cache::remember($cacheKey, now()->addDays(7), function () use ($id) {
+            // Fetch the city by ID with related districts
+            return $this->model->newQuery()->with(['kecamatan' => function ($query) {
+                $query->orderBy('name', 'ASC');
+            }])->find($id);
+        });
         return $this->sendSuccess($result);
     }
 

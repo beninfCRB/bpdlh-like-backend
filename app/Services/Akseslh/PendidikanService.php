@@ -7,6 +7,7 @@ namespace App\Services\Akseslh;
 use App\Models\Pendidikan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -27,15 +28,18 @@ class PendidikanService extends AppService implements AppServiceInterface
 
     public function getAllAttr()
     {
-        $result  = $this->model->newQuery()
-            ->orderBy('created_at', 'ASC')
-            ->get();
+        $result = Cache::remember('pendidikan', now()->adddays(7), function () {
+            $data  = $this->model->newQuery()
+                ->where('flag', true)
+                ->orderBy('created_at', 'ASC')
+                ->get();
 
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                    => $items->id,
-                'pendidikan'     => $items->pendidikan,
-            ];
+            return $data->transform(function ($items, $key) {
+                return [
+                    'id'                    => $items->id,
+                    'pendidikan'     => $items->pendidikan,
+                ];
+            });
         });
 
         return $this->sendSuccess($result);
@@ -66,6 +70,8 @@ class PendidikanService extends AppService implements AppServiceInterface
             ]);
 
             \DB::commit(); // commit the changes
+            Cache::forget('pendidikan');
+
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -85,6 +91,8 @@ class PendidikanService extends AppService implements AppServiceInterface
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('pendidikan');
+
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -98,6 +106,8 @@ class PendidikanService extends AppService implements AppServiceInterface
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            Cache::forget('pendidikan');
+
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes

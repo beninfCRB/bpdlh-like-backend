@@ -28,6 +28,7 @@ var data_master_indikator = (function () {
                 { data: "nama_indikator" },
                 { data: "satuan" },
                 { data: "tipe_data" },
+                { data: "sort" },
                 {},
                 { data: "created_at" },
                 { data: "updated_at" },
