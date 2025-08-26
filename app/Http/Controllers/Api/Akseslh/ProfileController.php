@@ -63,33 +63,33 @@ class ProfileController extends ApiController
         });
 
         $validator = Validator::make($request->all(), [
-            'jenis_kelompok_masyarakat_id'      => 'required|exists:jenis_kelompok_masyarakats,id',
-            'kelompok_masyarakat'               => 'required|not_undefined',
-            'kelompok_masyarakat_id'            => 'required|exists:kelompok_masyarakats,id',
-            'provinsi_kelompok_masyarakat_id'   => 'required',
-            'kabupaten_kelompok_masyarakat_id'  => 'required',
-            'kecamatan_kelompok_masyarakat_id'  => 'required',
-            'kelurahan_kelompok_masyarakat_id'  => 'required',
+            'jenis_kelompok_masyarakat_id'      => 'nullable|exists:jenis_kelompok_masyarakats,id',
+            'kelompok_masyarakat'               => 'nullable|not_undefined',
+            'kelompok_masyarakat_id'            => 'nullable|exists:kelompok_masyarakats,id',
+            'provinsi_kelompok_masyarakat_id'   => 'nullable',
+            'kabupaten_kelompok_masyarakat_id'  => 'nullable',
+            'kecamatan_kelompok_masyarakat_id'  => 'nullable',
+            'kelurahan_kelompok_masyarakat_id'  => 'nullable',
             'profil_kelompok'                   => 'nullable|file|mimes:pdf,doc,docx|max:10192',
             'foto_ktp'                          => 'nullable|file|mimes:png,jpg,jpeg|max:10192',
-            'nama_pic'                          => 'required|max:255|string',
-            'jenis_identitas_pic'               => 'required|in:KTP,SIM,KARTU MAHASISWA',
-            'nomor_identitas_pic'               => ['required', 'string', 'min:16', 'max:16', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_identitas_pic')->ignore($id)->whereNull('deleted_at')],
+            'nama_pic'                          => 'nullable|max:255|string',
+            'jenis_identitas_pic'               => 'nullable|in:KTP,SIM,KARTU MAHASISWA',
+            'nomor_identitas_pic'               => ['nullable', 'string', 'min:16', 'max:16', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_identitas_pic')->ignore($id)->whereNull('deleted_at')],
             'nomor_npwp_pic'                    => 'nullable',
-            'alamat_pic'                        => 'required|string|max:255',
-            'provinsi_pic'                      => 'required',
-            'kabupaten_pic'                     => 'required',
-            'kecamatan_pic'                     => 'required',
-            'kelurahan_pic'                     => 'required',
-            'tempat_lahir'                      => 'required',
-            'tanggal_lahir'                     => 'required|date',
-            'agama_id'                          => 'required|exists:agamas,id',
-            'status_perkawinan_id'              => 'required|exists:status_pernikahans,id',
-            'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
-            'pendidikan_id'                     => 'required|exists:pendidikans,id',
-            'nohp_pic'                          => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->ignore($id)->whereNull('deleted_at')],
-            'email_pic'                         => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->ignore($id)->whereNull('deleted_at')],
-            'jenis_kelamin'                     => 'required|in:laki-laki,perempuan|not_undefined',
+            'alamat_pic'                        => 'nullable|string|max:255',
+            'provinsi_pic'                      => 'nullable',
+            'kabupaten_pic'                     => 'nullable',
+            'kecamatan_pic'                     => 'nullable',
+            'kelurahan_pic'                     => 'nullable',
+            'tempat_lahir'                      => 'nullable',
+            'tanggal_lahir'                     => 'nullable|date',
+            'agama_id'                          => 'nullable|exists:agamas,id',
+            'status_perkawinan_id'              => 'nullable|exists:status_pernikahans,id',
+            'jenis_pekerjaan_id'                => 'nullable|exists:jenis_pekerjaans,id',
+            'pendidikan_id'                     => 'nullable|exists:pendidikans,id',
+            'nohp_pic'                          => ['nullable', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->ignore($id)->whereNull('deleted_at')],
+            'email_pic'                         => ['nullable', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->ignore($id)->whereNull('deleted_at')],
+            'jenis_kelamin'                     => 'nullable|in:laki-laki,perempuan|not_undefined',
         ], [
             'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
         ]);
@@ -97,6 +97,8 @@ class ProfileController extends ApiController
         if ($validator->fails()) {
             return $this->sendError($request->all(), $validator->getMessageBag(), 422);
         }
+
+        return $this->sendSuccess(null, 'Permintaan perubahan profil berhasil dikirim', 200);
 
         $input          = $validator->validated();
 
