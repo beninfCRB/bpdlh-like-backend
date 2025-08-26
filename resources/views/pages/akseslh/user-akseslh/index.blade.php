@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
                             <table id="dt_user_akseslh" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
