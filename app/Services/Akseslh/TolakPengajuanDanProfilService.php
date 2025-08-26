@@ -57,18 +57,24 @@ class TolakPengajuanDanProfilService extends AppService implements AppServiceInt
             ->pluck('id')
             ->toArray();
 
-        if (empty($data)) {
-            # code...
-            return $this->sendError(null, 'Tidak ada data yang perlu diproses', 422);
+        try {
+            //code...
+            if (empty($data)) {
+                # code...
+                return $this->sendError(null, 'Tidak ada data yang perlu diproses', 422);
+            }
+
+            $chunks = array_chunk($data, 100);
+
+            foreach ($chunks as $chunk) {
+                TolakPengajuanDanProfilJob::dispatch($chunk);
+            }
+
+            return $this->sendSuccess(null, 'Data berhasil diproses', 200);
+        } catch (\Exception $exception) {
+            //throw $th;
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
-
-        $chunks = array_chunk($data, 2);
-
-        foreach ($chunks as $chunk) {
-            TolakPengajuanDanProfilJob::dispatch($chunk);
-        }
-
-        return $this->sendSuccess(null, 'Data berhasil diproses', 200);
     }
 
     public function create($data)
