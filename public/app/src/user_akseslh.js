@@ -23,6 +23,7 @@ var data_user_akseslh = (function () {
             responsive: true,
             searchDelay: 500,
             processing: true,
+            scrollX: true,
             ajax: url_table,
             columns: [
                 { data: "DT_RowIndex" },
