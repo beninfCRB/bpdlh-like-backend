@@ -46,6 +46,7 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
 
                     // Jika Email PIC tidak sesuai dengan email yang tercantum di pengajuan, maka akan diskip
                     if ($data->email_pic != $data->pengajuan_kegiatan->user_akseslh->email) {
+                        $data->update(['status' => 'rejected', 'catatan_penolakan' => 'Profil tidak ditemukan']);
                         continue;
                     }
 
@@ -60,9 +61,12 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
                     if ($result->success) {
                         $data->update(['status' => 'approved']);
                     }
+
+                    $data->update(['status' => 'rejected', 'catatan_penolakan' => $result->message]);
                 } elseif ($data->status_penolakan == 'pengajuan') {
 
                     if (!$data->pengajuan_kegiatan) {
+                        $data->update(['status' => 'rejected', 'catatan_penolakan' => 'Pengajuan Kegiatan tidak ditemukan']);
                         continue;
                     }
 
@@ -77,11 +81,13 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
                             'status' => 0
                         ];
 
-                        $result = $verifikasiService->updateTemp($id, $dataSend);
+                        $result = $verifikasiService->updateTemp($id, $dataSend, false);
 
                         if ($result->success) {
                             $data->update(['status' => 'approved']);
                         }
+
+                        $data->update(['status' => 'rejected', 'catatan_penolakan' => $result->message]);
                     } elseif ($data->pengajuan_kegiatan->flag == 2) {
                         $id = $data->pengajuan_kegiatan->id ?? null;
 
@@ -98,6 +104,8 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
                             # code...
                             $data->update(['status' => 'approved']);
                         }
+
+                        $data->update(['status' => 'rejected', 'catatan_penolakan' => $result->message]);
                     }
                 }
             } catch (\Throwable $th) {

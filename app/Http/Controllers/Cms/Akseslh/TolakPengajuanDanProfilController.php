@@ -44,6 +44,7 @@ class TolakPengajuanDanProfilController extends ApiController
     public function proses()
     {
         $result = $this->tolakPengajuanDanProfilService->proses();
+
         try {
             if ($result->success) {
                 $response = $result->data;
