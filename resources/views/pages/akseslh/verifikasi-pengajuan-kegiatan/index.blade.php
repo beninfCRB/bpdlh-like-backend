@@ -308,6 +308,19 @@
                                     placeholder="Nomor HP" readonly />
                             </div>
                         </div>
+                        <div class="form-group col-md-6">
+                            <label for="nama_kontak_darurat">Nama Kontak Darurat</label>
+                            <input type="text" class="form-control" name="nama_kontak_darurat"
+                                id="nama_kontak_darurat" readonly />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="nomor_kontak_darurat">Nomor Kontak Darurat</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">+62</span>
+                                <input type="text" id="nomor_kontak_darurat" name="nomor_kontak_darurat"
+                                    class="form-control" placeholder="Nomor HP" readonly />
+                            </div>
+                        </div>
 
                         <div class="col-sm-6 col-lg-6 col-md-6 webdesign illustrator" style="cursor: pointer"
                             id="lihat-profil-kelompok">

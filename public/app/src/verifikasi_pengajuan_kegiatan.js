@@ -238,6 +238,17 @@ jQuery(document).ready(function () {
         let kabupaten_pic = $("#kabupaten_pic");
         let kecamatan_pic = $("#kecamatan_pic");
         let kelurahan_pic = $("#kelurahan_pic");
+        let nama_kontak_darurat = $("#nama_kontak_darurat");
+        let nomor_kontak_darurat = $("#nomor_kontak_darurat");
+
+        nama_kontak_darurat.val(
+            item.user_akseslh.data_pic_kelompok_masyarakat.nama_kontak_darurat
+        );
+
+        nomor_kontak_darurat.val(
+            item.user_akseslh.data_pic_kelompok_masyarakat.nomor_kontak_darurat
+        );
+
         let foto_ktp = item.user_akseslh.data_pic_kelompok_masyarakat.foto.find(
             (item) => item.group == "foto_ktp"
         );

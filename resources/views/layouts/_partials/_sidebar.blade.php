@@ -203,6 +203,8 @@
                             </li>
                         </ul>
                     </li>
+                @endif
+                @if (in_array(auth()->user()->role_user, ['administrator', 'approver']))
                     <li>
                         <a href="{{ route('banner-informasi.index') }}" class="waves-effect"><i
                                 class="md md-now-widgets"></i><span> Banner Informasi
@@ -233,6 +235,7 @@
                         @endif
                     </ul>
                 </li>
+
                 <li class="has_sub">
                     <a href="#" class="waves-effect"><i class="md md-account-balance-wallet"></i><span> Kelola
                             Verifikasi<i class="md md-add pull-right"></i>

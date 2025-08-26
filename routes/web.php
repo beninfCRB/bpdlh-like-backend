@@ -68,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('jenis-dokumen', App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class);
             Route::resource('master-data-indikator-laporan', App\Http\Controllers\Cms\Akseslh\MasterDataIndikatorLaporanController::class);
             Route::resource('master-indikator', App\Http\Controllers\Cms\Akseslh\MasterIndikatorController::class);
+            Route::resource('banner-informasi', App\Http\Controllers\Cms\Akseslh\BannerInformasiController::class);
 
             // Restore
             Route::post('/tematik-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\TematikKegiatanController::class, 'restore']);
@@ -78,7 +79,6 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::middleware(['ensureroleweb:administrator'])->group(function () {
-            Route::resource('banner-informasi', App\Http\Controllers\Cms\Akseslh\BannerInformasiController::class);
             Route::resource('email-blast', App\Http\Controllers\Cms\Akseslh\EmailBlastController::class);
         });
 
