@@ -361,8 +361,8 @@ class RegisterController extends ApiController
             'email_pic'                         => ['required', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->whereNull('deleted_at')],
             'kode_aktivasi'                     => 'required',
             'jenis_kelamin'                     => 'required|in:laki-laki,perempuan|not_undefined',
-            'nama_kontak_darurat'               => 'required|string',
-            'nomor_kontak_darurat'              => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')],
+            'nama_kontak_darurat'               => 'nullable|string',
+            'nomor_kontak_darurat'              => ['nullable', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')],
         ], [
             'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
         ]);
@@ -468,8 +468,8 @@ class RegisterController extends ApiController
                 // 'nama_gadis_ibu_kandung'    => $input['nama_gadis_ibu_kandung'],
                 'jenis_pekerjaan_id'        => $input['jenis_pekerjaan_id'],
                 'pendidikan_id'             => $input['pendidikan'],
-                'nama_kontak_darurat'       => $input['nama_kontak_darurat'],
-                'nomor_kontak_darurat'      => $input['nomor_kontak_darurat'],
+                'nama_kontak_darurat'       => $input['nama_kontak_darurat'] ?? null,
+                'nomor_kontak_darurat'      => $input['nomor_kontak_darurat'] ?? null,
             ]);
 
             $user_akseslh = UserAkseslh::create([
