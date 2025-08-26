@@ -38,7 +38,7 @@ class VerifikasiPengajuanKegiatanController extends ApiController
             ])
             ->with([
                 'user_akseslh:id,data_pic_kelompok_masyarakat_id',
-                'user_akseslh.data_pic_kelompok_masyarakat:id,nama_pic,email_pic,kelompok_masyarakat_id,nomor_identitas_pic,nomor_npwp_pic,alamat_pic,tempat_lahir,tanggal_lahir,nohp_pic,provinsi_pic,kabupaten_pic,kecamatan_pic,kelurahan_pic,agama_id,status_perkawinan_id,jenis_pekerjaan_id,pendidikan_id',
+                'user_akseslh.data_pic_kelompok_masyarakat:id,nama_pic,email_pic,kelompok_masyarakat_id,nomor_identitas_pic,nomor_npwp_pic,alamat_pic,tempat_lahir,tanggal_lahir,nohp_pic,provinsi_pic,kabupaten_pic,kecamatan_pic,kelurahan_pic,agama_id,status_perkawinan_id,jenis_pekerjaan_id,pendidikan_id,nama_kontak_darurat,nomor_kontak_darurat',
                 'user_akseslh.data_pic_kelompok_masyarakat.foto',
                 'user_akseslh.data_pic_kelompok_masyarakat.provinsi:id,name',
                 'user_akseslh.data_pic_kelompok_masyarakat.kabupaten:id,name',

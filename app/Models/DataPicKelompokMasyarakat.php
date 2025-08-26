@@ -37,6 +37,8 @@ class DataPicKelompokMasyarakat extends AppModel
         'jenis_pekerjaan_id',
         'pendidikan_id',
         'jenis_kelamin',
+        'nama_kontak_darurat',
+        'nomor_kontak_darurat',
         'flag',
         'username',
     ];
