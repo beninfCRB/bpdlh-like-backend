@@ -17,7 +17,7 @@ class TolakPengajuanDanProfil extends AppModel
         'nomor_pengajuan',
         'email_pic',
         'status_penolakan',
-        'catatan_penlokan',
+        'catatan_penolakan',
         'status',
         'username'
     ];
