@@ -187,14 +187,14 @@ class ProfileService extends AppService implements AppServiceInterface
 
         if (!$read) {
             \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' User tidak ditemukan', \Sentry\Severity::warning());
-            return $this->sendError(null, 'Not Found', 422);
+            return $this->sendError(null, 'Not Found ' . $data['user']->email . ' User tidak ditemukan', 422);
         }
 
         $pengajuan = $this->modelPengajuanKegiatan->newQuery()->find($data['pengajuan_kegiatan_id']);
 
         if (!$pengajuan) {
             \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
-            return $this->sendError(null, 'Not Found', 422);
+            return $this->sendError(null, 'Not Found ' . $data['user']->email . ' Pengajuan tidak ditemukan', 422);
         }
 
         if ($pengajuan->flag != 1 || $pengajuan->flag != '1') {
