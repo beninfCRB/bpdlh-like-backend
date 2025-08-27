@@ -15,20 +15,20 @@ return [
     |
     */
 
-    'paths' => ['api/*'],
+    // 'paths' => ['api/*'],
 
-    'allowed_methods' => ['*'],
+    // 'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // 'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [],
+    // 'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*', 'secret', 'id'],
+    // 'allowed_headers' => ['*', 'secret', 'id'],
 
-    'exposed_headers' => [],
+    // 'exposed_headers' => [],
 
-    'max_age' => 0,
+    // 'max_age' => 0,
 
-    'supports_credentials' => true,
+    // 'supports_credentials' => true,
 
 ];
