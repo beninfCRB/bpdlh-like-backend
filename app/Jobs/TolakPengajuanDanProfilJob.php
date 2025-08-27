@@ -60,7 +60,7 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
             try {
                 if ($data->status_penolakan == 'profil') {
                     // Jika Email PIC tidak sesuai dengan email yang tercantum di pengajuan, maka akan diskip
-                    if ($data->email_pic != $data->pengajuan_kegiatan->user_akseslh->email) {
+                    if ($data->email_pic != optional($data->pengajuan_kegiatan->user_akseslh)->email) {
                         $data->update(['status' => 'rejected', 'catatan_penolakan' => trim(($result->message ?? '') . ' ' . ($data->email_pic ?? '') . ' ' . ($data->nomor_pengajuan ?? ''))]);
                         continue;
                     }
