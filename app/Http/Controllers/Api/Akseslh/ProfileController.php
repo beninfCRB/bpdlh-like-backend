@@ -98,9 +98,7 @@ class ProfileController extends ApiController
             return $this->sendError($request->all(), $validator->getMessageBag(), 422);
         }
 
-        return $this->sendSuccess(null, 'Permintaan perubahan profil berhasil dikirim', 200);
-
-        $input          = $validator->validated();
+        $input = $validator->validated();
 
         if (isset($request->profil_kelompok)) {
             # code...
