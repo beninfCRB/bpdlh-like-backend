@@ -15,20 +15,26 @@ return [
     |
     */
 
-    // 'paths' => ['api/*'],
+    'paths' => ['api/*'],
 
-    // 'allowed_methods' => ['*'],
+    'allowed_methods' => ['*'],
 
     // 'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'http://localhost:3000',
+        'https://layanan-dana-masyarakat.bpdlh.id',
+        'https://layanan-masyarakat-uat.bpdlh.id',
+    ],
 
-    // 'allowed_origins_patterns' => [],
 
-    // 'allowed_headers' => ['*', 'secret', 'id'],
+    'allowed_origins_patterns' => [],
 
-    // 'exposed_headers' => [],
+    'allowed_headers' => ['*', 'secret', 'id'],
 
-    // 'max_age' => 0,
+    'exposed_headers' => [],
 
-    // 'supports_credentials' => true,
+    'max_age' => 0,
+
+    'supports_credentials' => true,
 
 ];
