@@ -204,7 +204,7 @@
                         </ul>
                     </li>
                 @endif
-                @if (in_array(auth()->user()->role_user, ['administrator', 'approver']))
+                @if (in_array(auth()->user()->role_user, ['administrator']))
                     <li>
                         <a href="{{ route('banner-informasi.index') }}" class="waves-effect"><i
                                 class="md md-now-widgets"></i><span> Banner Informasi
