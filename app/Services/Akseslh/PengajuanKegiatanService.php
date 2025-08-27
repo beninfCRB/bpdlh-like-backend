@@ -170,7 +170,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             })
             ->get();
 
-        return $this->sendSuccess($result);
+        return $this->sendSuccess($result, 'success', 200);
     }
 
     public function getDataProsesKegiatan($user_akseslh_id)
@@ -193,7 +193,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $data = [];
 
-        if (!$result) return $this->sendSuccess(collect($data));
+        if (!$result) return $this->sendSuccess(collect($data), null, 200);
 
         if ($result) {
             $total = 0;
@@ -230,7 +230,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ];
         }
 
-        return $this->sendSuccess($data);
+        return $this->sendSuccess($data, null, 200);
     }
 
     public function getLogKegiatan($id)
