@@ -67,27 +67,27 @@ class ProfilePicService extends AppService implements AppServiceInterface
         try {
 
             $read = $this->model->newQuery()->create([
-                'data_pic_kelompok_masyarakat_id' =>  $data['data_pic_kelompok_masyarakat_id'],
-                'kelompok_masyarakat_id' =>  $data['kelompok_masyarakat_id'],
-                'kelompok_masyarakat' =>  $data['kelompok_masyarakat'],
-                'nama_pic'              =>  $data['nama_pic'],
-                'jenis_identitas_pic'   =>  $data['jenis_identitas_pic'],
-                'nomor_identitas_pic'   =>  $data['nomor_identitas_pic'],
-                'nomor_npwp_pic'        =>  $data['nomor_npwp_pic'],
-                'email_pic'             =>  $data['email_pic'],
-                'nohp_pic'              =>  $data['nohp_pic'],
-                'alamat_pic'            =>  $data['alamat_pic'],
-                'kelurahan_pic'         =>  $data['kelurahan_pic'],
-                'kecamatan_pic'         =>  $data['kecamatan_pic'],
-                'kabupaten_pic'         =>  $data['kabupaten_pic'],
-                'provinsi_pic'          =>  $data['provinsi_pic'],
-                'tempat_lahir'          =>  $data['tempat_lahir'],
-                'tanggal_lahir'         =>  $data['tanggal_lahir'],
-                'agama_id'              =>  $data['agama_id'],
-                'status_perkawinan_id'  =>  $data['status_perkawinan_id'],
-                'jenis_pekerjaan_id'    =>  $data['jenis_pekerjaan_id'],
-                'pendidikan_id'         =>  $data['pendidikan_id'],
-                'jenis_kelamin'         =>  $data['jenis_kelamin'],
+                'data_pic_kelompok_masyarakat_id'   =>  $data['data_pic_kelompok_masyarakat_id'],
+                'kelompok_masyarakat_id'            =>  $data['kelompok_masyarakat_id'] ?? null,
+                'kelompok_masyarakat'               =>  $data['kelompok_masyarakat'] ?? null,
+                'nama_pic'              =>  $data['nama_pic'] ?? null,
+                'jenis_identitas_pic'   =>  $data['jenis_identitas_pic'] ?? 'KTP',
+                'nomor_identitas_pic'   =>  $data['nomor_identitas_pic'] ?? null,
+                'nomor_npwp_pic'        =>  $data['nomor_npwp_pic'] ?? null,
+                'email_pic'             =>  $data['email_pic'] ?? null,
+                'nohp_pic'              =>  $data['nohp_pic'] ?? null,
+                'alamat_pic'            =>  $data['alamat_pic'] ?? null,
+                'kelurahan_pic'         =>  $data['kelurahan_pic'] ?? null,
+                'kecamatan_pic'         =>  $data['kecamatan_pic'] ?? null,
+                'kabupaten_pic'         =>  $data['kabupaten_pic'] ?? null,
+                'provinsi_pic'          =>  $data['provinsi_pic'] ?? null,
+                'tempat_lahir'          =>  $data['tempat_lahir'] ?? null,
+                'tanggal_lahir'         =>  $data['tanggal_lahir'] ?? null,
+                'agama_id'              =>  $data['agama_id'] ?? null,
+                'status_perkawinan_id'  =>  $data['status_perkawinan_id'] ?? null,
+                'jenis_pekerjaan_id'    =>  $data['jenis_pekerjaan_id'] ?? null,
+                'pendidikan_id'         =>  $data['pendidikan_id'] ?? null,
+                'jenis_kelamin'         =>  $data['jenis_kelamin'] ?? null,
                 'flag'                  =>  1,
             ]);
 
@@ -196,30 +196,37 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
         try {
 
-            if ($nama_pic) {
-                # code...
-                $data_pic->user_akseslh->nama_pic = $read->nama_pic;
-            }
-
-            if ($email_pic) {
-                # code...
-                $data_pic->user_akseslh->email = $read->email_pic;
-            }
-
-            $data_pic->user_akseslh->save();
-
-            if ($foto_ktp) {
-                $document_foto_ktp = $read_document->where('group', 'foto_ktp')->first();
-
-                if ($document_foto_ktp) {
-                    $document_foto_ktp->update([
-                        'fileable_type' => get_class($data_pic),
-                        'fileable_id'   => $data_pic->id,
-                    ]);
+            if ($data['status'] == 1) {
+                if ($nama_pic) {
+                    # code...
+                    $data_pic->user_akseslh->nama_pic = $read->nama_pic;
                 }
+
+                if ($email_pic) {
+                    # code...
+                    $data_pic->user_akseslh->email = $read->email_pic;
+                }
+
+                $data_pic->user_akseslh->save();
+
+                if ($foto_ktp) {
+                    $document_foto_ktp = $read_document->where('group', 'foto_ktp')->first();
+
+                    if ($document_foto_ktp) {
+                        $document_foto_ktp->update([
+                            'fileable_type' => get_class($data_pic),
+                            'fileable_id'   => $data_pic->id,
+                        ]);
+                    }
+                }
+            } else {
+                $read->catatan              = $data['catatan'];
+                $read->status_verifikasi    = 'tolak';
+                $read->save();
             }
 
-            return $this->sendSuccess($read, 'Data Ditemukan', 200);
+
+            return $this->sendSuccess(null, 'Success', 200);
         } catch (\Exception $exception) {
             //throw $th;
             \DB::rollBack(); // rollback the changes
