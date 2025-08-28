@@ -19,7 +19,13 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // 'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'http://localhost:3000',
+        'https://layanan-dana-masyarakat.bpdlh.id',
+        'https://layanan-masyarakat-uat.bpdlh.id',
+    ],
+
 
     'allowed_origins_patterns' => [],
 
