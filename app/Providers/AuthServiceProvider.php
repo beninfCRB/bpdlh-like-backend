@@ -5,6 +5,9 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Auth;
+use App\Extensions\SanctumBearerGuard;
+
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -31,5 +34,11 @@ class AuthServiceProvider extends ServiceProvider
             return env('APP_FE') . '/#/layanan-masyarakat/reset-password/' . $token . '?email=' . urlencode($user->email);
         });
         //
+        Auth::extend('sanctum-bearer', function ($app, $name, array $config) {
+            return new SanctumBearerGuard(
+                Auth::createUserProvider($config['provider']),
+                $app['request']
+            );
+        });
     }
 }
