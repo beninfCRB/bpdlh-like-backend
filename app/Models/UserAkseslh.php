@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use App\Models\AppAuthenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -55,5 +56,20 @@ class UserAkseslh extends AppAuthenticatable
     public function pengajuan_kegiatan(): HasMany
     {
         return $this->hasMany(PengajuanKegiatan::class, 'user_akseslh_id');
+    }
+
+    public function createCustomToken($name = 'custom-token', $abilities = ['*'])
+    {
+        $plainTextToken = Str::random(40);
+
+        $token = $this->tokens()->create([
+            'name' => $name,
+            'token' => hash('sha256', $plainTextToken),
+            'abilities' => $abilities,
+        ]);
+
+        $customToken = $this->id . '_' . $plainTextToken;
+
+        return $customToken; // return tanpa ID dan tanpa '|'
     }
 }

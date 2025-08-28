@@ -51,6 +51,10 @@ return [
             'driver'    => 'token',
             'provider'  => 'akseslh'
         ],
+        'sanctum' => [
+            'driver' => 'sanctum-bearer',
+            'provider' => 'akseslh',
+        ],
     ],
 
     /*
