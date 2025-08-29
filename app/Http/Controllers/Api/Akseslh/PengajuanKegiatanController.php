@@ -70,9 +70,9 @@ class PengajuanKegiatanController extends ApiController
             'alamat_kegiatan'           => 'required|string|max:255',
             'tanggal_kegiatan'          => 'required|string|regex:/^\d{4}-\d{2}-\d{2} \- \d{4}-\d{2}-\d{2}$/',
             'waktu_kegiatan'            => 'required|string|regex:/^\d{2}:\d{2}(:\d{2})? - \d{2}:\d{2}(:\d{2})?$/',
-            'proposal_kegiatan'         => 'required|string|max:255',
-            'tujuan_kegiatan'           => 'required|string|max:255',
-            'ruang_lingkup_kegiatan'    => 'required|string|max:255',
+            'proposal_kegiatan'         => 'required|string|max:800',
+            'tujuan_kegiatan'           => 'required|string|max:800',
+            'ruang_lingkup_kegiatan'    => 'required|string|max:800',
             'fileDocument'              => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10192',
             'nomor_pengajuan'           => 'nullable',
         ]);
