@@ -12,7 +12,7 @@
                     <ul class="dropdown-menu">
                         @if (auth()->user()->role_user === 'administrator')
                             <li>
-                                <a href="{{ route('telescope') }}"><i class="md md-settings"></i> Telescope</a>
+                                <a href="#"><i class="md md-settings"></i> Telescope</a>
                             </li>
                         @endif
                         <li>
