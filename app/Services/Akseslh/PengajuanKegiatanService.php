@@ -196,6 +196,13 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         if (!$result) return $this->sendSuccess(collect($data), null, 200);
 
         if ($result) {
+
+            // Jika Laporan sudah melewati tahapan verifikasi laporan kegiatan
+            if ($result->flag >= 7) {
+                # code...
+                return $this->sendSuccess(collect($data), null, 200);
+            }
+
             $total = 0;
             $total_penyaluran = 0;
 
@@ -1495,7 +1502,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         // Mengecek data sebelumnya
         $cekData = PengajuanKegiatan::where('user_akseslh_id', $data['user_akseslh_id'])->latest()->first();
 
-        if ($cekData && $cekData->flag < 10) {
+        // Jika masih ada kegiatan yang belum diverifikasi kegiatan,
+        if ($cekData && $cekData->flag < 7) {
             \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' masih ada pengajuan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Masih ada pengajuan yang berlangsung', 422);
         }
