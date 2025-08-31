@@ -54,7 +54,9 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'tahapan',
             'document'
         ])
-            ->whereBetween('created_at', [$this->data['tanggal_awal'], $this->data['tanggal_akhir']])
+            // ->whereBetween('created_at', [$this->data['tanggal_awal'], $this->data['tanggal_akhir']])
+            ->whereDate('created_at', '>=', $this->data['tanggal_awal'])
+            ->whereDate('created_at', '<=', $this->data['tanggal_akhir'])
             ->when($this->data['flag'], function ($query) {
                 if ($this->data['flag'] == 1 || $this->data['flag'] == '1') {
                     # code...
