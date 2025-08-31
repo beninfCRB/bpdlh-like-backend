@@ -64,28 +64,30 @@ class VerifikasiPengajuanKegiatanController extends ApiController
         if ($request->has('search') && !empty($request->search)) {
 
             $query
-                ->whereHas('user_akseslh', function ($q) use ($request) {
-                    $q->where('email', 'like', '%' . $request->search . '%');
-                })
-                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
-                    $q->where('nama_pic', 'like', '%' . $request->search . '%');
-                })
-                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
-                    $q->where('nohp_pic', 'like', '%' . $request->search . '%');
-                })
-                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
-                    $q->where('nomor_identitas_pic', 'like', '%' . $request->search . '%');
-                })
-                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis', function ($q) use ($request) {
-                    $q->where('jenis_kelompok_masyarakat', 'like', '%' . $request->search . '%');
-                })
-                ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat', function ($q) use ($request) {
-                    $q->where('kelompok_masyarakat', 'like', '%' . $request->search . '%');
-                })
-                ->orWhereHas('tahapan', function ($q) use ($request) {
-                    $q->where('deskripsi_kegiatan', 'like', '%' . $request->search . '%');
-                })
-                ->orWhere('nomor_pengajuan', 'like', '%' . $request->search . '%');
+                ->where(function ($query) use ($request) {
+                    $query->whereHas('user_akseslh', function ($q) use ($request) {
+                        $q->where('email', 'like', '%' . $request->search . '%');
+                    })
+                        ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                            $q->where('nama_pic', 'like', '%' . $request->search . '%');
+                        })
+                        ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                            $q->where('nohp_pic', 'like', '%' . $request->search . '%');
+                        })
+                        ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat', function ($q) use ($request) {
+                            $q->where('nomor_identitas_pic', 'like', '%' . $request->search . '%');
+                        })
+                        ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis', function ($q) use ($request) {
+                            $q->where('jenis_kelompok_masyarakat', 'like', '%' . $request->search . '%');
+                        })
+                        ->orWhereHas('user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat', function ($q) use ($request) {
+                            $q->where('kelompok_masyarakat', 'like', '%' . $request->search . '%');
+                        })
+                        ->orWhereHas('tahapan', function ($q) use ($request) {
+                            $q->where('deskripsi_kegiatan', 'like', '%' . $request->search . '%');
+                        })
+                        ->orWhere('nomor_pengajuan', 'like', '%' . $request->search . '%');
+                });
         }
         $pengajuan_kegiatan = $query->where(['is_active' => 'INACTIVE', 'flag' => '1'])->orderBy('created_at', 'DESC')->paginate(10);
 
