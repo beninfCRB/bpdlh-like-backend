@@ -87,7 +87,7 @@ class VerifikasiPengajuanKegiatanController extends ApiController
                 })
                 ->orWhere('nomor_pengajuan', 'like', '%' . $request->search . '%');
         }
-        $pengajuan_kegiatan = $query->where(['is_active' => 'INACTIVE', 'flag' => 1])->orderBy('created_at', 'DESC')->paginate(10);
+        $pengajuan_kegiatan = $query->where(['is_active' => 'INACTIVE', 'flag' => '1'])->orderBy('created_at', 'DESC')->paginate(10);
 
         return view("pages.akseslh.verifikasi-pengajuan-kegiatan.index", compact('pengajuan_kegiatan'));
     }
