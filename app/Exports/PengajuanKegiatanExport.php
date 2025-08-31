@@ -56,7 +56,12 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
         ])
             ->whereBetween('created_at', [$this->data['tanggal_awal'], $this->data['tanggal_akhir']])
             ->when($this->data['flag'], function ($query) {
-                $query->where('flag', (int) $this->data['flag']);
+                if ($this->data['flag'] == 1 || $this->data['flag'] == '1') {
+                    # code...
+                    $query->where(['flag' => '1', 'is_active' => 'INACTIVE']);
+                } else {
+                    $query->where('flag', $this->data['flag']);
+                }
             },  function ($query) {
                 $query->where('flag', '>', 0);
             })
