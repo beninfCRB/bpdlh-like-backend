@@ -69,6 +69,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Kelompok</th>
+                                        <th>Nama PIC</th>
                                         <th>Tematik</th>
                                         <th>Jenis Kegiatan</th>
                                         <th>Nomor Pengajuan</th>
@@ -83,6 +84,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat ?? '-' }}
                                             </td>
+                                            <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }}</td>
                                             <td>{{ $item->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan ?? '-' }}
                                             </td>
                                             <td>{{ $item->paket_kegiatan->jenis_kegiatan->jenis_kegiatan ?? '-' }}</td>
