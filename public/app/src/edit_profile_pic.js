@@ -4,6 +4,7 @@ import { createData, updatePutData } from "../api.js";
 
 jQuery(document).ready(function () {
     let route = $("#profile_pic_route").val();
+    console.log(route);
 
     let data_pic_kelompok_masyarakat_id = $(
         "#data_pic_kelompok_masyarakat_id"
@@ -75,6 +76,8 @@ jQuery(document).ready(function () {
     });
 
     $(document).on("click", "#btn-terima", function () {
+        this.disabled = true;
+        $("#btn-tolak").prop("disabled", true);
         const checkboxes = document.querySelectorAll(".profile-field");
 
         const selected = [];
@@ -105,26 +108,34 @@ jQuery(document).ready(function () {
             confirmButtonText: "Ya",
             cancelButtonText: "Tidak",
             reverseButtons: false,
-        }).then((result) => {
-            if (result.value) {
-                createData(
-                    route + "/pengajuan-perubahan-profil/" + profile_pic_id,
-                    formData
-                )
-                    .then((res) => {
-                        Swal.fire(
-                            "Sukses",
-                            "Data berhasil diperbaharui",
-                            "success"
-                        );
-                        // window.location.reload();
-                        console.log(res.data);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-            }
-        });
+        })
+            .then((result) => {
+                if (result.value) {
+                    createData(
+                        route + "/pengajuan-perubahan-profil/" + profile_pic_id,
+                        formData
+                    )
+                        .then((res) => {
+                            Swal.fire(
+                                "Sukses",
+                                "Data berhasil diperbaharui",
+                                "success"
+                            );
+                            window.location.href = route;
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        })
+                        .finally(() => {
+                            this.disabled = false;
+                            $("#btn-tolak").prop("disabled", false);
+                        });
+                }
+            })
+            .finally(() => {
+                this.disabled = false;
+                $("#btn-tolak").prop("disabled", false);
+            });
     });
 
     $(document).on("click", "#ceklis_semua", function () {

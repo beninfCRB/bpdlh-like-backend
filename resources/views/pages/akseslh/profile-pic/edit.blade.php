@@ -66,37 +66,32 @@
                 <div id="bg-primary" class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <form role="form" method="POST">
-                            @if ($data->data->kelompok_masyarakat_id)
-                                <div class="form-group">
-                                    <label for="kelompok_masyarakat">Kelompok Masyarakat <span
-                                            class="text-danger">*</span></label>
-                                    <input type="hidden" id="profile_pic_route" name="profile_pic_route"
-                                        value="{{ route('profile-pic.index') }}">
-                                    <input type="hidden" id="data_pic_kelompok_masyarakat_id"
-                                        name="data_pic_kelompok_masyarakat_id"
-                                        value="{{ $data->data->data_pic_kelompok_masyarakat_id }}">
-                                    <input type="text" class="form-control" id="kelompok_masyarakat"
-                                        name="kelompok_masyarakat" placeholder="Nama PIC"
-                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}"
-                                        readonly>
-                                </div>
-                            @endif
-                            @if ($data->data->nama_pic)
-                                <div class="form-group">
-                                    <label for="nama_pic">Nama PIC <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="nama_pic" name="nama_pic"
-                                        placeholder="Nama PIC"
-                                        value="{{ $data->data->data_pic_kelompok_masyarakat->nama_pic }}" readonly>
-                                </div>
-                            @endif
-                            @if ($data->data->email_pic)
-                                <div class="form-group">
-                                    <label for="nama_pic">Email PIC <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="nama_pic" name="nama_pic"
-                                        placeholder="Nama PIC"
-                                        value="{{ $data->data->data_pic_kelompok_masyarakat->email_pic }}" readonly>
-                                </div>
-                            @endif
+                            <input type="hidden" id="profile_pic_route" name="profile_pic_route"
+                                value="{{ route('profile-pic.index') }}">
+                            <input type="hidden" id="data_pic_kelompok_masyarakat_id"
+                                name="data_pic_kelompok_masyarakat_id"
+                                value="{{ $data->data->data_pic_kelompok_masyarakat_id }}">
+                            <div class="form-group">
+                                <label for="kelompok_masyarakat">Kelompok Masyarakat <span
+                                        class="text-danger">*</span></label>
+
+                                <input type="text" class="form-control" id="kelompok_masyarakat"
+                                    name="kelompok_masyarakat" placeholder="Nama PIC"
+                                    value="{{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}"
+                                    readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="nama_pic">Nama PIC <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nama_pic" name="nama_pic"
+                                    placeholder="Nama PIC" value="{{ $data->data->data_pic_kelompok_masyarakat->nama_pic }}"
+                                    readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="nama_pic">Email PIC <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nama_pic" name="nama_pic"
+                                    placeholder="Nama PIC"
+                                    value="{{ $data->data->data_pic_kelompok_masyarakat->email_pic }}" readonly>
+                            </div>
                             @if ($data->data->jenis_identitas_pic && $data->data->jenis_identitas_pic != 'KTP')
                                 <div class="form-group">
                                     <label for="jenis_identitas_pic">Jenis Identitas PIC <span
@@ -236,11 +231,12 @@
                                 @forelse ($data->data->data_pic_kelompok_masyarakat->foto as $item)
                                     @if ($item->group == 'foto_ktp' || $item->group == 'profil_kelompok')
                                         <div class="col-md-6">
-                                            <a href="#">
+                                            <a href="{{ config('app.url') . '/storage/' . $item->file_path }}"
+                                                target="_blank">
                                                 <div class="gal-detail thumb">
                                                     <img src="{{ asset('template/images/gallery/1.jpg') }}"
                                                         class="thumb-img" alt="work-thumbnail" />
-                                                    <h4>KTP PIC</h4>
+                                                    <h4>{{ ucwords(str_replace('_', ' ', $item->group)) }}</h4>
                                                 </div>
                                             </a>
                                         </div>
@@ -274,62 +270,54 @@
                 <div id="bg-primary" class="panel-collapse collapse in">
                     <div class="portlet-body">
                         <form role="form" method="POST">
-                            @if ($data->data->kelompok_masyarakat_id)
-                                <div
-                                    class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->id == $data->data->kelompok_masyarakat_id ? 'has-success' : 'has-error' }}">
-                                    <label for="kelompok_masyarakat">Kelompok Masyarakat <span
-                                            class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="hidden" id="profile_pic_id" name="profile_pic_id"
-                                            value="{{ $data->data->id }}">
-                                        <input type="text" id="kelompok_masyarakat" name="kelompok_masyarakat"
-                                            class="form-control" value="{{ $data->data->kelompok_masyarakat }}"
-                                            readonly />
-                                        <span class="input-group-addon">
-                                            @if (
-                                                $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->id != $data->data->kelompok_masyarakat_id &&
-                                                    $data->data->kelompok_masyarakat_id)
-                                                <input type="checkbox" class="profile-field" name="kelompok_masyarakat"
-                                                    id="">
-                                            @endif
-                                        </span>
-                                    </div>
+                            <input type="hidden" id="profile_pic_id" name="profile_pic_id"
+                                value="{{ $data->data->id }}">
+                            <div
+                                class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->id == $data->data->kelompok_masyarakat_id ? 'has-success' : 'has-error' }}">
+                                <label for="kelompok_masyarakat">Kelompok Masyarakat <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" id="kelompok_masyarakat" name="kelompok_masyarakat"
+                                        class="form-control" value="{{ $data->data->kelompok_masyarakat }}" readonly />
+                                    <span class="input-group-addon">
+                                        @if (
+                                            $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->id != $data->data->kelompok_masyarakat_id &&
+                                                $data->data->kelompok_masyarakat_id)
+                                            <input type="checkbox" class="profile-field" name="kelompok_masyarakat"
+                                                id="">
+                                        @endif
+                                    </span>
                                 </div>
-                            @endif
+                            </div>
 
-                            @if ($data->data->nama_pic)
-                                <div
-                                    class="form-group {{ $data->data->data_pic_kelompok_masyarakat->nama_pic == $data->data->nama_pic ? 'has-success' : 'has-error' }}">
-                                    <label for="nama_pic">Nama PIC <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="text" id="nama_pic" name="nama_pic" class="form-control"
-                                            placeholder="Email" value="{{ $data->data->nama_pic }}" readonly />
-                                        <span class="input-group-addon">
-                                            @if ($data->data->data_pic_kelompok_masyarakat->nama_pic != $data->data->nama_pic && $data->data->nama_pic)
-                                                <input type="checkbox" class="profile-field" name="nama_pic"
-                                                    id="">
-                                            @endif
-                                        </span>
-                                    </div>
+                            <div
+                                class="form-group {{ $data->data->data_pic_kelompok_masyarakat->nama_pic == $data->data->nama_pic ? 'has-success' : 'has-error' }}">
+                                <label for="nama_pic">Nama PIC <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" id="nama_pic" name="nama_pic" class="form-control"
+                                        placeholder="Email" value="{{ $data->data->nama_pic }}" readonly />
+                                    <span class="input-group-addon">
+                                        @if ($data->data->data_pic_kelompok_masyarakat->nama_pic != $data->data->nama_pic && $data->data->nama_pic)
+                                            <input type="checkbox" class="profile-field" name="nama_pic" id="">
+                                        @endif
+                                    </span>
                                 </div>
-                            @endif
+                            </div>
 
-                            @if ($data->data->email_pic)
-                                <div
-                                    class="form-group {{ $data->data->data_pic_kelompok_masyarakat->email_pic == $data->data->email_pic ? 'has-success' : 'has-error' }}">
-                                    <label for="email_pic">Email PIC <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input type="text" id="email_pic" name="email_pic" class="form-control"
-                                            placeholder="Email" value="{{ $data->data->email_pic }}" readonly />
-                                        <span class="input-group-addon">
-                                            @if ($data->data->data_pic_kelompok_masyarakat->email_pic != $data->data->email_pic && $data->data->email_pic)
-                                                <input type="checkbox" class="profile-field" name="email_pic"
-                                                    id="">
-                                            @endif
-                                        </span>
-                                    </div>
+                            <div
+                                class="form-group {{ $data->data->data_pic_kelompok_masyarakat->email_pic == $data->data->email_pic ? 'has-success' : 'has-error' }}">
+                                <label for="email_pic">Email PIC <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" id="email_pic" name="email_pic" class="form-control"
+                                        placeholder="Email" value="{{ $data->data->email_pic }}" readonly />
+                                    <span class="input-group-addon">
+                                        @if ($data->data->data_pic_kelompok_masyarakat->email_pic != $data->data->email_pic && $data->data->email_pic)
+                                            <input type="checkbox" class="profile-field" name="email_pic"
+                                                id="">
+                                        @endif
+                                    </span>
                                 </div>
-                            @endif
+                            </div>
 
                             @if ($data->data->jenis_identitas_pic && $data->data->jenis_identitas_pic != 'KTP')
                                 <div
@@ -648,8 +636,8 @@
                                                 <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
                                                     alt="work-thumbnail" />
                                                 <h4>{{ ucwords(str_replace('_', ' ', $item->group)) }}
-                                                    <input type="checkbox" name="foto_ktp" id="foto_ktp"
-                                                        class="pull-right profile-field">
+                                                    <input type="checkbox" name="{{ $item->group }}"
+                                                        id="{{ $item->group }}" class="pull-right profile-field">
                                                 </h4>
                                             </div>
                                         </a>
