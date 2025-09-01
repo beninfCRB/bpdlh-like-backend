@@ -161,11 +161,11 @@ class ProfilePicService extends AppService implements AppServiceInterface
             $data['profile_field'] = array_values($data['profile_field']);
         }
 
-        if (in_array('profile_kelompok', $data['profile_field'])) {
-            $profile_kelompok = true;
+        if (in_array('profil_kelompok', $data['profile_field'])) {
+            $profil_kelompok = true;
 
             // Hapus data profile_kelompok
-            $data['profile_field'] = array_diff($data['profile_field'], ['profile_kelompok']);
+            $data['profile_field'] = array_diff($data['profile_field'], ['profil_kelompok']);
 
             // kalau mau reset index biar rapi 0,1,2 dst
             $data['profile_field'] = array_values($data['profile_field']);
@@ -178,6 +178,7 @@ class ProfilePicService extends AppService implements AppServiceInterface
         if (in_array('email_pic', $data['profile_field'])) {
             $email_pic = true;
         }
+
 
         $read   =   $this->model->newQuery()->select($data['profile_field'])->with(['document'])->where('id', $id)->first();
 
@@ -194,6 +195,7 @@ class ProfilePicService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Data user tidak ditemukan', 422);
         }
 
+        \DB::beginTransaction();
         try {
 
             if ($data['status'] == 1) {
@@ -210,6 +212,21 @@ class ProfilePicService extends AppService implements AppServiceInterface
                 $data_pic->user_akseslh->save();
 
                 if ($foto_ktp) {
+                    $id_old_document   =   $data_pic->foto()->where('group', 'foto_ktp')->first() ? $data_pic->foto()->where('group', 'foto_ktp')->first()->id : null;
+
+                    if ($id_old_document) {
+                        # code...
+                        $readOldDocument   =   \DB::table('files')->where('id', $id_old_document)->first();
+
+                        if ($readOldDocument) {
+                            $filePath = $readOldDocument->file_path;
+
+                            $this->fileUploadService->deleteFiles($filePath);
+
+                            \DB::table('files')->where('id', $id_old_document)->delete();
+                        }
+                    }
+
                     $document_foto_ktp = $read_document->where('group', 'foto_ktp')->first();
 
                     if ($document_foto_ktp) {
@@ -219,13 +236,47 @@ class ProfilePicService extends AppService implements AppServiceInterface
                         ]);
                     }
                 }
+
+                if ($profil_kelompok) {
+                    $id_old_document   =   $data_pic->foto()->where('group', 'profil_kelompok')->first() ? $data_pic->foto()->where('group', 'profil_kelompok')->first()->id : null;
+
+                    if ($id_old_document) {
+                        # code...
+                        $readOldDocument   =   \DB::table('files')->where('id', $id_old_document)->first();
+
+                        if ($readOldDocument) {
+                            $filePath = $readOldDocument->file_path;
+
+                            $this->fileUploadService->deleteFiles($filePath);
+
+                            \DB::table('files')->where('id', $id_old_document)->delete();
+                        }
+                    }
+
+                    $document_profil_kelompok = $read_document->where('group', 'profil_kelompok')->first();
+
+                    if ($document_profil_kelompok) {
+                        $document_profil_kelompok->update([
+                            'fileable_type' => get_class($data_pic),
+                            'fileable_id'   => $data_pic->id,
+                        ]);
+                    }
+                }
+
+                $readData = $read->toArray();
+                unset($readData['id'], $readData['created_at'], $readData['updated_at'], $readData['data_pic_kelompok_masyarakat_id'], $readData['document']);
+
+                $data_pic->update($readData);
+
+                $read->status_verifikasi    = 'verifikasi';
+                $read->save();
             } else {
                 $read->catatan              = $data['catatan'];
                 $read->status_verifikasi    = 'tolak';
                 $read->save();
             }
 
-
+            \DB::commit(); // commit the changes
             return $this->sendSuccess(null, 'Success', 200);
         } catch (\Exception $exception) {
             //throw $th;
