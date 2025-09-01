@@ -69,6 +69,7 @@
                                             {{ $item->deskripsi_kegiatan }}
                                         </option>
                                     @endforeach
+                                    <option value="20">Ditolak</option>
                                 @endisset
                             </select>
                             @error('flag')
