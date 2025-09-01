@@ -61,6 +61,8 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
                 if ($this->data['flag'] == 1 || $this->data['flag'] == '1') {
                     # code...
                     $query->where(['flag' => '1', 'is_active' => 'INACTIVE']);
+                } elseif ($this->data['flag'] == 20 || $this->data['flag'] == '20') {
+                    $query->where(['flag' => '20']);
                 } else {
                     $query->where('flag', $this->data['flag']);
                 }
