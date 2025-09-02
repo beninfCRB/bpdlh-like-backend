@@ -169,7 +169,11 @@ class DataPicKelompokMasyarakatController extends ApiController
             'jenis_pekerjaan_id'                => 'required|exists:jenis_pekerjaans,id',
             'pendidikan_id'                     => 'required|exists:pendidikans,id',
             'status_user'                       => 'required',
-            'dokumen_pendukung'                 => 'required|file|mimes:pdf|max:2048'
+            'dokumen_pendukung'                 => 'required|file|mimes:pdf|max:2048',
+            'nama_kontak_darurat'               => 'required|string',
+            'nomor_kontak_darurat'              => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')->ignore($id)],
+            'profil_kelompok'                   => 'nullable|file|mimes:pdf,doc,docx|max:10192',
+            'foto_ktp'                          => 'nullable|file|mimes:png,jpg,jpeg|max:10192',
         ]);
 
         $result =   $this->dataPicKelompokMasyarakatService->update($id, $input);

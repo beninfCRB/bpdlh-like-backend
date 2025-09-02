@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DataPicKelompokMasyarakat extends AppModel
 {
@@ -147,5 +148,15 @@ class DataPicKelompokMasyarakat extends AppModel
     public function pendidikan(): BelongsTo
     {
         return $this->belongsTo(Pendidikan::class, 'pendidikan_id');
+    }
+
+    /**
+     * Get the profile_pic that owns the DataPicKelompokMasyarakat
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function profile_pic(): HasMany
+    {
+        return $this->hasMany(ProfilePic::class, 'data_pic_kelompok_masyarakat_id', 'id');
     }
 }

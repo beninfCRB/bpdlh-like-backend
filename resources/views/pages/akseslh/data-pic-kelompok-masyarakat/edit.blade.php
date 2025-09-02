@@ -54,6 +54,12 @@
                         <span class="hidden-xs">Dokumen Pendukung</span>
                     </a>
                 </li>
+                <li class="tab">
+                    <a href="#history-change-2" data-toggle="tab" aria-expanded="false">
+                        <span class="visible-xs"><i class="fa fa-cog"></i></span>
+                        <span class="hidden-xs">Riwayat Perubahan</span>
+                    </a>
+                </li>
                 <div class="indicator"></div>
             </ul>
         </div>
@@ -114,7 +120,7 @@
                                             {{ $message }}
                                         @enderror
                                     </div>
-                                    <div class="form-group @error('jenis_identitas_pic') has-error @enderror col-md-4">
+                                    <div class="form-group @error('jenis_identitas_pic') has-error @enderror col-md-6">
                                         <label for="jenis_identitas_pic">Jenis Identitas PIC<span
                                                 class="text-danger">*</span></label>
                                         <select class="form-control" required id="jenis_identitas_pic"
@@ -138,7 +144,7 @@
                                             {{ $message }}
                                         @enderror
                                     </div>
-                                    <div class="form-group @error('nomor_identitas_pic') has-error @enderror col-md-4">
+                                    <div class="form-group @error('nomor_identitas_pic') has-error @enderror col-md-6">
                                         <label for="nomor_identitas_pic">Nomor Identitas PIC<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="nomor_identitas_pic"
@@ -154,6 +160,26 @@
                                             placeholder="Contoh: 08123234345"
                                             value="{{ old('nohp_pic', $data->nohp_pic) }}">
                                         @error('nohp_pic')
+                                            {{ $message }}
+                                        @enderror
+                                    </div>
+                                    <div class=" form-group @error('nama_kontak_darurat') has-error @enderror col-md-4">
+                                        <label for="nohp_pic">Nama Kontak Darurat<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="nama_kontak_darurat"
+                                            name="nama_kontak_darurat" placeholder="Nama Kontak Darurat"
+                                            value="{{ old('nama_kontak_darurat', $data->nama_kontak_darurat) }}">
+                                        @error('nama_kontak_darurat')
+                                            {{ $message }}
+                                        @enderror
+                                    </div>
+                                    <div class=" form-group @error('nomor_kontak_darurat') has-error @enderror col-md-4">
+                                        <label for="nomor_kontak_darurat">Nomor Kontak Darurat<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="nomor_kontak_darurat"
+                                            name="nomor_kontak_darurat" placeholder="Contoh: 08123234345"
+                                            value="{{ old('nomor_kontak_darurat', $data->nomor_kontak_darurat) }}">
+                                        @error('nomor_kontak_darurat')
                                             {{ $message }}
                                         @enderror
                                     </div>
@@ -370,6 +396,22 @@
                                             {{ $message }}
                                         @enderror
                                     </div>
+
+                                    <div class="form-group @error('foto_ktp') has-error @enderror col-md-3">
+                                        <label for="foto_ktp">Foto KTP </label>
+                                        <input type="file" name="foto_ktp" id="foto_ktp" class="form-control">
+                                        @error('foto_ktp')
+                                            {{ $message }}
+                                        @enderror
+                                    </div>
+                                    <div class="form-group @error('profil_kelompok') has-error @enderror col-md-3">
+                                        <label for="profil_kelompok">Profil Kelompok </label>
+                                        <input type="file" name="profil_kelompok" id="profil_kelompok"
+                                            class="form-control">
+                                        @error('profil_kelompok')
+                                            {{ $message }}
+                                        @enderror
+                                    </div>
                                     <div class="form-group @error('dokumen_pendukung') has-error @enderror col-md-3">
                                         <label for="dokumen_pendukung">Dokumen Pendukung <span
                                                 class="text-danger">*</span></label>
@@ -382,6 +424,21 @@
                                 </div>
 
                                 <div class="row">
+                                    @forelse ($data->foto()->whereIn('group', ['profil_kelompok', 'foto_ktp'])->get() as $item)
+                                        <a href="{{ env('APP_URL') . '/storage/' . $item->file_path }}" target="_BLANK"
+                                            class="col-sm-3 col-lg-3 col-md-3 webdesign illustrator"
+                                            style="cursor: pointer" id="lihat-profil-kelompok">
+                                            <div class="gal-detail thumb">
+                                                <img src="{{ asset('template/images/gallery/1.jpg') }}" class="thumb-img"
+                                                    alt="work-thumbnail" />
+                                                <h4>{{ ucwords(str_replace('_', ' ', $item->group)) }}</h4>
+                                            </div>
+                                        </a>
+                                    @empty
+                                    @endforelse
+                                </div>
+
+                                <div class="row m-t-5">
                                     <div class="col-lg-12">
                                         <button type="submit"
                                             class="btn btn-primary waves-effect waves-light">Simpan</button>
@@ -429,6 +486,84 @@
                                             @endforeach
                                         @else
                                         @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Personal-Information -->
+                </div>
+                <div class="tab-pane" id="history-change-2">
+                    <!-- Personal-Information -->
+                    <div class="panel panel-default panel-fill">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Dokumen Pendukung Perubahan Profile</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nama PIC</th>
+                                            <th>Email PIC</th>
+                                            <th>Jenis Identitas PIC</th>
+                                            <th>Nomor Identitas PIC</th>
+                                            <th>Nomor NPWP PIC</th>
+                                            <th>Nomor HP PIC</th>
+                                            <th>Nama Kontak Darurat</th>
+                                            <th>Nomor Kontak Darurat</th>
+                                            <th>Alamat PIC</th>
+                                            <th>Kelurahan/Desa PIC</th>
+                                            <th>Kecamatan PIC</th>
+                                            <th>Kabupaten/Kota PIC</th>
+                                            <th>Provinsi PIC</th>
+                                            <th>Tempat Lahir PIC</th>
+                                            <th>Tanggal Lahir PIC</th>
+                                            <th>Agama PIC</th>
+                                            <th>Status Perkawinan PIC</th>
+                                            <th>Nama Gadis Ibu Kandung PIC</th>
+                                            <th>Jenis Pekerjaan PIC</th>
+                                            <th>Pendidikan PIC</th>
+                                            <th>Jenis Kelamin PIC</th>
+                                            <th>Created At</th>
+                                            <th>Updated At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($data->profile_pic as $item)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $item->nama_pic }}</td>
+                                                <td>{{ $item->email_pic }}</td>
+                                                <td>{{ $item->jenis_identitas_pic }}</td>
+                                                <td>{{ $item->nomor_identitas_pic }}</td>
+                                                <td>{{ $item->nomor_npwp_pic }}</td>
+                                                <td>{{ $item->nohp_pic }}</td>
+                                                <td>{{ $item->nama_kontak_darurat }}</td>
+                                                <td>{{ $item->nomor_kontak_darurat }}</td>
+                                                <td>{{ $item->alamat_pic }}</td>
+                                                <td>{{ $item->kelurahan->name }}</td>
+                                                <td>{{ $item->kecamatan->name }}</td>
+                                                <td>{{ $item->kabupaten->name }}</td>
+                                                <td>{{ $item->provinsi->name }}</td>
+                                                <td>{{ $item->tempat_lahir }}</td>
+                                                <td>{{ $item->tanggal_lahir }}</td>
+                                                <td>{{ $item->agama->agama }}</td>
+                                                <td>{{ $item->status_perkawinan->status_pernikahan }}</td>
+                                                <td>{{ $item->nama_gadis_ibu_kandung }}</td>
+                                                <td>{{ $item->jenis_pekerjaan->jenis_pekerjaan }}</td>
+                                                <td>{{ $item->pendidikan->pendidikan }}</td>
+                                                <td>{{ $item->jenis_kelamin }}</td>
+                                                <td>
+                                                    {{ $item->created_at->diffForHumans() }}
+                                                </td>
+                                                <td>
+                                                    {{ $item->updated_at->diffForHumans() }}
+                                                </td>
+                                            </tr>
+                                        @empty
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
