@@ -10,6 +10,7 @@ use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\File as FileTable;
+use App\Models\ProfilePic;
 use App\Services\FileUploadService;
 
 
@@ -18,17 +19,20 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
     protected $modelUserAkseslh;
     protected $fileUploadService;
     protected $fileTable;
+    protected $modelProfilePic;
 
     public function __construct(
         DataPicKelompokMasyarakat $model,
         UserAkseslh $modelAkseslh,
         FileUploadService $fileUploadService,
-        FileTable $fileTable
+        FileTable $fileTable,
+        ProfilePic $modelProfilePic
     ) {
         parent::__construct($model);
         $this->modelUserAkseslh = $modelAkseslh;
         $this->fileUploadService                        = $fileUploadService;
         $this->fileTable                                = $fileTable;
+        $this->modelProfilePic                          = $modelProfilePic;
     }
 
     public function getAll()
@@ -63,7 +67,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->where('id', $id)->with('profile_pic')->first();
 
         return $this->sendSuccess($result);
     }
@@ -129,6 +133,7 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->nomor_identitas_pic      = $data['nomor_identitas_pic'];
             $read->email_pic                = $data['email_pic'] ?? null;
             $read->nohp_pic                 = $data['nohp_pic'];
+            $read->nomor_npwp_pic           = $data['nomor_npwp_pic'] ?? null;
             $read->alamat_pic               = $data['alamat_pic'];
             $read->kelurahan_pic            = $data['kelurahan_pic'];
             $read->kecamatan_pic            = $data['kecamatan_pic'];
@@ -141,6 +146,8 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
             $read->nama_gadis_ibu_kandung   = $data['nama_gadis_ibu_kandung'];
             $read->jenis_pekerjaan_id       = $data['jenis_pekerjaan_id'];
             $read->pendidikan_id            = $data['pendidikan_id'];
+            $read->nama_kontak_darurat      = $data['nama_kontak_darurat'];
+            $read->nomor_kontak_darurat     = $data['nomor_kontak_darurat'];
 
             $upload = $this->fileUploadService->handleFile($data['dokumen_pendukung'])->saveToDb('dokumen_pendukung');
 
@@ -151,14 +158,96 @@ class DataPicKelompokMasyarakatService extends AppService implements AppServiceI
                 ]);
             }
 
-            $read->save();
+            if (isset($data['foto_ktp'])) {
+                $oldFotoKtp = $read->foto()->where('group', 'foto_ktp')->first();
+
+                if ($oldFotoKtp) {
+                    $doku   =   \DB::table('files')->where('id', $oldFotoKtp->id)->first();
+
+                    if (!$doku) {
+                        # code...
+                        return $this->sendError(null, 'Not Found', 422);
+                    }
+
+                    $filePath = $doku->file_path;
+
+                    $this->fileUploadService->deleteFiles($filePath);
+
+                    \DB::table('files')->where('id', $oldFotoKtp->id)->delete();
+                }
+
+                # code...
+                $upload = $this->fileUploadService->handleImage($data['foto_ktp'])->saveToDb('foto_ktp');
+                if ($upload) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+            }
+
+            if (isset($data['profil_kelompok'])) {
+                # code...
+                $oldProfilKelompok = $read->foto()->where('group', 'profil_kelompok')->first();
+
+                if ($oldProfilKelompok) {
+                    $doku   =   \DB::table('files')->where('id', $oldProfilKelompok->id)->first();
+
+                    if (!$doku) {
+                        # code...
+                        return $this->sendError(null, 'Not Found', 422);
+                    }
+
+                    $filePath = $doku->file_path;
+
+                    $this->fileUploadService->deleteFiles($filePath);
+
+                    \DB::table('files')->where('id', $oldProfilKelompok->id)->delete();
+                }
+
+                $upload = $this->fileUploadService->handleFile($data['profil_kelompok'])->saveToDb('profil_kelompok');
+                if ($upload) {
+                    $document = $this->fileTable->newQuery()->find($upload->id);
+                    $document->update([
+                        'fileable_type' => get_class($read),
+                        'fileable_id'   => $read->id,
+                    ]);
+                }
+            }
+
 
             $read->user_akseslh->nama_pic           = $data['nama_pic'] ?? null;
             $read->user_akseslh->email              = $data['email_pic'] ?? null;
             $read->user_akseslh->status_user        = $data['status_user'];
             $read->user_akseslh->save();
 
+            $read->save();
 
+            $this->modelProfilePic->newQuery()->create([
+                'data_pic_kelompok_masyarakat_id'   =>  $id,
+                'kelompok_masyarakat_id'            =>  $data['kelompok_masyarakat_id'],
+                'kelompok_masyarakat'               =>  $data['kelompok_masyarakat'] ?? null,
+                'nama_pic'                          =>  $data['nama_pic'],
+                'jenis_identitas_pic'               =>  $data['jenis_identitas_pic'],
+                'nomor_identitas_pic'               =>  $data['nomor_identitas_pic'],
+                'email_pic'                         =>  $data['email_pic'],
+                'nohp_pic'                          =>  $data['nohp_pic'],
+                'nomor_npwp_pic'                    =>  $data['nomor_npwp_pic'] ?? null,
+                'alamat_pic'                        =>  $data['alamat_pic'],
+                'kelurahan_pic'                     =>  $data['kelurahan_pic'],
+                'kecamatan_pic'                     =>  $data['kecamatan_pic'],
+                'kabupaten_pic'                     =>  $data['kabupaten_pic'],
+                'provinsi_pic'                      =>  $data['provinsi_pic'],
+                'tempat_lahir'                      =>  $data['tempat_lahir'],
+                'tanggal_lahir'                     =>  $data['tanggal_lahir'],
+                'agama_id'                          =>  $data['agama_id'],
+                'status_perkawinan_id'              =>  $data['status_perkawinan_id'],
+                'jenis_pekerjaan_id'                =>  $data['jenis_pekerjaan_id'],
+                'pendidikan_id'                     =>  $data['pendidikan_id'],
+                'status_verifikasi'                 =>  'verifikasi',
+                'flag'                              =>  1,
+            ]);
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess($read);
