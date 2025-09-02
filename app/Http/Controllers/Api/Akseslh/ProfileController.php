@@ -89,6 +89,8 @@ class ProfileController extends ApiController
             'pendidikan_id'                     => 'nullable|exists:pendidikans,id',
             'nohp_pic'                          => ['nullable', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->ignore($id)->whereNull('deleted_at')],
             'email_pic'                         => ['nullable', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->ignore($id)->whereNull('deleted_at')],
+            'nama_kontak_darurat'               => 'required|string',
+            'nomor_kontak_darurat'              => ['required', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')->ignore($id)],
             'jenis_kelamin'                     => 'nullable|in:laki-laki,perempuan|not_undefined',
         ], [
             'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',

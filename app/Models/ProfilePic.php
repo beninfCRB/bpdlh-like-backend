@@ -47,6 +47,8 @@ class ProfilePic extends AppModel
         'jenis_kelamin',
         'catatan',
         'status_verifikasi',
+        'nama_kontak_darurat',
+        'nomor_kontak_darurat',
         'flag',
         'username',
     ];
