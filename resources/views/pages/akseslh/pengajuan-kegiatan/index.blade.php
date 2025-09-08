@@ -210,6 +210,7 @@
                                     <th>Nama Gadis Ibu Kandung</th>
                                     <th>Status User</th>
                                     <th>Role User</th>
+                                    <th>Nomor Kontak Darurat</th>
                                     <th>Nomor Pengajuan</th>
                                     <th>Tematik Kegiatan</th>
                                     <th>Sub Tematik Kegiatan</th>
@@ -267,6 +268,8 @@
                                         <td>{{ $item->user_akseslh->status_user ?? '-' }}
                                         </td>
                                         <td>{{ $item->user_akseslh->role_user ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->nomor_kontak_darurat ?? '-' }}
                                         </td>
                                         <td>{{ $item->nomor_pengajuan ?? '-' }}
                                         </td>
