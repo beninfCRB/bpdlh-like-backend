@@ -309,8 +309,8 @@
                                         <td>Rp.
                                             {{ number_format($item->transaksi_penyaluran->sum(function ($rab) {return $rab->nilai_penyaluran;})) }}
                                         </td>
-                                        <td>{{ $item->longitude_kegiatan ?? '-' }}</td>
-                                        <td>{{ $item->latitude_kegiatan ?? '-' }}</td>
+                                        <td>{{ $item->longitude ?? '-' }}</td>
+                                        <td>{{ $item->latitude ?? '-' }}</td>
                                         <td>{{ $item->flag == '20' ? 'Ditolak' : $item->tahapan->deskripsi_kegiatan ?? 'Draft' }}
                                         </td>
                                         <td>{{ $item->created_at->format('d-m-Y H:i:s') ?? '-' }}</td>
