@@ -228,6 +228,8 @@
                                     <th>Ruang Lingkup Kegiatan</th>
                                     <th>Total RAB</th>
                                     <th>Total Dana Dicairkan</th>
+                                    <th>Longitude Kegiatan</th>
+                                    <th>Latitude Kegiatan</th>
                                     <th>Flag</th>
                                     <th>Created at</th>
                                     <th>Updated at</th>
@@ -307,6 +309,8 @@
                                         <td>Rp.
                                             {{ number_format($item->transaksi_penyaluran->sum(function ($rab) {return $rab->nilai_penyaluran;})) }}
                                         </td>
+                                        <td>{{ $item->longitude_kegiatan ?? '-' }}</td>
+                                        <td>{{ $item->latitude_kegiatan ?? '-' }}</td>
                                         <td>{{ $item->flag == '20' ? 'Ditolak' : $item->tahapan->deskripsi_kegiatan ?? 'Draft' }}
                                         </td>
                                         <td>{{ $item->created_at->format('d-m-Y H:i:s') ?? '-' }}</td>
