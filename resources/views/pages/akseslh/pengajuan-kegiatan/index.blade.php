@@ -230,6 +230,7 @@
                                     <th>Total Dana Dicairkan</th>
                                     <th>Longitude Kegiatan</th>
                                     <th>Latitude Kegiatan</th>
+                                    <th>Rab Double</th>
                                     <th>Flag</th>
                                     <th>Created at</th>
                                     <th>Updated at</th>
@@ -311,6 +312,7 @@
                                         </td>
                                         <td>{{ $item->longitude ?? '-' }}</td>
                                         <td>{{ $item->latitude ?? '-' }}</td>
+                                        <td>{{ $item->rab_double }}</td>
                                         <td>{{ $item->flag == '20' ? 'Ditolak' : $item->tahapan->deskripsi_kegiatan ?? 'Draft' }}
                                         </td>
                                         <td>{{ $item->created_at->format('d-m-Y H:i:s') ?? '-' }}</td>

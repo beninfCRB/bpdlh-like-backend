@@ -54,6 +54,13 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'tahapan',
             'document'
         ])
+            ->addSelect([
+                'rab_double' => \DB::table('rab_pengajuan_paket_kegiatans')
+                    ->selectRaw('CASE WHEN COUNT(*) > COUNT(DISTINCT komponen_rab_id) THEN 1 ELSE 0 END')
+                    ->whereColumn('pengajuan_kegiatan_id', 'pengajuan_kegiatans.id')
+                    ->groupBy('pengajuan_kegiatan_id')
+                    ->limit(1)
+            ])
             // ->whereBetween('created_at', [$this->data['tanggal_awal'], $this->data['tanggal_akhir']])
             ->whereDate('created_at', '>=', $this->data['tanggal_awal'])
             ->whereDate('created_at', '<=', $this->data['tanggal_akhir'])
@@ -146,6 +153,7 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             $pengajuanKegiatan->longitude,
             $pengajuanKegiatan->latitude,
             $pengajuanKegiatan->flag == 20 ? 'Ditolak' : $pengajuanKegiatan->tahapan->deskripsi_kegiatan,
+            $pengajuanKegiatan->rab_double ? 'Ya' : 'Tidak',
             $pengajuanKegiatan->created_at,
             $pengajuanKegiatan->updated_at,
             $pengajuanKegiatan->document()->where('group', 'document_sk')->first() ? env('APP_URL') . '/storage/' . $pengajuanKegiatan->document()->where('group', 'document_sk')->first()->file_path : null
@@ -204,6 +212,7 @@ class PengajuanKegiatanExport implements FromCollection, WithHeadings, WithMappi
             'Longitude Kegiatan',
             'Latitude Kegiatan',
             'Tahapan',
+            'Rab Double',
             'Created At',
             'Updated At',
             'Link File SK'
