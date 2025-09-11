@@ -76,6 +76,15 @@ class PengajuanKegiatanController extends ApiController
             $query->where('flag', (int) $request->tahapan);
         }
 
+        // 🔥 Tambahkan subquery untuk cek rab double
+        $query->addSelect([
+            'rab_double' => \DB::table('rab_pengajuan_paket_kegiatans')
+                ->selectRaw('CASE WHEN COUNT(*) > COUNT(DISTINCT komponen_rab_id) THEN 1 ELSE 0 END')
+                ->whereColumn('pengajuan_kegiatan_id', 'pengajuan_kegiatans.id')
+                ->groupBy('pengajuan_kegiatan_id')
+                ->limit(1)
+        ]);
+
         $pengajuan_kegiatan = $query->orderBy('created_at', 'DESC')->paginate(10);
         $flag = TahapanPengajuanKegiatan::orderBy('sort')->get();
         return view("pages.akseslh.pengajuan-kegiatan.index", compact('group', 'pengajuan_kegiatan', 'flag'));
