@@ -24,6 +24,7 @@ return [
         'http://localhost:3000',
         'https://layanan-dana-masyarakat.bpdlh.id',
         'https://layanan-masyarakat-uat.bpdlh.id',
+        env('APP_ENV') == 'production' ? '' : 'https://ladama.vercel.app',
     ],
 
 
