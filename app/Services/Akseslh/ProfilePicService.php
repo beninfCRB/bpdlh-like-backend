@@ -88,8 +88,8 @@ class ProfilePicService extends AppService implements AppServiceInterface
                 'jenis_pekerjaan_id'    =>  $data['jenis_pekerjaan_id'] ?? null,
                 'pendidikan_id'         =>  $data['pendidikan_id'] ?? null,
                 'jenis_kelamin'         =>  $data['jenis_kelamin'] ?? null,
-                'nama_kontak_darurat'         =>  $data['nama_kontak_darurat'] ?? null,
-                'nomor_kontak_darurat'         =>  $data['nomor_kontak_darurat'] ?? null,
+                'nama_kontak_darurat'               =>  $data['nama_kontak_darurat'] ?? null,
+                'nomor_kontak_darurat'              =>  $data['nomor_kontak_darurat'] ?? null,
                 'flag'                  =>  1,
             ]);
 
