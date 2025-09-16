@@ -119,7 +119,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                     $query->withTrashed();
                 }])
-                ->orderBy('created_at', 'ASC')
+                ->orderBy('created_at', 'DESC')
                 ->get();
         } else {
             $result  = $this->pengajuanKegiatan->newQuery()
@@ -130,7 +130,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                     $query->withTrashed();
                 }])
                 ->doesntHave('transaksi_penyaluran')
-                ->orderBy('created_at', 'ASC')
+                ->orderBy('created_at', 'DESC')
                 ->get();
         }
 
