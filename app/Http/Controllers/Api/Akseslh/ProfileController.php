@@ -112,13 +112,6 @@ class ProfileController extends ApiController
             $input['foto_ktp'] = $request->file('foto_ktp');
         }
 
-        // return $this->sendSuccess([
-        //     'request'           => $request->all(),
-        //     'input'             => $input,
-        //     'foto_ktp'          => $request->file('foto_ktp'),
-        //     'profil_kelompok'   => $request->file('profil_kelompok'),
-        // ], 'data', 200);
-
         $input['data_pic_kelompok_masyarakat_id'] = $id;
 
         $result =   $this->profilePicService->create($input);
