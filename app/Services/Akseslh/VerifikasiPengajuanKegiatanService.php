@@ -75,7 +75,7 @@ class VerifikasiPengajuanKegiatanService extends AppService implements AppServic
                     $query->withTrashed();
                 }
             ])
-            ->orderBy('created_at', 'ASC')
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         // $result  = $this->model->newQuery()

@@ -107,7 +107,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         }, 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
-                        ->orderBy('created_at', 'ASC')
+                        ->orderBy('created_at', 'DESC')
                         ->get();
                     break;
                 case 6:
@@ -133,7 +133,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
                         ->where('flag', 6)
-                        ->orderBy('created_at', 'ASC')
+                        ->orderBy('created_at', 'DESC')
                         ->get();
 
                     $result->transform(function ($items, $key) {
@@ -210,7 +210,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
-                        ->orderBy('created_at', 'ASC')
+                        ->orderBy('created_at', 'DESC')
                         ->get();
 
                     $result->transform(function ($items, $key) {
@@ -279,7 +279,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                             $query->withTrashed();
                         }])
-                        ->orderBy('created_at', 'ASC')
+                        ->orderBy('created_at', 'DESC')
                         ->get();
                     $result->transform(function ($items, $key) {
 
@@ -330,7 +330,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                             $query->withTrashed();
                         }])
-                        ->orderBy('created_at', 'ASC')
+                        ->orderBy('created_at', 'DESC')
                         ->get();
                     break;
             }
@@ -348,7 +348,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                     $query->withTrashed();
                 }])
                 ->where('flag', 2)
-                ->orderBy('created_at', 'ASC')
+                ->orderBy('created_at', 'DESC')
                 ->get();
         }
 
