@@ -284,16 +284,27 @@ class VerifikasiService extends AppService implements AppServiceInterface
                         $q->where('deskripsi_kegiatan', 'Validasi');
                     })
                     ->update(['tanggal_masuk' => now()]);
-                // $this->emailService->verifikasiPengajuanKegiatan($read->user_akseslh, 'Pengajuan Kegiatan Terverifikasi', $dataSend, '', 'mail.verifikasi-pengajuan-kegiatan-diterima');
+                if ($emailSend) {
+                    # code...
+                    $this->emailService->verifikasiPengajuanKegiatan($read->user_akseslh, 'Pengajuan Kegiatan Terverifikasi', $dataSend, '', 'mail.verifikasi-pengajuan-kegiatan-diterima');
+                }
             } else {
-                // Kirim email
-                // $this->emailService->verifikasiValidasiDitolak(
-                //     $read->user_akseslh,
-                //     'Pengajuan Ditolak',
-                //     $dataSend,
-                //     null,
-                //     'mail.verifikasi-pengajuan-kegiatan-ditolak'
-                // );
+                if ($emailSend) {
+                    $dataSend['judul_pengajuan_kegiatan'] = $read->judul_pengajuan_kegiatan;
+                    $dataSend['kelompok_masyarakat'] = $read->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat;
+                    $dataSend['nama_pic'] = $read->user_akseslh->data_pic_kelompok_masyarakat->nama_pic;
+                    $dataSend['total'] = $read->rab_pengajuan_paket_kegiatans->sum(function ($item) {
+                        return $item->qty * $item->harga_unit;
+                    });
+                    // Kirim email
+                    $this->emailService->verifikasiValidasiDitolak(
+                        $read->user_akseslh,
+                        'Pengajuan Ditolak',
+                        $dataSend,
+                        null,
+                        'mail.verifikasi-pengajuan-kegiatan-ditolak'
+                    );
+                }
             }
 
             \DB::commit(); // commit the changes

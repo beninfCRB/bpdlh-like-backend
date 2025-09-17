@@ -58,7 +58,7 @@
     <div class="container">
         <h1>Pengajuan Kegiatan Belum Dapat Disetujui</h1>
         <p>
-            Yth. Bapak/Ibu {{ $to->nama_pic ?? $data['nama_pic'] }}, {{ $data['kelompok_masyarakat'] }},
+            Yth. Bapak/Ibu {{ $to->nama_pic ?? $data['nama_pic'] }}, {{ $data['kelompok_masyarakat'] ?? null }},
         </p>
         <p>
             Berdasarkan hasil verifikasi dan validasi, dengan ini kami sampaikan bahwa usulan kegiatan Bapak/Ibu dengan

@@ -71,7 +71,7 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
                         'catatan_log'           => $data->catatan_penolakan,
                     ];
 
-                    $result = $profileService->delete_profile($data->pic_kelompok_masyarakat->id, $dataSend, false);
+                    $result = $profileService->delete_profile($data->pic_kelompok_masyarakat->id, $dataSend, true);
 
                     if ($result->success) {
                         $data->update(['status' => 'approved']);
@@ -104,7 +104,7 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
                             'status' => 0
                         ];
 
-                        $result = $verifikasiService->updateTemp($id, $dataSend, false);
+                        $result = $verifikasiService->updateTemp($id, $dataSend, true);
 
                         if ($result->success) {
                             $data->update(['status' => 'approved']);
@@ -129,7 +129,7 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
                             'status' => 0
                         ];
 
-                        $result = $validasiPengajuanKegiatanService->updateTemp($id, $dataSend, false);
+                        $result = $validasiPengajuanKegiatanService->updateTemp($id, $dataSend, true);
 
                         if ($result->success) {
                             # code...
