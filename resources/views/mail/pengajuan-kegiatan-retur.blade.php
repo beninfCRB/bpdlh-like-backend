@@ -68,7 +68,7 @@
             <p>{{ $data['catatan_log'] }}</p>
         </div>
         <p>
-            Mohon melakukan perbaikan RAB paling lambat tanggal 25 April 2025.
+            Mohon melakukan perbaikan RAB.
             Informasi lebih lanjut dapat menghubungi nomor PMU FOLU NC 2&3: 082121730552.
         </p>
         <div class="footer">
