@@ -1838,7 +1838,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 return $this->sendSuccess($result);
             } else {
                 # code...
-                \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' total ' . $total . ' melebihi caping ' . $model->caping_rab, \Sentry\Severity::warning());
+                \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' total ' . $total . ' tidak sesuai caping ' . $model->caping_rab, \Sentry\Severity::warning());
                 \DB::rollBack();
                 return $this->sendError(null, 'Nilai RAB harus sama dengan caping', 422);
             }
