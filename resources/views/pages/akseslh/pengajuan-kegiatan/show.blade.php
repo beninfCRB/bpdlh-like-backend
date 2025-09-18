@@ -81,7 +81,7 @@
                             </tr>
                             <tr>
                                 <td>Status Pengajuan</td>
-                                <td>{{ $data->data->flag == 20 ? 'Ditolak' : $data->data->tahapan->deskripsi_kegiatan }}
+                                <td>{{ $data->data->flag == 20 ? 'Ditolak' : ($data->data->flag == 0 ? 'Draft' : $data->data->tahapan->deskripsi_kegiatan) }}
                                 </td>
                             </tr>
                         </tbody>
