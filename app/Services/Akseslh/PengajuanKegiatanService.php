@@ -1800,7 +1800,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             }, $data['komponen_rab']);
 
-            if ($total <= (int)$model->caping_rab) {
+            if ($total == (int)$model->caping_rab) {
 
                 // Menyimpan rab sebelumnya ke tabel log rab
                 $rabData = $model->rab_pengajuan_paket_kegiatans->map(function ($dt) use ($model) {
@@ -1840,7 +1840,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 # code...
                 \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' total ' . $total . ' melebihi caping ' . $model->caping_rab, \Sentry\Severity::warning());
                 \DB::rollBack();
-                return $this->sendError(null, 'Nilai RAB tidak boleh melebihi caping', 422);
+                return $this->sendError(null, 'Nilai RAB harus sama dengan caping', 422);
             }
         } catch (\Exception $exception) {
             \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' ' . $exception->getMessage(), \Sentry\Severity::warning());
