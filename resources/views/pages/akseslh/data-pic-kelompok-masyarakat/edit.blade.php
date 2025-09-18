@@ -534,27 +534,27 @@
                                         @forelse ($data->profile_pic as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->nama_pic }}</td>
-                                                <td>{{ $item->email_pic }}</td>
-                                                <td>{{ $item->jenis_identitas_pic }}</td>
-                                                <td>{{ $item->nomor_identitas_pic }}</td>
-                                                <td>{{ $item->nomor_npwp_pic }}</td>
-                                                <td>{{ $item->nohp_pic }}</td>
-                                                <td>{{ $item->nama_kontak_darurat }}</td>
-                                                <td>{{ $item->nomor_kontak_darurat }}</td>
-                                                <td>{{ $item->alamat_pic }}</td>
-                                                <td>{{ $item->kelurahan->name }}</td>
-                                                <td>{{ $item->kecamatan->name }}</td>
-                                                <td>{{ $item->kabupaten->name }}</td>
-                                                <td>{{ $item->provinsi->name }}</td>
-                                                <td>{{ $item->tempat_lahir }}</td>
-                                                <td>{{ $item->tanggal_lahir }}</td>
-                                                <td>{{ $item->agama->agama }}</td>
-                                                <td>{{ $item->status_perkawinan->status_pernikahan }}</td>
-                                                <td>{{ $item->nama_gadis_ibu_kandung }}</td>
-                                                <td>{{ $item->jenis_pekerjaan->jenis_pekerjaan }}</td>
-                                                <td>{{ $item->pendidikan->pendidikan }}</td>
-                                                <td>{{ $item->jenis_kelamin }}</td>
+                                                <td>{{ $item->nama_pic ?? null }}</td>
+                                                <td>{{ $item->email_pic ?? null }}</td>
+                                                <td>{{ $item->jenis_identitas_pic ?? null }}</td>
+                                                <td>{{ $item->nomor_identitas_pic ?? null }}</td>
+                                                <td>{{ $item->nomor_npwp_pic ?? null }}</td>
+                                                <td>{{ $item->nohp_pic ?? null }}</td>
+                                                <td>{{ $item->nama_kontak_darurat ?? null }}</td>
+                                                <td>{{ $item->nomor_kontak_darurat ?? null }}</td>
+                                                <td>{{ $item->alamat_pic ?? null }}</td>
+                                                <td>{{ $item->kelurahan->name ?? null }}</td>
+                                                <td>{{ $item->kecamatan->name ?? null }}</td>
+                                                <td>{{ $item->kabupaten->name ?? null }}</td>
+                                                <td>{{ $item->provinsi->name ?? null }}</td>
+                                                <td>{{ $item->tempat_lahir ?? null }}</td>
+                                                <td>{{ $item->tanggal_lahir ?? null }}</td>
+                                                <td>{{ $item->agama->agama ?? null }}</td>
+                                                <td>{{ $item->status_perkawinan->status_pernikahan ?? null }}</td>
+                                                <td>{{ $item->nama_gadis_ibu_kandung ?? null }}</td>
+                                                <td>{{ $item->jenis_pekerjaan->jenis_pekerjaan ?? null }}</td>
+                                                <td>{{ $item->pendidikan->pendidikan ?? null }}</td>
+                                                <td>{{ $item->jenis_kelamin ?? null }}</td>
                                                 <td>
                                                     {{ $item->created_at->diffForHumans() }}
                                                 </td>
