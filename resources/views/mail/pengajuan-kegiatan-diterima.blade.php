@@ -58,7 +58,7 @@
     <div class="container">
         <h1>Pemberitahuan Persetujuan Pengajuan Proposal Akses Dana Layanan Masyarakat untuk Lingkungan</h1>
         <p>
-            Yth. Bapak/Ibu Pengusul Kegiatan Layanan Dana Masyarakat untuk Lingkungan <i>Batch 2</i>,
+            Yth. Bapak/Ibu Pengusul Kegiatan Layanan Dana Masyarakat untuk Lingkungan <i>Periode 3</i>,
         </p>
         <p>
             Berdasarkan hasil verifikasi dan validasi, dengan ini kami sampaikan bahwa usulan kegiatan Bapak/Ibu dengan
@@ -70,14 +70,16 @@
             <p>{{ $data['catatan_log'] }}</p>
         </div>
         <p>
-            Seluruh proses seleksi dan keputusan akhir merupakan kewenangan penuh Tim FOLU NC 2&3 dan Tim Percepatan
-            <i>Small Grant</i>. Keputusan ini bersifat mutlak serta tidak dapat diganggu gugat (<i>final and
+            Seluruh proses seleksi dan keputusan akhir merupakan kewenangan penuh Tim FOLU NC 2&3 Kementerian Kehutanan.
+            Keputusan ini bersifat mutlak serta tidak dapat diganggu gugat (<i>final and
                 binding</i>).
         </p>
         <p>
-            Untuk tahapan selanjutnya, mohon kesediaan Bapak/Ibu melakukan pengecekan secara berkala pada masing-masing
-            akun pada portal <a href="https://bpdlh.id/layanan-masyarakat">Layanan Dana Masyarakat untuk Lingkungan</a>
-            untuk melengkapi dokumen berikut:
+            Penyaluran dana akan disalurkan melalui rekening giro khusus bank BNI yang akan dibuatkan oleh Badan
+            Pengelola Dana Lingkungan Hidup (BPDLH). Untuk tahapan selanjutnya, mohon kesediaan Bapak/Ibu melakukan
+            pengecekan secara berkala pada masing-masing akun pada portal <a
+                href="https://layanan-dana-masyarakat.bpdlh.id">Layanan Dana Masyarakat untuk Lingkungan</a> untuk
+            melengkapi dokumen berikut:
         </p>
         <ol>
             <li>
