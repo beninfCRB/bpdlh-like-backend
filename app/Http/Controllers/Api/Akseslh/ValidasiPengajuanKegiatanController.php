@@ -96,7 +96,7 @@ class ValidasiPengajuanKegiatanController extends ApiController
         $input['user_akseslh_id']  = $request->user()->id;
         $input['user']           = $request->user();
 
-        $result = $this->validasiPengajuanKegiatanService->updateTemp($id, $input);
+        $result = $this->validasiPengajuanKegiatanService->updateTemp($id, $input, true);
 
         try {
             if ($result->success) {
