@@ -199,7 +199,7 @@ class VerifikasiService extends AppService implements AppServiceInterface
         }
     }
 
-    public function updateTemp($id, $data, $emailSend = true)
+    public function updateTemp($id, $data, $emailSend = false)
     {
         $read = $this->model->newQuery()->find($id);
 

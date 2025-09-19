@@ -70,9 +70,8 @@
             <p>{{ $data['catatan_log'] }}</p>
         </div>
         <p>
-            Seluruh proses seleksi dan keputusan akhir merupakan kewenangan penuh Tim FOLU NC 2&3 dan Tim Percepatan
-            <i>Small Grant</i>. Keputusan ini bersifat mutlak serta tidak dapat diganggu gugat (<i>final and
-                binding</i>).
+            Seluruh proses seleksi dan keputusan akhir merupakan kewenangan penuh Tim FOLU NC 2&3 Kementerian Kehutanan.
+            Keputusan ini bersifat mutlak serta tidak dapat diganggu gugat (<i>final and binding</i>).
         </p>
         <p>
             Kami ucapkan terima kasih atas perhatian dan komitmen Bapak/Ibu dalam mendukung aksi nyata pelestarian
