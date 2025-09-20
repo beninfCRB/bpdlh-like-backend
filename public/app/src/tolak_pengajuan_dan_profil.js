@@ -45,8 +45,8 @@ var data_tolak_pengajuan_dan_profil = (function () {
                 },
                 {
                     targets: -2, // created_at
-                    searchable: false,
-                    orderable: false,
+                    searchable: true,
+                    orderable: true,
                     render: function (data, type, full, meta) {
                         if (full.created_at === null) {
                             return null;
@@ -57,8 +57,8 @@ var data_tolak_pengajuan_dan_profil = (function () {
                 },
                 {
                     targets: -1, // updated_at
-                    searchable: false,
-                    orderable: false,
+                    searchable: true,
+                    orderable: true,
                     render: function (data, type, full, meta) {
                         if (full.updated_at === null) {
                             return null;

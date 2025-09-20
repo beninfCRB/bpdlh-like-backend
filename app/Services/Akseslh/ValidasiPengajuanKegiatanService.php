@@ -133,7 +133,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                         }])
                         ->where('flag', 6)
-                        ->orderBy('created_at', 'DESC')
+                        ->orderBy('updated_at', 'DESC')
                         ->get();
 
                     $result->transform(function ($items, $key) {
@@ -147,7 +147,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                             'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
                             'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
-                            'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                            'tanggal_pengajuan'         => $items->updated_at->format('d M Y H:i'),
                             'tanggal_akhir_validasi'    => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
                             'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                             'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
@@ -279,8 +279,9 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                         }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                             $query->withTrashed();
                         }])
-                        ->orderBy('created_at', 'DESC')
+                        ->orderBy('updated_at', 'DESC')
                         ->get();
+
                     $result->transform(function ($items, $key) {
 
                         return [
@@ -293,7 +294,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'jenis_kegiatan'            => $items->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
                             'rencana_kegiatan'          => $items->tanggal_mulai_kegiatan,
                             'jumlah'                    => $items->paket_kegiatan->jumlah_peserta . " " . ($items->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
-                            'tanggal_pengajuan'         => $items->created_at->format('d M Y H:i'),
+                            'tanggal_pengajuan'         => $items->updated_at->format('d M Y H:i'),
                             'tanggal_akhir_validasi'    => Carbon::parse($items->created_at)->locale('id')->addDays(7)->format('d M Y'),
                             'kelompok_masyarakat'       => $items->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                             'nama_pic'                  => $items->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
