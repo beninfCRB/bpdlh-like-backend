@@ -99,6 +99,11 @@ class TolakPengajuanDanProfilService extends AppService implements AppServiceInt
                 // Skip baris kosong atau baris header
                 if ($index === 0) continue;
 
+                // Skip baris kosong
+                if ($row[0] === null && $row[1] === null && $row[2] === null && $row[3] === null) {
+                    continue;
+                }
+
                 $dataToInsert[] = [
                     'id' => (string) Str::uuid(),
                     'nomor_pengajuan' => $row[0] ?? null,
