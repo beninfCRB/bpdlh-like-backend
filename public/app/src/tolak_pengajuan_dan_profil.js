@@ -34,8 +34,8 @@ var data_tolak_pengajuan_dan_profil = (function () {
                 },
                 { data: "catatan_penolakan" },
                 { data: "status" },
-                {}, // rendered by dayjs
-                {}, // rendered by dayjs
+                { data: "created_at" }, // rendered by dayjs
+                { data: "updated_at" }, // rendered by dayjs
             ],
             columnDefs: [
                 {
@@ -48,11 +48,21 @@ var data_tolak_pengajuan_dan_profil = (function () {
                     searchable: true,
                     orderable: true,
                     render: function (data, type, full, meta) {
-                        if (full.created_at === null) {
-                            return null;
-                        } else {
-                            return dayjs(full.created_at).format("DD MMM YYYY");
+                        if (!data) return null;
+
+                        if (type === "display") {
+                            // Untuk tampilan di tabel
+                            return dayjs(data).format("DD MMM YYYY");
+                        } else if (type === "filter") {
+                            // Supaya bisa di-search pakai format yang sudah diformat
+                            return dayjs(data).format("DD MMM YYYY");
+                        } else if (type === "sort") {
+                            // Supaya urutan tetap benar (pakai format asli)
+                            return data;
                         }
+
+                        // Default (misalnya untuk export)
+                        return data;
                     },
                 },
                 {
@@ -60,11 +70,21 @@ var data_tolak_pengajuan_dan_profil = (function () {
                     searchable: true,
                     orderable: true,
                     render: function (data, type, full, meta) {
-                        if (full.updated_at === null) {
-                            return null;
-                        } else {
-                            return dayjs(full.updated_at).format("DD MMM YYYY");
+                        if (!data) return null;
+
+                        if (type === "display") {
+                            // Untuk tampilan di tabel
+                            return dayjs(data).format("DD MMM YYYY");
+                        } else if (type === "filter") {
+                            // Supaya bisa di-search pakai format yang sudah diformat
+                            return dayjs(data).format("DD MMM YYYY");
+                        } else if (type === "sort") {
+                            // Supaya urutan tetap benar (pakai format asli)
+                            return data;
                         }
+
+                        // Default (misalnya untuk export)
+                        return data;
                     },
                 },
             ],
