@@ -64,7 +64,7 @@ class TolakPengajuanDanProfilService extends AppService implements AppServiceInt
                 return $this->sendError(null, 'Tidak ada data yang perlu diproses', 422);
             }
 
-            $chunks = array_chunk($data, 100);
+            $chunks = array_chunk($data, 20);
 
             foreach ($chunks as $chunk) {
                 TolakPengajuanDanProfilJob::dispatch($chunk);
