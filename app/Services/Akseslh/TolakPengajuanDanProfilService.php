@@ -100,7 +100,7 @@ class TolakPengajuanDanProfilService extends AppService implements AppServiceInt
                 if ($index === 0) continue;
 
                 // Skip baris kosong
-                if ($row[0] === null && $row[1] === null && $row[2] === null && $row[3] === null) {
+                if ($row[0] === null || $row[1] === null || $row[2] === null || $row[3] === null) {
                     continue;
                 }
 
