@@ -1485,7 +1485,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'proposal_kegiatan'                 => $read->proposal_kegiatan,
                 'tujuan_kegiatan'                   => $read->tujuan_kegiatan,
                 'ruang_lingkup_kegiatan'            => $read->ruang_lingkup_kegiatan,
-                'tanggal_kegiatan'                  => $read->tanggal_mulai_kegiatan->format('Y-m-d') . ' - ' . $newData->tanggal_akhir_kegiatan->format('Y-m-d H:i:s'),
+                'tanggal_kegiatan'                  => $read->tanggal_mulai_kegiatan->format('Y-m-d') . ' - ' . $read->tanggal_akhir_kegiatan->format('Y-m-d H:i:s'),
             ];
 
             // Mengelompokkan komponen RAB berdasarkan jenis
