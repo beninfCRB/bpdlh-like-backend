@@ -104,7 +104,7 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
                             'status' => 0
                         ];
 
-                        $result = $verifikasiService->updateTemp($id, $dataSend, true);
+                        $result = $verifikasiService->updateTemp($id, $dataSend, false);
 
                         if ($result->success) {
                             $data->update(['status' => 'approved']);
@@ -129,7 +129,7 @@ class TolakPengajuanDanProfilJob implements ShouldQueue
                             'status' => 0
                         ];
 
-                        $result = $validasiPengajuanKegiatanService->updateTemp($id, $dataSend, true);
+                        $result = $validasiPengajuanKegiatanService->updateTemp($id, $dataSend, false);
 
                         if ($result->success) {
                             # code...
