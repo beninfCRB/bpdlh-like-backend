@@ -228,6 +228,7 @@
                                     <th>Ruang Lingkup Kegiatan</th>
                                     <th>Total RAB</th>
                                     <th>Total Dana Dicairkan</th>
+                                    <th>Caping Retur RAB</th>
                                     <th>Longitude Kegiatan</th>
                                     <th>Latitude Kegiatan</th>
                                     <th>Rab Double</th>
@@ -310,6 +311,7 @@
                                         <td>Rp.
                                             {{ number_format($item->transaksi_penyaluran->sum(function ($rab) {return $rab->nilai_penyaluran;})) }}
                                         </td>
+                                        <td>{{ $item->caping_rab }}</td>
                                         <td>{{ $item->longitude ?? '-' }}</td>
                                         <td>{{ $item->latitude ?? '-' }}</td>
                                         <td>{{ $item->rab_double }}</td>
