@@ -69,13 +69,21 @@ class LaporanKegiatanController extends ApiController
     public function uploadDokumenLaporanKegiatan($id)
     {
         $validator = Validator::make($this->request->all(), [
-            'file_dokumen'              => 'required|file|mimes:pdf|max:10240', // 10 mb
+            'file_dokumen'              => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', // 10 mb
             'jenis_dokumen'             => 'required',
         ]);
 
+        // $validator->sometimes('file_dokumen', 'required|file|mimes:pdf|max:10240', function ($input) {
+        //     return $input->jenis_dokumen != "Quisioner";
+        // });
+
+        // $validator->sometimes('file_dokumen', 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', function ($input) {
+        //     return $input->jenis_dokumen == "Quisioner";
+        // });
+
         if ($validator->fails()) {
             # code...
-            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
+            \Sentry\captureMessage('Validate Message: ' . $this->request->user()->email_pic . ' ' . json_encode($validator->errors()->all()), \Sentry\Severity::warning());
             return $this->sendError(null, $validator->getMessageBag(), 422);
         }
 
