@@ -662,4 +662,13 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
         $newData->pengajuan_kegiatan->flag = 8;
         $newData->pengajuan_kegiatan->save();
     }
+
+    public function uploadSuratKeterangan($data)
+    {
+        $fileName = [];
+        foreach ($data['surat_keterangan'] as $file) {
+            $fileName[] = str_replace('.pdf', '', $file->getClientOriginalName());
+        }
+        dd($fileName);
+    }
 }

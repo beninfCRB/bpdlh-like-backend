@@ -90,6 +90,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/transaksi-penyaluran-import', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_view'])->name('transaksi-penyaluran.import-view');
             Route::get('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_edit'])->name('transaksi-penyaluran.import-edit');
             Route::put('/transaksi-penyaluran-import/{id}', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'import_update'])->name('transaksi-penyaluran.import-update');
+
+            Route::post('/transaksi-penyaluran-upload-surat-keterangan', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'upload_surat_keterangan'])->name('transaksi-penyaluran.upload-surat-keterangan');
         });
 
         Route::middleware(['ensureroleweb:administrator,verifikator'])->group(function () {

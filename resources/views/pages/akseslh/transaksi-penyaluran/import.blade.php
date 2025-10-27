@@ -20,10 +20,11 @@
 
     <!-- Inline Form -->
     <div class="row">
+        {{-- Form Upload Penyaluran --}}
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Form Upload</h3>
+                    <h3 class="panel-title">Form Upload Penyaluran</h3>
                 </div>
                 <div class="panel-body">
                     @if (session('error'))
@@ -82,6 +83,45 @@
             <!-- panel -->
         </div>
         <!-- col -->
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Form Upload Surat Keterangan</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-inline" role="form"
+                        action="{{ route('transaksi-penyaluran.upload-surat-keterangan') }}" enctype="multipart/form-data"
+                        method="POST">
+                        @csrf
+                        <div class="form-group m-l-10">
+                            <label class="sr-only" for="surat_keterangan">Upload File</label>
+                            <input type="file" name="surat_keterangan[]" class="form-control" id="surat_keterangan"
+                                multiple accept="application/pdf" />
+                            {{-- @error('file')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror --}}
+                        </div>
+                        <div class="form-group m-l-10">
+                            <label for="termin" class="sr-only">Tahap Penyaluran</label>
+                            <select name="termin" id="termin" class="form-control" required>
+                                <option value="">-- Pilih Tahap Penyaluran --</option>
+                                <option value="1">Penyaluran Tahap I</option>
+                                <option value="2">Penyaluran Tahap II</option>
+                            </select>
+                            @error('termin')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <button type="submit" class="btn btn-success waves-effect waves-light m-l-10">
+                            Upload
+                        </button>
+                    </form>
+                </div>
+                <!-- panel-body -->
+            </div>
+            <!-- panel -->
+        </div>
+        <!-- col -->
     </div>
     <!-- End row -->
 
@@ -122,6 +162,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nomor Pengajuan</th>
+                                        <th>Tahap Penyaluran</th>
                                         <th>Nama Kelompok</th>
                                         <th>Jenis Kelompok</th>
                                         <th>Tanggal Transaksi Pencairan</th>
@@ -135,29 +176,32 @@
                                 <tbody>
                                     @isset($datas)
                                         @foreach ($datas as $item)
+                                            @dd($item->transaksi_penyaluran()->count())
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item->nomor_pengajuan }}</td>
+                                                <td>{{ $item->flag == 4 ? 'Penyaluran Tahap I' : 'Penyaluran Tahap II' }}
+                                                </td>
                                                 <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}
                                                 </td>
                                                 <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->tanggal_penyaluran }}
+                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->tanggal_penyaluran : '-' }}
                                                 </td>
                                                 <td>Rp.
-                                                    {{ number_format($item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nilai_penyaluran, 0, ',', '.') }}
+                                                    {{ number_format($item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nilai_penyaluran : 0, 0, ',', '.') }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->master_data_bank->nama_bank }}
+                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->master_data_bank->nama_bank : '-' }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nomor_rekening }}
+                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nomor_rekening : '-' }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nama_pemilik_rekening }}
+                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nama_pemilik_rekening : '-' }}
                                                 </td>
                                                 <td class="">
-                                                    <a href="{{ route('transaksi-penyaluran.import-edit', $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->id) }}"
+                                                    {{-- <a href="{{ route('transaksi-penyaluran.import-edit', $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->id) }}"
                                                         class="btn btn-sm btn-icon waves-effect btn-default">
                                                         <i class="fa fa-pencil"></i>
-                                                    </a>
+                                                    </a> --}}
                                                 </td>
                                             </tr>
                                         @endforeach

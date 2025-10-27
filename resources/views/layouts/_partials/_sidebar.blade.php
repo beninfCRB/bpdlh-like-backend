@@ -201,6 +201,9 @@
                             <li>
                                 <a href="{{ route('email-blast.index') }}" class="">Status Email Blast</a>
                             </li>
+                            <li>
+                                <a href="#" class="">Email Template</a>
+                            </li>
                         </ul>
                     </li>
                 @endif
