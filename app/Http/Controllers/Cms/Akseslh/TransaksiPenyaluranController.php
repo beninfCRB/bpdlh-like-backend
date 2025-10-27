@@ -78,7 +78,10 @@ class TransaksiPenyaluranController extends ApiController
             }
         }
 
-        $datas = $query->with('transaksi_penyaluran')->whereIn('flag', [4, 7])->has('transaksi_penyaluran')->orderBy('created_at', 'DESC')->paginate(10);
+        $datas = $query->with('transaksi_penyaluran')
+            ->where('flag', 4)->has('transaksi_penyaluran')
+            ->orWhere('flag', 7)->has('transaksi_penyaluran', '==', 2)
+            ->orderBy('created_at', 'DESC')->paginate(10);
 
         return view('pages.akseslh.transaksi-penyaluran.import', compact('datas'));
     }
@@ -216,6 +219,30 @@ class TransaksiPenyaluranController extends ApiController
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (\Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function upload_surat_keterangan(Request $request)
+    {
+        $input  =   $request->validate([
+            'termin'                => 'required|numeric',
+            'surat_keterangan.*'      => 'required|file|mimes:pdf|max:4096'
+        ]);
+
+        $input['username'] = auth()->user()->id;
+
+        $result =   $this->transaksiPenyaluranService->uploadSuratKeterangan($input);
+
+        try {
+            if ($result->success) {
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('transaksi-penyaluran.import-view');
+            }
+
+            return back()->with('error', $result->message);
+        } catch (\Exception $exception) {
+            return back()->with('error', $exception->getMessage());
         }
     }
 }
