@@ -176,7 +176,6 @@
                                 <tbody>
                                     @isset($datas)
                                         @foreach ($datas as $item)
-                                            @dd($item->transaksi_penyaluran()->count())
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item->nomor_pengajuan }}</td>
@@ -186,22 +185,29 @@
                                                 </td>
                                                 <td>{{ $item->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->tanggal_penyaluran : '-' }}
+                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->tanggal_penyaluran : $item->transaksi_penyaluran()->orderBy('created_at', 'asc')->first()->tanggal_penyaluran }}
                                                 </td>
                                                 <td>Rp.
-                                                    {{ number_format($item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nilai_penyaluran : 0, 0, ',', '.') }}
+                                                    {{ number_format($item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nilai_penyaluran : $item->transaksi_penyaluran()->orderBy('created_at', 'asc')->first()->nilai_penyaluran, 0, ',', '.') }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->master_data_bank->nama_bank : '-' }}
+                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->master_data_bank->nama_bank : $item->transaksi_penyaluran()->orderBy('created_at', 'asc')->first()->master_data_bank->nama_bank }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nomor_rekening : '-' }}
+                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nomor_rekening : $item->transaksi_penyaluran()->orderBy('created_at', 'asc')->first()->nomor_rekening }}
                                                 </td>
-                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nama_pemilik_rekening : '-' }}
+                                                <td>{{ $item->transaksi_penyaluran()->count() > 1 ? $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->nama_pemilik_rekening : $item->transaksi_penyaluran()->orderBy('created_at', 'asc')->first()->nama_pemilik_rekening }}
                                                 </td>
                                                 <td class="">
-                                                    {{-- <a href="{{ route('transaksi-penyaluran.import-edit', $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->id) }}"
-                                                        class="btn btn-sm btn-icon waves-effect btn-default">
-                                                        <i class="fa fa-pencil"></i>
-                                                    </a> --}}
+                                                    @if ($item->transaksi_penyaluran()->count() > 1)
+                                                        <a href="{{ route('transaksi-penyaluran.import-edit', $item->transaksi_penyaluran()->orderBy('created_at', 'desc')->first()->id) }}"
+                                                            class="btn btn-sm btn-icon waves-effect btn-default">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ route('transaksi-penyaluran.import-edit', $item->transaksi_penyaluran()->orderBy('created_at', 'asc')->first()->id) }}"
+                                                            class="btn btn-sm btn-icon waves-effect btn-default">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
