@@ -7,14 +7,13 @@ use App\Models\PengajuanKegiatan;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
-class TransaksiPenyaluranImport implements ToCollection
+class TransaksiPenyaluranImport2 implements ToCollection
 {
     /**
      * @param Collection $collection
      */
     public function collection(Collection $collection)
     {
-        //
         // Ambil semua data bank dari database
         $master_data_bank = MasterDataBank::all();
 
@@ -29,7 +28,7 @@ class TransaksiPenyaluranImport implements ToCollection
             $pengajuan_kegiatan = PengajuanKegiatan::where('nomor_pengajuan', $item[1])->first();
 
             if ($pengajuan_kegiatan) {
-                if ($pengajuan_kegiatan->flag != 4 || $pengajuan_kegiatan->transaksi_penyaluran->count() > 0) {
+                if ($pengajuan_kegiatan->flag != 7 || $pengajuan_kegiatan->transaksi_penyaluran->count() < 1 || $pengajuan_kegiatan->transaksi_penyaluran->count() > 1) {
                     # code...
                     continue;
                 }

@@ -119,6 +119,7 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                     $query->withTrashed();
                 }])
+                ->has('transaksi_penyaluran', '<', 2)
                 ->orderBy('created_at', 'DESC')
                 ->get();
         } else {
@@ -669,6 +670,203 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
         foreach ($data['surat_keterangan'] as $file) {
             $fileName[] = str_replace('.pdf', '', $file->getClientOriginalName());
         }
-        dd($fileName);
+        $pengajuan_kegiatan = $this->pengajuanKegiatan->whereIn('nomor_pengajuan', $fileName)
+            ->with(['transaksi_penyaluran'])
+            ->get();
+
+        $tempFile = [];
+
+        \DB::beginTransaction();
+        try {
+            // Upload file dulu
+            foreach ($data['surat_keterangan'] as $file) {
+                $checkFlag = $pengajuan_kegiatan->where('nomor_pengajuan', str_replace('.pdf', '', $file->getClientOriginalName()))->first() ? $pengajuan_kegiatan->where('nomor_pengajuan', str_replace('.pdf', '', $file->getClientOriginalName()))->first()->flag != 4 : true;
+                if ($checkFlag) {
+                    continue;
+                }
+                $upload = $this->fileUploadService->handleFile($file)->saveToDb('surat_keterangan');
+                if ($upload) {
+                    $tempFile[] = [
+                        'id_file' => $upload->id,
+                        'nomor_pengajuan' => str_replace('.pdf', '', $file->getClientOriginalName())
+                    ];
+                }
+            }
+
+            // Update pengajuan kegiatan
+            foreach ($pengajuan_kegiatan as $pk) {
+                $checkFlag = $pk->flag != 4;
+                if ($checkFlag) {
+                    # code...
+                    continue;
+                }
+                $informasiPencairanDana = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $pk->id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(
+                            'deskripsi_kegiatan',
+                            'Informasi Pencairan Dana'
+                        );
+                    })
+                    ->first();
+
+                $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $pk->id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(
+                            'deskripsi_kegiatan',
+                            'Konfirmasi Pencairan Dana Termin 1'
+                        );
+                    })
+                    ->first();
+
+                if (!$informasiPencairanDana->tanggal_selesai) {
+                    # code...
+                    $informasiPencairanDana->update(['tanggal_selesai' => date("Y-m-d")]);
+                    $informasiPencairanDana->save();
+
+                    $log->tanggal_masuk = date('Y-m-d');
+                    $log->save();
+                }
+
+                $log->tanggal_selesai = date('Y-m-d');
+                $log->user_akseslh_id = $data['username'];
+                $log->save();
+
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $pk->id,
+                    'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['username']
+                ]);
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $pk->id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(
+                            'deskripsi_kegiatan',
+                            'Laporan Kegiatan Termin 1'
+                        );
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+                $fileUpload = $this->fileTable->where([
+                    'id' => collect($tempFile)->where('nomor_pengajuan', $pk->nomor_pengajuan)->first()['id_file']
+                ])->first();
+
+                if ($fileUpload) {
+                    # code...
+                    $fileUpload->update([
+                        // ambil data transaksi penyaluran pertama
+                        'fileable_type' => get_class($pk->transaksi_penyaluran()->orderBy('created_at', 'ASC')->first()),
+                        'fileable_id'   => $pk->transaksi_penyaluran()->orderBy('created_at', 'ASC')->first()->id,
+                    ]);
+                }
+
+                $pk->flag = 5;
+                $pk->save();
+            }
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null);
+        } catch (\Throwable $th) {
+            //throw $th;
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $th->getMessage() : null, 500);
+        }
+    }
+
+    public function uploadSuratKeterangan2($data)
+    {
+        $fileName = [];
+        foreach ($data['surat_keterangan'] as $file) {
+            $fileName[] = str_replace('.pdf', '', $file->getClientOriginalName());
+        }
+        $pengajuan_kegiatan = $this->pengajuanKegiatan->whereIn('nomor_pengajuan', $fileName)
+            ->with(['transaksi_penyaluran'])
+            ->get();
+
+        $tempFile = [];
+
+        \DB::beginTransaction();
+        try {
+            // Upload file dulu
+            foreach ($data['surat_keterangan'] as $file) {
+                $checkFlag = $pengajuan_kegiatan->where('nomor_pengajuan', str_replace('.pdf', '', $file->getClientOriginalName()))->first() ? $pengajuan_kegiatan->where('nomor_pengajuan', str_replace('.pdf', '', $file->getClientOriginalName()))->first()->flag != 7 : true;
+                if ($checkFlag) {
+                    continue;
+                }
+                $upload = $this->fileUploadService->handleFile($file)->saveToDb('surat_keterangan');
+                if ($upload) {
+                    $tempFile[] = [
+                        'id_file' => $upload->id,
+                        'nomor_pengajuan' => str_replace('.pdf', '', $file->getClientOriginalName())
+                    ];
+                }
+            }
+
+            // Update pengajuan kegiatan
+            foreach ($pengajuan_kegiatan as $pk) {
+                $checkFlag = $pk->flag != 7;
+                if ($checkFlag) {
+                    # code...
+                    continue;
+                }
+
+                $log = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $pk->id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(
+                            'deskripsi_kegiatan',
+                            'Konfirmasi Pencairan Dana Termin II'
+                        );
+                    })
+                    ->first();
+
+                $log->tanggal_selesai = date('Y-m-d');
+                $log->user_akseslh_id = $data['username'];
+                $log->save();
+
+                $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                    'pengajuan_kegiatan_id' => $pk->id,
+                    'tahapan_pengajuan_kegiatan_id' => $log->tahapan_pengajuan_kegiatan_id,
+                    'tanggal_masuk' => date("Y-m-d"),
+                    'tanggal_selesai' => date("Y-m-d"),
+                    'user_akseslh_id'   => $data['username']
+                ]);
+
+                $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                    ->where('pengajuan_kegiatan_id', $pk->id)
+                    ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                        $q->where(
+                            'deskripsi_kegiatan',
+                            'Laporan Akhir Kegiatan'
+                        );
+                    })
+                    ->update(['tanggal_masuk' => date("Y-m-d")]);
+
+                $fileUpload = $this->fileTable->where([
+                    'id' => collect($tempFile)->where('nomor_pengajuan', $pk->nomor_pengajuan)->first()['id_file']
+                ])->first();
+
+                if ($fileUpload) {
+                    # code...
+                    $fileUpload->update([
+                        // ambil data transaksi penyaluran pertama
+                        'fileable_type' => get_class($pk->transaksi_penyaluran()->orderBy('created_at', 'ASC')->first()),
+                        'fileable_id'   => $pk->transaksi_penyaluran()->orderBy('created_at', 'ASC')->first()->id,
+                    ]);
+                }
+
+                $pk->flag = 8;
+                $pk->save();
+            }
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null);
+        } catch (\Throwable $th) {
+            //throw $th;
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $th->getMessage() : null, 500);
+        }
     }
 }
