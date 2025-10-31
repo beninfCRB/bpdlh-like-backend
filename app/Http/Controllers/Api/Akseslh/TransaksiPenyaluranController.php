@@ -73,14 +73,36 @@ class TransaksiPenyaluranController extends ApiController
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $validator = Validator::make($request->all(), [
+        // Handle null string dari frontend
+        $requestData = $request->all();
+
+        // Konversi string "null", empty string, atau "undefined" menjadi null untuk field file
+        if (
+            isset($requestData['surat_keterangan']) &&
+            (is_string($requestData['surat_keterangan']) &&
+                (strtolower($requestData['surat_keterangan']) === 'null' ||
+                    $requestData['surat_keterangan'] === '' ||
+                    strtolower($requestData['surat_keterangan']) === 'undefined'))
+        ) {
+            $requestData['surat_keterangan'] = null;
+        }
+
+        // Jika surat_keterangan adalah null atau tidak ada file, hapus dari request data untuk validasi
+        if (
+            !$request->hasFile('surat_keterangan') ||
+            (isset($requestData['surat_keterangan']) && $requestData['surat_keterangan'] === null)
+        ) {
+            unset($requestData['surat_keterangan']);
+        }
+
+        $validator = Validator::make($requestData, [
             'master_data_bank_id'       => 'required|exists:master_data_banks,id',
             'pengajuan_kegiatan_id'     => 'required|exists:pengajuan_kegiatans,id',
             'nomor_rekening'            => 'required',
             'nama_pemilik_rekening'     => 'required',
             'nilai_penyaluran'          => 'required',
             'tanggal_penyaluran'        => 'required',
-            'surat_keterangan'          => 'required|file|mimes:pdf'
+            'surat_keterangan'          => 'sometimes|file|mimes:pdf'
         ]);
 
         if ($validator->fails()) {

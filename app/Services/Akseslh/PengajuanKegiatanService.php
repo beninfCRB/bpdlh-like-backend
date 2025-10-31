@@ -1515,6 +1515,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' masih ada pengajuan', \Sentry\Severity::warning());
             return $this->sendError(null, 'Masih ada pengajuan yang berlangsung', 422);
         }
+        if (!isset($data['fileDocument'])) {
+            return $this->sendError(null, collect([
+                'fileDocument' => ['File proposal kegiatan wajib diisi.']
+            ]), 422);
+        }
 
         \DB::beginTransaction();
 

@@ -363,13 +363,16 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                     })
                     ->update(['tanggal_masuk' => date("Y-m-d")]);
 
-                $upload = $this->fileUploadService->handleFile($data['surat_keterangan'])->saveToDb('surat_keterangan');
+                if (isset($data['surat_keterangan'])) {
+                    # code...
+                    $upload = $this->fileUploadService->handleFile($data['surat_keterangan'])->saveToDb('surat_keterangan');
 
-                if ($upload) {
-                    $upload->update([
-                        'fileable_type' => get_class($newData),
-                        'fileable_id'   => $newData->id,
-                    ]);
+                    if ($upload) {
+                        $upload->update([
+                            'fileable_type' => get_class($newData),
+                            'fileable_id'   => $newData->id,
+                        ]);
+                    }
                 }
 
                 $newData->pengajuan_kegiatan->user_akseslh->unreadNotifications->markAsRead();
@@ -381,18 +384,18 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                     'nomor_rekening'    => $newData->nomor_rekening,
                 ];
 
-                // $statusEmail = $this->emailService->transaksiPenyaluran($newData->pengajuan_kegiatan->user_akseslh, 'Pemberitahuan Pencairan Dana Termin I', $dataSend, null, 'mail.pencairan-dana-termin-1');
+                $statusEmail = $this->emailService->transaksiPenyaluran($newData->pengajuan_kegiatan->user_akseslh, 'Pemberitahuan Pencairan Dana Termin II', $dataSend, null, 'mail.pencairan-dana-termin-2');
 
-                // if ($statusEmail !== true) {
-                //     # code...
-                //     \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . '  email gagal dikirim ' . $statusEmail, \Sentry\Severity::warning());
+                if ($statusEmail !== true) {
+                    # code...
+                    \Sentry\captureMessage('Validate Message: ' . $data['user_akseslh']->email . '  email gagal dikirim ' . $statusEmail, \Sentry\Severity::warning());
 
-                //     \DB::rollBack(); // rollback the changes
+                    \DB::rollBack(); // rollback the changes
 
-                //     return $this->sendError(null, collect([
-                //         'email' => ['Email gagal dikirim.']
-                //     ]), 422);
-                // }
+                    return $this->sendError(null, collect([
+                        'email' => ['Email gagal dikirim.']
+                    ]), 422);
+                }
 
                 $newData->pengajuan_kegiatan->flag = 8;
                 $newData->pengajuan_kegiatan->save();
@@ -401,8 +404,6 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 \DB::rollBack();
                 return $this->sendError(null, 'Data Invalid', 422);
             }
-
-
 
             \DB::commit(); // commit the changes
             return $this->sendSuccess(null);

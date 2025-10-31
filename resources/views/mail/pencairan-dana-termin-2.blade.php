@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Pemberitahuan Pencairan Dana Termin I</title>
+    <title>Pemberitahuan Pencairan Dana Termin II</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,17 +56,17 @@
 
 <body>
     <div class="container">
-        <h1>Pemberitahuan Pencairan Dana Termin I</h1>
+        <h1>Pemberitahuan Pencairan Dana Termin II</h1>
         <p>
             Yth. Bapak/Ibu Pengusul Kegiatan Layanan Dana Masyarakat untuk Lingkungan,
         </p>
         <p>
-            Dengan ini kami sampaikan dana termin I untuk nomor pengajuan {{ $data['nomor_pengajuan'] }} telah tersedia
+            Dengan ini kami sampaikan dana termin II untuk nomor pengajuan {{ $data['nomor_pengajuan'] }} telah tersedia
             pada rekening BNI dengan
             nomor rekening:({{ $data['nomor_rekening'] }}).
         </p>
         <p>
-            Bapak/Ibu PIC dipersilahkan melakukan aktivasi dan penarikan dana pada cabang Bank BNI yang sesuai dengan
+            Bapak/Ibu PIC dipersilahkan melakukan penarikan dana pada cabang Bank BNI yang sesuai dengan
             domisili Bapak/Ibu, dengan membawa dokumen-dokumen sebagai berikut:
         </p>
         <ol>
