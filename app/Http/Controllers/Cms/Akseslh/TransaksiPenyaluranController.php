@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Cms\Akseslh;
 
 use Illuminate\Http\Request;
+use App\Models\MasterDataBank;
 use App\Models\PengajuanKegiatan;
+use App\Models\TransaksiPenyaluran;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\ApiController;
 use App\Exports\TransaksiPenyaluranExport;
 use App\Imports\TransaksiPenyaluranImport;
+use App\Imports\TransaksiPenyaluranImport2;
 use App\Exports\TemplateTransaksiPenyaluranExport;
-use App\Models\MasterDataBank;
-use App\Models\TransaksiPenyaluran;
 use App\Services\Akseslh\TransaksiPenyaluranService;
 
 class TransaksiPenyaluranController extends ApiController
@@ -78,7 +79,10 @@ class TransaksiPenyaluranController extends ApiController
             }
         }
 
-        $datas = $query->with('transaksi_penyaluran')->whereIn('flag', [4, 7])->has('transaksi_penyaluran')->orderBy('created_at', 'DESC')->paginate(10);
+        $datas = $query->with('transaksi_penyaluran')
+            ->where('flag', 4)->has('transaksi_penyaluran')
+            ->orWhere('flag', 7)->has('transaksi_penyaluran', '>', 1)
+            ->orderBy('created_at', 'DESC')->paginate(10);
 
         return view('pages.akseslh.transaksi-penyaluran.import', compact('datas'));
     }
@@ -128,7 +132,15 @@ class TransaksiPenyaluranController extends ApiController
                 'termin'    => 'required|numeric',
             ]);
 
-            Excel::import(new TransaksiPenyaluranImport, $request->file('file'));
+            if ($request->termin == 1 || $request->termin == '1') {
+                # code...
+                Excel::import(new TransaksiPenyaluranImport, $request->file('file'));
+            } elseif ($request->termin == 2 || $request->termin == '2') {
+                //code...
+                Excel::import(new TransaksiPenyaluranImport2, $request->file('file'));
+            } else {
+                return back()->with('error', 'Termin tidak valid!');
+            }
 
             return back()->with('success', 'Data berhasil diimpor!');
         } catch (\Throwable $th) {
@@ -216,6 +228,35 @@ class TransaksiPenyaluranController extends ApiController
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (\Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
+    public function upload_surat_keterangan(Request $request)
+    {
+        $input  =   $request->validate([
+            'termin'                => 'required|numeric',
+            'surat_keterangan.*'    => 'required|file|mimes:pdf|max:8192'
+        ]);
+
+        $input['username'] = auth()->user()->id;
+
+        if ($input['termin'] == 1 || $input['termin'] == '1') {
+            # code...
+            $result =   $this->transaksiPenyaluranService->uploadSuratKeterangan($input);
+        } else {
+            $result =   $this->transaksiPenyaluranService->uploadSuratKeterangan2($input);
+        }
+
+        try {
+            if ($result->success) {
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('transaksi-penyaluran.import-view');
+            }
+
+            return back()->with('error', $result->message);
+        } catch (\Exception $exception) {
+            return back()->with('error', $exception->getMessage());
         }
     }
 }
