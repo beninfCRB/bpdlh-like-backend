@@ -3,6 +3,7 @@
 
 namespace App\Services\Akseslh;
 
+use App\Jobs\TransaksiPenyaluranEmailJob;
 use Carbon\Carbon;
 use App\Services\AppService;
 use App\Models\PengajuanKegiatan;
@@ -764,6 +765,13 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                         'fileable_id'   => $pk->transaksi_penyaluran()->orderBy('created_at', 'ASC')->first()->id,
                     ]);
                 }
+
+                $dataSend = [
+                    'nomor_pengajuan'   => $pk->nomor_pengajuan,
+                    'nomor_rekening'    => $pk->transaksi_penyaluran()->orderBy('created_at', 'ASC')->first()->nomor_rekening,
+                ];
+
+                TransaksiPenyaluranEmailJob::dispatch($pk->user_akseslh, 'Pemberitahuan Pencairan Dana Termin I', $dataSend, null, 'mail.pencairan-dana-termin-1');
 
                 $pk->flag = 5;
                 $pk->save();
