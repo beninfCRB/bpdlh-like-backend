@@ -95,14 +95,21 @@ class TransaksiPenyaluranController extends ApiController
             unset($requestData['surat_keterangan']);
         }
 
+        // Menambahkan custom rule untuk mengecek apakah inputan sama dengan "undefined"
+        Validator::extend('not_undefined', function ($attribute, $value, $parameters, $validator) {
+            return $value !== 'undefined'; // Mengembalikan false jika nilai "undefined"
+        });
+
         $validator = Validator::make($requestData, [
             'master_data_bank_id'       => 'required|exists:master_data_banks,id',
             'pengajuan_kegiatan_id'     => 'required|exists:pengajuan_kegiatans,id',
             'nomor_rekening'            => 'required',
             'nama_pemilik_rekening'     => 'required',
             'nilai_penyaluran'          => 'required',
-            'tanggal_penyaluran'        => 'required',
+            'tanggal_penyaluran'        => 'required|not_undefined',
             'surat_keterangan'          => 'sometimes|file|mimes:pdf'
+        ], [
+            'tanggal_penyaluran.not_undefined' => 'The tanggal penyaluran wajib diisi.'
         ]);
 
         if ($validator->fails()) {
