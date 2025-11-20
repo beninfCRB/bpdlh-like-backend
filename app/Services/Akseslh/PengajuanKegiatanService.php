@@ -198,7 +198,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         if ($result) {
 
             // Jika Laporan sudah melewati tahapan verifikasi laporan kegiatan
-            if ($result->flag >= 7) {
+            if ($result->flag == 7) {
                 # code...
                 return $this->sendSuccess(collect($data), null, 200);
             }
