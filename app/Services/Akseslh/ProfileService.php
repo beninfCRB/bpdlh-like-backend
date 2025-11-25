@@ -365,4 +365,33 @@ class ProfileService extends AppService implements AppServiceInterface
         }
         return $result;
     }
+
+    public function check_profile($data)
+    {
+        $model =   $this->model->newQuery()
+            ->where('user_akseslh_id', $data['user']->id)
+            ->first();
+
+        if (!$model) {
+            return $this->sendError(null, 'Profil tidak ditemukan', 422);
+        }
+
+        if (!$model->nomor_kontak_darurat) {
+            return $this->sendError(null, 'Profil belum lengkap, silahkan lengkapi profil terlebih dahulu', 422);
+        }
+
+        if ($model->nohp_pic == $model->nomor_kontak_darurat) {
+            return $this->sendError(null, 'Nomor HP dan Nomor Kontak Darurat tidak boleh sama', 422);
+        }
+
+        $result = [
+            "id" => $model->id,
+            "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
+            "nama_pic" => $model->nama_pic ?? null,
+            "email_pic" => $model->email_pic ?? null,
+            "nohp_pic" => $model->nohp_pic ?? null,
+        ];
+
+        return $this->sendSuccess($result, 'Profile found', 200);
+    }
 }

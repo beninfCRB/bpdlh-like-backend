@@ -135,6 +135,22 @@ class ProfileController extends ApiController
         }
     }
 
+    public function checkProfile(Request $request)
+    {
+        $input['user'] = $request->user();
+
+        $result = $this->profileService->check_profile($input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            return $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
 
     public function destroy($id, Request $request): \Illuminate\Http\JsonResponse
     {
