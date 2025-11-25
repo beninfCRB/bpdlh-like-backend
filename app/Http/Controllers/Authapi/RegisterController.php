@@ -363,6 +363,7 @@ class RegisterController extends ApiController
             'jenis_kelamin'                     => 'required|in:laki-laki,perempuan|not_undefined',
             'nama_kontak_darurat'               => 'nullable|string',
             'nomor_kontak_darurat'              => ['nullable', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')],
+            'alamat_kontak_darurat'             => 'nullable|string',
         ], [
             'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
         ]);
@@ -470,6 +471,7 @@ class RegisterController extends ApiController
                 'pendidikan_id'             => $input['pendidikan'],
                 'nama_kontak_darurat'       => $input['nama_kontak_darurat'] ?? null,
                 'nomor_kontak_darurat'      => $input['nomor_kontak_darurat'] ?? null,
+                'alamat_kontak_darurat'     => $input['alamat_kontak_darurat'] ?? null,
             ]);
 
             $user_akseslh = UserAkseslh::create([
