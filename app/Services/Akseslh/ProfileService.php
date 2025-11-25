@@ -78,6 +78,7 @@ class ProfileService extends AppService implements AppServiceInterface
             "agama_id" => $model->agama->id ?? null,
             "nama_kontak_darurat" => $model->nama_kontak_darurat ?? null,
             "nomor_kontak_darurat" => $model->nomor_kontak_darurat ?? null,
+            "alamat_kontak_darurat" => $model->alamat_kontak_darurat ?? null,
             "status_perkawinan" => $model->status_perkawinan->status_pernikahan ?? null,
             "status_perkawinan_id" => $model->status_perkawinan->id ?? null,
             "nama_gadis_ibu_kandung" => $model->nama_gadis_ibu_kandung ?? null,
