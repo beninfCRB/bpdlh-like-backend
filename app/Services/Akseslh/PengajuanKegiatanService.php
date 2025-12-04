@@ -383,6 +383,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         $result->transform(function ($items, $key) use ($prop) {
 
             $detail = null;
+            $nama_tahapan = null;
             switch ($items->tahapan_pengajuan_kegiatan->sort) {
                 case 3:
                     # code...
@@ -426,6 +427,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     break;
 
                 case 5:
+
                     $detail = [
                         'master_data_bank'          => $prop->master_data_bank,
                         'nomor_rekening'            => $prop->nomor_rekening,
@@ -444,6 +446,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     ];
                     break;
                 case 7:
+                    $nama_tahapan = 'Laporan Kegiatan';
                     $detail = [
                         'catatan'                       => $prop->catatan_verifikator_laporan_tahap_1,
                         'tanggal_realisasi_kegiatan'    => $items->pengajuan_kegiatan->tanggal_mulai_kegiatan,
@@ -453,6 +456,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     break;
 
                 case 8:
+                    $nama_tahapan = 'Verifikasi Laporan Kegiatan';
                     $detail = [
                         'master_data_bank'          => $prop->master_data_bank_2,
                         'nomor_rekening'            => $prop->nomor_rekening_2,
@@ -483,9 +487,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
             return [
                 'id'                => $items->id,
-                'tahapan_kegiatan'  => $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
+                'tahapan_kegiatan'  => $nama_tahapan ?? $items->tahapan_pengajuan_kegiatan->deskripsi_kegiatan,
                 'sort'              => $items->tahapan_pengajuan_kegiatan->sort,
-                'code_id'              => $items->tahapan_pengajuan_kegiatan->code_id,
+                'code_id'           => $items->tahapan_pengajuan_kegiatan->code_id,
                 'tanggal_masuk'     => $items->tanggal_masuk,
                 'tanggal_selesai'   => $items->tanggal_selesai,
                 'user_akseslh'      => $items->user_akseslh_admin->email ?? null,
@@ -495,7 +499,15 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             ];
         });
 
-        return $this->sendSuccess(array_slice($result->sortBy('sort')->values()->all(), 2));
+        $filtered = $result
+            ->sortBy('sort')
+            ->values()
+            ->slice(2, $result->count() - 4)
+            ->values();
+
+        return $this->sendSuccess($filtered);
+
+        // return $this->sendSuccess(array_slice($result->sortBy('sort')->values()->all(), 2));
     }
 
     public function getDataRiwayatPengajuan($user_akseslh_id)
