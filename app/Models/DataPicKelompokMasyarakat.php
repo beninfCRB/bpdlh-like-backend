@@ -40,6 +40,7 @@ class DataPicKelompokMasyarakat extends AppModel
         'jenis_kelamin',
         'nama_kontak_darurat',
         'nomor_kontak_darurat',
+        'alamat_kontak_darurat',
         'flag',
         'username',
     ];

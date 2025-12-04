@@ -91,6 +91,7 @@ class ProfileController extends ApiController
             'email_pic'                         => ['nullable', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->ignore($id)->whereNull('deleted_at')],
             'nama_kontak_darurat'               => 'nullable|string',
             'nomor_kontak_darurat'              => ['nullable', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')->ignore($id)],
+            'alamat_kontak_darurat'             => 'nullable|string',
             'jenis_kelamin'                     => 'nullable|in:laki-laki,perempuan|not_undefined',
         ], [
             'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
@@ -135,6 +136,22 @@ class ProfileController extends ApiController
         }
     }
 
+    public function checkProfile(Request $request)
+    {
+        $input['user'] = $request->user();
+
+        $result = $this->profileService->check_profile($input);
+
+        try {
+            if ($result->success) {
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            return $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
 
     public function destroy($id, Request $request): \Illuminate\Http\JsonResponse
     {
