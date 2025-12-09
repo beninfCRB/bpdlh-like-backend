@@ -448,6 +448,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 case 7:
                     $nama_tahapan = 'Laporan Kegiatan';
                     $detail = [
+                        'id'                            => $items->pengajuan_kegiatan->id,
                         'catatan'                       => $prop->catatan_verifikator_laporan_tahap_1,
                         'tanggal_realisasi_kegiatan'    => $items->pengajuan_kegiatan->tanggal_mulai_kegiatan,
                         'indikator_laporan_kegiatan'    => $prop->indikator_laporan_kegiatan,
