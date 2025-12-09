@@ -450,8 +450,15 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     $detail = [
                         'catatan'                       => $prop->catatan_verifikator_laporan_tahap_1,
                         'tanggal_realisasi_kegiatan'    => $items->pengajuan_kegiatan->tanggal_mulai_kegiatan,
-                        'indikator_laporan_kegiatan' => $prop->indikator_laporan_kegiatan,
-                        'laporan_kegiatan_termin_1' => $prop->laporan_kegiatan_termin_1,
+                        'indikator_laporan_kegiatan'    => $prop->indikator_laporan_kegiatan,
+                        'laporan_kegiatan_termin_1'     => $prop->laporan_kegiatan_termin_1,
+                        'testimonial'                   => $items->pengajuan_kegiatan->testimonial()->first()->testimonial ?? null,
+                        'longitude'                     => $items->pengajuan_kegiatan->longitude,
+                        'latitude'                      => $items->pengajuan_kegiatan->latitude,
+                        'capaian_output'                => $items->pengajuan_kegiatan->capaian_output,
+                        'capaian_outcome'               => $items->pengajuan_kegiatan->capaian_outcome,
+                        'kendala_kegiatan'              => $items->pengajuan_kegiatan->kendala_kegiatan,
+                        'alamat_kegiatan_realisasi'     => $items->pengajuan_kegiatan->alamat_kegiatan_realisasi,
                     ];
                     break;
 
