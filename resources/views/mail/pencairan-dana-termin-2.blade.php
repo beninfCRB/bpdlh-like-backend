@@ -66,7 +66,7 @@
             nomor rekening:({{ $data['nomor_rekening'] }}).
         </p>
         <p>
-            Bapak/Ibu PIC dipersilahkan melakukan penarikan dana pada cabang Bank BNI yang sesuai dengan
+            Bapak/Ibu PIC dipersilahkan melakukan penarikan dana pada cabang Bank yang sesuai dengan
             domisili Bapak/Ibu, dengan membawa dokumen-dokumen sebagai berikut:
         </p>
         <ol>
