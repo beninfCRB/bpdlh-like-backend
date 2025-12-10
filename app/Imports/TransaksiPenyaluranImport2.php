@@ -83,7 +83,7 @@ class TransaksiPenyaluranImport2 implements ToCollection
 
                     $dataSend = [
                         'nomor_pengajuan'   => $pengajuan_kegiatan->nomor_pengajuan,
-                        'nomor_rekening'    => (float) $item[6],
+                        'nomor_rekening'    => (string) $item[3],
                     ];
 
                     TransaksiPenyaluranEmailJob::dispatch($pengajuan_kegiatan->user_akseslh, 'Pemberitahuan Pencairan Dana Termin II', $dataSend, null, 'mail.pencairan-dana-termin-2');
