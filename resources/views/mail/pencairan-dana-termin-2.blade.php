@@ -62,7 +62,7 @@
         </p>
         <p>
             Dengan ini kami sampaikan dana termin II untuk nomor pengajuan {{ $data['nomor_pengajuan'] }} telah tersedia
-            pada rekening BNI dengan
+            pada rekening dengan
             nomor rekening:({{ $data['nomor_rekening'] }}).
         </p>
         <p>
