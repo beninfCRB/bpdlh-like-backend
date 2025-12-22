@@ -53,9 +53,11 @@ class ProfileService extends AppService implements AppServiceInterface
 
         if (!$model) return $this->sendError(null, 'Not Found', 422);
 
+        $status_perubahan_profil = $model->profile_pic()->where('status_verifikasi', 'belum_verifikasi')->exists();
+
         $result = [
             "id" => $model->id,
-            "status_perubahan_profil" => $model->profile_pic()->where('status_verifikasi', 'belum_verifikasi')->exists() ? 'Menunggu Verifikasi' : 'Terverifikasi',
+            "status_perubahan_profil" => $status_perubahan_profil ? 'Menunggu Verifikasi oleh pengelola' : 'Terverifikasi',
             "kelompok_masyarakat" => $model->kelompok_masyarakat->kelompok_masyarakat ?? null,
             "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
             "nama_pic" => $model->nama_pic ?? null,
