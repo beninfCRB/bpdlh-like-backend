@@ -57,7 +57,7 @@ class ProfileService extends AppService implements AppServiceInterface
 
         $result = [
             "id" => $model->id,
-            "status_perubahan_profil" => $status_perubahan_profil ? 'Menunggu Verifikasi oleh pengelola' : '',
+            "status_perubahan_profil" => $status_perubahan_profil ? 'Menunggu verifikasi oleh pengelola' : '',
             "kelompok_masyarakat" => $model->kelompok_masyarakat->kelompok_masyarakat ?? null,
             "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
             "nama_pic" => $model->nama_pic ?? null,
@@ -381,6 +381,11 @@ class ProfileService extends AppService implements AppServiceInterface
 
         if (!$model) {
             return $this->sendError(null, 'Profil tidak ditemukan', 422);
+        }
+
+        if ($status_perubahan_profil) {
+            # code...
+            return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
         }
 
         if (!$model->nomor_kontak_darurat || !$model->nama_kontak_darurat || !$model->alamat_kontak_darurat) {
