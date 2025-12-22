@@ -370,7 +370,9 @@ class ProfileService extends AppService implements AppServiceInterface
     public function check_profile($data)
     {
         $model =   $this->model->newQuery()
-            ->where('user_akseslh_id', $data['user']->id)
+            ->whereHas('user_akseslh', function ($q) use ($data) {
+                $q->where('id', $data['user']->id);
+            })
             ->first();
 
         if (!$model) {
