@@ -57,7 +57,7 @@ class ProfileService extends AppService implements AppServiceInterface
 
         $result = [
             "id" => $model->id,
-            "status_perubahan_profil" => $status_perubahan_profil ? 'Menunggu Verifikasi oleh pengelola' : 'Terverifikasi',
+            "status_perubahan_profil" => $status_perubahan_profil ? 'Menunggu Verifikasi oleh pengelola' : '',
             "kelompok_masyarakat" => $model->kelompok_masyarakat->kelompok_masyarakat ?? null,
             "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
             "nama_pic" => $model->nama_pic ?? null,
