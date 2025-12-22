@@ -377,7 +377,7 @@ class ProfileService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Profil tidak ditemukan', 422);
         }
 
-        if (!$model->nomor_kontak_darurat) {
+        if (!$model->nomor_kontak_darurat || !$model->nama_kontak_darurat || !$model->alamat_kontak_darurat) {
             return $this->sendError(null, 'Profil belum lengkap, silahkan lengkapi profil terlebih dahulu', 422);
         }
 
