@@ -119,6 +119,12 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                     $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                 }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                     $query->withTrashed();
+                }, 'user_akseslh' => function ($query) {
+                    $query->withTrashed();
+                }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                }, 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
                 }])
                 ->has('transaksi_penyaluran', '<', 2)
                 ->orderBy('created_at', 'DESC')
@@ -129,6 +135,12 @@ class TransaksiPenyaluranService extends AppService implements AppServiceInterfa
                 ->with(['paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
                     $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
                 }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
+                    $query->withTrashed();
+                }, 'user_akseslh' => function ($query) {
+                    $query->withTrashed();
+                }, 'user_akseslh.data_pic_kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                }, 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
                     $query->withTrashed();
                 }])
                 ->doesntHave('transaksi_penyaluran')
