@@ -250,7 +250,12 @@
                                     <td>{{ $item->tanggal_masuk }}</td>
                                     <td>{{ $item->tanggal_selesai }}</td>
                                     <td>{{ $item->user_akseslh_admin->email ?? null }}</td>
-                                    <td>{{ $item->catatan_log_tahapan_pengajuan_kegiatan->first()->catatan_log ?? null }}
+                                    <td>
+                                        @foreach ($item->catatan_log_tahapan_pengajuan_kegiatan as $catatan)
+                                            <p>
+                                                {{ $catatan->catatan_log ?? null }}
+                                            </p>
+                                        @endforeach
                                     </td>
                                 </tr>
                             @endforeach
