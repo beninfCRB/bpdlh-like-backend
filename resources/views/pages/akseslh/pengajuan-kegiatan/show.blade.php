@@ -302,5 +302,24 @@
         </div> <!-- col-->
 
     </div>
-    <!-- End row -->
+
+    @if ($data->data->longitude && $data->data->latitude)
+        <div class="row">
+            <!-- Basic example -->
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Lokasi Kegiatan</h3>
+                    </div>
+                    <div class="panel-body">
+                        <input type="hidden" name="longitude" id="longitude" value="{{ $data->data->longitude }}">
+                        <input type="hidden" name="latitude" id="latitude" value="{{ $data->data->latitude }}">
+                        <div id="map" style="height: 500px;"></div>
+                    </div><!-- panel-body -->
+                </div> <!-- panel -->
+            </div> <!-- col-->
+
+        </div>
+        <!-- End row -->
+    @endif
 @endsection

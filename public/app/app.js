@@ -8,11 +8,12 @@ window.dayjs = require("dayjs");
 
 import "chart.js";
 import "dayjs/locale/id";
+import L from "leaflet";
 
 dayjs.locale("id");
 
+window.L = L;
 window.baseUrlAsset = "https://bpdlh-cms.dev.pinteraktif.id/storage/";
-
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 let token = document.head.querySelector('meta[name="csrf-token"]');
