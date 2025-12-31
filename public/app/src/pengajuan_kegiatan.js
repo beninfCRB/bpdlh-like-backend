@@ -607,6 +607,7 @@ jQuery(document).ready(function () {
     if ($("#longitude").length && $("#latitude").length) {
         const longitude = $("#longitude").val();
         const latitude = $("#latitude").val();
+        const alamat_kegiatan_realisasi = $("#alamat_kegiatan_realisasi").val();
 
         const map = L.map("map").setView([latitude, longitude], 13);
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -617,7 +618,7 @@ jQuery(document).ready(function () {
 
         L.marker([latitude, longitude])
             .addTo(map)
-            .bindPopup("Lokasi Kegiatan")
+            .bindPopup(alamat_kegiatan_realisasi)
             .openPopup();
     }
 });
