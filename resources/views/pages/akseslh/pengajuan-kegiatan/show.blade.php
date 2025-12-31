@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section('style')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+@endsection
+
 @section('script')
     <script src="{{ asset('app/build/pengajuan_kegiatan.js') }}" type="text/javascript"></script>
 @endsection
@@ -53,7 +58,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Kelompok Masyarakat</td>
+                                <td>PIC Kelompok Masyarakat</td>
                                 <td>{{ $data->data->user_akseslh->data_pic_kelompok_masyarakat->nama_pic }}
                                 </td>
                             </tr>
@@ -302,5 +307,26 @@
         </div> <!-- col-->
 
     </div>
-    <!-- End row -->
+
+    @if ($data->data->longitude && $data->data->latitude)
+        <div class="row">
+            <!-- Basic example -->
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Lokasi Kegiatan</h3>
+                    </div>
+                    <div class="panel-body">
+                        <input type="hidden" name="longitude" id="longitude" value="{{ $data->data->longitude }}">
+                        <input type="hidden" name="latitude" id="latitude" value="{{ $data->data->latitude }}">
+                        <input type="hidden" name="alamat_kegiatan_realisasi" id="alamat_kegiatan_realisasi"
+                            value="{{ $data->data->alamat_kegiatan_realisasi }}">
+                        <div id="map" style="height: 500px;"></div>
+                    </div><!-- panel-body -->
+                </div> <!-- panel -->
+            </div> <!-- col-->
+        </div>
+        <!-- End row -->
+    @endif
+
 @endsection

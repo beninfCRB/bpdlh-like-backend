@@ -604,6 +604,23 @@ var data_pengajuan_kegiatan = (function () {
 
 jQuery(document).ready(function () {
     // data_pengajuan_kegiatan.init();
+    if ($("#longitude").length && $("#latitude").length) {
+        const longitude = $("#longitude").val();
+        const latitude = $("#latitude").val();
+        const alamat_kegiatan_realisasi = $("#alamat_kegiatan_realisasi").val();
+
+        const map = L.map("map").setView([latitude, longitude], 13);
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution:
+                '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        }).addTo(map);
+
+        L.marker([latitude, longitude])
+            .addTo(map)
+            .bindPopup(alamat_kegiatan_realisasi)
+            .openPopup();
+    }
 });
 
 window.generateFormTahapSalur = () => {
