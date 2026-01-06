@@ -213,4 +213,22 @@ class FileUploadService extends AppService
     {
         return str_replace('\\', '/', $subject);
     }
+
+    public function show($id)
+    {
+        $file = $this->model->find($id);
+
+        if (!$file) {
+            return $this->sendError(null, "File not found", 422);
+        }
+
+        return response()->stream(function () use ($file) {
+            $stream = $this->storage()->readStream($file->file_path);
+            fpassthru($stream);
+        }, 200, [
+            "Content-Type" => $file->mime_type,
+            "Content-Length" => $file->size,
+            "Content-Disposition" => "inline; filename=\"" . $file->real_name . "\""
+        ]);
+    }
 }
