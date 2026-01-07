@@ -153,6 +153,7 @@ class ProfilePicService extends AppService implements AppServiceInterface
         $profil_kelompok = false;
         $nama_pic = false;
         $email_pic = false;
+        $kelompok_masyarakat = false;
 
         if (in_array('foto_ktp', $data['profile_field'])) {
             $foto_ktp = true;
@@ -182,6 +183,9 @@ class ProfilePicService extends AppService implements AppServiceInterface
             $email_pic = true;
         }
 
+        if (in_array('kelompok_masyarakat', $data['profile_field'])) {
+            $kelompok_masyarakat = true;
+        }
 
         $read   =   $this->model->newQuery()->select($data['profile_field'])->with(['document'])->where('id', $id)->first();
 
@@ -191,7 +195,7 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
         $read_document = $read->document;
 
-        $data_pic = $this->modelDataPicKelompokMasyarakat->newQuery()->with(['user_akseslh'])->where('id', $read->data_pic_kelompok_masyarakat_id)->first();
+        $data_pic = $this->modelDataPicKelompokMasyarakat->newQuery()->with(['user_akseslh', 'kelompok_masyarakat'])->where('id', $read->data_pic_kelompok_masyarakat_id)->first();
 
         if (!$data_pic) {
             # code...
@@ -213,6 +217,11 @@ class ProfilePicService extends AppService implements AppServiceInterface
                 }
 
                 $data_pic->user_akseslh->save();
+
+                if ($kelompok_masyarakat) {
+                    $data_pic->kelompok_masyarakat->kelompok_masyarakat = $read->kelompok_masyarakat;
+                    $data_pic->kelompok_masyarakat->save();
+                }
 
                 if ($foto_ktp) {
                     $id_old_document   =   $data_pic->foto()->where('group', 'foto_ktp')->first() ? $data_pic->foto()->where('group', 'foto_ktp')->first()->id : null;
