@@ -49,6 +49,7 @@ class ProfilePic extends AppModel
         'status_verifikasi',
         'nama_kontak_darurat',
         'nomor_kontak_darurat',
+        'alamat_kontak_darurat',
         'flag',
         'username',
     ];
