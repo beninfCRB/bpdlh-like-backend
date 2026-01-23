@@ -24,6 +24,8 @@ class ProfilePic extends AppModel
      */
     protected $fillable = [
         'data_pic_kelompok_masyarakat_id',
+        'jenis_kelompok_masyarakat',
+        'jenis_kelompok_masyarakat_id',
         'kelompok_masyarakat',
         'kelompok_masyarakat_id',
         'nama_pic',
