@@ -71,6 +71,17 @@
                             <input type="hidden" id="data_pic_kelompok_masyarakat_id"
                                 name="data_pic_kelompok_masyarakat_id"
                                 value="{{ $data->data->data_pic_kelompok_masyarakat_id }}">
+                            @if ($data->data->jenis_kelompok_masyarakat)
+                                <div class="form-group">
+                                    <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span
+                                            class="text-danger">*</span></label>
+
+                                    <input type="text" class="form-control" id="jenis_kelompok_masyarakat"
+                                        name="jenis_kelompok_masyarakat" placeholder="Nama PIC"
+                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat }}"
+                                        readonly>
+                                </div>
+                            @endif
                             <div class="form-group">
                                 <label for="kelompok_masyarakat">Kelompok Masyarakat <span
                                         class="text-danger">*</span></label>
@@ -302,6 +313,29 @@
                         <form role="form" method="POST">
                             <input type="hidden" id="profile_pic_id" name="profile_pic_id"
                                 value="{{ $data->data->id }}">
+                            @if ($data->data->jenis_kelompok_masyarakat)
+                                <div
+                                    class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat == $data->data->jenis_kelompok_masyarakat ? 'has-success' : 'has-error' }}">
+                                    <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span
+                                            class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" id="jenis_kelompok_masyarakat"
+                                            name="jenis_kelompok_masyarakat" class="form-control"
+                                            value="{{ $data->data->jenis_kelompok_masyarakat }}" readonly />
+                                        <span class="input-group-addon">
+                                            @if (
+                                                ($data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->id !=
+                                                    $data->data->jenis_kelompok_masyarakat_id &&
+                                                    $data->data->jenis_kelompok_masyarakat_id) ||
+                                                    $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat !=
+                                                        $data->data->jenis_kelompok_masyarakat)
+                                                <input type="checkbox" class="profile-field"
+                                                    name="jenis_kelompok_masyarakat" id="">
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            @endif
                             <div
                                 class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat == $data->data->kelompok_masyarakat ? 'has-success' : 'has-error' }}">
                                 <label for="kelompok_masyarakat">Kelompok Masyarakat <span
