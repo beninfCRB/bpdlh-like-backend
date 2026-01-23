@@ -68,6 +68,8 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
             $read = $this->model->newQuery()->create([
                 'data_pic_kelompok_masyarakat_id'   =>  $data['data_pic_kelompok_masyarakat_id'],
+                'jenis_kelompok_masyarakat'         =>  $data['jenis_kelompok_masyarakat'] ?? null,
+                'jenis_kelompok_masyarakat_id'      =>  $data['jenis_kelompok_masyarakat_id'] ?? null,
                 'kelompok_masyarakat_id'            =>  $data['kelompok_masyarakat_id'] ?? null,
                 'kelompok_masyarakat'               =>  $data['kelompok_masyarakat'] ?? null,
                 'nama_pic'              =>  $data['nama_pic'] ?? null,
@@ -154,6 +156,7 @@ class ProfilePicService extends AppService implements AppServiceInterface
         $nama_pic = false;
         $email_pic = false;
         $kelompok_masyarakat = false;
+        $jenis_kelompok_masyarakat = false;
 
         if (in_array('foto_ktp', $data['profile_field'])) {
             $foto_ktp = true;
@@ -181,6 +184,10 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
         if (in_array('email_pic', $data['profile_field'])) {
             $email_pic = true;
+        }
+
+        if (in_array('jenis_kelompok_masyarakat', $data['profile_field'])) {
+            $jenis_kelompok_masyarakat = true;
         }
 
         if (in_array('kelompok_masyarakat', $data['profile_field'])) {
@@ -217,6 +224,11 @@ class ProfilePicService extends AppService implements AppServiceInterface
                 }
 
                 $data_pic->user_akseslh->save();
+
+                if ($jenis_kelompok_masyarakat) {
+                    $data_pic->kelompok_masyarakat->jenis_kelompok_masyarakat = $read->jenis_kelompok_masyarakat;
+                    $data_pic->kelompok_masyarakat->save();
+                }
 
                 if ($kelompok_masyarakat) {
                     $data_pic->kelompok_masyarakat->kelompok_masyarakat = $read->kelompok_masyarakat;

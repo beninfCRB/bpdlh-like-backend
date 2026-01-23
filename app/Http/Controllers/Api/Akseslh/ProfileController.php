@@ -63,6 +63,7 @@ class ProfileController extends ApiController
         });
 
         $validator = Validator::make($request->all(), [
+            'jenis_kelompok_masyarakat'         => 'nullable|not_undefined',
             'jenis_kelompok_masyarakat_id'      => 'nullable|exists:jenis_kelompok_masyarakats,id',
             'kelompok_masyarakat'               => 'nullable|not_undefined',
             'kelompok_masyarakat_id'            => 'nullable|exists:kelompok_masyarakats,id',
@@ -94,7 +95,8 @@ class ProfileController extends ApiController
             'alamat_kontak_darurat'             => 'nullable|string',
             'jenis_kelamin'                     => 'nullable|in:laki-laki,perempuan|not_undefined',
         ], [
-            'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
+            'kelompok_masyarakat.not_undefined'         => ':attribute tidak valid',
+            'jenis_kelompok_masyarakat.not_undefined'   => ':attribute tidak valid',
         ]);
 
         if ($validator->fails()) {
