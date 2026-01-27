@@ -18,6 +18,7 @@ class LogJadwalPembukaan extends AppModel
         'jam_awal',
         'jam_akhir',
         'batas_pengajuan',
+        'batch',
         'flag',
         'username',
     ];
@@ -29,5 +30,17 @@ class LogJadwalPembukaan extends AppModel
      */
     protected $casts = [
         'batas_pengajuan' => 'string',
+        'batch' => 'string',
     ];
+
+    /**
+     * Set the batch to uppercase.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setBatchAttribute($value)
+    {
+        $this->attributes['batch'] = strtoupper($value);
+    }
 }
