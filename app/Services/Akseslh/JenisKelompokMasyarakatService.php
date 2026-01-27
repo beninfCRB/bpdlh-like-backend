@@ -221,7 +221,7 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
 
     public function apiGetAll()
     {
-        $result = Cache::remember('jenis_kelompok_masyarakat', now()->adddays(7), function () {
+        $result = Cache::remember('jenis_kelompok_masyarakat', now()->addDays(7), function () {
             $data  = $this->model->newQuery()
                 ->where('flag', true)
                 ->orderBy('short_id', 'ASC')
@@ -247,6 +247,7 @@ class JenisKelompokMasyarakatService extends AppService implements AppServiceInt
         try {
             $read->restore();
             \DB::commit(); // commit the changes
+            Cache::forget('jenis_kelompok_masyarakat');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes

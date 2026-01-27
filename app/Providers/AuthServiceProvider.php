@@ -31,7 +31,7 @@ class AuthServiceProvider extends ServiceProvider
 
         ResetPassword::createUrlUsing(function ($user, string $token) {
             // return 'https://example.com/reset-password?token=' . $token;
-            return env('APP_FE') . '/#/layanan-masyarakat/reset-password/' . $token . '?email=' . urlencode($user->email);
+            return env('APP_FE') . '/auth/new-password/' . $token . '?email=' . urlencode($user->email);
         });
         //
         Auth::extend('sanctum-bearer', function ($app, $name, array $config) {

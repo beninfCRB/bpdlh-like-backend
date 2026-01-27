@@ -11,6 +11,7 @@ use App\Models\StandarRabPaketKegiatan;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 use Ramsey\Uuid\Uuid;
 
@@ -215,20 +216,6 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
     function apiGetAll($data)
     {
-        // $result  = $this->model
-        //     ->select('nama_paket_kegiatan')
-
-        //     ->whereHas('master_sub_tematik_kegiatan', function ($q) use ($data) {
-        //         $q->where([
-        //             'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
-        //             'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
-        //         ]);
-        //     })
-        //     ->with(['peserta' => function ($query) {
-        //         $query->select('nama_paket_kegiatan', 'id', 'deskripsi_paket_kegiatan', 'jumlah_peserta')->orderBy('jumlah_peserta', 'ASC');
-        //     }])
-        //     ->distinct()
-        //     ->get();
         $result = null;
 
         $result = $this->modelJenisKegiatan->select(['id', 'jenis_kegiatan'])
@@ -249,33 +236,6 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
                     // ->with(['standar_rab_paket_kegiatan'])
                 ;
             }])->get();
-
-        //         $query = "
-        //             SELECT 
-        // B.id,
-        // A.jenis_kegiatan,
-        // B.jumlah_peserta,
-        // B.master_sub_tematik_kegiatan_id,
-        // C.tematik_kegiatan_id,
-        // C.sub_tematik_kegiatan_id FROM akseslh_jenis_kegiatans AS A
-        // LEFT JOIN (SELECT id, jenis_kegiatan_id,master_sub_tematik_kegiatan_id,jumlah_peserta FROM akseslh_paket_kegiatans) AS B ON (B.jenis_kegiatan_id=A.id)
-        // LEFT JOIN (SELECT id, tematik_kegiatan_id,sub_tematik_kegiatan_id FROM akseslh_master_sub_tematik_kegiatans) AS C ON (C.id=B.master_sub_tematik_kegiatan_id)
-        // LEFT JOIN (SELECT id, tematik_kegiatan FROM akseslh_tematik_kegiatans) AS D ON (D.id=C.tematik_kegiatan_id)
-        // LEFT JOIN (SELECT id, sub_tematik_kegiatan FROM akseslh_sub_tematik_kegiatans) AS E ON (E.id=C.sub_tematik_kegiatan_id);
-        //         ";
-
-        // $result = \DB::select($query);
-        // dd($result);
-
-        // $result = $this->modelJenisKegiatan->select(['id', 'jenis_kegiatan'])
-        //     ->with('paket_kegiatan')
-        //     ->whereHas('paket_kegiatan.master_sub_tematik_kegiatan', function ($q) use ($data) {
-        //         $q->where([
-        //             'tematik_kegiatan_id'       => $data['tematik_kegiatan_id'],
-        //             'sub_tematik_kegiatan_id'   => $data['sub_tematik_kegiatan_id'],
-        //         ]);
-        //     })
-        //     ->get();
 
         return $this->sendSuccess($result);
     }
