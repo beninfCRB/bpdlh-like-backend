@@ -216,8 +216,6 @@ class PaketKegiatanService extends AppService implements AppServiceInterface
 
     function apiGetAll($data)
     {
-        $result = null;
-
         $result = $this->modelJenisKegiatan->select(['id', 'jenis_kegiatan'])
             ->whereHas('paket_kegiatan.master_sub_tematik_kegiatan', function ($q) use ($data) {
                 $q->where([

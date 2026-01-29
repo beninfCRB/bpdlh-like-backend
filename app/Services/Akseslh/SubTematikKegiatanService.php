@@ -95,6 +95,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
             }
 
             \DB::commit(); // commit the changes
+            Cache::forget('sub_tematik_kegiatan_' . $tematik_kegiatan->id);
             Cache::forget('sub_tematik_kegiatan');
             return $this->sendSuccess($tematik_kegiatan);
         } catch (\Exception $exception) {
@@ -118,6 +119,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('sub_tematik_kegiatan_' . $id);
             Cache::forget('sub_tematik_kegiatan');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
@@ -132,6 +134,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            Cache::forget('sub_tematik_kegiatan_' . $id);
             Cache::forget('sub_tematik_kegiatan');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
@@ -146,6 +149,7 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         try {
             $read->restore();
             \DB::commit(); // commit the changes
+            Cache::forget('sub_tematik_kegiatan_' . $id);
             Cache::forget('sub_tematik_kegiatan');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
@@ -156,16 +160,17 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
     public function getApiAll($data)
     {
-        $result = Cache::remember('sub_tematik_kegiatan', now()->addDays(7), function () use ($data) {
-            $data  = $this->modelMasterSubTematikKegiatan->newQuery()
+        $result = Cache::remember('sub_tematik_kegiatan_' . $data['tematik_kegiatan_id'], now()->addDays(7), function () use ($data) {
+
+            $dataResult  = $this->modelMasterSubTematikKegiatan->newQuery()
                 ->with(['sub_tematik_kegiatan.image'])
                 ->where(['tematik_kegiatan_id' => $data['tematik_kegiatan_id']])
                 ->orderBy('short_id', 'ASC')
                 ->get();
 
-            if (!$data) return $this->sendError(null, 'Not Found', 422);
+            if (!$dataResult) return $this->sendError(null, 'Not Found', 422);
 
-            $data->transform(function ($items, $key) {
+            $dataResult->transform(function ($items, $key) {
                 if ($items->sub_tematik_kegiatan != null) {
                     return [
                         'id'                    => $items->sub_tematik_kegiatan->id ?? null,
@@ -175,13 +180,13 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
                     ];
                 }
             });
-            $data = $data->toArray();
-            $data = array_filter($data, function ($value) {
+            $dataResult = $dataResult->toArray();
+            $dataResult = array_filter($dataResult, function ($value) {
                 return !is_null($value);
             });
 
             // Menyusun ulang array (karena array_filter bisa mengubah indeks)
-            $data = array_values($data);
+            return $dataResult = array_values($dataResult);
         });
 
         return $this->sendSuccess($result);
