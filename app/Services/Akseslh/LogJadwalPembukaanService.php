@@ -83,7 +83,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->withTrashed()->find($id);
 
         return $this->sendSuccess($result);
     }
@@ -121,15 +121,18 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
 
     public function update($id, $data)
     {
-        $read   =   $this->model->newQuery()->find($id);
+        $read   =   $this->model->newQuery()->withTrashed()->find($id);
 
         \DB::beginTransaction();
 
         try {
 
-            $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
-            $read->short_id                     =   $data['short_id'];
-            $read->code_id                     =   $data['code_id'];
+            $read->tanggal_awal    =   $data['tanggal_awal'];
+            $read->jam_awal        =   $data['jam_awal'];
+            $read->tanggal_akhir   =   $data['tanggal_akhir'];
+            $read->jam_akhir       =   $data['jam_akhir'];
+            $read->batch           =   $data['batch'];
+            $read->batas_pengajuan =   preg_replace('/[^\d]/', '', $data['batas_pengajuan']);
             $read->save();
 
             \DB::commit(); // commit the changes

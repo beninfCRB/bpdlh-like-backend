@@ -155,11 +155,11 @@
                                 @csrf
                                 <div class="input-group m-t-10">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <input type="text" id="search" name="search" class="form-control"
                                                 value="{{ old('search') }}" placeholder="Search" />
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <select name="tahapan" id="tahapan" class="form-control">
                                                 <option value="">-- Pilih Tahapan --</option>
                                                 @isset($flag)
@@ -171,6 +171,19 @@
                                                     @endforeach
                                                     <option value="20" {{ old('tahapan') == 20 ? 'selected' : '' }}>
                                                         Ditolak</option>
+                                                @endisset
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select name="batch" id="batch" class="form-control">
+                                                <option value="">-- Pilih Batch --</option>
+                                                @isset($batchList)
+                                                    @foreach ($batchList as $batch)
+                                                        <option value="{{ $batch->batch }}"
+                                                            {{ old('batch') == $batch->batch ? 'selected' : '' }}>
+                                                            {{ $batch->batch }}
+                                                        </option>
+                                                    @endforeach
                                                 @endisset
                                             </select>
                                         </div>
