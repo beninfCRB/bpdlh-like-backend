@@ -6,6 +6,7 @@ use App\Exports\PengajuanKegiatanExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Models\File;
+use App\Models\LogJadwalPembukaan;
 use App\Models\PengajuanKegiatan;
 use App\Models\TahapanPengajuanKegiatan;
 use App\Services\Akseslh\PengajuanKegiatanService;
@@ -76,6 +77,20 @@ class PengajuanKegiatanController extends ApiController
             $query->where('flag', (int) $request->tahapan);
         }
 
+        if ($request->has('batch') && !empty($request->batch)) {
+            $rangeTanggal = LogJadwalPembukaan::where('batch', $request->batch)
+                ->selectRaw('
+                    MIN(tanggal_awal) as tanggal_awal,
+                    MAX(tanggal_akhir) as tanggal_akhir
+                ')
+                ->withTrashed()->first();
+
+            if ($rangeTanggal) {
+                $query->where('created_at', '>=', $rangeTanggal->tanggal_awal . ' 00:00:00')
+                    ->where('created_at', '<=', $rangeTanggal->tanggal_akhir . ' 23:59:59');
+            }
+        }
+
         // 🔥 Tambahkan subquery untuk cek rab double
         $query->addSelect([
             'rab_double' => \DB::table('rab_pengajuan_paket_kegiatans')
@@ -87,7 +102,13 @@ class PengajuanKegiatanController extends ApiController
 
         $pengajuan_kegiatan = $query->orderBy('created_at', 'DESC')->paginate(10);
         $flag = TahapanPengajuanKegiatan::orderBy('sort')->get();
-        return view("pages.akseslh.pengajuan-kegiatan.index", compact('group', 'pengajuan_kegiatan', 'flag'));
+        $batchList = LogJadwalPembukaan::select('batch')
+            ->distinct()
+            ->orderBy('batch', 'DESC')
+            ->withTrashed()
+            ->get();
+
+        return view("pages.akseslh.pengajuan-kegiatan.index", compact('group', 'pengajuan_kegiatan', 'flag', 'batchList'));
     }
 
     public function create()

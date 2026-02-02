@@ -50,6 +50,7 @@ class LogJadwalPembukaanController extends ApiController
             'jam_awal'          => 'required',
             'tanggal_akhir'     => 'required|after_or_equal:tanggal_awal',
             'jam_akhir'         => 'required',
+            'batch'             => 'required',
             'batas_pengajuan'   => 'required',
         ]);
 
@@ -70,9 +71,12 @@ class LogJadwalPembukaanController extends ApiController
     public function update($id, Request $request)
     {
         $input  =   $request->validate([
-            'jenis_kegiatan'    => 'required',
-            'short_id'                      => 'required|numeric|min:0',
-            'code_id'                       => 'required|numeric|min:0',
+            'tanggal_awal'      => 'required',
+            'jam_awal'          => 'required',
+            'tanggal_akhir'     => 'required|after_or_equal:tanggal_awal',
+            'jam_akhir'         => 'required',
+            'batch'             => 'required',
+            'batas_pengajuan'   => 'required',
         ]);
 
         $result =   $this->logJadwalPembukaan->update($id, $input);
@@ -81,7 +85,7 @@ class LogJadwalPembukaanController extends ApiController
             if ($result->success) {
                 // Contoh menyimpan session flash
                 session()->flash('success', $result->message);
-                return redirect()->route('jenis-kegiatan.index');
+                return redirect()->route('log-jadwal-pembukaan.index');
             }
 
             return back()->with('error', $result->message);
