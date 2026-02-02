@@ -27,6 +27,7 @@
                         value="{{ route('data-log-jadwal-pembukaan') }}">
                     <input type="hidden" name="log-jadwal-pembukaan-route" id="log-jadwal-pembukaan-route"
                         value="{{ route('log-jadwal-pembukaan.index') }}">
+                    <input type="hidden" name="user-role" id="user-role" value="{{ auth()->user()->role_user }}">
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -44,10 +45,12 @@
                                         <th>Jam Awal</th>
                                         <th>Tanggal Akhir</th>
                                         <th>Jam Akhir</th>
+                                        <th>Batch</th>
                                         <th>Batas Pengajuan</th>
                                         <th>Deleted at</th>
                                         <th>Created at</th>
                                         <th>Updated at</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
 

@@ -38,6 +38,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
                 'jam_awal'          => $model->jam_awal,
                 'tanggal_akhir'     => $model->tanggal_akhir,
                 'jam_akhir'         => $model->jam_akhir,
+                'batch'             => $model->batch,
                 'batas_pengajuan'   => $model->batas_pengajuan,
             ];
         });
@@ -103,6 +104,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
                 'tanggal_akhir'     =>  $data['tanggal_akhir'],
                 'jam_awal'          =>  $data['jam_awal'],
                 'jam_akhir'         =>  $data['jam_akhir'],
+                'batch'             =>  $data['batch'],
                 'batas_pengajuan'   =>  $amount,
                 'username'          =>  auth()->user()->username ?? auth()->user()->email
             ]);
