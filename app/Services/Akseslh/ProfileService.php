@@ -389,6 +389,10 @@ class ProfileService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
         }
 
+        if ($model->is_accurate == false) {
+            return $this->sendError(null, 'Data profil belum diperbarui, silahkan perbarui data profil terlebih dahulu', 422);
+        }
+
         if (!$model->nomor_kontak_darurat || !$model->nama_kontak_darurat || !$model->alamat_kontak_darurat) {
             if ($status_perubahan_profil) {
                 # code...

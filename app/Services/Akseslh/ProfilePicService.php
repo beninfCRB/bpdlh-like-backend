@@ -288,6 +288,8 @@ class ProfilePicService extends AppService implements AppServiceInterface
                 }
 
                 $readData = $read->toArray();
+                $readData['is_accurate'] = true;
+                $readData['accurate_date'] = date('Y-m-d H:i:s');
                 unset($readData['id'], $readData['created_at'], $readData['updated_at'], $readData['data_pic_kelompok_masyarakat_id'], $readData['document']);
 
                 $data_pic->update($readData);
