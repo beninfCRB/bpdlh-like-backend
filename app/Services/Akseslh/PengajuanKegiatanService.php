@@ -1290,10 +1290,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     # code...
                     $qtyWajib = $jumlah_peserta * $jumlahHari;
 
-                    // if ($item['qty'] < $qtyWajib) {
-                    //     # code...
-                    //     return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $qtyWajib]]), 422);
-                    // }
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $qtyWajib]]), 422);
+                    }
 
                     if ($item['qty'] > $qtyWajib) {
                         # code...
@@ -1305,10 +1305,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     # code...
                     $qtyWajib = $jumlah_peserta * $jumlahHari;
 
-                    // if ($item['qty'] < $qtyWajib) {
-                    //     # code...
-                    //     return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $qtyWajib]]), 422);
-                    // }
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $qtyWajib]]), 422);
+                    }
 
                     if ($item['qty'] > $qtyWajib) {
                         # code...
