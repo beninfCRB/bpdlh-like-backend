@@ -1252,6 +1252,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $jasaProfesi = 0;
 
+        $tanggalAwal = Carbon::parse($model->tanggal_mulai_kegiatan);
+        $tanggalAkhir = Carbon::parse($model->tanggal_akhir_kegiatan);
+        $jumlahHari = $tanggalAkhir->diffInDays($tanggalAwal) + 1;
+
+
         foreach ($dataKomponenRab as $item) {
             # code...
             if ($item['id_komponen'] == $idNaraSumber) {
@@ -1283,27 +1288,31 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 # code...
                 if ($item['id_komponen'] == $idTransportasi) {
                     # code...
-                    if ($item['qty'] < $jumlah_peserta) {
+                    $qtyWajib = $jumlah_peserta * $jumlahHari;
+
+                    if ($item['qty'] < $qtyWajib) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $qtyWajib]]), 422);
                     }
 
-                    if ($item['qty'] > $jumlah_peserta) {
+                    if ($item['qty'] > $qtyWajib) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $qtyWajib]]), 422);
                     }
                 }
 
                 if ($item['id_komponen'] == $idKonsumsi) {
                     # code...
-                    if ($item['qty'] < $jumlah_peserta) {
+                    $qtyWajib = $jumlah_peserta * $jumlahHari;
+
+                    if ($item['qty'] < $qtyWajib) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $qtyWajib]]), 422);
                     }
 
-                    if ($item['qty'] > $jumlah_peserta) {
+                    if ($item['qty'] > $qtyWajib) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $qtyWajib]]), 422);
                     }
                 }
             }

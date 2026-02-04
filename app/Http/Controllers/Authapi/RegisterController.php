@@ -367,7 +367,7 @@ class RegisterController extends ApiController
             'is_accurate'                       => 'required',
             'accurate_date'                     => 'required_if:is_accurate,1|date',
         ], [
-            'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
+            'kelompok_masyarakat.not_undefined' => ':attribute kelompok masyarakat telah terdaftar.',
         ]);
 
         if ($validator->fails()) {
