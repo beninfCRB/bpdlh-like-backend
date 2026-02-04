@@ -91,7 +91,7 @@ var data_jenis_kegiatan = (function () {
                             <a data-id=` +
                                 full.id +
                                 ` href="#" onclick="deleteJenisKegiatan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
-                              <i class="fa fa-trash"></i>
+                              <i class="fa fa-unlock-alt"></i>
                             </a>
                             `
                             );

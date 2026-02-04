@@ -91,7 +91,7 @@ var data_jenis_kelompok_masyarakat = (function () {
                         <a data-id=` +
                                 full.id +
                                 ` href="#" onclick="deleteJenisKelompokMasyarakat(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Non Aktifkan">
-                          <i class="fa fa-trash"></i>
+                          <i class="fa fa-unlock-alt"></i>
                         </a>`
                             );
                         } else {
