@@ -150,6 +150,27 @@ class EmailPhpService
         }
     }
 
+    public function pengajuanKegiatanBerhasilDikirim($to, $subject, $data, $altBody = '', $view)
+    {
+        try {
+            // Pengaturan pengirim dan penerima
+            $this->mail->setFrom(env('PHPEMAIL_FROM_ADDRESS'), env('PHPEMAIL_FROM_NAME'));
+            $this->mail->addAddress($to->email);
+
+            // Konten email
+            $this->mail->isHTML(true);
+            $this->mail->Subject = $subject;
+            $this->mail->Body    = view($view, compact('data', 'to'));
+            $this->mail->AltBody = $altBody;
+
+            $this->mail->send();
+            return true;
+        } catch (\Throwable $th) {
+            //throw $th;
+            return "Email gagal dikirim. Mailer Error: {$this->mail->ErrorInfo}";
+        }
+    }
+
     public function pengajuanKegiatanDiterima($to, $subject, $data, $altBody = '', $view)
     {
         try {
