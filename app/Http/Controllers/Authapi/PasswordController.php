@@ -31,6 +31,8 @@ class PasswordController extends ApiController
     {
         $validator = Validator::make($request->all(), [
             'email'                   => 'required|exists:user_akseslhs,email',
+        ], [
+            'email.exists' => 'Email Tidak Ditemukan'
         ]);
 
         if ($validator->fails()) {

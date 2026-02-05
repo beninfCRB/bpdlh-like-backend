@@ -7,7 +7,6 @@ use App\Services\AppService;
 use App\Models\PengajuanKegiatan;
 use App\Services\EmailPhpService;
 use App\Services\AppServiceInterface;
-use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\DataPicKelompokMasyarakat;
 use App\Models\LogTahapanPengajuanKegiatan;
@@ -58,6 +57,8 @@ class ProfileService extends AppService implements AppServiceInterface
         $result = [
             "id" => $model->id,
             "status_perubahan_profil" => $status_perubahan_profil ? 'Menunggu verifikasi oleh pengelola' : '',
+            "jenis_kelompok_masyarakat" => $model->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat ?? null,
+            "jenis_kelompok_masyarakat_id" => $model->kelompok_masyarakat->jenis->id ?? null,
             "kelompok_masyarakat" => $model->kelompok_masyarakat->kelompok_masyarakat ?? null,
             "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
             "nama_pic" => $model->nama_pic ?? null,
@@ -386,6 +387,10 @@ class ProfileService extends AppService implements AppServiceInterface
         if ($status_perubahan_profil) {
             # code...
             return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
+        }
+
+        if ($model->is_accurate == false) {
+            return $this->sendError(null, 'Data profil belum diperbarui, silahkan perbarui data profil terlebih dahulu', 422);
         }
 
         if (!$model->nomor_kontak_darurat || !$model->nama_kontak_darurat || !$model->alamat_kontak_darurat) {

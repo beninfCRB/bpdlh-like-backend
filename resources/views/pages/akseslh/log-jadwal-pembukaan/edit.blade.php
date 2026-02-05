@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Log Jadwal Pembukaan')
+@section('title', 'Edit Log Jadwal Pembukaan')
 
 @section('script')
     <script src="{{ asset('app/build/log_jadwal_pembukaan.js') }}" type="text/javascript"></script>
@@ -19,7 +19,6 @@
         </div>
     </div>
 
-
     <div class="row">
         <!-- Basic example -->
         <div class="col-md-6">
@@ -28,12 +27,14 @@
                     <h3 class="panel-title">Pengelolaan Data Jenis Kelompok Masyarakat</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form" action="{{ route('log-jadwal-pembukaan.store') }}" method="POST">
+                    <form role="form" action="{{ route('log-jadwal-pembukaan.update', $data->data->id) }}"
+                        method="POST">
+                        @method('PUT')
                         @csrf
                         <div class="form-group @error('tanggal_awal') has-error @enderror">
                             <label for="tanggal_awal">Tanggal Awal <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="tanggal_awal" name="tanggal_awal"
-                                value="{{ old('tanggal_awal') }}">
+                                value="{{ old('tanggal_awal', $data->data->tanggal_awal) }}">
                             @error('tanggal_awal')
                                 <span class="error">
                                     {{ $message }}
@@ -43,7 +44,7 @@
                         <div class="form-group @error('jam_awal') has-error @enderror">
                             <label for="jam_awal">Jam Awal <span class="text-danger">*</span></label>
                             <input type="time" class="form-control" id="jam_awal" name="jam_awal"
-                                value="{{ old('jam_awal') }}">
+                                value="{{ old('jam_awal', $data->data->jam_awal) }}">
                             @error('jam_awal')
                                 <span class="error">
                                     {{ $message }}
@@ -53,7 +54,7 @@
                         <div class="form-group @error('tanggal_akhir') has-error @enderror">
                             <label for="tanggal_akhir">Tanggal Akhir <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="tanggal_akhir" name="tanggal_akhir"
-                                value="{{ old('tanggal_akhir') }}">
+                                value="{{ old('tanggal_akhir', $data->data->tanggal_akhir) }}">
                             @error('tanggal_akhir')
                                 <span class="error">
                                     {{ $message }}
@@ -63,7 +64,7 @@
                         <div class="form-group @error('jam_akhir') has-error @enderror">
                             <label for="jam_akhir">Jam Akhir <span class="text-danger">*</span></label>
                             <input type="time" class="form-control" id="jam_akhir" name="jam_akhir"
-                                value="{{ old('jam_akhir') }}">
+                                value="{{ old('jam_akhir', $data->data->jam_akhir) }}">
                             @error('jam_akhir')
                                 <span class="error">
                                     {{ $message }}
@@ -73,7 +74,7 @@
                         <div class="form-group @error('batch') has-error @enderror">
                             <label for="batch">Batch Pengajuan <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="batch" name="batch"
-                                value="{{ old('batch') }}">
+                                value="{{ old('batch', $data->data->batch) }}">
                             @error('batch')
                                 <span class="error">
                                     {{ $message }}
@@ -83,7 +84,8 @@
                         <div class="form-group @error('batas_pengajuan') has-error @enderror">
                             <label for="batas_pengajuan">Batas Pengajuan <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="batas_pengajuan" name="batas_pengajuan"
-                                value="{{ old('batas_pengajuan') }}" oninput="formatMoney(this)">
+                                value="{{ old('batas_pengajuan', $data->data->batas_pengajuan) }}"
+                                oninput="formatMoney(this)">
                             @error('batas_pengajuan')
                                 <span class="error">
                                     {{ $message }}
@@ -101,5 +103,4 @@
         </div> <!-- col-->
 
     </div>
-    <!-- End row -->
 @endsection

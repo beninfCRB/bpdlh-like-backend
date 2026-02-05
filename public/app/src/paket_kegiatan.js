@@ -109,7 +109,7 @@ var data_paket_kegiatan = (function () {
                         <a data-id=` +
                             full.id +
                             ` href="#" onclick="deletePaketKegiatan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Hapus">
-                          <i class="fa fa-trash"></i>
+                          <i class="fa  fa-unlock-alt"></i>
                         </a>`
                         );
                     },
@@ -183,7 +183,7 @@ window.generateForm = (input) => {
 
 window.countSum = (iteration) => {
     let standar_harga_unit = $.trim(
-        $("#standar_harga_unit_" + iteration).text()
+        $("#standar_harga_unit_" + iteration).text(),
     );
     let int_standar_harga_unit = parseInt(standar_harga_unit, 10);
     let qty = $("#qty_" + iteration).val();

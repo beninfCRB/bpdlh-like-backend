@@ -63,6 +63,7 @@ class ProfileController extends ApiController
         });
 
         $validator = Validator::make($request->all(), [
+            'jenis_kelompok_masyarakat'         => 'nullable|not_undefined',
             'jenis_kelompok_masyarakat_id'      => 'nullable|exists:jenis_kelompok_masyarakats,id',
             'kelompok_masyarakat'               => 'nullable|not_undefined',
             'kelompok_masyarakat_id'            => 'nullable|exists:kelompok_masyarakats,id',
@@ -90,11 +91,13 @@ class ProfileController extends ApiController
             'nohp_pic'                          => ['nullable', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nohp_pic')->ignore($id)->whereNull('deleted_at')],
             'email_pic'                         => ['nullable', 'email', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'email_pic')->ignore($id)->whereNull('deleted_at')],
             'nama_kontak_darurat'               => 'nullable|string',
-            'nomor_kontak_darurat'              => ['nullable', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')->ignore($id)],
+            'nomor_kontak_darurat'              => ['nullable', 'different:nohp_pic', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')->ignore($id)],
             'alamat_kontak_darurat'             => 'nullable|string',
             'jenis_kelamin'                     => 'nullable|in:laki-laki,perempuan|not_undefined',
+            'is_accurate'                       => 'required',
         ], [
-            'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
+            'kelompok_masyarakat.not_undefined'         => ':attribute tidak valid',
+            'jenis_kelompok_masyarakat.not_undefined'   => ':attribute tidak valid',
         ]);
 
         if ($validator->fails()) {
@@ -114,13 +117,6 @@ class ProfileController extends ApiController
         }
 
         $input['data_pic_kelompok_masyarakat_id'] = $id;
-
-        // return $this->sendSuccess([
-        //     'request'           => $request->all(),
-        //     'input'             => $input,
-        //     'foto_ktp'          => $request->foto_ktp,
-        //     'profil_kelompok'   => $request->profil_kelompok,
-        // ]);
 
         $result =   $this->profilePicService->create($input);
 

@@ -10,6 +10,7 @@ use App\Models\MasterSubTematikKegiatan;
 use App\Services\FileUploadService;
 use App\Services\AppServiceInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 
 class SubTematikKegiatanService extends AppService implements AppServiceInterface
@@ -46,15 +47,17 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
 
     public function getAllAttr()
     {
-        $result  = $this->model->newQuery()
-            ->orderBy('short_id', 'ASC')
-            ->get();
+        $result = Cache::remember('sub_tematik_kegiatan', now()->addDays(7), function () {
+            $data  = $this->model->newQuery()
+                ->orderBy('short_id', 'ASC')
+                ->get();
 
-        $result->transform(function ($items, $key) {
-            return [
-                'id'                    => $items->id,
-                'sub_tematik_kegiatan'      => $items->sub_tematik_kegiatan,
-            ];
+            return $data->transform(function ($items, $key) {
+                return [
+                    'id'                    => $items->id,
+                    'sub_tematik_kegiatan'      => $items->sub_tematik_kegiatan,
+                ];
+            });
         });
 
         return $this->sendSuccess($result);
@@ -92,6 +95,8 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
             }
 
             \DB::commit(); // commit the changes
+            Cache::forget('sub_tematik_kegiatan_' . $tematik_kegiatan->id);
+            Cache::forget('sub_tematik_kegiatan');
             return $this->sendSuccess($tematik_kegiatan);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -114,6 +119,8 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('sub_tematik_kegiatan_' . $id);
+            Cache::forget('sub_tematik_kegiatan');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -127,6 +134,8 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            Cache::forget('sub_tematik_kegiatan_' . $id);
+            Cache::forget('sub_tematik_kegiatan');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -140,6 +149,8 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         try {
             $read->restore();
             \DB::commit(); // commit the changes
+            Cache::forget('sub_tematik_kegiatan_' . $id);
+            Cache::forget('sub_tematik_kegiatan');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -147,136 +158,37 @@ class SubTematikKegiatanService extends AppService implements AppServiceInterfac
         }
     }
 
-    protected function switchLang($search = null, $page = null, $perPage = null, $lang = 'ID')
-    {
-        $result  = $this->model->newQuery()
-            ->where('is_publish', true)
-            ->when($search, function ($query, $search) {
-                return $query->where('title', 'like', '%' . $search . '%');
-            })
-            ->orderBy('created_at', 'DESC')
-            ->paginate((int)$perPage, ['*'], null, $page);
-
-        if ($lang === 'ID') {
-            $result->getCollection()->transform(function ($items, $key) {
-                return [
-                    'id'            => $items->id,
-                    'title'         => $items->title_id,
-                    'desc'          => $items->desc_id,
-                    'lastUpdate'    => $items->created_at,
-                ];
-            });
-        } else {
-            $result->getCollection()->transform(function ($items, $key) {
-                return [
-                    'id'            => $items->id,
-                    'title'         => $items->title_en,
-                    'desc'          => $items->desc_en,
-                    'lastUpdate'    => $items->created_at,
-                ];
-            });
-        }
-        return $result;
-    }
-
-    public function apiLang($id, $lang = 'ID')
-    {
-        $model =   $this->model->newQuery()->where('is_publish', true)->find($id);
-
-        if (!$model)  return $this->sendError(null, 'Not Published');
-
-        if ($lang === 'ID') {
-            $result =   [
-                'id'            => $model->id,
-                'title'         => $model->title_id,
-                'desc'          => $model->desc_id,
-                'lastUpdate'    => $model->created_at
-            ];
-        } else {
-            $result =   [
-                'id'            => $model->id,
-                'title'         => $model->title_en,
-                'desc'          => $model->desc_en,
-                'lastUpdate'    => $model->created_at
-            ];
-        }
-
-        return $this->sendSuccess($result);
-    }
-
-    public function searchLang($lang = 'ID', $search = null)
-    {
-        if ($lang === 'ID') {
-
-            $result  = $this->model->newQuery()
-                ->when($search, function ($query, $search) {
-                    return $query->where('title_id', 'like', '%' . $search . '%')
-                        ->orWhere('desc_id', 'like', '%' . $search . '%');
-                })
-                ->where('is_publish', true)
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            $result->transform(function ($items, $key) {
-                return [
-                    'type'          => 'CAREER',
-                    'id'            => $items->id,
-                    'title'         => $items->title_id,
-                    'desc'          => $items->desc_id,
-                    'lastUpdate'    => $items->created_at
-                ];
-            });
-        } else {
-
-            $result  = $this->model->newQuery()
-                ->when($search, function ($query, $search) {
-                    return $query->where('title_en', 'like', '%' . $search . '%')
-                        ->orWhere('desc_en', 'like', '%' . $search . '%');
-                })
-                ->where('is_publish', true)
-                ->orderBy('created_at', 'DESC')
-                ->get();
-
-            $result->transform(function ($items, $key) {
-                return [
-                    'type'          => 'CAREER',
-                    'id'            => $items->id,
-                    'title'         => $items->title_en,
-                    'desc'          => $items->desc_en,
-                    'lastUpdate'    => $items->created_at
-                ];
-            });
-        }
-        return $result;
-    }
-
     public function getApiAll($data)
     {
-        $result  = $this->modelMasterSubTematikKegiatan->newQuery()
-            ->with(['sub_tematik_kegiatan.image'])
-            ->where(['tematik_kegiatan_id' => $data['tematik_kegiatan_id']])
-            ->orderBy('short_id', 'ASC')
-            ->get();
+        $result = Cache::remember('sub_tematik_kegiatan_' . $data['tematik_kegiatan_id'], now()->addDays(7), function () use ($data) {
 
-        if (!$result) return $this->sendError(null, 'Not Found', 422);
+            $dataResult  = $this->modelMasterSubTematikKegiatan->newQuery()
+                ->with(['sub_tematik_kegiatan.image'])
+                ->where(['tematik_kegiatan_id' => $data['tematik_kegiatan_id']])
+                ->orderBy('short_id', 'ASC')
+                ->get();
 
-        $result->transform(function ($items, $key) {
-            if ($items->sub_tematik_kegiatan != null) {
-                return [
-                    'id'                    => $items->sub_tematik_kegiatan->id ?? null,
-                    'tematik_kegiatan_id'   => $items->tematik_kegiatan_id ?? null,
-                    'sub_tematik_kegiatan'  => $items->sub_tematik_kegiatan->sub_tematik_kegiatan ?? null,
-                    'image'                 => $items->sub_tematik_kegiatan->image ?? null
-                ];
-            }
+            if (!$dataResult) return $this->sendError(null, 'Not Found', 422);
+
+            $dataResult->transform(function ($items, $key) {
+                if ($items->sub_tematik_kegiatan != null) {
+                    return [
+                        'id'                    => $items->sub_tematik_kegiatan->id ?? null,
+                        'tematik_kegiatan_id'   => $items->tematik_kegiatan_id ?? null,
+                        'sub_tematik_kegiatan'  => $items->sub_tematik_kegiatan->sub_tematik_kegiatan ?? null,
+                        'image'                 => $items->sub_tematik_kegiatan->image ?? null
+                    ];
+                }
+            });
+            $dataResult = $dataResult->toArray();
+            $dataResult = array_filter($dataResult, function ($value) {
+                return !is_null($value);
+            });
+
+            // Menyusun ulang array (karena array_filter bisa mengubah indeks)
+            return $dataResult = array_values($dataResult);
         });
-        $result = $result->toArray();
-        $result = array_filter($result, function ($value) {
-            return !is_null($value);
-        });
 
-        // Menyusun ulang array (karena array_filter bisa mengubah indeks)
-        $result = array_values($result);
         return $this->sendSuccess($result);
     }
 }

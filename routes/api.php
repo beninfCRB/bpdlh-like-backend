@@ -140,4 +140,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Laporan Akhir Kegiatan
     Route::post('laporanAkhir', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'laporan_akhir']);
+
+    // Dokumen File
+    Route::get('file/{id}', [App\Http\Controllers\Api\Akseslh\FileUploadController::class, 'show']);
 });

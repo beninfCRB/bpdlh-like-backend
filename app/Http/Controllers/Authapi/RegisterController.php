@@ -364,8 +364,10 @@ class RegisterController extends ApiController
             'nama_kontak_darurat'               => 'required|string',
             'nomor_kontak_darurat'              => ['required', 'different:nohp_pic', \Illuminate\Validation\Rule::unique('data_pic_kelompok_masyarakats', 'nomor_kontak_darurat')->whereNull('deleted_at')],
             'alamat_kontak_darurat'             => 'required|string',
+            'is_accurate'                       => 'required',
+            'accurate_date'                     => 'required_if:is_accurate,1|date',
         ], [
-            'kelompok_masyarakat.not_undefined' => ':attribute tidak valid',
+            'kelompok_masyarakat.not_undefined' => ':attribute kelompok masyarakat telah terdaftar.',
         ]);
 
         if ($validator->fails()) {
@@ -472,6 +474,8 @@ class RegisterController extends ApiController
                 'nama_kontak_darurat'       => $input['nama_kontak_darurat'] ?? null,
                 'nomor_kontak_darurat'      => $input['nomor_kontak_darurat'] ?? null,
                 'alamat_kontak_darurat'     => $input['alamat_kontak_darurat'] ?? null,
+                'is_accurate'               => $input['is_accurate'] ? true : false,
+                'accurate_date'             => date('Y-m-d H:i:s'),
             ]);
 
             $user_akseslh = UserAkseslh::create([

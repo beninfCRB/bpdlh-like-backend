@@ -3,6 +3,8 @@
 
 namespace App\Services\Akseslh;
 
+use App\Jobs\PengajuanKegiatanSendEmailPengaju;
+use App\Jobs\PengajuanKegiatanSendEmailVerifikator;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\PdfService;
@@ -1252,6 +1254,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $jasaProfesi = 0;
 
+        $tanggalAwal = Carbon::parse($model->tanggal_mulai_kegiatan);
+        $tanggalAkhir = Carbon::parse($model->tanggal_akhir_kegiatan);
+        $jumlahHari = $tanggalAkhir->diffInDays($tanggalAwal) + 1;
+
+
         foreach ($dataKomponenRab as $item) {
             # code...
             if ($item['id_komponen'] == $idNaraSumber) {
@@ -1283,27 +1290,31 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 # code...
                 if ($item['id_komponen'] == $idTransportasi) {
                     # code...
+                    $qtyWajib = $jumlah_peserta * $jumlahHari;
+
                     if ($item['qty'] < $jumlah_peserta) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $qtyWajib]]), 422);
                     }
 
-                    if ($item['qty'] > $jumlah_peserta) {
+                    if ($item['qty'] > $qtyWajib) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $qtyWajib]]), 422);
                     }
                 }
 
                 if ($item['id_komponen'] == $idKonsumsi) {
                     # code...
+                    $qtyWajib = $jumlah_peserta * $jumlahHari;
+
                     if ($item['qty'] < $jumlah_peserta) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $qtyWajib]]), 422);
                     }
 
-                    if ($item['qty'] > $jumlah_peserta) {
+                    if ($item['qty'] > $qtyWajib) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $qtyWajib]]), 422);
                     }
                 }
             }
@@ -1374,6 +1385,14 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
             ];
 
+            $sendData = [
+                'nama_pengusul' => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                'judul_kegiatan' => $model->judul_pengajuan_kegiatan,
+                'nomor_pengajuan' => $model->nomor_pengajuan,
+            ];
+
+            PengajuanKegiatanSendEmailPengaju::dispatch($model->user_akseslh, $sendData);
+
             // Mengirim email ke verifikator
             // $verifikator = UserAkseslh::where('role_user', 'verifikator')->get();
             $verifikator = UserAkseslh::where('role_user', 'verifikator')
@@ -1383,7 +1402,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ->get();
 
             foreach ($verifikator as $user) {
-                $this->emailPhpService->verifikasiPengajuanKegiatan($user, 'Verifikasi Pengajuan Kegiatan', $model, null, 'mail.verifikasi-pengajuan-kegiatan');
+                PengajuanKegiatanSendEmailVerifikator::dispatch($user, $model);
             }
 
             \DB::commit();

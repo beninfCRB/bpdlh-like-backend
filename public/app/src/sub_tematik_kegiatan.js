@@ -90,7 +90,7 @@ var data_sub_tematik_kegiatan = (function () {
                         <a data-id=` +
                                 full.id +
                                 ` href="#" onclick="deleteSubTematikKegiatan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Non Aktifkan">
-                          <i class="fa fa-trash"></i>
+                          <i class="fa  fa-unlock-alt"></i>
                         </a>`
                             );
                         } else {

@@ -41,6 +41,8 @@ class DataPicKelompokMasyarakat extends AppModel
         'nama_kontak_darurat',
         'nomor_kontak_darurat',
         'alamat_kontak_darurat',
+        'is_accurate',
+        'accurate_date',
         'flag',
         'username',
     ];

@@ -38,23 +38,12 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
                 'jam_awal'          => $model->jam_awal,
                 'tanggal_akhir'     => $model->tanggal_akhir,
                 'jam_akhir'         => $model->jam_akhir,
+                'batch'             => $model->batch,
                 'batas_pengajuan'   => $model->batas_pengajuan,
             ];
         });
 
         return $this->sendSuccess($result);
-
-        // $model = $this->model->newQuery()->latest()->first();
-
-        // $result = [
-        //     'tanggal_awal'      => $model->tanggal_awal,
-        //     'jam_awal'          => $model->jam_awal,
-        //     'tanggal_akhir'     => $model->tanggal_akhir,
-        //     'jam_akhir'         => $model->jam_akhir,
-        //     'batas_pengajuan'         => $model->batas_pengajuan,
-        // ];
-
-        // return $this->sendSuccess($result);
     }
 
     public function getAllAttr()
@@ -82,7 +71,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->find($id);
+        $result =   $this->model->newQuery()->withTrashed()->find($id);
 
         return $this->sendSuccess($result);
     }
@@ -103,6 +92,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
                 'tanggal_akhir'     =>  $data['tanggal_akhir'],
                 'jam_awal'          =>  $data['jam_awal'],
                 'jam_akhir'         =>  $data['jam_akhir'],
+                'batch'             =>  $data['batch'],
                 'batas_pengajuan'   =>  $amount,
                 'username'          =>  auth()->user()->username ?? auth()->user()->email
             ]);
@@ -119,18 +109,22 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
 
     public function update($id, $data)
     {
-        $read   =   $this->model->newQuery()->find($id);
+        $read   =   $this->model->newQuery()->withTrashed()->find($id);
 
         \DB::beginTransaction();
 
         try {
 
-            $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
-            $read->short_id                     =   $data['short_id'];
-            $read->code_id                     =   $data['code_id'];
+            $read->tanggal_awal    =   $data['tanggal_awal'];
+            $read->jam_awal        =   $data['jam_awal'];
+            $read->tanggal_akhir   =   $data['tanggal_akhir'];
+            $read->jam_akhir       =   $data['jam_akhir'];
+            $read->batch           =   $data['batch'];
+            $read->batas_pengajuan =   preg_replace('/[^\d]/', '', $data['batas_pengajuan']);
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('range_opening');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -144,6 +138,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            Cache::forget('range_opening');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes

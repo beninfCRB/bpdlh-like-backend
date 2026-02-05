@@ -31,10 +31,12 @@ var data_log_jadwal_pembukaan = (function () {
                 { data: "jam_awal" },
                 { data: "tanggal_akhir" },
                 { data: "jam_akhir" },
+                { data: "batch" },
                 { data: "batas_pengajuan" },
                 { data: "deleted_at" },
                 { data: "created_at" },
                 { data: "updated_at" },
+                {},
             ],
             columnDefs: [
                 {
@@ -43,14 +45,14 @@ var data_log_jadwal_pembukaan = (function () {
                     orderable: false,
                 },
                 {
-                    targets: -4,
+                    targets: -5,
                     render: function (data, type, full, meta) {
                         return numberFormat.format(full.batas_pengajuan);
                         // return full.batas_pengajuan;
                     },
                 },
                 {
-                    targets: -3,
+                    targets: -4,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -62,7 +64,7 @@ var data_log_jadwal_pembukaan = (function () {
                     },
                 },
                 {
-                    targets: -2,
+                    targets: -3,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -74,7 +76,7 @@ var data_log_jadwal_pembukaan = (function () {
                     },
                 },
                 {
-                    targets: -1,
+                    targets: -2,
                     searchable: false,
                     orderable: false,
                     render: function (data, type, full, meta) {
@@ -82,6 +84,27 @@ var data_log_jadwal_pembukaan = (function () {
                             return null;
                         } else {
                             return dayjs(full.updated_at).format("DD MMM YYYY");
+                        }
+                    },
+                },
+                {
+                    targets: -1,
+                    orderable: false,
+                    render: function (data, type, full, meta) {
+                        const userRole = $("#user-role").val();
+                        var editRoute = route + "/" + full.id + "/edit";
+
+                        if (userRole == "administrator") {
+                            return (
+                                `
+                            <a href="` +
+                                editRoute +
+                                `" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Ubah">
+                              <i class="fa fa-pencil"></i>
+                            </a>`
+                            );
+                        } else {
+                            return ``;
                         }
                     },
                 },

@@ -91,7 +91,7 @@ var data_tematik_kegiatan = (function () {
                         <a data-id=` +
                                 full.id +
                                 ` href="#" onclick="deleteTematikKegiatan(this,event)" class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Non Aktifkan">
-                          <i class="fa fa-trash"></i>
+                          <i class="fa fa-unlock-alt"></i>
                         </a>`
                             );
                         } else {

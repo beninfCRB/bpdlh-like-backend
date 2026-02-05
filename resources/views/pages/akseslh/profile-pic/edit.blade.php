@@ -71,6 +71,17 @@
                             <input type="hidden" id="data_pic_kelompok_masyarakat_id"
                                 name="data_pic_kelompok_masyarakat_id"
                                 value="{{ $data->data->data_pic_kelompok_masyarakat_id }}">
+                            @if ($data->data->jenis_kelompok_masyarakat)
+                                <div class="form-group">
+                                    <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span
+                                            class="text-danger">*</span></label>
+
+                                    <input type="text" class="form-control" id="jenis_kelompok_masyarakat"
+                                        name="jenis_kelompok_masyarakat" placeholder="Nama PIC"
+                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat }}"
+                                        readonly>
+                                </div>
+                            @endif
                             <div class="form-group">
                                 <label for="kelompok_masyarakat">Kelompok Masyarakat <span
                                         class="text-danger">*</span></label>
@@ -248,6 +259,15 @@
                                 </div>
                             @endif
 
+                            @if ($data->data->alamat_kontak_darurat)
+                                <div class="form-group">
+                                    <label for="alamat_kontak_darurat">Alamat Kontak Darurat <span
+                                            class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="alamat_kontak_darurat" name="alamat_kontak_darurat" readonly rows="5">{{ $data->data->data_pic_kelompok_masyarakat->alamat_kontak_darurat }}</textarea>
+
+                                </div>
+                            @endif
+
                             <div class="row">
                                 @forelse ($data->data->data_pic_kelompok_masyarakat->foto as $item)
                                     @if ($item->group == 'foto_ktp' || $item->group == 'profil_kelompok')
@@ -293,8 +313,31 @@
                         <form role="form" method="POST">
                             <input type="hidden" id="profile_pic_id" name="profile_pic_id"
                                 value="{{ $data->data->id }}">
+                            @if ($data->data->jenis_kelompok_masyarakat)
+                                <div
+                                    class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat == $data->data->jenis_kelompok_masyarakat ? 'has-success' : 'has-error' }}">
+                                    <label for="jenis_kelompok_masyarakat">Jenis Kelompok Masyarakat <span
+                                            class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" id="jenis_kelompok_masyarakat"
+                                            name="jenis_kelompok_masyarakat" class="form-control"
+                                            value="{{ $data->data->jenis_kelompok_masyarakat }}" readonly />
+                                        <span class="input-group-addon">
+                                            @if (
+                                                ($data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->id !=
+                                                    $data->data->jenis_kelompok_masyarakat_id &&
+                                                    $data->data->jenis_kelompok_masyarakat_id) ||
+                                                    $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat !=
+                                                        $data->data->jenis_kelompok_masyarakat)
+                                                <input type="checkbox" class="profile-field"
+                                                    name="jenis_kelompok_masyarakat" id="">
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            @endif
                             <div
-                                class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->id == $data->data->kelompok_masyarakat_id ? 'has-success' : 'has-error' }}">
+                                class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat == $data->data->kelompok_masyarakat ? 'has-success' : 'has-error' }}">
                                 <label for="kelompok_masyarakat">Kelompok Masyarakat <span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
@@ -302,8 +345,10 @@
                                         class="form-control" value="{{ $data->data->kelompok_masyarakat }}" readonly />
                                     <span class="input-group-addon">
                                         @if (
-                                            $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->id != $data->data->kelompok_masyarakat_id &&
-                                                $data->data->kelompok_masyarakat_id)
+                                            ($data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->id != $data->data->kelompok_masyarakat_id &&
+                                                $data->data->kelompok_masyarakat_id) ||
+                                                $data->data->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat !=
+                                                    $data->data->kelompok_masyarakat)
                                             <input type="checkbox" class="profile-field" name="kelompok_masyarakat"
                                                 id="">
                                         @endif
@@ -652,7 +697,7 @@
                             @if ($data->data->nama_kontak_darurat)
                                 <div
                                     class="form-group {{ $data->data->data_pic_kelompok_masyarakat->nama_kontak_darurat == $data->data->nama_kontak_darurat ? 'has-success' : 'has-error' }}">
-                                    <label for="nama_kontak_darurat">Jenis Kelamin<span
+                                    <label for="nama_kontak_darurat">Nama Kontak Darurat<span
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <input type="text" id="nama_kontak_darurat" name="nama_kontak_darurat"
@@ -673,7 +718,7 @@
                             @if ($data->data->nomor_kontak_darurat)
                                 <div
                                     class="form-group {{ $data->data->data_pic_kelompok_masyarakat->nomor_kontak_darurat == $data->data->nomor_kontak_darurat ? 'has-success' : 'has-error' }}">
-                                    <label for="nomor_kontak_darurat">Jenis Kelamin<span
+                                    <label for="nomor_kontak_darurat">Nomor Kontak Darurat<span
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <input type="text" id="nomor_kontak_darurat" name="nomor_kontak_darurat"
@@ -690,6 +735,27 @@
                                     </div>
                                 </div>
                             @endif
+
+                            @if ($data->data->alamat_kontak_darurat)
+                                <div
+                                    class="form-group {{ $data->data->data_pic_kelompok_masyarakat->alamat_kontak_darurat == $data->data->alamat_kontak_darurat ? 'has-success' : 'has-error' }}">
+                                    <label for="alamat_kontak_darurat">Alamat Kontak Darurat<span
+                                            class="text-danger">*</span></label>
+                                    <div class="input-group">
+
+                                        <textarea id="alamat_kontak_darurat" name="alamat_kontak_darurat" class="form-control" rows="5" readonly>{{ $data->data->alamat_kontak_darurat }}</textarea>
+                                        <span class="input-group-addon">
+                                            @if (
+                                                $data->data->data_pic_kelompok_masyarakat->alamat_kontak_darurat != $data->data->alamat_kontak_darurat &&
+                                                    $data->data->alamat_kontak_darurat)
+                                                <input type="checkbox" class="profile-field" name="alamat_kontak_darurat"
+                                                    id="">
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            @endif
+
 
                             <div class="row">
                                 @forelse ($data->data->document as $item)
