@@ -44,18 +44,6 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
         });
 
         return $this->sendSuccess($result);
-
-        // $model = $this->model->newQuery()->latest()->first();
-
-        // $result = [
-        //     'tanggal_awal'      => $model->tanggal_awal,
-        //     'jam_awal'          => $model->jam_awal,
-        //     'tanggal_akhir'     => $model->tanggal_akhir,
-        //     'jam_akhir'         => $model->jam_akhir,
-        //     'batas_pengajuan'         => $model->batas_pengajuan,
-        // ];
-
-        // return $this->sendSuccess($result);
     }
 
     public function getAllAttr()
@@ -136,6 +124,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
             $read->save();
 
             \DB::commit(); // commit the changes
+            Cache::forget('range_opening');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
@@ -149,6 +138,7 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            Cache::forget('range_opening');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
             \DB::rollBack(); // rollback the changes
