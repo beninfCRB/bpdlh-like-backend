@@ -3,6 +3,8 @@
 
 namespace App\Services\Akseslh;
 
+use App\Jobs\PengajuanKegiatanSendEmailPengaju;
+use App\Jobs\PengajuanKegiatanSendEmailVerifikator;
 use App\Models\DetailLogTahapanPengajuanKegiatan;
 use App\Services\AppService;
 use App\Services\PdfService;
@@ -1290,7 +1292,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     # code...
                     $qtyWajib = $jumlah_peserta * $jumlahHari;
 
-                    if ($item['qty'] < $qtyWajib) {
+                    if ($item['qty'] < $jumlah_peserta) {
                         # code...
                         return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $qtyWajib]]), 422);
                     }
@@ -1305,7 +1307,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     # code...
                     $qtyWajib = $jumlah_peserta * $jumlahHari;
 
-                    if ($item['qty'] < $qtyWajib) {
+                    if ($item['qty'] < $jumlah_peserta) {
                         # code...
                         return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $qtyWajib]]), 422);
                     }
@@ -1383,6 +1385,14 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
             ];
 
+            $sendData = [
+                'nama_pengusul' => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                'judul_kegiatan' => $model->judul_pengajuan_kegiatan,
+                'nomor_pengajuan' => $model->nomor_pengajuan,
+            ];
+
+            PengajuanKegiatanSendEmailPengaju::dispatch($model->user_akseslh->user, $sendData);
+
             // Mengirim email ke verifikator
             // $verifikator = UserAkseslh::where('role_user', 'verifikator')->get();
             $verifikator = UserAkseslh::where('role_user', 'verifikator')
@@ -1392,7 +1402,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ->get();
 
             foreach ($verifikator as $user) {
-                $this->emailPhpService->verifikasiPengajuanKegiatan($user, 'Verifikasi Pengajuan Kegiatan', $model, null, 'mail.verifikasi-pengajuan-kegiatan');
+                PengajuanKegiatanSendEmailVerifikator::dispatch($user, $model);
             }
 
             \DB::commit();
