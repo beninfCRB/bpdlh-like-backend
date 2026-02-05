@@ -1391,7 +1391,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'nomor_pengajuan' => $model->nomor_pengajuan,
             ];
 
-            PengajuanKegiatanSendEmailPengaju::dispatch($model->user_akseslh->user, $sendData);
+            PengajuanKegiatanSendEmailPengaju::dispatch($model->user_akseslh, $sendData);
 
             // Mengirim email ke verifikator
             // $verifikator = UserAkseslh::where('role_user', 'verifikator')->get();
