@@ -80,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::middleware(['ensureroleweb:administrator'])->group(function () {
             Route::resource('email-blast', App\Http\Controllers\Cms\Akseslh\EmailBlastController::class);
+            Route::resource('video', App\Http\Controllers\Cms\Akseslh\VideoController::class);
         });
 
         Route::middleware(['ensureroleweb:administrator,pmu-bpdlh'])->group(function () {
@@ -177,5 +178,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-master-indikator', [App\Http\Controllers\Datatable\Akseslh\MasterIndikatorController::class, 'getAll'])->name('data-master-indikator');
         Route::get('/data-laporan-akhir-kegiatan', [App\Http\Controllers\Datatable\Akseslh\LaporanAkhirKegiatanController::class, 'getAll'])->name('data-laporan-akhir-kegiatan');
         Route::get('/data-tolak-pengajuan-dan-profil', [App\Http\Controllers\Datatable\Akseslh\TolakPengajuanDanProfilController::class, 'getAll'])->name('data-tolak-pengajuan-dan-profil');
+        Route::get('/data-video', [App\Http\Controllers\Datatable\Akseslh\VideoController::class, 'getAll'])->name('data-video');
     });
 });

@@ -54,6 +54,10 @@ Route::get('getTahapanKegiatan', [App\Http\Controllers\Api\Akseslh\TahapanPengaj
 
 Route::get('banner-informasi', [App\Http\Controllers\Api\Akseslh\BannerInformasiController::class, 'index']);
 
+Route::get('video', [App\Http\Controllers\Api\Akseslh\VideoController::class, 'index']);
+// Dokumen File
+Route::get('file/{id}', [App\Http\Controllers\Api\Akseslh\FileUploadController::class, 'show']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
@@ -140,7 +144,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Laporan Akhir Kegiatan
     Route::post('laporanAkhir', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'laporan_akhir']);
-
-    // Dokumen File
-    Route::get('file/{id}', [App\Http\Controllers\Api\Akseslh\FileUploadController::class, 'show']);
 });
