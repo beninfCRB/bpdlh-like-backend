@@ -21,29 +21,68 @@
                     <h3 class="panel-title">Daftar Testimonial</h3>
                 </div>
                 <div class="panel-body">
-                    <div class="row">
-                        @forelse ($testimonials as $item)
-                            <div class="col-md-6 col-sm-6 col-lg-4">
-                                <div class="mini-stat clearfix bx-shadow">
-                                    <span class="mini-stat-icon"><img
-                                            src="{{ asset('template/images/users/avatar-1.jpg') }}" alt=""
-                                            class="img-circle img-responsive" /></span>
-                                    <div class="mini-stat-info text-right text-muted">
-                                        <span class="name">{{ $item->data_pic_kelompok_masyarakat->nama_pic }}</span>
-                                        {{ $item->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat }}
-                                    </div>
-                                    <br />
-                                    <hr class="m-t-10" />
-                                    <ul class="text-center social-links list-inline m-0">
-                                        <p class="text-justify">
-                                            {{ Str::words($item->testimonial, '20', '...') }}
-                                        </p>
-                                    </ul>
-                                </div>
-                            </div>
-                        @empty
-                        @endforelse
+                    <div class="row m-b-10">
+                        <div class="col-md-12">
+                            <span class="input-group-btn">
+                                <a href="{{ route('testimonial.export') }}"
+                                    class="btn waves-effect waves-light btn-success">
+                                    Export Excel
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="table-responsive m-t-10" data-pattern="priority-columns">
+                        <table id="" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Jenis Kelompok</th>
+                                    <th>Nama Kelompok</th>
+                                    <th>Nama PIC</th>
+                                    <th>Nomor Pengajuan</th>
+                                    <th>Nilai Pengajuan</th>
+                                    <th>Nilai Pencairan</th>
+                                    <th>Testimonial</th>
+                                    <th>Deleted at</th>
+                                    <th>Created at</th>
+                                    <th>Updated at</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($testimonials as $key => $item)
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>{{ $item->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->data_pic_kelompok_masyarakat->nama_pic ?? '-' }}</td>
+                                        <td>{{ $item->pengajuan_kegiatan->nomor_pengajuan }}</td>
+                                        <td>{{ number_format(
+                                            $item->pengajuan_kegiatan->rab_pengajuan_paket_kegiatans->reduce(function ($carry, $rab) {
+                                                return $carry + $rab->harga_unit * $rab->qty;
+                                            }, 0),
+                                        ) }}
+                                        </td>
+                                        <td>{{ number_format($item->pengajuan_kegiatan->transaksi_penyaluran()->sum('nilai_penyaluran')) }}
+                                        </td>
+                                        <td>{{ $item->testimonial }}</td>
+                                        <td>{{ $item->deleted_at ?? '-' }}</td>
+                                        <td>{{ $item->created_at ?? '-' }}</td>
+                                        <td>{{ $item->updated_at ?? '-' }}</td>
+                                        <td>
+                                            {{-- <a href="{{ route('pic-kelompok-masyarakat.edit', $item->id) }}"
+                                                class="btn btn-warning btn-xs">Edit</a>
 
+                                            <button class="btn btn-danger btn-xs" data-id="'{{ $item->id }}'"
+                                                onclick="deletePICKelompokMasyarakat('{{ $item->id }}')">Hapus</button> --}}
+                                        </td>
+                                    </tr>
+                                @empty
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                     {{ $testimonials->links() }}
                 </div>

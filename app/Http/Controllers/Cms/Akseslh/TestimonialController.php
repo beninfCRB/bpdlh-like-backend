@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
+use App\Exports\TestimonialExport;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Services\Akseslh\TestimonialService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TestimonialController extends ApiController
 {
@@ -21,7 +23,18 @@ class TestimonialController extends ApiController
 
     public function index()
     {
-        $testimonials = Testimonial::paginate(10);
+        $testimonials = Testimonial::query()->with([
+            'data_pic_kelompok_masyarakat' => function ($query) {
+                $query->withTrashed();
+            },
+            'data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+                $query->withTrashed();
+            },
+            'data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis' => function ($query) {
+                $query->withTrashed();
+            },
+        ])->orderBy('created_at', 'DESC')->paginate(10);
+
         return view("pages.akseslh.testimonial.index", compact('testimonials'));
     }
 
@@ -116,5 +129,10 @@ class TestimonialController extends ApiController
         } catch (\Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
         }
+    }
+
+    public function export()
+    {
+        return Excel::download(new TestimonialExport(), 'testimonial.xlsx');
     }
 }
