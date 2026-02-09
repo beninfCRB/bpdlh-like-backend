@@ -20,12 +20,32 @@ return [
     'allowed_methods' => ['*'],
 
     // 'allowed_origins' => ['*'],
-    'allowed_origins' => [
-        'http://localhost:3000',
-        'https://layanan-dana-masyarakat.bpdlh.id',
-        'https://layanan-masyarakat-uat.bpdlh.id',
-        env('APP_ENV') == 'production' ? '' : 'https://ladama.vercel.app',
-    ],
+    // 'allowed_origins' => [
+    //     'http://localhost:3000',
+    //     'https://layanan-dana-masyarakat.bpdlh.id',
+    //     'https://layanan-masyarakat-uat.bpdlh.id',
+    //     env('APP_ENV') == 'production' ? '' : 'https://ladama.vercel.app',
+    // ],
+
+    'allowed_origins' => array_filter([
+        // production only
+        env('APP_ENV') === 'production'
+            ? 'https://layanan-dana-masyarakat.bpdlh.id'
+            : null,
+
+        // non-production only
+        env('APP_ENV') !== 'production'
+            ? 'http://localhost:3000'
+            : null,
+
+        env('APP_ENV') !== 'production'
+            ? 'https://layanan-masyarakat-uat.bpdlh.id'
+            : null,
+
+        env('APP_ENV') !== 'production'
+            ? 'https://ladama.vercel.app'
+            : null,
+    ]),
 
 
     'allowed_origins_patterns' => [],
