@@ -53,9 +53,9 @@
                                 @forelse ($testimonials as $key => $item)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
-                                        <td>{{ $item->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat ?? '-' }}
-                                        </td>
                                         <td>{{ $item->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat ?? '-' }}
+                                        </td>
+                                        <td>{{ $item->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat ?? '-' }}
                                         </td>
                                         <td>{{ $item->data_pic_kelompok_masyarakat->nama_pic ?? '-' }}</td>
                                         <td>{{ $item->pengajuan_kegiatan->nomor_pengajuan }}</td>

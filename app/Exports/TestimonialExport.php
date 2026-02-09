@@ -48,8 +48,8 @@ class TestimonialExport implements FromCollection, WithHeadings, WithMapping
     public function map($testimonial): array
     {
         return [
-            $testimonial->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat ?? '-',
             $testimonial->data_pic_kelompok_masyarakat->kelompok_masyarakat->jenis->jenis_kelompok_masyarakat ?? '-',
+            $testimonial->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat ?? '-',
             $testimonial->data_pic_kelompok_masyarakat->nama_pic ?? '-',
             $testimonial->pengajuan_kegiatan->nomor_pengajuan,
             number_format($testimonial->pengajuan_kegiatan->rab_pengajuan_paket_kegiatans->reduce(function ($carry, $rab) {
