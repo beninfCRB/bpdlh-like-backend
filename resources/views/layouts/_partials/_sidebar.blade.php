@@ -213,6 +213,11 @@
                                 class="md md-now-widgets"></i><span> Banner Informasi
                             </span></a>
                     </li>
+                    <li>
+                        <a href="{{ route('testimonial.index') }}" class="waves-effect"><i
+                                class="md md-textsms"></i><span> Testimonial
+                            </span></a>
+                    </li>
                 @endif
                 <li class="has_sub">
                     <a href="#" class="waves-effect"><i class="md md-view-list"></i><span> Pengajuan Kegiatan<i

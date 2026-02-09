@@ -129,6 +129,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('master-user-jenis-kelompok', App\Http\Controllers\Cms\Akseslh\MasterUserJenisKelompokController::class);
 
         Route::resource('testimonial', App\Http\Controllers\Cms\Akseslh\TestimonialController::class);
+        Route::get('testimonial-export', [App\Http\Controllers\Cms\Akseslh\TestimonialController::class, 'export'])->name('testimonial.export');
 
         Route::get('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'index'])->name('tolak-pengajuan-dan-profil.index');
         Route::post('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'store'])->name('tolak-pengajuan-dan-profil.store');
