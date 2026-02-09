@@ -43,6 +43,9 @@ class MasterSubTematikKegiatanService extends AppService implements AppServiceIn
     public function getAllAttr()
     {
         $result  = $this->model->newQuery()
+            ->with(['tematik_kegiatan' => function ($q) {
+                $q->withTrashed();
+            }])
             ->orderBy('short_id', 'ASC')
             ->get();
 

@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/jenis-kelompok-masyarakat/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class, 'restore']);
             Route::post('/jenis-dokumen/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class, 'restore']);
             Route::post('/jenis-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class, 'restore']);
+            Route::post('/video/{id}/restore', [App\Http\Controllers\Cms\Akseslh\VideoController::class, 'restore']);
         });
 
         Route::middleware(['ensureroleweb:administrator'])->group(function () {
