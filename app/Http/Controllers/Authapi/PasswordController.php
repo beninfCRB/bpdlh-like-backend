@@ -52,10 +52,12 @@ class PasswordController extends ApiController
                 # code...
                 return $this->sendSuccess(null, 'Success send link');
             } else {
+                \Sentry\captureMessage('Error send link to: ' . $request->email . ' ' . $status, \Sentry\Severity::warning());
                 return $this->sendError(null, 'Error send link', 422);
             }
         } catch (\Exception $th) {
             //throw $th;
+            \Sentry\captureMessage('Error send link to: ' . $request->email . ' ' . $th->getMessage(), \Sentry\Severity::warning());
             return $this->sendError(null, $th->getMessage(), 500);
         }
     }
@@ -101,7 +103,8 @@ class PasswordController extends ApiController
                 return $this->sendSuccess(null, 'Success Change Password');
             } else {
                 \DB::rollBack();
-                return $this->sendError(null, 'Error Change Password');
+                \Sentry\captureMessage('Error change password for: ' . $request->email . ' ' . $status, \Sentry\Severity::warning());
+                return $this->sendError(null, 'Error Change Password', 422);
             }
         } catch (\Throwable $th) {
             //throw $th;
