@@ -100,8 +100,11 @@ class VideoService extends AppService implements AppServiceInterface
                     'fileable_id'   => $data->id,
                 ]);
             }
-
             \DB::commit(); // commit the changes
+            if (!empty($input['title'])) {
+                $tahapan = strtolower(str_replace(' ', '_', $input['title']));
+                Cache::forget('video_' . $tahapan);
+            }
             Cache::forget('video');
             return $this->sendSuccess($data);
         } catch (\Exception $exception) {
@@ -124,6 +127,10 @@ class VideoService extends AppService implements AppServiceInterface
             $read->save();
 
             \DB::commit(); // commit the changes
+            if (!empty($input['title'])) {
+                $tahapan = strtolower(str_replace(' ', '_', $input['title']));
+                Cache::forget('video_' . $tahapan);
+            }
             Cache::forget('video');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
@@ -138,6 +145,10 @@ class VideoService extends AppService implements AppServiceInterface
         try {
             $read->delete();
             \DB::commit(); // commit the changes
+            if (!empty($input['title'])) {
+                $tahapan = strtolower(str_replace(' ', '_', $input['title']));
+                Cache::forget('video_' . $tahapan);
+            }
             Cache::forget('video');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
