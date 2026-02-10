@@ -3,10 +3,11 @@
 
 namespace App\Services\Akseslh;
 
-
+use App\Imports\TestimonialPublishImport;
 use App\Models\Testimonial;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class TestimonialService extends AppService implements AppServiceInterface
@@ -161,7 +162,7 @@ class TestimonialService extends AppService implements AppServiceInterface
                 'id'            => $model->id,
                 'title'         => $model->title_en,
                 'desc'          => $model->desc_en,
-                'lastUpdate'    => $model->created_at
+                'lastUpdate'    => $model->published_date
             ];
         }
 
@@ -228,8 +229,8 @@ class TestimonialService extends AppService implements AppServiceInterface
                     $query->withTrashed();
                 },
             ])
-            // ->where('flag', true)
-            ->orderBy('created_at', 'ASC')
+            ->where('is_published', true)
+            ->orderBy('published_date', 'ASC')
             ->get();
 
         $result->transform(function ($items, $key) {
@@ -239,7 +240,7 @@ class TestimonialService extends AppService implements AppServiceInterface
                 'nama_pic'                => $items->data_pic_kelompok_masyarakat->nama_pic,
                 'provinsi_pic'            => $items->data_pic_kelompok_masyarakat->provinsi->name,
                 'testimonial'             => $items->testimonial,
-                'flag'                    => $items->flag,
+                'is_published'            => $items->is_published,
             ];
         });
 
@@ -257,5 +258,13 @@ class TestimonialService extends AppService implements AppServiceInterface
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
+    }
+
+    public function import($file)
+    {
+        $import = new TestimonialPublishImport();
+        Excel::import($import, $file);
+
+        return $this->sendSuccess(null, 'Import successful.');
     }
 }

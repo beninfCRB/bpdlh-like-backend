@@ -16,6 +16,8 @@ class Testimonial extends AppModel
         'data_pic_kelompok_masyarakat_id',
         'pengajuan_kegiatan_id',
         'testimonial',
+        'is_published',
+        'published_date',
     ];
 
     /**
