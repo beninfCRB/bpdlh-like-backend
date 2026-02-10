@@ -217,16 +217,29 @@ class TestimonialService extends AppService implements AppServiceInterface
     public function apiGetAll()
     {
         $result  = $this->model->newQuery()
-            ->where('flag', true)
-            ->orderBy('short_id', 'ASC')
+            ->with([
+                'data_pic_kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis' => function ($query) {
+                    $query->withTrashed();
+                },
+            ])
+            // ->where('flag', true)
+            ->orderBy('created_at', 'ASC')
             ->get();
 
         $result->transform(function ($items, $key) {
             return [
-                'id'                            => $items->id,
-                'jenis_kelompok_masyarakat'     => $items->jenis_kelompok_masyarakat,
-                'short_id'                      => $items->short_id,
-                'flag'                          => $items->flag,
+                'id'                      => $items->id,
+                'kelompok_masyarakat'     => $items->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'nama_pic'                => $items->data_pic_kelompok_masyarakat->nama_pic,
+                'provinsi_pic'            => $items->data_pic_kelompok_masyarakat->provinsi->name,
+                'testimonial'             => $items->testimonial,
+                'flag'                    => $items->flag,
             ];
         });
 
