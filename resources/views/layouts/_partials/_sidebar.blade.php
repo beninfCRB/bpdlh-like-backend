@@ -214,6 +214,11 @@
                             </span></a>
                     </li>
                     <li>
+                        <a href="{{ route('video.index') }}" class="waves-effect"><i
+                                class="md md-video-collection"></i><span> Video
+                            </span></a>
+                    </li>
+                    <li>
                         <a href="{{ route('testimonial.index') }}" class="waves-effect"><i
                                 class="md md-textsms"></i><span> Testimonial
                             </span></a>

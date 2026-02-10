@@ -135,4 +135,44 @@ class TestimonialController extends ApiController
     {
         return Excel::download(new TestimonialExport(), 'testimonial.xlsx');
     }
+
+    public function unpublish($id)
+    {
+        $result = $this->testimonialService->unpublish($id);
+        try {
+            if ($result->success) {
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('testimonial.index');
+            }
+
+            return back()->with('error', $result->message);
+        } catch (\Exception $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function import(Request $request)
+    {
+
+        $request->validate([
+            'fileImport' => 'required|mimes:xlsx,xls',
+        ]);
+
+        $file = $request->file('fileImport');
+
+        $result = $this->testimonialService->import($file);
+
+        try {
+            if ($result->success) {
+                // Contoh menyimpan session flash
+                session()->flash('success', $result->message);
+                return redirect()->route('testimonial.index');
+            }
+
+            return back()->with('error', $result->message);
+        } catch (\Exception $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
+    }
 }

@@ -3,10 +3,11 @@
 
 namespace App\Services\Akseslh;
 
-
+use App\Imports\TestimonialPublishImport;
 use App\Models\Testimonial;
 use App\Services\AppService;
 use App\Services\AppServiceInterface;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class TestimonialService extends AppService implements AppServiceInterface
@@ -161,7 +162,7 @@ class TestimonialService extends AppService implements AppServiceInterface
                 'id'            => $model->id,
                 'title'         => $model->title_en,
                 'desc'          => $model->desc_en,
-                'lastUpdate'    => $model->created_at
+                'lastUpdate'    => $model->published_date
             ];
         }
 
@@ -217,16 +218,29 @@ class TestimonialService extends AppService implements AppServiceInterface
     public function apiGetAll()
     {
         $result  = $this->model->newQuery()
-            ->where('flag', true)
-            ->orderBy('short_id', 'ASC')
+            ->with([
+                'data_pic_kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis' => function ($query) {
+                    $query->withTrashed();
+                },
+            ])
+            ->where('is_published', true)
+            ->orderBy('published_date', 'ASC')
             ->get();
 
         $result->transform(function ($items, $key) {
             return [
-                'id'                            => $items->id,
-                'jenis_kelompok_masyarakat'     => $items->jenis_kelompok_masyarakat,
-                'short_id'                      => $items->short_id,
-                'flag'                          => $items->flag,
+                'id'                      => $items->id,
+                'kelompok_masyarakat'     => $items->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'nama_pic'                => $items->data_pic_kelompok_masyarakat->nama_pic,
+                'provinsi_pic'            => $items->data_pic_kelompok_masyarakat->provinsi->name,
+                'testimonial'             => $items->testimonial,
+                'is_published'            => $items->is_published,
             ];
         });
 
@@ -244,5 +258,34 @@ class TestimonialService extends AppService implements AppServiceInterface
             \DB::rollBack(); // rollback the changes
             return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
         }
+    }
+
+    public function unpublish($id)
+    {
+        $result =   $this->model->newQuery()->find($id);
+
+        if (!$result) {
+            return $this->sendError(null, 'Data not found', 404);
+        }
+
+        try {
+            $result->is_published = false;
+            $result->published_date = null;
+            $result->save();
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($result);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
+    public function import($file)
+    {
+        $import = new TestimonialPublishImport();
+        Excel::import($import, $file);
+
+        return $this->sendSuccess(null, 'Import successful.');
     }
 }

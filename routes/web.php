@@ -76,10 +76,12 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/jenis-kelompok-masyarakat/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKelompokMasyarakat::class, 'restore']);
             Route::post('/jenis-dokumen/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisDokumenController::class, 'restore']);
             Route::post('/jenis-kegiatan/{id}/restore', [App\Http\Controllers\Cms\Akseslh\JenisKegiatanController::class, 'restore']);
+            Route::post('/video/{id}/restore', [App\Http\Controllers\Cms\Akseslh\VideoController::class, 'restore']);
         });
 
         Route::middleware(['ensureroleweb:administrator'])->group(function () {
             Route::resource('email-blast', App\Http\Controllers\Cms\Akseslh\EmailBlastController::class);
+            Route::resource('video', App\Http\Controllers\Cms\Akseslh\VideoController::class);
         });
 
         Route::middleware(['ensureroleweb:administrator,pmu-bpdlh'])->group(function () {
@@ -130,6 +132,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('testimonial', App\Http\Controllers\Cms\Akseslh\TestimonialController::class);
         Route::get('testimonial-export', [App\Http\Controllers\Cms\Akseslh\TestimonialController::class, 'export'])->name('testimonial.export');
+        Route::post('testimonial-import', [App\Http\Controllers\Cms\Akseslh\TestimonialController::class, 'import'])->name('testimonial.import');
+        Route::get('testimonial-unpublish/{id}', [App\Http\Controllers\Cms\Akseslh\TestimonialController::class, 'unpublish'])->name('testimonial.unpublish');
 
         Route::get('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'index'])->name('tolak-pengajuan-dan-profil.index');
         Route::post('tolak-pengajuan-dan-profil', [App\Http\Controllers\Cms\Akseslh\TolakPengajuanDanProfilController::class, 'store'])->name('tolak-pengajuan-dan-profil.store');
@@ -178,5 +182,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-master-indikator', [App\Http\Controllers\Datatable\Akseslh\MasterIndikatorController::class, 'getAll'])->name('data-master-indikator');
         Route::get('/data-laporan-akhir-kegiatan', [App\Http\Controllers\Datatable\Akseslh\LaporanAkhirKegiatanController::class, 'getAll'])->name('data-laporan-akhir-kegiatan');
         Route::get('/data-tolak-pengajuan-dan-profil', [App\Http\Controllers\Datatable\Akseslh\TolakPengajuanDanProfilController::class, 'getAll'])->name('data-tolak-pengajuan-dan-profil');
+        Route::get('/data-video', [App\Http\Controllers\Datatable\Akseslh\VideoController::class, 'getAll'])->name('data-video');
     });
 });
