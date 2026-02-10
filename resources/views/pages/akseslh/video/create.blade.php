@@ -42,7 +42,7 @@
                             @enderror
                         </div>
                         <div class="form-group @error('fileVideo') has-error @enderror">
-                            <label for="fileVideo">Video <span class="text-danger">*</span></label>
+                            <label for="fileVideo">Video</label>
                             <input type="file" class="form-control" id="fileVideo" name="fileVideo" accept="video/*">
                             @error('fileVideo')
                                 {{ $message }}

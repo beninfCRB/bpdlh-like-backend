@@ -93,10 +93,10 @@
                                         <td>{{ $item->created_at ?? '-' }}</td>
                                         <td>{{ $item->updated_at ?? '-' }}</td>
                                         <td>
-                                            {{-- <a href="{{ route('pic-kelompok-masyarakat.edit', $item->id) }}"
-                                                class="btn btn-warning btn-xs">Edit</a>
+                                            <a href="{{ route('testimonial.unpublish', $item->id) }}"
+                                                class="btn btn-warning btn-xs">Un Publish</a>
 
-                                            <button class="btn btn-danger btn-xs" data-id="'{{ $item->id }}'"
+                                            {{-- <button class="btn btn-danger btn-xs" data-id="'{{ $item->id }}'"
                                                 onclick="deletePICKelompokMasyarakat('{{ $item->id }}')">Hapus</button> --}}
                                         </td>
                                     </tr>

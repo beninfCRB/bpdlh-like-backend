@@ -45,10 +45,12 @@ class VideoController extends ApiController
         $input  =   $request->validate([
             'title'         => 'required|string|max:150',
             'description'   => 'required|string|max:500',
-            'fileVideo'     => 'required',
+            'fileVideo'     => 'nullable',
         ]);
 
-        $input['fileVideo'] = $request->file('fileVideo');
+        if ($request->hasFile('fileVideo')) {
+            $input['fileVideo'] = $request->file('fileVideo');
+        }
 
         $result =   $this->videoService->create($input);
 

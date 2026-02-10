@@ -89,17 +89,20 @@ class VideoService extends AppService implements AppServiceInterface
                 'username'      =>  auth()->user()->id,
             ]);
 
-            $group = strtolower(str_replace(' ', '_', $input['title']));
+            if (!empty($input['fileVideo'])) {
+                $group = strtolower(str_replace(' ', '_', $input['title']));
 
-            $upload = $this->fileUploadService->handleFile($input['fileVideo'])->saveToDb($group);
+                $upload = $this->fileUploadService->handleFile($input['fileVideo'])->saveToDb($group);
 
-            if (!empty($upload)) {
-                $video = $this->fileTable->newQuery()->find($upload->id);
-                $video->update([
-                    'fileable_type' => get_class($data),
-                    'fileable_id'   => $data->id,
-                ]);
+                if (!empty($upload)) {
+                    $video = $this->fileTable->newQuery()->find($upload->id);
+                    $video->update([
+                        'fileable_type' => get_class($data),
+                        'fileable_id'   => $data->id,
+                    ]);
+                }
             }
+
             \DB::commit(); // commit the changes
             if (!empty($input['title'])) {
                 $tahapan = strtolower(str_replace(' ', '_', $input['title']));

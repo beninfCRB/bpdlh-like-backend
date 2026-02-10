@@ -260,6 +260,27 @@ class TestimonialService extends AppService implements AppServiceInterface
         }
     }
 
+    public function unpublish($id)
+    {
+        $result =   $this->model->newQuery()->find($id);
+
+        if (!$result) {
+            return $this->sendError(null, 'Data not found', 404);
+        }
+
+        try {
+            $result->is_published = false;
+            $result->published_date = null;
+            $result->save();
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess($result);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
     public function import($file)
     {
         $import = new TestimonialPublishImport();
