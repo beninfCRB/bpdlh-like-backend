@@ -31,6 +31,15 @@
                     </div>
                 </div>
 
+                @if (env('CLOUDFLARE_TURNSTILE_ENABLED', false))
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <div class="cf-turnstile" data-sitekey="{{ env('CLOUDFLARE_TURNSTILE_SITE_KEY') }}"
+                                data-size="flexible" data-theme="light"></div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="form-group text-center m-t-40">
                     <div class="col-xs-12">
                         <button class="btn btn-primary btn-lg w-lg waves-effect waves-light" type="submit">Log
@@ -39,16 +48,22 @@
                 </div>
             </form>
 
-            <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
-            <script>
-                grecaptcha.ready(function() {
-                    grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {
-                        action: 'submit'
-                    }).then(function(token) {
-                        document.getElementById('g-recaptcha-response').value = token;
+            @if (env('RECAPTCHA_ENABLED', false))
+                <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
+                <script>
+                    grecaptcha.ready(function() {
+                        grecaptcha.execute('{{ env('RECAPTCHA_SITE_KEY') }}', {
+                            action: 'submit'
+                        }).then(function(token) {
+                            document.getElementById('g-recaptcha-response').value = token;
+                        });
                     });
-                });
-            </script>
+                </script>
+            @endif
+
+            @if (env('CLOUDFLARE_TURNSTILE_ENABLED', false))
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            @endif
         </div>
     </div>
 @endsection
