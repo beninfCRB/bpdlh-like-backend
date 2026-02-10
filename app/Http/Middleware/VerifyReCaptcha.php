@@ -17,22 +17,50 @@ class VerifyReCaptcha
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->isMethod('post')) {
-            $recaptchaResponse = $request->input('g-recaptcha-response');
-            $secretKey = env('RECAPTCHA_SECRET_KEY');
-            $response = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
-                'secret' => $secretKey,
-                'response' => $recaptchaResponse,
-            ]);
-            $responseBody = json_decode($response->getBody());
+        if (env('RECAPTCHA_ENABLED', false)) {
+            if ($request->isMethod('post')) {
+                $recaptchaResponse = $request->input('g-recaptcha-response');
+                $secretKey = env('RECAPTCHA_SECRET_KEY');
+                $response = Http::asForm()->post("https://www.google.com/recaptcha/api/siteverify", [
+                    'secret' => $secretKey,
+                    'response' => $recaptchaResponse,
+                ]);
+                $responseBody = json_decode($response->getBody());
 
-            // if (!$responseBody->success || $responseBody->score < 0.5) {
-            if (!$responseBody->success) {
-                \Sentry\captureMessage('Validate Message: ' . $request->email . ' Response Success=' . $responseBody->success, \Sentry\Severity::warning());
-                return redirect()->back()->with(['error' => 'Invalid reCAPTCHA']);
+                // if (!$responseBody->success || $responseBody->score < 0.5) {
+                if (!$responseBody->success) {
+                    \Sentry\captureMessage('Validate Message: ' . $request->email . ' Response Success=' . $responseBody->success, \Sentry\Severity::warning());
+                    return redirect()->back()->with(['error' => 'Invalid reCAPTCHA']);
+                }
             }
-        }
+            return $next($request);
+        } elseif (env('CLOUDFLARE_TURNSTILE_ENABLED', false)) {
+            $token = $request->input('cf-turnstile-response');
 
-        return $next($request);
+            if (!$token) {
+                return back()->withErrors([
+                    'captcha' => 'CAPTCHA wajib diisi.',
+                ]);
+            }
+
+            $response = Http::asForm()->post(
+                'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+                [
+                    'secret'   => env('CLOUDFLARE_TURNSTILE_SECRET_KEY'),
+                    'response' => $token,
+                    'remoteip' => $request->ip(),
+                ]
+            );
+
+            if (!($response->json('success'))) {
+                return back()->withErrors([
+                    'captcha' => 'Verifikasi CAPTCHA gagal.',
+                ]);
+            }
+
+            return $next($request);
+        } else {
+            return $next($request);
+        }
     }
 }
