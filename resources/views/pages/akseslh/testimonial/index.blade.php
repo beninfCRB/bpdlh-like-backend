@@ -23,12 +23,29 @@
                 <div class="panel-body">
                     <div class="row m-b-10">
                         <div class="col-md-12">
-                            <span class="input-group-btn">
-                                <a href="{{ route('testimonial.export') }}"
-                                    class="btn waves-effect waves-light btn-success">
-                                    Export Excel
-                                </a>
-                            </span>
+                            <form role="form" class="form-horizontal" method="POST"
+                                action="{{ route('testimonial.import') }}" enctype="multipart/form-data">
+                                @csrf
+                                <div class="input-group m-t-10">
+                                    <input type="file" id="fileImport" name="fileImport" class="form-control"
+                                        placeholder="file" accept=".xls,.xlsx" />
+                                    @error('fileImport')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn waves-effect waves-light btn-primary">
+                                            Import Testimonial
+                                        </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <a href="{{ route('testimonial.export') }}"
+                                            class="btn waves-effect waves-light btn-success">
+                                            Export Excel
+                                        </a>
+                                    </span>
+
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="table-responsive m-t-10" data-pattern="priority-columns">
@@ -43,6 +60,8 @@
                                     <th>Nilai Pengajuan</th>
                                     <th>Nilai Pencairan</th>
                                     <th>Testimonial</th>
+                                    <th>Is Published</th>
+                                    <th>Published Date</th>
                                     <th>Deleted at</th>
                                     <th>Created at</th>
                                     <th>Updated at</th>
@@ -68,6 +87,8 @@
                                         <td>{{ number_format($item->pengajuan_kegiatan->transaksi_penyaluran()->sum('nilai_penyaluran')) }}
                                         </td>
                                         <td>{{ $item->testimonial }}</td>
+                                        <td>{{ $item->is_published ? 'Yes' : 'No' }}</td>
+                                        <td>{{ $item->published_date ?? '-' }}</td>
                                         <td>{{ $item->deleted_at ?? '-' }}</td>
                                         <td>{{ $item->created_at ?? '-' }}</td>
                                         <td>{{ $item->updated_at ?? '-' }}</td>
