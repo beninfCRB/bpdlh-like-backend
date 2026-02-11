@@ -60,9 +60,9 @@ Route::get('file/{id}', [App\Http\Controllers\Api\Akseslh\FileUploadController::
 
 Route::get('testimonial', [App\Http\Controllers\Api\Akseslh\TestimonialController::class, 'index']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
 
-    Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
+Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
 
