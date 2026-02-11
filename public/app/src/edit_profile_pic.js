@@ -1,5 +1,6 @@
 "use strict";
 
+import Swal from "sweetalert2";
 import { createData, updatePutData } from "../api.js";
 
 jQuery(document).ready(function () {
@@ -7,7 +8,7 @@ jQuery(document).ready(function () {
     console.log(route);
 
     let data_pic_kelompok_masyarakat_id = $(
-        "#data_pic_kelompok_masyarakat_id"
+        "#data_pic_kelompok_masyarakat_id",
     ).val();
 
     let profile_pic_id = $("#profile_pic_id").val();
@@ -42,13 +43,13 @@ jQuery(document).ready(function () {
             if (result.value) {
                 createData(
                     route + "/pengajuan-perubahan-profil/" + profile_pic_id,
-                    formData
+                    formData,
                 )
                     .then((res) => {
                         Swal.fire(
                             "Sukses",
                             "Perubahan data berhasil ditolak",
-                            "success"
+                            "success",
                         );
                         window.location.href = route;
                     })
@@ -113,18 +114,19 @@ jQuery(document).ready(function () {
                 if (result.value) {
                     createData(
                         route + "/pengajuan-perubahan-profil/" + profile_pic_id,
-                        formData
+                        formData,
                     )
                         .then((res) => {
                             Swal.fire(
                                 "Sukses",
                                 "Data berhasil diperbaharui",
-                                "success"
+                                "success",
                             );
                             window.location.href = route;
                         })
                         .catch((error) => {
                             console.log(error);
+                            Swal.fire("Gagal", error.message, "error");
                         })
                         .finally(() => {
                             this.disabled = false;
