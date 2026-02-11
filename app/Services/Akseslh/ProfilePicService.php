@@ -158,6 +158,10 @@ class ProfilePicService extends AppService implements AppServiceInterface
         $kelompok_masyarakat = false;
         $jenis_kelompok_masyarakat = false;
 
+        if (in_array('is_accurate', $data['profile_field'])) {
+            unset($data['profile_field'][array_search('is_accurate', $data['profile_field'])]);
+        }
+
         if (in_array('foto_ktp', $data['profile_field'])) {
             $foto_ktp = true;
 
