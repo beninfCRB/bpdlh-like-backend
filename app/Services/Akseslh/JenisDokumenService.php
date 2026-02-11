@@ -37,7 +37,7 @@ class JenisDokumenService extends AppService implements AppServiceInterface
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
 
-    public function apiGetAll($flag = null, $user)
+    public function apiGetAll($flag = null, $user = null)
     {
 
         $result  = $this->model->newQuery()
@@ -56,30 +56,32 @@ class JenisDokumenService extends AppService implements AppServiceInterface
             ];
         });
 
-        $dokumen = $this->modelPengajuanKegiatan->newQuery()->where('user_akseslh_id', $user->id)->latest()->first();
-        if ($dokumen) {
-            # code...
-            $dokumenDokumenSK = $dokumen->document()->where('group', 'document_sk')->first();
-            if ($dokumenDokumenSK) {
-                $result = $result->push([
-                    'id'    => $dokumenDokumenSK->id,
-                    'tahapan_pengajuan_kegiatan'    => 'Surat Keputusan (SK) penetapan penerima manfaat  layanan dana masyarakat',
-                    'jenis_dokumen'                 => 'Surat Keputusan (SK) penetapan penerima manfaat  layanan dana masyarakat',
-                    'dokumen_url'                   => env('APP_URL') . '/storage/' . $dokumenDokumenSK->file_path,
-                    'dokumen'                       => $dokumenDokumenSK,
-                ]);
-            }
-            if (isset($dokumen->transaksi_penyaluran) && $dokumen->transaksi_penyaluran->count() > 0) {
-                foreach ($dokumen->transaksi_penyaluran as $item) {
-                    # code...
-                    $dok = $item->document()->where('group', 'surat_keterangan')->first();
+        if ($user) {
+            $dokumen = $this->modelPengajuanKegiatan->newQuery()->where('user_akseslh_id', $user->id)->latest()->first();
+            if ($dokumen) {
+                # code...
+                $dokumenDokumenSK = $dokumen->document()->where('group', 'document_sk')->first();
+                if ($dokumenDokumenSK) {
                     $result = $result->push([
-                        'id'                            => $dok->id,
-                        'tahapan_pengajuan_kegiatan'    => 'Surat Keterangan Penyaluran Dana',
-                        'jenis_dokumen'                 => 'Surat Keterangan Penyaluran Dana',
-                        'dokumen_url'                   => env('APP_URL') . '/storage/' . $dok->file_path,
-                        'dokumen'                       => $dok,
+                        'id'    => $dokumenDokumenSK->id,
+                        'tahapan_pengajuan_kegiatan'    => 'Surat Keputusan (SK) penetapan penerima manfaat  layanan dana masyarakat',
+                        'jenis_dokumen'                 => 'Surat Keputusan (SK) penetapan penerima manfaat  layanan dana masyarakat',
+                        'dokumen_url'                   => env('APP_URL') . '/storage/' . $dokumenDokumenSK->file_path,
+                        'dokumen'                       => $dokumenDokumenSK,
                     ]);
+                }
+                if (isset($dokumen->transaksi_penyaluran) && $dokumen->transaksi_penyaluran->count() > 0) {
+                    foreach ($dokumen->transaksi_penyaluran as $item) {
+                        # code...
+                        $dok = $item->document()->where('group', 'surat_keterangan')->first();
+                        $result = $result->push([
+                            'id'                            => $dok->id,
+                            'tahapan_pengajuan_kegiatan'    => 'Surat Keterangan Penyaluran Dana',
+                            'jenis_dokumen'                 => 'Surat Keterangan Penyaluran Dana',
+                            'dokumen_url'                   => env('APP_URL') . '/storage/' . $dok->file_path,
+                            'dokumen'                       => $dok,
+                        ]);
+                    }
                 }
             }
         }
