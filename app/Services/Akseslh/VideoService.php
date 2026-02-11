@@ -146,12 +146,11 @@ class VideoService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->find($id);
         try {
+
+            $tahapan = strtolower(str_replace(' ', '_', $read->title));
             $read->delete();
             \DB::commit(); // commit the changes
-            if (!empty($input['title'])) {
-                $tahapan = strtolower(str_replace(' ', '_', $input['title']));
-                Cache::forget('video_' . $tahapan);
-            }
+            Cache::forget('video_' . $tahapan);
             Cache::forget('video');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
@@ -164,8 +163,10 @@ class VideoService extends AppService implements AppServiceInterface
     {
         $read   =   $this->model->newQuery()->withTrashed()->find($id);
         try {
+            $tahapan = strtolower(str_replace(' ', '_', $read->title));
             $read->restore();
             \DB::commit(); // commit the changes
+            Cache::forget('video_' . $tahapan);
             Cache::forget('video');
             return $this->sendSuccess($read);
         } catch (\Exception $exception) {
