@@ -236,11 +236,13 @@ class TestimonialService extends AppService implements AppServiceInterface
         $result->transform(function ($items, $key) {
             return [
                 'id'                      => $items->id,
-                'kelompok_masyarakat'     => $items->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                 'nama_pic'                => $items->data_pic_kelompok_masyarakat->nama_pic,
+                'kelompok_masyarakat'     => $items->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
                 'provinsi_pic'            => $items->data_pic_kelompok_masyarakat->provinsi->name,
                 'testimonial'             => $items->testimonial,
                 'is_published'            => $items->is_published,
+                'kabupaten_kegiatan'      => $items->pengajuan_kegiatan->kabupaten->name,
+                'provinsi_kegiatan'       => $items->pengajuan_kegiatan->provinsi->name,
             ];
         });
 
