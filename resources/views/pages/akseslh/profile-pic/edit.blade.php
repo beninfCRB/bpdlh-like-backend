@@ -756,6 +756,18 @@
                                 </div>
                             @endif
 
+                            <div class="form-group has-error">
+                                <label for="nomor_kontak_darurat">Data Sudah Akurat<span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" id="is_accurate" name="is_accurate" class="form-control"
+                                        value="" placeholder="Data Sudah Akurat" readonly />
+                                    <span class="input-group-addon">
+                                        <input type="checkbox" class="profile-field" name="is_accurate" id="">
+                                    </span>
+                                </div>
+                            </div>
+
 
                             <div class="row">
                                 @forelse ($data->data->document as $item)
