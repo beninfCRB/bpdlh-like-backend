@@ -550,8 +550,8 @@ class RegisterController extends ApiController
         // Membuat objek DateTime dengan waktu sekarang
         $date = new DateTime();
 
-        // Menambahkan 30 menit
-        $date->modify('+30 minutes');
+        // Menambahkan 60 menit
+        $date->modify('+60 minutes');
 
         // Prepare data
         $data = [
