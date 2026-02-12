@@ -33,7 +33,14 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
     public function getAll()
     {
-        $model = $this->model->query()->where('status_verifikasi', 'belum_verifikasi')->with('data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis')->orderBy('created_at', 'ASC');
+        $model = $this->model->query()->where('status_verifikasi', 'belum_verifikasi')->with([
+            'data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis' => function ($query) {
+                $query->withTrashed();
+            },
+            'data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+                $query->withTrashed();
+            },
+        ])->orderBy('created_at', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
     }
