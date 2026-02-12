@@ -40,6 +40,9 @@ class ProfilePicService extends AppService implements AppServiceInterface
             'data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
                 $query->withTrashed();
             },
+            'data_pic_kelompok_masyarakat' => function ($query) {
+                $query->withTrashed();
+            },
         ])->orderBy('created_at', 'ASC');
 
         return DataTables::eloquent($model)->addIndexColumn()->toJson();
