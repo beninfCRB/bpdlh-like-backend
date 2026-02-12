@@ -384,9 +384,18 @@ class ProfileService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Profil tidak ditemukan', 422);
         }
 
+        $result = [
+            "id" => $model->id,
+            "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
+            "nama_pic" => $model->nama_pic ?? null,
+            "email_pic" => $model->email_pic ?? null,
+            "nohp_pic" => $model->nohp_pic ?? null,
+        ];
+
         if ($status_perubahan_profil) {
             # code...
-            return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
+            // return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
+            return $this->sendSuccess($result, 'Profile found', 200);
         }
 
         if ($model->is_accurate == false) {
@@ -396,7 +405,8 @@ class ProfileService extends AppService implements AppServiceInterface
         if (!$model->nomor_kontak_darurat || !$model->nama_kontak_darurat || !$model->alamat_kontak_darurat) {
             if ($status_perubahan_profil) {
                 # code...
-                return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
+                // return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
+                return $this->sendSuccess($result, 'Profile found', 200);
             } else {
                 return $this->sendError(null, 'Profil belum lengkap, silahkan lengkapi profil terlebih dahulu', 422);
             }
@@ -410,14 +420,6 @@ class ProfileService extends AppService implements AppServiceInterface
                 return $this->sendError(null, 'Nomor HP dan Nomor Kontak Darurat tidak boleh sama', 422);
             }
         }
-
-        $result = [
-            "id" => $model->id,
-            "kelompok_masyarakat_id" => $model->kelompok_masyarakat->id ?? null,
-            "nama_pic" => $model->nama_pic ?? null,
-            "email_pic" => $model->email_pic ?? null,
-            "nohp_pic" => $model->nohp_pic ?? null,
-        ];
 
         return $this->sendSuccess($result, 'Profile found', 200);
     }
