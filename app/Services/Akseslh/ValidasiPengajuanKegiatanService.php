@@ -431,7 +431,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
             'proposal_kegiatan'         => $model->proposal_kegiatan,
             'tujuan_kegiatan'           => $model->tujuan_kegiatan,
             'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
-            'nama_verifikator'          => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh_admin->email,
+            // 'nama_verifikator'          => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->user_akseslh_admin->email,
             'tanggal_verifikasi'        => $model->log_tahapan_pengajuan->whereNotNull('user_akseslh_id')->first()->tanggal_selesai,
             'document'                  => $model->document,
             'surat_keterangan'          => $model->transaksi_penyaluran()->latest()->first()->document ?? null,
