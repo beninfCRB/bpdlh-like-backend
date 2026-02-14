@@ -373,12 +373,11 @@ class ProfileService extends AppService implements AppServiceInterface
 
     public function check_profile($data)
     {
-        $model =   $this->model->newQuery()
+        $model = $this->model->newQuery()
             ->whereHas('user_akseslh', function ($q) use ($data) {
                 $q->where('id', $data['user']->id);
             })
             ->first();
-        $status_perubahan_profil = $model->profile_pic()->where('status_verifikasi', 'belum_verifikasi')->exists();
 
         if (!$model) {
             return $this->sendError(null, 'Profil tidak ditemukan', 422);
@@ -392,33 +391,30 @@ class ProfileService extends AppService implements AppServiceInterface
             "nohp_pic" => $model->nohp_pic ?? null,
         ];
 
+        // ✅ Cek dulu apakah ada perubahan profil yang belum diverifikasi
+        $status_perubahan_profil = $model->profile_pic()
+            ->where('status_verifikasi', 'belum_verifikasi')
+            ->exists();
+
         if ($status_perubahan_profil) {
-            # code...
-            // return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
             return $this->sendSuccess($result, 'Profile found', 200);
         }
 
+        // ✅ Lanjut validasi normal kalau tidak ada perubahan profil pending
         if ($model->is_accurate == false) {
             return $this->sendError(null, 'Data profil belum diperbarui, silahkan perbarui data profil terlebih dahulu', 422);
         }
 
-        if (!$model->nomor_kontak_darurat || !$model->nama_kontak_darurat || !$model->alamat_kontak_darurat) {
-            if ($status_perubahan_profil) {
-                # code...
-                // return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
-                return $this->sendSuccess($result, 'Profile found', 200);
-            } else {
-                return $this->sendError(null, 'Profil belum lengkap, silahkan lengkapi profil terlebih dahulu', 422);
-            }
+        if (
+            !$model->nomor_kontak_darurat ||
+            !$model->nama_kontak_darurat ||
+            !$model->alamat_kontak_darurat
+        ) {
+            return $this->sendError(null, 'Profil belum lengkap, silahkan lengkapi profil terlebih dahulu', 422);
         }
 
         if ($model->nohp_pic == $model->nomor_kontak_darurat) {
-            if ($status_perubahan_profil) {
-                # code...
-                return $this->sendError(null, 'Perubahan profil masih tahap verifikasi oleh pengelola', 422);
-            } else {
-                return $this->sendError(null, 'Nomor HP dan Nomor Kontak Darurat tidak boleh sama', 422);
-            }
+            return $this->sendError(null, 'Nomor HP dan Nomor Kontak Darurat tidak boleh sama', 422);
         }
 
         return $this->sendSuccess($result, 'Profile found', 200);
