@@ -38,8 +38,17 @@ class VerifikasiPengajuanKegiatanController extends ApiController
             ])
             ->with([
                 'user_akseslh:id,data_pic_kelompok_masyarakat_id',
-                'user_akseslh.data_pic_kelompok_masyarakat:id,nama_pic,email_pic,kelompok_masyarakat_id,nomor_identitas_pic,nomor_npwp_pic,alamat_pic,tempat_lahir,tanggal_lahir,nohp_pic,provinsi_pic,kabupaten_pic,kecamatan_pic,kelurahan_pic,agama_id,status_perkawinan_id,jenis_pekerjaan_id,pendidikan_id,nama_kontak_darurat,nomor_kontak_darurat',
+                'user_akseslh.data_pic_kelompok_masyarakat:id,nama_pic,email_pic,kelompok_masyarakat_id,nomor_identitas_pic,nomor_npwp_pic,alamat_pic,tempat_lahir,tanggal_lahir,nohp_pic,provinsi_pic,kabupaten_pic,kecamatan_pic,kelurahan_pic,agama_id,status_perkawinan_id,jenis_pekerjaan_id,pendidikan_id,nama_kontak_darurat,nomor_kontak_darurat,jenis_kelamin',
                 'user_akseslh.data_pic_kelompok_masyarakat.foto',
+                'user_akseslh.data_pic_kelompok_masyarakat.profile_pic' => function ($query) {
+                    $query
+                        // ->select('id', 'data_pic_kelompok_masyarakat_id', 'nama_pic', 'jenis_identitas_pic', 'nomor_identitas_pic', 'nomor_npwp_pic', 'email_pic', 'nohp_pic', 'alamat_pic', 'kelurahan_pic', 'kecamatan_pic', 'kabupaten_pic', 'provinsi_pic', 'tempat_lahir', 'tanggal_lahir', 'agama_id', 'status_perkawinan_id', 'nama_gadis_ibu_kandung', 'jenis_pekerjaan_id', 'pendidikan_id', 'jenis_kelamin')
+                        ->with(['agama:id,agama', 'status_perkawinan:id,status_pernikahan', 'jenis_pekerjaan:id,jenis_pekerjaan', 'pendidikan:id,pendidikan', 'provinsi:id,name', 'kabupaten:id,name', 'kecamatan:id,name', 'kelurahan:id,name']);
+                    $query
+
+                        ->where('status_verifikasi', 'belum_verifikasi')
+                        ->first();
+                },
                 'user_akseslh.data_pic_kelompok_masyarakat.provinsi:id,name',
                 'user_akseslh.data_pic_kelompok_masyarakat.kabupaten:id,name',
                 'user_akseslh.data_pic_kelompok_masyarakat.kecamatan:id,name',
@@ -49,6 +58,9 @@ class VerifikasiPengajuanKegiatanController extends ApiController
                 'user_akseslh.data_pic_kelompok_masyarakat.jenis_pekerjaan:id,jenis_pekerjaan',
                 'user_akseslh.data_pic_kelompok_masyarakat.pendidikan:id,pendidikan',
                 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat:id,jenis_kelompok_masyarakat_id,kelompok_masyarakat',
+                'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis' => function ($query) {
+                    $query->withTrashed()->select('id', 'jenis_kelompok_masyarakat');
+                },
                 'paket_kegiatan:id,jenis_kegiatan_id,master_sub_tematik_kegiatan_id,jumlah_peserta',
                 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                     $query->withTrashed()->select('id', 'jenis_kegiatan');

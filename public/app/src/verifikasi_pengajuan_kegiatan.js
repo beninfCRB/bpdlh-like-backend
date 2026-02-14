@@ -29,6 +29,7 @@ jQuery(document).ready(function () {
     let lampiran = $("#lampiran");
     let nomorPengajuan = $("#nomor-pengajuan");
     let rab = $("#rab");
+    let btn_lihat_perubahan_profil = $("#lihat_perubahan_profil");
 
     window.verifikasiPengajuanKegiatan = (input, el) => {
         lastTriggerButton = el;
@@ -36,12 +37,12 @@ jQuery(document).ready(function () {
         idPengajuan = item.id;
 
         let documentPengajuan = input.document.find(
-            (item) => item.group == "document"
+            (item) => item.group == "document",
         );
 
         kelompokMasyarakat.text(
             item.user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat
-                .kelompok_masyarakat
+                .kelompok_masyarakat,
         );
 
         namaPic.text(item.user_akseslh.data_pic_kelompok_masyarakat.nama_pic);
@@ -50,7 +51,7 @@ jQuery(document).ready(function () {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
-            })
+            }),
         );
 
         tanggalKegiatan.text(
@@ -66,8 +67,8 @@ jQuery(document).ready(function () {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
-                    }
-                )
+                    },
+                ),
         );
 
         jenisKegiatan.text(item.paket_kegiatan.jenis_kegiatan.jenis_kegiatan);
@@ -77,7 +78,7 @@ jQuery(document).ready(function () {
                 .tematik_kegiatan +
                 " - " +
                 item.paket_kegiatan.master_sub_tematik_kegiatan
-                    .sub_tematik_kegiatan.sub_tematik_kegiatan
+                    .sub_tematik_kegiatan.sub_tematik_kegiatan,
         );
         alamatKegiatan.text(item.alamat_kegiatan);
 
@@ -87,13 +88,13 @@ jQuery(document).ready(function () {
             '<i class="md md-insert-drive-file"></i> ' +
                 "Proposal_" +
                 item.nomor_pengajuan +
-                ".pdf"
+                ".pdf",
         );
         rab.html(
             '<i class="md md-insert-drive-file"></i> ' +
                 "RAB_" +
                 item.nomor_pengajuan +
-                ".pdf"
+                ".pdf",
         );
 
         $("#myModal").modal(
@@ -101,13 +102,13 @@ jQuery(document).ready(function () {
                 backdrop: "static", // klik di luar modal tidak menutup
                 keyboard: false, // tekan ESC tidak menutup
             },
-            "show"
+            "show",
         );
 
         $("#btn-buka-lampiran").on("click", function () {
             window.open(
                 appRoute + "/storage/" + documentPengajuan.file_path,
-                "_blank"
+                "_blank",
             );
         });
 
@@ -155,7 +156,7 @@ jQuery(document).ready(function () {
                     if (response.value) {
                         createData(
                             route + "/verifikasi-pengajuan/" + idPengajuan,
-                            formData
+                            formData,
                         )
                             .then((response) => {
                                 if (response.data.code == 200) {
@@ -190,11 +191,11 @@ jQuery(document).ready(function () {
                                     didOpen: (toast) => {
                                         toast.addEventListener(
                                             "mouseenter",
-                                            Swal.stopTimer
+                                            Swal.stopTimer,
                                         );
                                         toast.addEventListener(
                                             "mouseleave",
-                                            Swal.resumeTimer
+                                            Swal.resumeTimer,
                                         );
                                     },
                                 });
@@ -202,7 +203,7 @@ jQuery(document).ready(function () {
                             .finally(() => {
                                 $(".btn-status-pengajuan").attr(
                                     "disabled",
-                                    false
+                                    false,
                                 );
                             });
                     }
@@ -242,72 +243,73 @@ jQuery(document).ready(function () {
         let nomor_kontak_darurat = $("#nomor_kontak_darurat");
 
         nama_kontak_darurat.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.nama_kontak_darurat
+            item.user_akseslh.data_pic_kelompok_masyarakat.nama_kontak_darurat,
         );
 
         nomor_kontak_darurat.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.nomor_kontak_darurat
+            item.user_akseslh.data_pic_kelompok_masyarakat.nomor_kontak_darurat,
         );
 
         let foto_ktp = item.user_akseslh.data_pic_kelompok_masyarakat.foto.find(
-            (item) => item.group == "foto_ktp"
+            (item) => item.group == "foto_ktp",
         );
 
         let profil_kelompok =
             item.user_akseslh.data_pic_kelompok_masyarakat.foto.find(
-                (item) => item.group == "profil_kelompok"
+                (item) => item.group == "profil_kelompok",
             );
 
         provinsi_pic.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.provinsi.name
+            item.user_akseslh.data_pic_kelompok_masyarakat.provinsi.name,
         );
 
         kabupaten_pic.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.kabupaten.name
+            item.user_akseslh.data_pic_kelompok_masyarakat.kabupaten.name,
         );
 
         kecamatan_pic.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.kecamatan.name
+            item.user_akseslh.data_pic_kelompok_masyarakat.kecamatan.name,
         );
 
         kelurahan_pic.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.kelurahan.name
+            item.user_akseslh.data_pic_kelompok_masyarakat.kelurahan.name,
         );
 
         agama_id.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.agama.agama
+            item.user_akseslh.data_pic_kelompok_masyarakat.agama.agama,
         );
 
         pendidikan_id.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.pendidikan.pendidikan
+            item.user_akseslh.data_pic_kelompok_masyarakat.pendidikan
+                .pendidikan,
         );
 
         jenis_pekerjaan_id.val(
             item.user_akseslh.data_pic_kelompok_masyarakat.jenis_pekerjaan
-                .jenis_pekerjaan
+                .jenis_pekerjaan,
         );
 
         status_perkawinan_id.val(
             item.user_akseslh.data_pic_kelompok_masyarakat.status_perkawinan
-                .status_pernikahan
+                .status_pernikahan,
         );
 
         nama_pic.val(item.user_akseslh.data_pic_kelompok_masyarakat.nama_pic);
         email_pic.val(item.user_akseslh.data_pic_kelompok_masyarakat.email_pic);
         nomor_identitas_pic.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.nomor_identitas_pic
+            item.user_akseslh.data_pic_kelompok_masyarakat.nomor_identitas_pic,
         );
         nomor_npwp_pic.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.nomor_npwp_pic
+            item.user_akseslh.data_pic_kelompok_masyarakat.nomor_npwp_pic,
         );
         alamat_pic.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.alamat_pic
+            item.user_akseslh.data_pic_kelompok_masyarakat.alamat_pic,
         );
         tempat_lahir.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.tempat_lahir
+            item.user_akseslh.data_pic_kelompok_masyarakat.tempat_lahir,
         );
         tanggal_lahir.val(
-            item.user_akseslh.data_pic_kelompok_masyarakat.tanggal_lahir
+            item.user_akseslh.data_pic_kelompok_masyarakat.tanggal_lahir,
         );
         nohp_pic.val(item.user_akseslh.data_pic_kelompok_masyarakat.nohp_pic);
 
@@ -316,7 +318,7 @@ jQuery(document).ready(function () {
                 backdrop: "static", // klik di luar modal tidak menutup
                 keyboard: false, // tekan ESC tidak menutup
             },
-            "show"
+            "show",
         );
 
         $("#lihat-foto-ktp").on("click", function () {
@@ -326,7 +328,7 @@ jQuery(document).ready(function () {
         $("#lihat-profil-kelompok").on("click", function () {
             window.open(
                 appRoute + "/storage/" + profil_kelompok.file_path,
-                "_blank"
+                "_blank",
             );
         });
 
@@ -362,7 +364,7 @@ jQuery(document).ready(function () {
                     if (result.value) {
                         createData(
                             profilePicRoute + "/tolak-profil/" + id_data_pic,
-                            formData
+                            formData,
                         )
                             .then((response) => {
                                 if (response.data.code == 200) {
@@ -397,11 +399,11 @@ jQuery(document).ready(function () {
                                     didOpen: (toast) => {
                                         toast.addEventListener(
                                             "mouseenter",
-                                            Swal.stopTimer
+                                            Swal.stopTimer,
                                         );
                                         toast.addEventListener(
                                             "mouseleave",
-                                            Swal.resumeTimer
+                                            Swal.resumeTimer,
                                         );
                                     },
                                 });
@@ -417,6 +419,151 @@ jQuery(document).ready(function () {
         });
     };
 
+    window.lihatPengajuanPerubahanProfil = (input, el) => {
+        $("#myModal").modal("hide");
+        $("#profileModal").modal("hide");
+        lastTriggerButton = el;
+        item = input;
+
+        console.log(item);
+
+        $("#perubahanProfil").modal(
+            {
+                backdrop: "static", // klik di luar modal tidak menutup
+                keyboard: false, // tekan ESC tidak menutup
+            },
+            "show",
+        );
+
+        let tabelPerubahanProfil = $("#tabel-perubahan-profil tbody");
+        tabelPerubahanProfil.empty();
+
+        let perubahanProfil =
+            item.user_akseslh.data_pic_kelompok_masyarakat.profile_pic.filter(
+                (item) => item.status_verifikasi == "belum_verifikasi",
+            );
+        let data_pic = item.user_akseslh.data_pic_kelompok_masyarakat;
+        console.log(perubahanProfil);
+
+        if (perubahanProfil.length === 0) {
+            tabelPerubahanProfil.append(
+                `<tr><td colspan="3" class="text-center">Tidak ada perubahan profil yang menunggu verifikasi</td></tr>`,
+            );
+        } else {
+            Object.keys(perubahanProfil[0]).forEach((key) => {
+                let value = perubahanProfil[0][key];
+                let originalValue = data_pic[key];
+
+                if (
+                    key === "id" ||
+                    key === "data_pic_kelompok_masyarakat_id" ||
+                    key === "status_verifikasi" ||
+                    key === "created_at" ||
+                    key === "updated_at" ||
+                    key === "deleted_at" ||
+                    key === "username" ||
+                    key === "catatan" ||
+                    key === "jenis_identitas_pic" ||
+                    key === "kelompok_masyarakat_id" ||
+                    key === "jenis_kelompok_masyarakat_id" ||
+                    key === "agama_id" ||
+                    key === "status_perkawinan_id" ||
+                    key === "jenis_pekerjaan_id" ||
+                    key === "pendidikan_id" ||
+                    key === "provinsi_pic" ||
+                    key === "kabupaten_pic" ||
+                    key === "kecamatan_pic" ||
+                    key === "kelurahan_pic" ||
+                    key === "flag"
+                ) {
+                    return; // skip field yang tidak perlu ditampilkan
+                }
+
+                if (key === "agama") {
+                    originalValue = data_pic.agama.agama;
+                    value = perubahanProfil[0].agama.agama;
+                }
+
+                if (key === "status_perkawinan") {
+                    originalValue =
+                        data_pic.status_perkawinan.status_pernikahan;
+                    value =
+                        perubahanProfil[0].status_perkawinan.status_pernikahan;
+                }
+
+                if (key === "jenis_pekerjaan") {
+                    originalValue = data_pic.jenis_pekerjaan.jenis_pekerjaan;
+                    value = perubahanProfil[0].jenis_pekerjaan.jenis_pekerjaan;
+                }
+
+                if (key === "pendidikan") {
+                    originalValue = data_pic.pendidikan.pendidikan;
+                    value = perubahanProfil[0].pendidikan?.pendidikan ?? "-";
+                }
+
+                if (key === "provinsi") {
+                    originalValue = data_pic.provinsi.name;
+                    value = perubahanProfil[0].provinsi.name;
+                }
+
+                if (key === "kabupaten") {
+                    originalValue = data_pic.kabupaten.name;
+                    value = perubahanProfil[0].kabupaten.name;
+                }
+
+                if (key === "kecamatan") {
+                    originalValue = data_pic.kecamatan.name;
+                    value = perubahanProfil[0].kecamatan.name;
+                }
+
+                if (key === "kelurahan") {
+                    originalValue = data_pic.kelurahan.name;
+                    value = perubahanProfil[0].kelurahan.name;
+                }
+
+                if (key === "kelompok_masyarakat") {
+                    originalValue =
+                        data_pic.kelompok_masyarakat.kelompok_masyarakat;
+                    value = perubahanProfil[0].kelompok_masyarakat;
+                }
+
+                // Buat nama field yang lebih user-friendly
+                let fieldName = key
+                    .split("_")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ");
+
+                if (originalValue != value) {
+                    tabelPerubahanProfil.append(`
+                        <tr class='danger'>
+                            <td>${fieldName}</td>
+                            <td>${originalValue || "-"}</td>
+                            <td>${value || "-"}</td>
+                        </tr>
+                    `);
+                } else {
+                    tabelPerubahanProfil.append(`
+                        <tr>
+                            <td>${fieldName}</td>
+                            <td>${originalValue || "-"}</td>
+                            <td>${value || "-"}</td>
+                        </tr>
+                    `);
+                }
+            });
+
+            $("#verifikasi-perubahan-profil").on("click", function () {
+                window.open(
+                    appRoute +
+                        "/akseslh/profile-pic/" +
+                        perubahanProfil[0].id +
+                        "/edit",
+                    "_blank",
+                );
+            });
+        }
+    };
+
     // Kembalikan fokus ke tombol pemicu setelah modal tertutup
     $("#myModal").on("hidden.bs.modal", function () {
         if (lastTriggerButton) {
@@ -430,10 +577,17 @@ jQuery(document).ready(function () {
         }
     });
 
+    $("#perubahanProfil").on("hidden.bs.modal", function () {
+        if (lastTriggerButton) {
+            lastTriggerButton.focus();
+        }
+    });
+
     window.tutupModal = () => {
         lastTriggerButton = null;
         item = null;
         $("#myModal").modal("hide");
         $("#profileModal").modal("hide");
+        $("#perubahanProfil").modal("hide");
     };
 });
