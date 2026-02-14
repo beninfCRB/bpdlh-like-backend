@@ -86,6 +86,7 @@ jQuery(document).ready(function () {
         const formData = new FormData();
 
         formData.append("_method", "PUT");
+        formData.append("profile_field[]", "is_accurate");
         formData.append("status", 1);
 
         checkboxes.forEach(function (checkbox) {

@@ -93,12 +93,28 @@
                                             <td>{{ $item->paket_kegiatan->jumlah_peserta < 50 ? $item->paket_kegiatan->jumlah_peserta . ' Hectar' : $item->paket_kegiatan->jumlah_peserta . ' Orang' }}
                                             </td>
                                             <td>
-                                                <button type="button"
-                                                    onclick="verifikasiPengajuanKegiatan({{ $item }}, this)"
-                                                    class="btn btn-primary btn-sm">Verifikasi</button>
-                                                <button type="button"
-                                                    onclick="verifikasiProfile({{ $item }}, this)"
-                                                    class="btn btn-primary btn-sm">Lihat Profil</button>
+                                                <div class="btn-group">
+                                                    <button type="button"
+                                                        class="btn btn-primary dropdown-toggle waves-effect "
+                                                        data-toggle="dropdown" aria-expanded="false">
+                                                        Aksi <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-center"
+                                                        style="left: 50%; transform: translateX(-50%);">
+                                                        <li><a href="#"
+                                                                onclick="verifikasiPengajuanKegiatan({{ $item }}, this)">Verifikasi</a>
+                                                        </li>
+                                                        <li><a href="#"
+                                                                onclick="verifikasiProfile({{ $item }}, this)">Lihat
+                                                                Profil</a></li>
+                                                        <li @if ($item->user_akseslh->data_pic_kelompok_masyarakat->profile_pic->count() == 0) class="hidden" @endif>
+                                                            <a href="#"
+                                                                onclick="lihatPengajuanPerubahanProfil({{ $item }}, this)">Lihat
+                                                                Perubahan
+                                                                Profil</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -134,8 +150,19 @@
                                     alt="" class="img-circle img-responsive" /></span>
                             <div class="mini-stat-info text-left text-muted">
                                 <span class="name" id="kelompok-masyarakat">Kelompok Masyarakat</span>
-                                <p id="nama-pic">Nama Pic</p>
+                                <p id="nama-pic">Nama Pic
+                                </p>
                             </div>
+                            <br />
+                            <hr class="m-t-10" />
+                            <ul class="text-center social-links list-inline m-0">
+                                <li>
+                                    <button id="lihat_perubahan_profil"
+                                        class="hidden btn btn-primary waves-effect waves-light"
+                                        style="cursor: pointer">Lihat
+                                        Perubahan Profil</button>
+                                </li>
+                            </ul>
                         </div>
                     </div>
 
@@ -354,4 +381,39 @@
                 </div>
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-    @endsection
+    </div>
+
+    {{-- Modal Lihat Perubahan Profil --}}
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="perubahanProfil"
+        style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="tutupModal()">×</button>
+                    <h4 class="modal-title" id="perubahanProfilLabel">Lihat Perubahan Profil</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <table class="table" id="tabel-perubahan-profil">
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Profil PIC</th>
+                                        <th>Perubahan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary waves-effect" id="verifikasi-perubahan-profil">
+                        Verifikasi Perubahan Profil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

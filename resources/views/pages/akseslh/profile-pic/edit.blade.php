@@ -211,6 +211,14 @@
                                         readonly>
                                 </div>
                             @endif
+                            @if ($data->data->pendidikan_id)
+                                <div class="form-group">
+                                    <label for="pendidikan">Pendidikan <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="pendidikan" name="pendidikan"
+                                        value="{{ $data->data->data_pic_kelompok_masyarakat->pendidikan->pendidikan ?? null }}"
+                                        readonly>
+                                </div>
+                            @endif
                             @if ($data->data->jenis_pekerjaan_id)
                                 <div class="form-group">
                                     <label for="jenis_pekerjaan">Jenis Pekerjaan <span
@@ -633,6 +641,26 @@
                                 </div>
                             @endif
 
+                            @if ($data->data->pendidikan_id)
+                                <div
+                                    class="form-group {{ $data->data->data_pic_kelompok_masyarakat->pendidikan_id == $data->data->pendidikan_id ? 'has-success' : 'has-error' }}">
+                                    <label for="pendidikan_id">Pendidikan<span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" id="pendidikan_id" name="pendidikan_id"
+                                            class="form-control"
+                                            value="{{ $data->data->pendidikan->pendidikan ?? null }}" readonly />
+                                        <span class="input-group-addon">
+                                            @if (
+                                                $data->data->data_pic_kelompok_masyarakat->pendidikan_id != $data->data->pendidikan_id &&
+                                                    $data->data->pendidikan_id)
+                                                <input type="checkbox" class="profile-field" name="pendidikan_id"
+                                                    id="">
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            @endif
+
                             @if ($data->data->jenis_pekerjaan_id)
                                 <div
                                     class="form-group {{ $data->data->data_pic_kelompok_masyarakat->jenis_pekerjaan_id == $data->data->jenis_pekerjaan_id ? 'has-success' : 'has-error' }}">
@@ -756,7 +784,7 @@
                                 </div>
                             @endif
 
-                            <div class="form-group has-error">
+                            {{-- <div class="form-group has-error">
                                 <label for="nomor_kontak_darurat">Data Sudah Akurat<span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
@@ -766,7 +794,7 @@
                                         <input type="checkbox" class="profile-field" name="is_accurate" id="">
                                     </span>
                                 </div>
-                            </div>
+                            </div> --}}
 
 
                             <div class="row">
