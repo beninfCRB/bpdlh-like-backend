@@ -1997,6 +1997,35 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         }
     }
 
+    public function tolakDraftPengajuan($id)
+    {
+        $read = $this->model->newQuery()->find($id);
+
+        if (!$read) {
+            \Sentry\captureMessage('Validate Message: Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        if ($read->flag != 0) {
+            \Sentry\captureMessage('Validate Message: Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Allowed', 403);
+        }
+
+        \DB::beginTransaction();
+
+        try {
+
+            // Update status pengajuan
+            $read->update(['flag' => 20]);
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null, 'Pengajuan berhasil ditolak', 200);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
+
     public function deleteDokumenSPTJM($id)
     {
         $result =   $this->model->newQuery()->find($id);

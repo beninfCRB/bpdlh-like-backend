@@ -290,4 +290,29 @@ class PengajuanKegiatanController extends ApiController
             return $this->sendError($exception->getMessage(), "", 500);
         }
     }
+
+    public function tolak_draft_pengajuan($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'catatan_log' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            return $this->sendError($validator->errors(), "Validation Error", 422);
+        }
+
+        $input = $validator->validated();
+
+        $result = $this->PengajuanKegiatanService->tolakDraftPengajuan($id, $input);
+
+        try {
+            if (!$result->success) {
+                return back()->with('error', $result->message);
+            }
+            return back()->with('success', $result->message);
+        } catch (\Exception $exception) {
+            return back()->with('error', $exception->getMessage());
+        }
+    }
 }
