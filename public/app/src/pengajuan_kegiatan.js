@@ -688,7 +688,7 @@ window.deletePaketKegiatan = (input) => {
     }).then((result) => {
         if (result.value) {
             deleteData(
-                "/akseslh/paket-kegiatan/" + $(input).attr("data-id")
+                "/akseslh/paket-kegiatan/" + $(input).attr("data-id"),
             ).then((res) => {
                 Swal.fire("Sukses", "Data berhasil dihapus", "success");
                 window.location.reload();
@@ -721,7 +721,7 @@ window.exportPengajuanKegiatan = (input, evt) => {
             })
                 .then((response) => {
                     const url = window.URL.createObjectURL(
-                        new Blob([response.data])
+                        new Blob([response.data]),
                     );
                     const link = document.createElement("a");
                     link.href = url;
@@ -740,17 +740,58 @@ window.exportPengajuanKegiatan = (input, evt) => {
     });
 };
 
-window.showModal = () => {
-    $("#modalUpdateSPTJM").modal({
+window.showModal = (id) => {
+    $("#" + id).modal({
         keyboard: true,
         show: true,
         backdrop: true,
     });
 };
 
-window.hideModal = () => {
-    $("#save-button").attr("disabled", false);
-    $("#modalUpdateSPTJM").modal("hide");
+window.hideModal = (id) => {
+    $(".save-button").attr("disabled", false);
+    $("#" + id).modal("hide");
+};
+
+window.tolakDraft = (input, evt) => {
+    evt.preventDefault();
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    input.disabled = true;
+    let formData = new FormData();
+    formData.append("catatan_log", getValue("catatan_log"));
+
+    updateData(
+        route + "/" + $(input).attr("data-id") + "/tolak-draft-pengajuan",
+        formData,
+    )
+        .then((response) => {
+            console.log(response.data.message);
+
+            Swal.fire("Sukses", response.data.message, "success");
+            hideModal("modalTolakDraft");
+            window.location.reload();
+        })
+        .catch((err) => {
+            input.disabled = false;
+            let error = err.response.data;
+            if (!error.success) {
+                Toast.fire({
+                    icon: "warning",
+                    title: error.data.catatan_log[0],
+                });
+            }
+        });
 };
 
 window.updateSPTJM = (input, evt) => {
@@ -774,13 +815,13 @@ window.updateSPTJM = (input, evt) => {
 
     updateData(
         route + "/" + $(input).attr("data-id") + "/update-sptjm",
-        formData
+        formData,
     )
         .then((response) => {
             console.log(response.data.message);
 
             Swal.fire("Sukses", response.data.message, "success");
-            hideModal();
+            hideModal("modalUpdateSPTJM");
             window.location.reload();
         })
         .catch((err) => {

@@ -11,6 +11,20 @@
 
 @section('title', 'Lihat Data Pengajuan Kegiatan')
 
+@php
+    $tahapan_pengajuan = null;
+
+    if ($data->data->flag == 0 && $data->data->rab_pengajuan_paket_kegiatans->count() != 0) {
+        $tahapan_pengajuan = 'Retur';
+    } elseif ($data->data->flag == 0) {
+        $tahapan_pengajuan = 'Draft';
+    } elseif ($data->data->flag == 20) {
+        $tahapan_pengajuan = 'Ditolak';
+    } else {
+        $tahapan_pengajuan = $data->data->tahapan->deskripsi_kegiatan;
+    }
+@endphp
+
 @section('content')
     <!-- Page-Title -->
     <div class="row">
@@ -27,6 +41,7 @@
         </div>
     </div>
 
+    {{-- Detail Pengajuan --}}
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-primary">
@@ -47,7 +62,8 @@
                                     @if (
                                         (auth()->user()->role_user == 'administrator' || auth()->user()->role_user == 'approver') &&
                                             ($data->data->flag > 3 && $data->data->flag < 10))
-                                        <button class="btn btn-sm btn-primary" onclick="showModal()">Update
+                                        <button class="btn btn-sm btn-primary"
+                                            onclick="showModal('modalUpdateSPTJM')">Update
                                             SPTJM</button>
                                     @endif
                                 </td>
@@ -86,7 +102,15 @@
                             </tr>
                             <tr>
                                 <td>Status Pengajuan</td>
-                                <td>{{ $data->data->flag == 20 ? 'Ditolak' : ($data->data->flag == 0 ? 'Draft' : $data->data->tahapan->deskripsi_kegiatan) }}
+                                <td>
+                                    {{ $tahapan_pengajuan }}
+                                    @if (
+                                        (auth()->user()->role_user == 'administrator' || auth()->user()->role_user == 'approver') &&
+                                            $data->data->flag == 0 &&
+                                            $data->data->rab_pengajuan_paket_kegiatans->count() == 0)
+                                        <button class="btn btn-sm btn-primary" onclick="showModal('modalTolakDraft')">Tolak
+                                            Draft</button>
+                                    @endif
                                 </td>
                             </tr>
                         </tbody>
@@ -97,14 +121,14 @@
     </div>
 
     {{-- Modal Update SPTJM --}}
-    <!-- sample modal content -->
     <div id="modalUpdateSPTJM" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalUpdateSPTJMLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="" method="post">
                     <div class="modal-header">
-                        <button type="button" class="close" onclick="hideModal()" aria-hidden="true">×</button>
+                        <button type="button" class="close" onclick="hideModal('modalUpdateSPTJM')"
+                            aria-hidden="true">×</button>
                         <h4 class="modal-title" id="modalUpdateSPTJMLabel">Modal Heading</h4>
                     </div>
                     <div class="modal-body">
@@ -115,10 +139,39 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default waves-effect" onclick="hideModal()"
-                            id="close-button">Close</button>
-                        <button type="submit" class="btn btn-primary waves-effect waves-light"
-                            onclick="updateSPTJM(this, event)" id="save-button" data-id="{{ $data->data->id }}">Save
+                        <button type="button" class="btn btn-default waves-effect"
+                            onclick="hideModal('modalUpdateSPTJM')">Close</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light save-button"
+                            onclick="updateSPTJM(this, event)" data-id="{{ $data->data->id }}">Save
+                            changes</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    {{-- Modal Tolak Draft --}}
+    <div id="modalTolakDraft" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTolakDraftLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="" method="post">
+                    <div class="modal-header">
+                        <button type="button" class="close" onclick="hideModal('modalTolakDraft')"
+                            aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="modalTolakDraftLabel">Tolak Draft</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="catatan_log">Catatan Log</label>
+                            <textarea class="form-control" id="catatan_log" name="catatan_log" placeholder="Catatan Log" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect"
+                            onclick="hideModal('modalTolakDraft')">Close</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light save-button"
+                            onclick="tolakDraft(this, event)" data-id="{{ $data->data->id }}">Save
                             changes</button>
                     </div>
                 </form>
@@ -308,6 +361,7 @@
 
     </div>
 
+    {{-- Lokasi Kegiatan --}}
     @if ($data->data->longitude && $data->data->latitude)
         <div class="row">
             <!-- Basic example -->
