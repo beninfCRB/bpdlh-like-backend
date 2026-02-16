@@ -96,9 +96,9 @@ jQuery(document).ready(function () {
             }
         });
 
-        if (selected.length < 1) {
-            return alert("Silahkan pilih data terlebih dahulu");
-        }
+        // if (selected.length < 1) {
+        //     return alert("Silahkan pilih data terlebih dahulu");
+        // }
 
         Swal.fire({
             title: "Konfirmasi Perubahan Profil",
