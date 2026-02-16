@@ -57,7 +57,20 @@ class ProfilePicService extends AppService implements AppServiceInterface
 
     public function getById($id)
     {
-        $result =   $this->model->newQuery()->where('id', $id)->with(['data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis', 'data_pic_kelompok_masyarakat.foto', 'document'])->first();
+        $result =   $this->model->newQuery()->where('id', $id)
+            ->with([
+                'data_pic_kelompok_masyarakat.kelompok_masyarakat.jenis' => function ($query) {
+                    $query->withTrashed();
+                },
+                'data_pic_kelompok_masyarakat.kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'data_pic_kelompok_masyarakat' => function ($query) {
+                    $query->withTrashed();
+                },
+                'data_pic_kelompok_masyarakat.foto',
+                'document'
+            ])->first();
 
         return $this->sendSuccess($result);
     }
