@@ -5,7 +5,7 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class PivotEmailBlastTemplateExport implements FromArray, WithHeadings
+class EmailBlastPivotTemplateExport implements FromArray, WithHeadings
 {
     public function headings(): array
     {

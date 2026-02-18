@@ -91,7 +91,7 @@ class IndikatorLaporanKegiatanController extends ApiController
             'indikator_kegiatan'                                        => 'nullable|array',
             'indikator_kegiatan.*.master_data_indikator_laporan_id'     => 'nullable|exists:master_indikators,id',
             'indikator_kegiatan.*.nilai_laporan'                        => 'nullable',
-            'testimonial'                                               => 'required|string|max:500',
+            'testimonial'                                               => 'required|string|max:800',
             'capaian_output'                                            => 'required|string|max:850',
             'capaian_outcome'                                           => 'required|string|max:850',
             'kendala_kegiatan'                                         => 'required|string|max:850',

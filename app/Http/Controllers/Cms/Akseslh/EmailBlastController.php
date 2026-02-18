@@ -130,4 +130,9 @@ class EmailBlastController extends ApiController
             $this->sendError($exception->getMessage(), "", 500);
         }
     }
+
+    public function template()
+    {
+        return Excel::download(new App\Exports\EmailBlastPivotTemplateExport, 'template_pivot_email_blast.xlsx');
+    }
 }

@@ -1205,7 +1205,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         return $this->sendSuccess($result);
     }
 
-    public function updateRabTemp($id, $dataKomponenRab, $user)
+    public function draft($id, $dataKomponenRab, $user)
     {
         $logJadwalPembukaan = $this->modelLogJadwalPembukaan->newQuery()->latest()->first();
 
@@ -1225,9 +1225,155 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Not Allowed', 422);
         }
 
-        if ($model->rab_pengajuan_paket_kegiatans->count() > 0) {
-            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Rab sudah ada', \Sentry\Severity::warning());
-            return $this->sendError(null, 'Rab sudah ada', 422);
+        $idTransportasi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Transportasi'); // Transportasi
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idKonsumsi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Konsumsi'); // Konsumsi
+        })->pluck('master_komponen_rab_id')->first();
+
+        $jumlah_peserta = $model->paket_kegiatan->jumlah_peserta;
+
+        $idNaraSumber = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Nara Sumber'); // Nara Sumber
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idFasilitator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Fasilitator'); // Fasilitator
+        })->pluck('master_komponen_rab_id')->first();
+
+        $idModerator = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
+            $query->where('komponen_rab', 'Moderator'); // Moderator
+        })->pluck('master_komponen_rab_id')->first();
+
+        $jasaProfesi = 0;
+
+        $tanggalAwal = Carbon::parse($model->tanggal_mulai_kegiatan);
+        $tanggalAkhir = Carbon::parse($model->tanggal_akhir_kegiatan);
+        $jumlahHari = $tanggalAkhir->diffInDays($tanggalAwal) + 1;
+
+        foreach ($dataKomponenRab as $item) {
+            # code...
+            if ($item['id_komponen'] == $idNaraSumber) {
+                if ($item['qty'] < 1 || $item['qty'] > 4) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen'] == $idFasilitator) {
+                if ($item['qty'] < 1 || $item['qty'] > 10) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            if ($item['id_komponen'] == $idModerator) {
+                if ($item['qty'] < 1 || $item['qty'] > 2) {
+                    \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
+                    return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
+                }
+                $jasaProfesi++;
+            }
+
+            // Jika pesera kurang dari 50, berarti paket yang dipilih adalah hektar
+            if ($jumlah_peserta >= 50) {
+                # code...
+                if ($item['id_komponen'] == $idTransportasi) {
+                    # code...
+                    $qtyWajib = $jumlah_peserta * $jumlahHari;
+
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $qtyWajib]]), 422);
+                    }
+
+                    if ($item['qty'] > $qtyWajib) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $qtyWajib]]), 422);
+                    }
+                }
+
+                if ($item['id_komponen'] == $idKonsumsi) {
+                    # code...
+                    $qtyWajib = $jumlah_peserta * $jumlahHari;
+
+                    if ($item['qty'] < $jumlah_peserta) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $qtyWajib]]), 422);
+                    }
+
+                    if ($item['qty'] > $qtyWajib) {
+                        # code...
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $qtyWajib]]), 422);
+                    }
+                }
+            }
+        }
+
+        \DB::beginTransaction();
+
+        try {
+
+            // Hapus data rab
+            $model->rab_pengajuan_paket_kegiatans()->forceDelete();
+
+            // Menghitung total harga RAB dan mempersiapkan data komponen RAB
+            $total = 0;
+            $dataKomponenRabInput = array_map(function ($item) use ($model, &$total) {
+                $total += $item['qty'] * $item['harga_unit'];
+                return [
+                    'pengajuan_kegiatan_id' => $model->id,
+                    'komponen_rab_id'       => $item['id_komponen'],
+                    'harga_unit'            => $item['harga_unit'],
+                    'qty'                   => $item['qty'],
+                ];
+            }, $dataKomponenRab);
+
+            if ($total > (int)$logJadwalPembukaan->batas_pengajuan) {
+                \DB::rollBack(); // rollback the changes
+                return $this->sendError(null, 'Rab tidak boleh lebih dari caping', 422);
+            }
+
+            // Menyimpan RAB pengajuan paket kegiatan
+            $model->rab_pengajuan_paket_kegiatans()->createMany($dataKomponenRabInput);
+
+            // Persiapkan data untuk response
+            $result = [
+                'nomor_pengajuan'   => $model->nomor_pengajuan,
+                'sebesar'           => $total,
+                'atas_nama'         => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat
+            ];
+
+            \DB::commit();
+            return $this->sendSuccess($result, null, 200);
+        } catch (\Exception $exception) {
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : 'Internal Server Error', 500);
+        }
+    }
+
+    public function updateRabTemp($id, $dataKomponenRab, $user)
+    {
+        $logJadwalPembukaan = $this->modelLogJadwalPembukaan->newQuery()->latest()->first();
+
+        // Mencari model pengajuan berdasarkan nomor pengajuan
+        $model = $this->model->with(['rab_pengajuan_paket_kegiatans', 'user_akseslh.data_pic_kelompok_masyarakat.kelompok_masyarakat'])
+            ->where('nomor_pengajuan', $id)
+            ->first();
+
+        // Memeriksa apakah model ditemukan dan valid
+        if (!$model) {
+            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not found', 422);
+        }
+
+        if ($model->flag != 0) {
+            \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Allowed', 422);
         }
 
         $idTransportasi = $model->paket_kegiatan->standar_rab_paket_kegiatan()->whereHas('master_komponen_rab', function ($query) {
@@ -1329,6 +1475,11 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
         \DB::beginTransaction();
 
         try {
+
+            if ($model->rab_pengajuan_paket_kegiatans->count() > 0) {
+                $model->rab_pengajuan_paket_kegiatans()->forceDelete();
+            }
+
             // Menghitung total harga RAB dan mempersiapkan data komponen RAB
             $total = 0;
             $dataKomponenRabInput = array_map(function ($item) use ($model, &$total) {
@@ -1488,18 +1639,33 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 }
             }
 
-            // Mengambil data komponen RAB secara langsung tanpa loop berlebihan
-            $rab = $read->paket_kegiatan->standar_rab_paket_kegiatan->map(function ($item) {
-                return [
-                    'id_komponen'        => $item->master_komponen_rab_id,
-                    'jenis_komponen_rab' => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
-                    'komponen_rab'       => $item->master_komponen_rab->komponen_rab,
-                    'satuan'             => $item->master_komponen_rab->satuan->satuan,
-                    'harga_unit'         => $item->standar_harga_unit,
-                    'nilai_standar'      => $item->standar_harga_unit,
-                    'qty'                => $item->standar_qty,
-                ];
-            });
+            if ($read->rab_pengajuan_paket_kegiatans()->count() > 0) {
+                $rab = $read->rab_pengajuan_paket_kegiatans()->with('master_komponen_rab.satuan', 'master_komponen_rab.jenis_komponen')->get()->map(function ($item) {
+                    return [
+                        'id_komponen'        => $item->komponen_rab_id,
+                        'jenis_komponen_rab' => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                        'komponen_rab'       => $item->master_komponen_rab->komponen_rab,
+                        'satuan'             => $item->master_komponen_rab->satuan->satuan,
+                        'harga_unit'         => $item->harga_unit,
+                        'nilai_standar'      => $item->harga_unit,
+                        'qty'                => $item->qty,
+                    ];
+                });
+            } else {
+                // Mengambil data komponen RAB secara langsung tanpa loop berlebihan
+                $rab = $read->paket_kegiatan->standar_rab_paket_kegiatan->map(function ($item) {
+                    return [
+                        'id_komponen'        => $item->master_komponen_rab_id,
+                        'jenis_komponen_rab' => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                        'komponen_rab'       => $item->master_komponen_rab->komponen_rab,
+                        'satuan'             => $item->master_komponen_rab->satuan->satuan,
+                        'harga_unit'         => $item->standar_harga_unit,
+                        'nilai_standar'      => $item->standar_harga_unit,
+                        'qty'                => $item->standar_qty,
+                    ];
+                });
+            }
+
 
             // Menyiapkan response untuk review pengajuan
             $review_pengajuan_kegiatan = [
