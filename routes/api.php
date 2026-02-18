@@ -77,6 +77,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('pengajuanKegiatan', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'store']);
     Route::middleware(['pembukaan'])->group(function () {
+        Route::put('pengajuanKegiatan/{id}/draft', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'draft']);
         Route::put('pengajuanKegiatan/{id}', [App\Http\Controllers\Api\Akseslh\PengajuanKegiatanController::class, 'update']);
     });
 

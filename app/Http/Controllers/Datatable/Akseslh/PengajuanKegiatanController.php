@@ -35,4 +35,9 @@ class PengajuanKegiatanController extends Controller
     {
         return $this->PengajuanKegiatanService->getAll();
     }
+
+    public function getPaginate()
+    {
+        return $this->PengajuanKegiatanService->getPaginated();
+    }
 }

@@ -146,6 +146,8 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">Daftar Pengajuan Kegiatan</h3>
+                    <input type="hidden" name="data-pengajuan-kegiatan-route" id="data-pengajuan-kegiatan-route"
+                        value="{{ route('data-pengajuan-kegiatan') }}">
                 </div>
                 <div class="panel-body table-rep-plugin">
                     <div class="row">

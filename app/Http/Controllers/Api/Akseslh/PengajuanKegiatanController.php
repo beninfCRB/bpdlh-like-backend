@@ -179,6 +179,44 @@ class PengajuanKegiatanController extends ApiController
         }
     }
 
+    public function draft($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'komponen_rab' => 'required|array', // Pastikan 'komponen_rab' adalah array
+            'komponen_rab.*.id_komponen' => 'required|exists:master_komponen_rabs,id', // Pastikan id_komponen ada di tabel master_data_komponen
+            'komponen_rab.*.harga_unit' => 'required|numeric|min:0', // Pastikan harga_unit adalah angka dan lebih besar dari 0
+            'komponen_rab.*.qty' => 'required|numeric|min:1', // Pastikan qty adalah angka dan lebih besar dari 0
+        ]);
+
+        if ($validator->fails()) {
+            # code...
+            \Sentry\captureMessage('Validate Message: ' . $request->user()->email_pic . ' ' . $validator->getMessageBag(), \Sentry\Severity::warning());
+            return $this->sendError(null, $validator->getMessageBag(), 422);
+        }
+
+        $user = $request->user();
+
+        $result = $this->pengajuanKegiatanService->draft($id, $request->komponen_rab, $user);
+
+        try {
+            //code...
+            if ($result->success) {
+                // Make before notification read
+                $request->user()->unreadNotifications->markAsRead();
+
+                // Send notification database
+                $request->user()->notify(new PengajuanKegiatanNotification($result->data['nomor_pengajuan'], $result->data['atas_nama'], $result->data['sebesar']));
+
+                return $this->sendSuccess($result->data, $result->message, $result->code);
+            }
+
+            return $this->sendError($result->data, $result->message, $result->code);
+        } catch (Exception $exception) {
+            //throw $th;
+            $this->sendError($exception->getMessage(), "", 500);
+        }
+    }
+
     public function getDataRab($id): \Illuminate\Http\JsonResponse
     {
         $result = $this->pengajuanKegiatanService->getDataRab($id);

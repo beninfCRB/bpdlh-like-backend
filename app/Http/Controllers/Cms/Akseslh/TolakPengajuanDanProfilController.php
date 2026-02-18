@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
-use Illuminate\Http\Request;
+use App\Exports\TolakPengajuanDanProfilTemplate;
 use App\Http\Controllers\ApiController;
-use Illuminate\Support\Facades\Validator;
 use App\Services\Akseslh\TolakPengajuanDanProfilService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TolakPengajuanDanProfilController extends ApiController
 {
@@ -137,5 +139,10 @@ class TolakPengajuanDanProfilController extends ApiController
         } catch (\Exception $exception) {
             $this->sendError($exception->getMessage(), "", 500);
         }
+    }
+
+    public function template()
+    {
+        return Excel::download(new TolakPengajuanDanProfilTemplate, 'tolak_pengajuan_dan_profil_template.xlsx');
     }
 }

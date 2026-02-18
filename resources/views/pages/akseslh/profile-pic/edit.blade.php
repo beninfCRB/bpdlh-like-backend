@@ -146,7 +146,7 @@
 
                                 </div>
                             @endif
-                            @if ($data->data->provinsi_pic)
+                            @if ($data->data->provinsi_pic && $data->data->provinsi->name)
                                 <div class="form-group">
                                     <label for="provinsi_pic">Provinsi PIC <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="provinsi_pic" name="provinsi_pic"
@@ -154,7 +154,7 @@
                                         value="{{ $data->data->data_pic_kelompok_masyarakat->provinsi->name }}" readonly>
                                 </div>
                             @endif
-                            @if ($data->data->kabupaten_pic)
+                            @if ($data->data->kabupaten_pic && $data->data->kabupaten->name)
                                 <div class="form-group">
                                     <label for="kabupaten_pic">Kota/Kabupaten PIC <span
                                             class="text-danger">*</span></label>
@@ -163,7 +163,7 @@
                                         value="{{ $data->data->data_pic_kelompok_masyarakat->kabupaten->name }}" readonly>
                                 </div>
                             @endif
-                            @if ($data->data->kecamatan_pic)
+                            @if ($data->data->kecamatan_pic && $data->data->kecamatan->name)
                                 <div class="form-group">
                                     <label for="kecamatan_pic">Kecamatan PIC <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="kecamatan_pic" name="kecamatan_pic"
@@ -171,7 +171,7 @@
                                         value="{{ $data->data->data_pic_kelompok_masyarakat->kecamatan->name }}" readonly>
                                 </div>
                             @endif
-                            @if ($data->data->kelurahan_pic)
+                            @if ($data->data->kelurahan_pic && $data->data->kelurahan->name)
                                 <div class="form-group">
                                     <label for="kelurahan_pic">Kelurahan PIC <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="kelurahan_pic" name="kelurahan_pic"
@@ -488,7 +488,7 @@
                                 </div>
                             @endif
 
-                            @if ($data->data->provinsi_pic)
+                            @if ($data->data->provinsi_pic && $data->data->provinsi->name)
                                 <div
                                     class="form-group {{ $data->data->data_pic_kelompok_masyarakat->provinsi_pic == $data->data->provinsi_pic ? 'has-success' : 'has-error' }}">
                                     <label for="provinsi_pic">Provinsi PIC<span class="text-danger">*</span></label>
@@ -505,7 +505,7 @@
                                 </div>
                             @endif
 
-                            @if ($data->data->kabupaten_pic)
+                            @if ($data->data->kabupaten_pic && $data->data->kabupaten->name)
                                 <div
                                     class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kabupaten_pic == $data->data->kabupaten_pic ? 'has-success' : 'has-error' }}">
                                     <label for="kabupaten_pic">Kota/Kabupaten PIC<span
@@ -526,7 +526,7 @@
                                 </div>
                             @endif
 
-                            @if ($data->data->kecamatan_pic)
+                            @if ($data->data->kecamatan_pic && $data->data->kecamatan->name)
                                 <div
                                     class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kecamatan_pic == $data->data->kecamatan_pic ? 'has-success' : 'has-error' }}">
                                     <label for="kecamatan_pic">Kecamatan PIC<span class="text-danger">*</span></label>
@@ -546,7 +546,7 @@
                                 </div>
                             @endif
 
-                            @if ($data->data->kelurahan_pic)
+                            @if ($data->data->kelurahan_pic && $data->data->kelurahan->name)
                                 <div
                                     class="form-group {{ $data->data->data_pic_kelompok_masyarakat->kelurahan_pic == $data->data->kelurahan_pic ? 'has-success' : 'has-error' }}">
                                     <label for="kelurahan_pic">Kelurahan PIC<span class="text-danger">*</span></label>
@@ -783,19 +783,6 @@
                                     </div>
                                 </div>
                             @endif
-
-                            {{-- <div class="form-group has-error">
-                                <label for="nomor_kontak_darurat">Data Sudah Akurat<span
-                                        class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <input type="text" id="is_accurate" name="is_accurate" class="form-control"
-                                        value="" placeholder="Data Sudah Akurat" readonly />
-                                    <span class="input-group-addon">
-                                        <input type="checkbox" class="profile-field" name="is_accurate" id="">
-                                    </span>
-                                </div>
-                            </div> --}}
-
 
                             <div class="row">
                                 @forelse ($data->data->document as $item)
