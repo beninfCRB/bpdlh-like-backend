@@ -1258,7 +1258,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             if ($item['id_komponen'] == $idNaraSumber) {
                 if ($item['qty'] < 1 || $item['qty'] > 4) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Nara Sumber tidak valid', \Sentry\Severity::warning());
-                    return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak valid']]), 422);
+                    return $this->sendError(null, collect(['message' => ['Qty Nara Sumber tidak boleh lebih dari 4']]), 422);
                 }
                 $jasaProfesi++;
             }
@@ -1266,7 +1266,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             if ($item['id_komponen'] == $idFasilitator) {
                 if ($item['qty'] < 1 || $item['qty'] > 10) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Fasilitator tidak valid', \Sentry\Severity::warning());
-                    return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak valid']]), 422);
+                    return $this->sendError(null, collect(['message' => ['Qty Fasilitator tidak boleh lebih dari 10']]), 422);
                 }
                 $jasaProfesi++;
             }
@@ -1274,7 +1274,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             if ($item['id_komponen'] == $idModerator) {
                 if ($item['qty'] < 1 || $item['qty'] > 2) {
                     \Sentry\captureMessage('Validate Message: ' . $user->email_pic . ' Qty Moderator tidak valid', \Sentry\Severity::warning());
-                    return $this->sendError(null, collect(['message' => ['Qty Moderator tidak valid']]), 422);
+                    return $this->sendError(null, collect(['message' => ['Qty Moderator tidak boleh lebih dari 2']]), 422);
                 }
                 $jasaProfesi++;
             }
