@@ -147,7 +147,7 @@ class PengajuanKegiatanController extends ApiController
             'komponen_rab' => 'required|array', // Pastikan 'komponen_rab' adalah array
             'komponen_rab.*.id_komponen' => 'required|exists:master_komponen_rabs,id', // Pastikan id_komponen ada di tabel master_data_komponen
             'komponen_rab.*.harga_unit' => 'required|numeric|min:0', // Pastikan harga_unit adalah angka dan lebih besar dari 0
-            'komponen_rab.*.qty' => 'required|numeric|min:1', // Pastikan qty adalah angka dan lebih besar dari 0
+            'komponen_rab.*.qty' => 'required|numeric|min:0', // Pastikan qty adalah angka dan lebih besar dari 0
         ]);
 
         if ($validator->fails()) {
@@ -185,7 +185,7 @@ class PengajuanKegiatanController extends ApiController
             'komponen_rab' => 'required|array', // Pastikan 'komponen_rab' adalah array
             'komponen_rab.*.id_komponen' => 'required|exists:master_komponen_rabs,id', // Pastikan id_komponen ada di tabel master_data_komponen
             'komponen_rab.*.harga_unit' => 'required|numeric|min:0', // Pastikan harga_unit adalah angka dan lebih besar dari 0
-            'komponen_rab.*.qty' => 'required|numeric|min:1', // Pastikan qty adalah angka dan lebih besar dari 0
+            'komponen_rab.*.qty' => 'required|numeric|min:0', // Pastikan qty adalah angka dan lebih besar dari 0
         ]);
 
         if ($validator->fails()) {
