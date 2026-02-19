@@ -1590,6 +1590,12 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             return $this->sendError(null, 'Data bukan draft', 422);
         }
 
+        $paketBerubah = false;
+
+        if ($read->paket_kegiatan_id != $data['paket_kegiatan_id']) {
+            $paketBerubah = true;
+        }
+
         $logJadwalPembukaan = $this->modelLogJadwalPembukaan->newQuery()->latest()->first();
 
         \DB::beginTransaction();
@@ -1639,7 +1645,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 }
             }
 
-            if ($read->rab_pengajuan_paket_kegiatans()->count() > 0) {
+            if ($read->rab_pengajuan_paket_kegiatans()->count() > 0 && !$paketBerubah) {
                 $rab = $read->rab_pengajuan_paket_kegiatans()->with('master_komponen_rab.satuan', 'master_komponen_rab.jenis_komponen')->get()->map(function ($item) {
                     return [
                         'id_komponen'        => $item->komponen_rab_id,
