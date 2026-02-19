@@ -107,7 +107,7 @@
                                     @if (
                                         (auth()->user()->role_user == 'administrator' || auth()->user()->role_user == 'approver') &&
                                             $data->data->flag == 0 &&
-                                            $data->data->rab_pengajuan_paket_kegiatans->count() == 0)
+                                            $data->data->log_tahapan_pengajuan->count() == 0)
                                         <button class="btn btn-sm btn-primary" onclick="showModal('modalTolakDraft')">Tolak
                                             Draft</button>
                                     @endif
