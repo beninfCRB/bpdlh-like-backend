@@ -330,7 +330,7 @@
                                         <td>{{ $item->longitude ?? '-' }}</td>
                                         <td>{{ $item->latitude ?? '-' }}</td>
                                         <td>{{ $item->rab_double }}</td>
-                                        <td>{{ $item->flag == '20' ? 'Ditolak' : $item->tahapan->deskripsi_kegiatan ?? 'Draft' }}
+                                        <td>{{ $item->flag == '20' ? 'Ditolak' : $item->tahapan->deskripsi_kegiatan ?? ($item->log_tahapan_pengajuan->count() == 0 ? 'Draft' : 'Retur') }}
                                         </td>
                                         <td>{{ $item->created_at->format('d-m-Y H:i:s') ?? '-' }}</td>
                                         <td>{{ $item->updated_at->format('d-m-Y H:i:s') ?? '-' }}</td>
