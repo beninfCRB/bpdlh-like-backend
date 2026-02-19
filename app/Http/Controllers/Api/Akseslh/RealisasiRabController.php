@@ -26,7 +26,7 @@ class RealisasiRabController extends ApiController
             'komponen_rab'                          => 'required|array', // Pastikan 'komponen_rab' adalah array
             'komponen_rab.*.id_komponen_rab'        => 'required|exists:rab_pengajuan_paket_kegiatans,id', // Pastikan id_komponen ada di tabel master_data_komponen
             'komponen_rab.*.harga_unit_realisasi'   => 'required|numeric|min:0', // Pastikan harga_unit adalah angka dan lebih besar dari 0
-            'komponen_rab.*.qty_realisasi'          => 'required|numeric|min:1', // Pastikan qty adalah angka dan lebih besar dari 0
+            'komponen_rab.*.qty_realisasi'          => 'required|numeric|min:0', // Pastikan qty adalah angka dan lebih besar dari 0
         ], [
             'komponen_rab.required'                         => 'Komponen RAB harus diisi.',
             'komponen_rab.array'                            => 'Komponen RAB harus berupa array.',
