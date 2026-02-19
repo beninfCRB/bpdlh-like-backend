@@ -30,7 +30,7 @@
     <div class="row">
         <div class="col-sm-12">
             <h4 class="pull-left page-title">KELOLA DATA PENGAJUAN KEGIATAN
-                <input type="hidden" name="pengajuan-kegiatan-route" id="pengajuan-kegiatan-route"
+                <input type="hidden" name="data-pengajuan-kegiatan-route" id="data-pengajuan-kegiatan-route"
                     value="{{ route('pengajuan-kegiatan.index') }}">
             </h4>
             <ol class="breadcrumb pull-right">
