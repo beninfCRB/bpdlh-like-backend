@@ -15,12 +15,12 @@ class EmailPhpService
 
         // Konfigurasi server SMTP
         $this->mail->isSMTP();
-        $this->mail->Host       = env('PHPEMAIL_HOST'); // Gunakan variabel lingkungan untuk keamanan
-        $this->mail->SMTPAuth   = env('PHPEMAIL_AUTH');
-        $this->mail->Username   = env('PHPEMAIL_USERNAME');
-        $this->mail->Password   = env('PHPEMAIL_PASSWORD');
-        $this->mail->SMTPSecure = env('PHPEMAIL_ENCRYPTION');
-        $this->mail->Port       = env('PHPEMAIL_PORT');
+        $this->mail->Host       = env('PHPEMAIL_HOST', 'mail.bpdlh.id'); // Gunakan variabel lingkungan untuk keamanan
+        $this->mail->SMTPAuth   = env('PHPEMAIL_AUTH', true);
+        $this->mail->Username   = env('PHPEMAIL_USERNAME', 'noreply.eoffice@bpdlh.id');
+        $this->mail->Password   = env('PHPEMAIL_PASSWORD', 'Bpdlh2021!');
+        $this->mail->SMTPSecure = env('PHPEMAIL_ENCRYPTION', null);
+        $this->mail->Port       = env('PHPEMAIL_PORT', '587');
     }
 
     public function sendEmail($to, $subject, $data, $default_password, $altBody = '', $view = null)
