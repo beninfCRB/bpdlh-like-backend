@@ -151,7 +151,8 @@
                                     <label for="provinsi_pic">Provinsi PIC <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="provinsi_pic" name="provinsi_pic"
                                         placeholder="Nama PIC"
-                                        value="{{ $data->data->data_pic_kelompok_masyarakat->provinsi->name }}" readonly>
+                                        value="{{ $data->data->data_pic_kelompok_masyarakat->provinsi->name ?? null }}"
+                                        readonly>
                                 </div>
                             @endif
                             @if ($data->data->kabupaten_pic && $data->data->kabupaten->name)
@@ -160,7 +161,8 @@
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="kabupaten_pic" name="kabupaten_pic"
                                         placeholder="Nama PIC"
-                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kabupaten->name }}" readonly>
+                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kabupaten->name ?? null }}"
+                                        readonly>
                                 </div>
                             @endif
                             @if ($data->data->kecamatan_pic && $data->data->kecamatan->name)
@@ -168,7 +170,8 @@
                                     <label for="kecamatan_pic">Kecamatan PIC <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="kecamatan_pic" name="kecamatan_pic"
                                         placeholder="Nama PIC"
-                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kecamatan->name }}" readonly>
+                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kecamatan->name ?? null }}"
+                                        readonly>
                                 </div>
                             @endif
                             @if ($data->data->kelurahan_pic && $data->data->kelurahan->name)
@@ -176,7 +179,8 @@
                                     <label for="kelurahan_pic">Kelurahan PIC <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="kelurahan_pic" name="kelurahan_pic"
                                         placeholder="Nama PIC"
-                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kelurahan->name }}" readonly>
+                                        value="{{ $data->data->data_pic_kelompok_masyarakat->kelurahan->name ?? null }}"
+                                        readonly>
                                 </div>
                             @endif
                             @if ($data->data->tempat_lahir)
