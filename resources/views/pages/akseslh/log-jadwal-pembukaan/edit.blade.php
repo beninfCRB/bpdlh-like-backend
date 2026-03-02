@@ -73,8 +73,14 @@
                         </div>
                         <div class="form-group @error('batch') has-error @enderror">
                             <label for="batch">Batch Pengajuan <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="batch" name="batch"
+                            <input type="text" class="form-control" id="batch" name="batch" list="batch-list"
                                 value="{{ old('batch', $data->data->batch) }}">
+                            <datalist id="batch-list">
+                                <!-- Add your batch options here -->
+                                @foreach ($batches as $batch)
+                                    <option value="{{ $batch }}">
+                                @endforeach
+                            </datalist>
                             @error('batch')
                                 <span class="error">
                                     {{ $message }}

@@ -28,13 +28,15 @@ class LogJadwalPembukaanController extends ApiController
 
     public function create()
     {
-        return view("pages.akseslh.log-jadwal-pembukaan.create");
+        $batches = $this->logJadwalPembukaan->getFieldValues('batch');
+        return view("pages.akseslh.log-jadwal-pembukaan.create", compact('batches'));
     }
 
     public function edit($id)
     {
         $data   =   $this->logJadwalPembukaan->getById($id);
-        return view("pages.akseslh.log-jadwal-pembukaan.edit", compact('data'));
+        $batches = $this->logJadwalPembukaan->getFieldValues('batch');
+        return view("pages.akseslh.log-jadwal-pembukaan.edit", compact('data', 'batches'));
     }
 
     public function show($id)
@@ -52,6 +54,7 @@ class LogJadwalPembukaanController extends ApiController
             'jam_akhir'         => 'required',
             'batch'             => 'required',
             'batas_pengajuan'   => 'required',
+            'hapus_draft'       => 'nullable|boolean',
         ]);
 
         $result =   $this->logJadwalPembukaan->create($input);

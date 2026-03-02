@@ -6,17 +6,19 @@ namespace App\Services\Akseslh;
 
 use App\Services\AppService;
 use App\Models\LogJadwalPembukaan;
+use App\Models\PengajuanKegiatan;
 use App\Services\AppServiceInterface;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\Facades\DataTables;
 
 class LogJadwalPembukaanService extends AppService implements AppServiceInterface
 {
+    protected $modelPengajuanKegiatan;
 
-    public function __construct(LogJadwalPembukaan $model)
+    public function __construct(LogJadwalPembukaan $model, PengajuanKegiatan $modelPengajuanKegiatan)
     {
         parent::__construct($model);
+        $this->modelPengajuanKegiatan = $modelPengajuanKegiatan;
     }
 
     public function getAll()
@@ -76,6 +78,13 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
         return $this->sendSuccess($result);
     }
 
+    public function getFieldValues($field)
+    {
+        $result =   $this->model->newQuery()->distinct()->pluck($field);
+
+        return $result;
+    }
+
     public function create($data)
     {
         \DB::beginTransaction();
@@ -96,6 +105,12 @@ class LogJadwalPembukaanService extends AppService implements AppServiceInterfac
                 'batas_pengajuan'   =>  $amount,
                 'username'          =>  auth()->user()->username ?? auth()->user()->email
             ]);
+
+            if (isset($data['hapus_draft']) && $data['hapus_draft']) {
+                $this->modelPengajuanKegiatan->where('flag', 0)
+                    ->doesntHave('log_tahapan_pengajuan')
+                    ->update(['flag' => 20]); // Set flag to 20 (rejected)
+            }
 
             \DB::commit(); // commit the changes
 
