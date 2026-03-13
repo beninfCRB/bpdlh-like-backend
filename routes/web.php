@@ -75,12 +75,6 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/video/{id}/restore', [App\Http\Controllers\Cms\Akseslh\VideoController::class, 'restore']);
         });
 
-        Route::middleware(['ensureroleweb:administrator'])->group(function () {
-            Route::resource('banner-informasi', App\Http\Controllers\Cms\Akseslh\BannerInformasiController::class);
-            Route::resource('email-blast', App\Http\Controllers\Cms\Akseslh\EmailBlastController::class);
-            Route::resource('video', App\Http\Controllers\Cms\Akseslh\VideoController::class);
-        });
-
         Route::middleware(['ensureroleweb:administrator,pmu-bpdlh'])->group(function () {
             Route::resource('transaksi-penyaluran', App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class);
             Route::get('/transaksi-penyaluran-export-template', [App\Http\Controllers\Cms\Akseslh\TransaksiPenyaluranController::class, 'template'])->name('transaksi-penyaluran.export-template');
@@ -143,6 +137,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('laporan-akhir-kegiatan', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'index'])->name('laporan-akhir-kegiatan.index');
         Route::get('laporan-akhir-kegiatan/edit', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'edit'])->name('laporan-akhir-kegiatan.edit');
         Route::post('laporan-akhir-kegiatan', [App\Http\Controllers\Cms\Akseslh\LaporanAkhirKegiatanController::class, 'store'])->name('laporan-akhir-kegiatan.store');
+
+        Route::middleware(['ensureroleweb:administrator'])->group(function () {
+            Route::resource('banner-informasi', App\Http\Controllers\Cms\Akseslh\BannerInformasiController::class);
+            Route::resource('email-blast', App\Http\Controllers\Cms\Akseslh\EmailBlastController::class);
+            Route::resource('video', App\Http\Controllers\Cms\Akseslh\VideoController::class);
+        });
 
         // Datatable
         Route::get('/data-pengajuan-kegiatan', [App\Http\Controllers\Datatable\Akseslh\PengajuanKegiatanController::class, 'getPaginate'])->name('data-pengajuan-kegiatan');
