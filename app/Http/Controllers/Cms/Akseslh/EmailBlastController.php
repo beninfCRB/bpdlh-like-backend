@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Cms\Akseslh;
 
+use App\Exports\EmailBlastPivotTemplateExport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PivotEmailBlastImport;
@@ -133,6 +134,6 @@ class EmailBlastController extends ApiController
 
     public function template()
     {
-        return Excel::download(new App\Exports\EmailBlastPivotTemplateExport, 'template_pivot_email_blast.xlsx');
+        return Excel::download(new EmailBlastPivotTemplateExport, 'template_pivot_email_blast.xlsx');
     }
 }

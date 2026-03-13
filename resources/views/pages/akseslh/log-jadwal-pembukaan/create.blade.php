@@ -72,8 +72,14 @@
                         </div>
                         <div class="form-group @error('batch') has-error @enderror">
                             <label for="batch">Batch Pengajuan <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="batch" name="batch"
+                            <input type="text" class="form-control" id="batch" name="batch" list="batch-list"
                                 value="{{ old('batch') }}">
+                            <datalist id="batch-list">
+                                <!-- Add your batch options here -->
+                                @foreach ($batches as $batch)
+                                    <option value="{{ $batch }}">
+                                @endforeach
+                            </datalist>
                             @error('batch')
                                 <span class="error">
                                     {{ $message }}
@@ -89,6 +95,13 @@
                                     {{ $message }}
                                 </span>
                             @enderror
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox checkbox-primary">
+                                <input id="hapus_draft" type="checkbox" name="hapus_draft" value="1"
+                                    {{ old('hapus_draft') ? 'checked' : '' }} />
+                                <label for="hapus_draft"> Hapus Draft Dari Pengajuan Sebelumnya? </label>
+                            </div>
                         </div>
                         <div class="row">
                             <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
