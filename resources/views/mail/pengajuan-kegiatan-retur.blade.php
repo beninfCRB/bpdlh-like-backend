@@ -69,7 +69,7 @@
         </div>
         <p>
             Mohon melakukan perbaikan RAB.
-            Informasi lebih lanjut dapat menghubungi nomor PMU FOLU NC 2&3: 082121730552.
+            Informasi lebih lanjut dapat menghubungi nomor PMU FOLU NC : 0811-8881-0990.
         </p>
         <div class="footer">
             Salam,<br>

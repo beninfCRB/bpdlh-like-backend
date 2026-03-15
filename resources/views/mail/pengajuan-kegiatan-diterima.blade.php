@@ -70,7 +70,7 @@
             <p>{{ $data['catatan_log'] }}</p>
         </div>
         <p>
-            Seluruh proses seleksi dan keputusan akhir merupakan kewenangan penuh Tim FOLU NC 2&3 Kementerian Kehutanan.
+            Seluruh proses seleksi dan keputusan akhir merupakan kewenangan penuh Tim FOLU NC Kementerian Kehutanan.
             Keputusan ini bersifat mutlak serta tidak dapat diganggu gugat (<i>final and
                 binding</i>).
         </p>
