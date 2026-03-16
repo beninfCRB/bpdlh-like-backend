@@ -1877,12 +1877,25 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             });
 
+            $paket_rab = $read->paket_kegiatan->standar_rab_paket_kegiatan->map(function ($item) {
+                return [
+                    'id_komponen'        => $item->master_komponen_rab_id,
+                    'jenis_komponen_rab' => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                    'komponen_rab'       => $item->master_komponen_rab->komponen_rab,
+                    'satuan'             => $item->master_komponen_rab->satuan->satuan,
+                    'harga_unit'         => $item->standar_harga_unit,
+                    'nilai_standar'      => $item->standar_harga_unit,
+                    'qty'                => $item->standar_qty,
+                ];
+            });
+
             // Menyiapkan data yang akan dikirim
             $dataSend = [
                 'id_pengajuan'    => $read->id,
                 'nomor_pengajuan' => $read->nomor_pengajuan,
                 'caping_rab'      => $read->caping_rab,
-                'komponen_rab'    => $rab->groupBy('jenis_komponen_rab'),
+                'komponen_rab'          => $rab->groupBy('jenis_komponen_rab'),
+                'komponen_rab_paket'    => $paket_rab->groupBy('jenis_komponen_rab'),
             ];
 
             \DB::commit(); // commit the changes
