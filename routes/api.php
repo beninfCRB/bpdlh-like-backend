@@ -62,6 +62,15 @@ Route::get('testimonial', [App\Http\Controllers\Api\Akseslh\TestimonialControlle
 
 Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenController::class, 'index']);
 
+// AI routes for pre-auth flows (e.g. OCR at registration)
+Route::prefix('ai')->group(function () {
+    Route::get('/health', [App\Http\Controllers\Api\Akseslh\AiController::class, 'health']);
+    Route::post('/ocr', [App\Http\Controllers\Api\Akseslh\AiController::class, 'ocr']);
+    Route::post('/ocr/async', [App\Http\Controllers\Api\Akseslh\AiController::class, 'ocrAsync']);
+    Route::get('/ocr/status/{jobId}', [App\Http\Controllers\Api\Akseslh\AiController::class, 'ocrStatus']);
+    Route::post('/summarize', [App\Http\Controllers\Api\Akseslh\AiController::class, 'summarize']);
+});
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('getNotification', [App\Http\Controllers\Api\Akseslh\NotificationController::class, 'index']);
@@ -147,4 +156,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Laporan Akhir Kegiatan
     Route::post('laporanAkhir', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'laporan_akhir']);
+
 });
