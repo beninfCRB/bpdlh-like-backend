@@ -1705,7 +1705,18 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'nomor_pengajuan' => $read->nomor_pengajuan,
                 'caping_rab'      => $read->caping_rab > 0 ? $read->caping_rab : $logJadwalPembukaan->batas_pengajuan,
                 'pengajuan_kegiatan'    => $review_pengajuan_kegiatan,
-                'komponen_rab'    => $rab->groupBy('jenis_komponen_rab')
+                'komponen_rab'    => $rab->sortBy('komponen_rab')->groupBy('jenis_komponen_rab')->sortKeys(),
+                'komponen_rab_paket' => $read->paket_kegiatan->standar_rab_paket_kegiatan->map(function ($item) {
+                    return [
+                        'id_komponen'        => $item->master_komponen_rab_id,
+                        'jenis_komponen_rab' => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                        'komponen_rab'       => $item->master_komponen_rab->komponen_rab,
+                        'satuan'             => $item->master_komponen_rab->satuan->satuan,
+                        'harga_unit'         => $item->standar_harga_unit,
+                        'nilai_standar'      => $item->standar_harga_unit,
+                        'qty'                => $item->standar_qty,
+                    ];
+                })->sortBy('komponen_rab')->groupBy('jenis_komponen_rab')->sortKeys(),
             ];
 
             \DB::commit();
@@ -1877,12 +1888,25 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 ];
             });
 
+            $paket_rab = $read->paket_kegiatan->standar_rab_paket_kegiatan->map(function ($item) {
+                return [
+                    'id_komponen'        => $item->master_komponen_rab_id,
+                    'jenis_komponen_rab' => $item->master_komponen_rab->jenis_komponen->jenis_komponen_rab,
+                    'komponen_rab'       => $item->master_komponen_rab->komponen_rab,
+                    'satuan'             => $item->master_komponen_rab->satuan->satuan,
+                    'harga_unit'         => $item->standar_harga_unit,
+                    'nilai_standar'      => $item->standar_harga_unit,
+                    'qty'                => $item->standar_qty,
+                ];
+            });
+
             // Menyiapkan data yang akan dikirim
             $dataSend = [
                 'id_pengajuan'    => $read->id,
                 'nomor_pengajuan' => $read->nomor_pengajuan,
                 'caping_rab'      => $read->caping_rab,
-                'komponen_rab'    => $rab->groupBy('jenis_komponen_rab'),
+                'komponen_rab'          => $rab->sortBy('komponen_rab')->groupBy('jenis_komponen_rab')->sortKeys(),
+                'komponen_rab_paket'    => $paket_rab->sortBy('komponen_rab')->groupBy('jenis_komponen_rab')->sortKeys(),
             ];
 
             \DB::commit(); // commit the changes
@@ -1946,6 +1970,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         $jasaProfesi = 0;
 
+        $tanggalAwal = Carbon::parse($model->tanggal_mulai_kegiatan);
+        $tanggalAkhir = Carbon::parse($model->tanggal_akhir_kegiatan);
+        $jumlahHari = $tanggalAkhir->diffInDays($tanggalAwal) + 1;
+
         foreach ($dataKomponenRab as $item) {
             # code...
             if ($item['id_komponen'] == $idNaraSumber) {
@@ -1977,27 +2005,31 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 # code...
                 if ($item['id_komponen'] == $idTransportasi) {
                     # code...
+                    $qtyWajib = $jumlah_peserta * $jumlahHari;
+
                     if ($item['qty'] < $jumlah_peserta) {
                         # code...
                         return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
                     }
 
-                    if ($item['qty'] > $jumlah_peserta) {
+                    if ($item['qty'] > $qtyWajib) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Transportasi tidak boleh lebih dari ' . $qtyWajib]]), 422);
                     }
                 }
 
                 if ($item['id_komponen'] == $idKonsumsi) {
                     # code...
+                    $qtyWajib = $jumlah_peserta * $jumlahHari;
+
                     if ($item['qty'] < $jumlah_peserta) {
                         # code...
                         return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh kurang dari ' . $jumlah_peserta]]), 422);
                     }
 
-                    if ($item['qty'] > $jumlah_peserta) {
+                    if ($item['qty'] > $qtyWajib) {
                         # code...
-                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $jumlah_peserta]]), 422);
+                        return $this->sendError(null, collect(['message' => ['Item Konsumsi tidak boleh lebih dari ' . $qtyWajib]]), 422);
                     }
                 }
             }
