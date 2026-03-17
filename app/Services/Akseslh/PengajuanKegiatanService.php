@@ -1705,7 +1705,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'nomor_pengajuan' => $read->nomor_pengajuan,
                 'caping_rab'      => $read->caping_rab > 0 ? $read->caping_rab : $logJadwalPembukaan->batas_pengajuan,
                 'pengajuan_kegiatan'    => $review_pengajuan_kegiatan,
-                'komponen_rab'    => $rab->groupBy('jenis_komponen_rab'),
+                'komponen_rab'    => $rab->sortBy('komponen_rab')->groupBy('jenis_komponen_rab')->sortKeys(),
                 'komponen_rab_paket' => $read->paket_kegiatan->standar_rab_paket_kegiatan->map(function ($item) {
                     return [
                         'id_komponen'        => $item->master_komponen_rab_id,
@@ -1716,7 +1716,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                         'nilai_standar'      => $item->standar_harga_unit,
                         'qty'                => $item->standar_qty,
                     ];
-                })->groupBy('jenis_komponen_rab'),
+                })->sortBy('komponen_rab')->groupBy('jenis_komponen_rab')->sortKeys(),
             ];
 
             \DB::commit();
@@ -1905,8 +1905,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'id_pengajuan'    => $read->id,
                 'nomor_pengajuan' => $read->nomor_pengajuan,
                 'caping_rab'      => $read->caping_rab,
-                'komponen_rab'          => $rab->groupBy('jenis_komponen_rab'),
-                'komponen_rab_paket'    => $paket_rab->groupBy('jenis_komponen_rab'),
+                'komponen_rab'          => $rab->sortBy('komponen_rab')->groupBy('jenis_komponen_rab')->sortKeys(),
+                'komponen_rab_paket'    => $paket_rab->sortBy('komponen_rab')->groupBy('jenis_komponen_rab')->sortKeys(),
             ];
 
             \DB::commit(); // commit the changes
