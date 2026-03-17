@@ -1645,7 +1645,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 }
             }
 
-            if ($read->rab_pengajuan_paket_kegiatans()->count() > 0 && !$paketBerubah) {
+            if ($read->rab_pengajuan_paket_kegiatans()->count() > 0 || !$paketBerubah) {
                 $rab = $read->rab_pengajuan_paket_kegiatans()->with('master_komponen_rab.satuan', 'master_komponen_rab.jenis_komponen')->get()->map(function ($item) {
                     return [
                         'id_komponen'        => $item->komponen_rab_id,
