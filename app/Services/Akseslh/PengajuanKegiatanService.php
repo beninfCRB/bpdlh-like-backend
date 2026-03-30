@@ -1089,7 +1089,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             if (isset($data['perjanjian_kerjasama'])) {
                 // Hapus file lama jika ada
                 foreach ($fileLamaSPTJM as $item) {
-                    $this->fileUploadService->deleteFile($item->file_path);
+                    $this->fileUploadService->deleteFiles($item->file_path);
                     \DB::table('files')->where(['id' => $item->id])->delete();
                 }
 
