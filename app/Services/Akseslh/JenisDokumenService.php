@@ -86,6 +86,13 @@ class JenisDokumenService extends AppService implements AppServiceInterface
             }
         }
 
+        $result = $result->reject(function ($item) {
+            return in_array($item['jenis_dokumen'], [
+                'surat_permintaan_nomor_rekening',
+                'surat_pencairan_dana_termin_1'
+            ]);
+        });
+
         return $this->sendSuccess($result);
     }
 
