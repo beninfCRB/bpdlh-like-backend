@@ -411,31 +411,60 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
 
         if (!$model)  return $this->sendError(null, 'Not Found');
 
-        $result = [
-            'id'                        => $model->id,
-            'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
-            'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
-            'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
-            'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
-            'kegiatan'                  => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
-            'jenis_kegiatan'            => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
-            'rencana_kegiatan'          => $model->tanggal_mulai_kegiatan,
-            'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
-            'tanggal_pengajuan'         => $model->created_at->format('d M Y H:i'),
-            'tanggal_akhir_validasi'    => Carbon::parse($model->created_at)->locale('id')->addDays(7)->format('d M Y'),
-            'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
-            'nama_pic'                  => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
-            'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
-            'lokasi'                    => $model->alamat_kegiatan,
-            'nomor_pengajuan'           => $model->nomor_pengajuan,
-            'proposal_kegiatan'         => $model->proposal_kegiatan,
-            'tujuan_kegiatan'           => $model->tujuan_kegiatan,
-            'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
-            'nama_verifikator'          => null,
-            'tanggal_verifikasi'        => null,
-            'document'                  => $model->document,
-            'surat_keterangan'          => $model->transaksi_penyaluran()->latest()->first()->document ?? null,
-        ];
+        if (auth()->user()->role_user == 'maker') {
+            $result = [
+                'id'                        => $model->id,
+                'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
+                'kegiatan'                  => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                'jenis_kegiatan'            => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'rencana_kegiatan'          => $model->tanggal_mulai_kegiatan,
+                'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                'tanggal_pengajuan'         => $model->created_at->format('d M Y H:i'),
+                'tanggal_akhir_validasi'    => Carbon::parse($model->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'nama_pic'                  => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                'lokasi'                    => $model->alamat_kegiatan,
+                'nomor_pengajuan'           => $model->nomor_pengajuan,
+                'proposal_kegiatan'         => $model->proposal_kegiatan,
+                'tujuan_kegiatan'           => $model->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
+                'nama_verifikator'          => null,
+                'tanggal_verifikasi'        => null,
+                'document'                  => $model->document()->whereNotIn('group', ['surat_permintaan_nomor_rekening', 'surat_pencairan_dana_termin_1'])->get(),
+                'surat_keterangan'          => $model->transaksi_penyaluran()->latest()->first()->document ?? null,
+            ];
+        } else {
+            $result = [
+                'id'                        => $model->id,
+                'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'tematik_kegiatan'          => $model->paket_kegiatan->master_sub_tematik_kegiatan->tematik_kegiatan->tematik_kegiatan,
+                'sub_tematik_kegiatan'      => $model->paket_kegiatan->master_sub_tematik_kegiatan->sub_tematik_kegiatan->sub_tematik_kegiatan,
+                'judul_pengajuan_kegiatan'  => $model->judul_pengajuan_kegiatan,
+                'kegiatan'                  => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan . " " . $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta > 50 ? "Orang" : "Hektare"),
+                'jenis_kegiatan'            => $model->paket_kegiatan->jenis_kegiatan->jenis_kegiatan,
+                'rencana_kegiatan'          => $model->tanggal_mulai_kegiatan,
+                'jumlah'                    => $model->paket_kegiatan->jumlah_peserta . " " . ($model->paket_kegiatan->jumlah_peserta >= 50 ? "Orang" : "Hectare"),
+                'tanggal_pengajuan'         => $model->created_at->format('d M Y H:i'),
+                'tanggal_akhir_validasi'    => Carbon::parse($model->created_at)->locale('id')->addDays(7)->format('d M Y'),
+                'kelompok_masyarakat'       => $model->user_akseslh->data_pic_kelompok_masyarakat->kelompok_masyarakat->kelompok_masyarakat,
+                'nama_pic'                  => $model->user_akseslh->data_pic_kelompok_masyarakat->nama_pic,
+                'email_pic'                 => $model->user_akseslh->data_pic_kelompok_masyarakat->email_pic,
+                'lokasi'                    => $model->alamat_kegiatan,
+                'nomor_pengajuan'           => $model->nomor_pengajuan,
+                'proposal_kegiatan'         => $model->proposal_kegiatan,
+                'tujuan_kegiatan'           => $model->tujuan_kegiatan,
+                'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
+                'nama_verifikator'          => null,
+                'tanggal_verifikasi'        => null,
+                'document'                  => $model->document,
+                'surat_keterangan'          => $model->transaksi_penyaluran()->latest()->first()->document ?? null,
+            ];
+        }
+
 
         return $this->sendSuccess($result);
     }
