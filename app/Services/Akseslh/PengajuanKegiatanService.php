@@ -560,10 +560,10 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'lokasi'                    => $items->alamat_kegiatan ?? 'Alamat',
                 'tahapan_pengajuan'         => $items->flag,
                 'persentase_pengajuan'      => $this->checkAngkaPengajuan($items->flag, $items->log_tahapan_pengajuan),
-                'dana_yang_disetujui'       => ($items->flag >= 3 && $item->flag < 20) ? $total : 0,
+                'dana_yang_disetujui'       => ($items->flag >= 3 && $items->flag < 20) ? $total : 0,
                 'dana_yang_diajukan'        => $total,
                 'dana_yang_dicairkan'       => $total_penyaluran,
-                'sisa_pencairan'            => ($items->flag >= 3 && $item->flag < 20) ? ($total - $total_penyaluran) : 0,
+                'sisa_pencairan'            => ($items->flag >= 3 && $items->flag < 20) ? ($total - $total_penyaluran) : 0,
                 'tanggal_kegiatan'          => $items->tanggal_mulai_kegiatan,
             ];
         });
