@@ -2155,6 +2155,32 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                         'fileable_id'   => $result->id,
                     ]);
                 }
+            } else if ($data['jenis_dokumen'] == 'perjanjian_kerjasama') {
+
+                if ($result->flag < 3 && $result->flag != 20) {
+                    # code...
+                    return $this->sendError(null, [
+                        'jenis_dokumen' => ['Jenis dokumen perjanjian kerjasama hanya bisa diupload ketika pengajuan sudah disetujui oleh admin.']
+                    ], 422);
+                }
+
+                $upload = $this->fileUploadService->handleFile($data['document'])->saveToDb('perjanjian_kerjasama');
+
+                if ($upload) {
+                    $upload->update([
+                        'fileable_type' => get_class($result),
+                        'fileable_id'   => $result->id,
+                    ]);
+                }
+
+                $upload_pendukung = $this->fileUploadService->handleFile($data['dokumen_pendukung'])->saveToDb('dokumen_pendukung');
+
+                if ($upload_pendukung) {
+                    $upload_pendukung->update([
+                        'fileable_type' => get_class($result),
+                        'fileable_id'   => $result->id,
+                    ]);
+                }
             } else {
                 $upload = $this->fileUploadService->handleFile($data['document'])->saveToDb($data['jenis_dokumen']);
                 if ($upload) {
