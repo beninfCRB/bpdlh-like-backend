@@ -22,41 +22,6 @@
                     <h3 class="panel-title">Tambah Dokumen</h3>
                 </div>
                 <div class="panel-body">
-                    {{-- <form class="form-horizontal row" role="form"
-                        action="{{ route('pengajuan-kegiatan.document.update', $data->id) }}" method="POST"
-                        enctype="multipart/form-data">
-                        @method('PUT')
-                        @csrf
-                        <div class="form-group col-md-5">
-                            <label class="col-sm-6 control-label">Lampiran Proposal</label>
-                            <div class="col-sm-6">
-                                <input type="file" placeholder="Lampiran Proposal" class="form-control" id="document"
-                                    name="document" value="{{ old('document') }}" accept="application/pdf" />
-                                @error('document')
-                                    <span class="error">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="form-group col-md-5">
-                            <label class="col-sm-6 control-label">Dokumen Pendukung</label>
-                            <div class="col-sm-6">
-                                <input type="file" class="form-control" id="dokumen_pendukung" name="dokumen_pendukung"
-                                    value="{{ old('dokumen_pendukung') }}" accept="application/pdf" />
-                                @error('dokumen_pendukung')
-                                    <span class="error">
-                                        {{ $message }}
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-success waves-effect waves-light">
-                                Simpan
-                            </button>
-                        </div>
-                    </form> --}}
                     <form role="form row" action="{{ route('pengajuan-kegiatan.document.update', $data->id) }}"
                         method="POST" enctype="multipart/form-data">
                         @method('PUT')
@@ -70,6 +35,10 @@
                                 </option>
                                 <option value="document" {{ old('jenis_dokumen') == 'document' ? 'selected' : '' }}>Lampiran
                                     Proposal</option>
+                                <option value="perjanjian_kerjasama"
+                                    {{ old('jenis_dokumen') == 'perjanjian_kerjasama' ? 'selected' : '' }}>Surat
+                                    Perjanjian/SPTJM
+                                </option>
                             </select>
                             @error('jenis_dokumen')
                                 <span class="error">
@@ -171,7 +140,7 @@
                         $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');
                     })->first())
                 @forelse ($data->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
-                                                            $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');})->first()->document_file as $item)
+                                                                                            $q->where('deskripsi_kegiatan', 'Laporan Kegiatan Termin 1');})->first()->document_file as $item)
                     <div class="col-sm-6 col-lg-3 col-md-4 webdesign illustrator">
                         <div class="gal-detail thumb">
                             <a href="{{ url('') . '/storage/' . $item->file_path }}" class="image-popup"
