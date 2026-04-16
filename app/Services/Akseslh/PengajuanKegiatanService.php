@@ -2290,4 +2290,75 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
 
         return $this->sendSuccess($result);
     }
+
+    public function kembalikanPengajuan($id, $data)
+    {
+        $read = $this->model->newQuery()->find($id);
+
+        if (!$read) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Pengajuan tidak ditemukan', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Found', 422);
+        }
+
+        if ($read->flag <= 1 || $read->flag == 20) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' Flag pengajuan tidak sesuai', \Sentry\Severity::warning());
+            return $this->sendError(null, 'Not Allowed', 422);
+        }
+
+        \DB::beginTransaction();
+
+        try {
+
+            switch ($read->flag) {
+                case 2:
+                    # code...
+                    $logTahapan = $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                        ->where('pengajuan_kegiatan_id', $id)
+                        ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                            $q->where('deskripsi_kegiatan', 'Validasi');
+                        })
+                        ->first();
+                    // Create Log Tahapan Pengajuan
+                    $this->modelDetailLogTahapanPengajuanKegiatan->newQuery()->create([
+                        'pengajuan_kegiatan_id'         => $read->id,
+                        'tahapan_pengajuan_kegiatan_id' => $logTahapan->tahapan_pengajuan_kegiatan_id,
+                        'tanggal_masuk'                 => date("Y-m-d"),
+                        'tanggal_selesai'               => date("Y-m-d"),
+                        'user_akseslh_id'               => $data['user']->id,
+                    ]);
+
+                    $logTahapan->update(['tanggal_masuk' => null]);
+
+                    $this->modelLogTahapanPengajuanKegiatan->newQuery()
+                        ->where('pengajuan_kegiatan_id', $id)
+                        ->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
+                            $q->where('deskripsi_kegiatan', 'Verifikasi');
+                        })
+                        ->update(['tanggal_selesai' => null]);
+
+                    $upload_pendukung = $this->fileUploadService->handleFile($data['dokumen_pendukung'])->saveToDb('dokumen_pendukung');
+
+                    if ($upload_pendukung) {
+                        $upload_pendukung->update([
+                            'fileable_type' => get_class($read),
+                            'fileable_id'   => $read->id,
+                        ]);
+                    }
+
+                    $read->update(['flag' => 1]);
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+
+            \DB::commit(); // commit the changes
+            return $this->sendSuccess(null, 'Pengajuan berhasil dikembalikan ke tahap sebelumnya', 200);
+        } catch (\Exception $exception) {
+            \Sentry\captureMessage('Validate Message: ' . $data['user']->email . ' ' . $exception->getMessage(), \Sentry\Severity::warning());
+            \DB::rollBack(); // rollback the changes
+            return $this->sendError(null, $this->debug ? $exception->getMessage() : null, 500);
+        }
+    }
 }

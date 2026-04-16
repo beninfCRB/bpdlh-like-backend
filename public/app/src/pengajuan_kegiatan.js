@@ -3,7 +3,7 @@
 const numberFormat = new Intl.NumberFormat("id-ID");
 
 import axios from "axios";
-import { createData, updateData, deleteData } from "../api";
+import { createData, updateData, deleteData, updatePutData } from "../api";
 var route = $("#data-pengajuan-kegiatan-route").val();
 
 jQuery(function () {
@@ -241,3 +241,54 @@ window.updateSPTJM = (input, evt) => {
             }
         });
 };
+
+$("#formKembalikan").on("submit", function (e) {
+    e.preventDefault();
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        },
+    });
+
+    const formData = new FormData();
+
+    formData.append("id_pengajuan_kegiatan", $("#id_pengajuan_kegiatan").val());
+    formData.append("dokumen_pendukung", $("#dokumen_pendukung")[0].files[0]);
+
+    createData(
+        route +
+            "/" +
+            formData.get("id_pengajuan_kegiatan") +
+            "/kembalikan-pengajuan",
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        },
+    )
+        .then((response) => {
+            console.log(response.data.message);
+
+            Swal.fire("Sukses", response.data.message, "success");
+            hideModal("modalKembalikan");
+            window.location.reload();
+        })
+        .catch((err) => {
+            console.log(err.response);
+
+            let error = err.response.data;
+            if (!error.success) {
+                Toast.fire({
+                    icon: "warning",
+                    title: error.data.dokumen_pendukung[0],
+                });
+            }
+        });
+});

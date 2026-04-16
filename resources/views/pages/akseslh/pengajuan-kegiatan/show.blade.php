@@ -111,6 +111,10 @@
                                         <button class="btn btn-sm btn-primary" onclick="showModal('modalTolakDraft')">Tolak
                                             Draft</button>
                                     @endif
+                                    @if (auth()->user()->role_user == 'administrator' && $data->data->flag > 1 && $data->data->flag < 20)
+                                        <button class="btn btn-sm btn-primary"
+                                            onclick="showModal('modalKembalikan')">Kembalikan 1 Flag</button>
+                                    @endif
                                 </td>
                             </tr>
                         </tbody>
@@ -119,6 +123,39 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal Kembalikan 1 Flag --}}
+    <div id="modalKembalikan" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalKembalikanLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form enctype="multipart/form-data" id="formKembalikan">
+                    @csrf
+                    <div class="modal-header">
+                        <button type="button" class="close" onclick="hideModal('modalKembalikan')"
+                            aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="modalKembalikanLabel">Modal Kembalikan 1 Flag</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="dokumen_pendukung">Dokumen Pendukung</label>
+                            <input type="hidden" name="id_pengajuan_kegiatan" id="id_pengajuan_kegiatan"
+                                value="{{ $data->data->id }}">
+                            <input type="file" class="form-control" id="dokumen_pendukung" name="dokumen_pendukung"
+                                placeholder="Dokumen Pendukung" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect"
+                            onclick="hideModal('modalKembalikan')">Close</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light save-button">Save
+                            changes</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 
     {{-- Modal Update SPTJM --}}
     <div id="modalUpdateSPTJM" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalUpdateSPTJMLabel"
@@ -148,7 +185,8 @@
                 </form>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+    </div>
+    <!-- /.modal -->
 
     {{-- Modal Tolak Draft --}}
     <div id="modalTolakDraft" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTolakDraftLabel"

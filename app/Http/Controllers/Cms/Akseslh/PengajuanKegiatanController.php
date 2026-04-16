@@ -198,7 +198,7 @@ class PengajuanKegiatanController extends ApiController
 
             return $this->sendError($result->data, $result->message, $result->code);
         } catch (\Exception $exception) {
-            $this->sendError($exception->getMessage(), "", 500);
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 
@@ -313,6 +313,34 @@ class PengajuanKegiatanController extends ApiController
             return back()->with('success', $result->message);
         } catch (\Exception $exception) {
             return back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function kembalikan_pengajuan($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_pengajuan_kegiatan' => 'required|exists:pengajuan_kegiatans,id',
+            'dokumen_pendukung'     => 'required|file|mimes:pdf|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors(), "Validasi Gagal", 422);
+        }
+
+        $input = $validator->validated();
+        $input['dokumen_pendukung'] = $request->file('dokumen_pendukung');
+        $input['user'] = auth()->user();
+
+
+        $result = $this->PengajuanKegiatanService->kembalikanPengajuan($id, $input);
+
+        try {
+            if (!$result->success) {
+                return $this->sendError($result->data, $result->message, $result->code);
+            }
+            return $this->sendSuccess(null, $result->message, 200);
+        } catch (\Exception $exception) {
+            return $this->sendError($exception->getMessage(), "", 500);
         }
     }
 }

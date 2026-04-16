@@ -111,6 +111,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pengajuan-kegiatan/export-rab/{id}', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export_rab'])->name('export-rab');
         Route::post('/pengajuan-kegiatan/{id}/update-sptjm', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'update_sptjm'])->name('pengajuan-kegiatan.update-sptjm');
         Route::post('/pengajuan-kegiatan/{id}/tolak-draft-pengajuan', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'tolak_draft_pengajuan'])->name('pengajuan-kegiatan.tolak-draft-pengajuan');
+        Route::post('/pengajuan-kegiatan/{id}/kembalikan-pengajuan', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'kembalikan_pengajuan'])->name('pengajuan-kegiatan.kembalikan-pengajuan');
         Route::post('/pengajuan-kegiatan/export-excel-pengajuan', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'export'])->name('export-excel-pengajuan');
         Route::put('/pengajuan-kegiatan/{id}/dokumen', [App\Http\Controllers\Cms\Akseslh\PengajuanKegiatanController::class, 'update_dokumen'])->name('pengajuan-kegiatan.document.update');
 

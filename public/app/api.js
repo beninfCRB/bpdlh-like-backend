@@ -12,8 +12,8 @@ export async function updateData(url = "", id, data = {}) {
     return await axios.post(url, id, data);
 }
 
-export async function updatePutData(url = "", data = {}) {
-    return await axios.put(url, data);
+export async function updatePutData(url = "", data = {}, config = {}) {
+    return await axios.put(url, data, config);
 }
 
 export async function showData(url, id) {
