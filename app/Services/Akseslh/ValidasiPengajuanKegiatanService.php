@@ -434,7 +434,7 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                 'ruang_lingkup_kegiatan'    => $model->ruang_lingkup_kegiatan,
                 'nama_verifikator'          => null,
                 'tanggal_verifikasi'        => null,
-                'document'                  => $model->document()->whereNotIn('group', ['surat_permintaan_nomor_rekening', 'surat_pencairan_dana_termin_1', 'dokumen_pendukung'])->get(),
+                'document'                  => $model->document()->whereNotIn('group', ['surat_permintaan_nomor_rekening', 'dokumen_pendukung'])->get(),
                 'surat_keterangan'          => $model->transaksi_penyaluran()->latest()->first()->document ?? null,
             ];
         } else {
