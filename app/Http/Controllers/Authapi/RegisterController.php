@@ -489,7 +489,8 @@ class RegisterController extends ApiController
             ]);
 
             //Send email notification
-            RegistrationPasswordDefault::dispatch($input['email_pic'], $user, $default_password);
+            // RegistrationPasswordDefault::dispatch($input['email_pic'], $user, $default_password);
+            $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
 
             // Upload files in a loop
             $documents = [
