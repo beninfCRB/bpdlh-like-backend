@@ -586,7 +586,8 @@ class RegisterController extends ApiController
                 if ($statusEmail !== true) {
                     \DB::rollBack();
                     Log::error('Failed to send activation email to ' . $input['email_pic'] . '. Email service responded with: ' . $statusEmail,);
-                    return $this->sendError(null, 'Proses registrasi berhasil, namun gagal mengirim email. Silakan hubungi administrator.', 500);
+                    \Sentry\captureMessage('Validate Message: ' . $input['email_pic'] . ' ' . $statusEmail, \Sentry\Severity::warning());
+                    return $this->sendError(null, 'Proses kirim email gagal. Silakan hubungi administrator.', 500);
                 }
 
                 // Commit Change
