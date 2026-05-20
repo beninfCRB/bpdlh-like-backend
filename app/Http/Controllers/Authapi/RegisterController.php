@@ -18,6 +18,7 @@ use DateTime;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Guid\Guid;
 
@@ -490,7 +491,12 @@ class RegisterController extends ApiController
 
             //Send email notification
             // RegistrationPasswordDefault::dispatch($input['email_pic'], $user, $default_password);
-            $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
+            $statusemail = $this->emailPhpService->sendEmail($input['email_pic'], 'Register Notification', $user, $default_password);
+
+            if ($statusemail !== true) {
+                error_log('Failed to send registration email to ' . $input['email_pic'] . '. Email service responded with: ' . $statusemail);
+                return $this->sendError(null, 'Proses registrasi berhasil, namun gagal mengirim email. Silakan hubungi administrator.');
+            }
 
             // Upload files in a loop
             $documents = [
@@ -574,7 +580,14 @@ class RegisterController extends ApiController
             if ($insert) {
 
                 //Send email notification
-                RegistrationEmailVerification::dispatch($input['email_pic'], $token);
+                // RegistrationEmailVerification::dispatch($input['email_pic'], $token);
+                $statusEmail = $this->emailPhpService->getTokenAktivasi($input['email_pic'], 'Kode Aktivasi', $token);
+                // @dd($statusEmail);
+                if ($statusEmail !== true) {
+                    \DB::rollBack();
+                    Log::error('Failed to send activation email to ' . $input['email_pic'] . '. Email service responded with: ' . $statusEmail,);
+                    return $this->sendError(null, 'Proses registrasi berhasil, namun gagal mengirim email. Silakan hubungi administrator.', 500);
+                }
 
                 // Commit Change
                 \DB::commit();

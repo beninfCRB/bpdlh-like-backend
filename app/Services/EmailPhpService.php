@@ -45,7 +45,7 @@ class EmailPhpService
             $this->mail->send();
             return true;
         } catch (Exception $e) {
-            return "Email gagal dikirim. Mailer Error: {$this->mail->ErrorInfo}";
+            return "Email gagal dikirim. Mailer Error: {$this->mail->ErrorInfo}, Pesan Error: {$e->getMessage()}";
         }
     }
 
