@@ -29,11 +29,4 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
-    'ai_service' => [
-        'base_url' => env('AI_SERVICE_BASE_URL', 'http://127.0.0.1:8001'),
-        'timeout' => env('AI_SERVICE_TIMEOUT', 180),
-        'api_key' => env('AI_SERVICE_API_KEY'),
-    ],
-
 ];

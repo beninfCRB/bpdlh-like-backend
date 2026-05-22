@@ -64,11 +64,7 @@ Route::get('getJenisDokumen', [App\Http\Controllers\Api\Akseslh\JenisDokumenCont
 
 // AI routes for pre-auth flows (e.g. OCR at registration)
 Route::prefix('ai')->group(function () {
-    Route::get('/health', [App\Http\Controllers\Api\Akseslh\AiController::class, 'health']);
-    Route::post('/ocr', [App\Http\Controllers\Api\Akseslh\AiController::class, 'ocr']);
-    Route::post('/ocr/async', [App\Http\Controllers\Api\Akseslh\AiController::class, 'ocrAsync']);
-    Route::get('/ocr/status/{jobId}', [App\Http\Controllers\Api\Akseslh\AiController::class, 'ocrStatus']);
-    Route::post('/summarize', [App\Http\Controllers\Api\Akseslh\AiController::class, 'summarize']);
+    Route::post('/generate-token', [App\Http\Controllers\Api\Akseslh\JwtTokenController::class, 'generate']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -156,5 +152,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Laporan Akhir Kegiatan
     Route::post('laporanAkhir', [App\Http\Controllers\Api\Akseslh\LaporanKegiatanController::class, 'laporan_akhir']);
+
+    //Map Location
+    Route::post('getAdministrativeData', [App\Http\Controllers\Api\Akseslh\MapLocationController::class, 'getAdministrativeData']);
 
 });
