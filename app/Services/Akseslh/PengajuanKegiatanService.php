@@ -379,13 +379,17 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }, 'pengajuan_kegiatan.paket_kegiatan.jenis_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
-            }])
+            }, 'pengajuan_kegiatan.transaksi_penyaluran.document', 'pengajuan_kegiatan.testimonial'])
             ->get();
 
         $result->transform(function ($items, $key) use ($prop) {
 
             $detail = null;
             $nama_tahapan = null;
+            $latestPenyaluran = $items->pengajuan_kegiatan->transaksi_penyaluran
+                ? $items->pengajuan_kegiatan->transaksi_penyaluran->sortByDesc('created_at')->first()
+                : null;
+            $testimonial = $items->pengajuan_kegiatan->testimonial;
             switch ($items->tahapan_pengajuan_kegiatan->sort) {
                 case 3:
                     # code...
@@ -444,7 +448,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                     $detail = [
                         'lampiran'                  => $prop->file_lampiran,
                         'sk'                        => $prop->file_sk,
-                        'surat_keterangan_termin_1' => $items->pengajuan_kegiatan->transaksi_penyaluran()->latest()->first()->document ?? null,
+                        'surat_keterangan_termin_1' => $latestPenyaluran ? $latestPenyaluran->document : null,
                     ];
                     break;
                 case 7:
@@ -455,7 +459,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                         'tanggal_realisasi_kegiatan'    => $items->pengajuan_kegiatan->tanggal_mulai_kegiatan,
                         'indikator_laporan_kegiatan'    => $prop->indikator_laporan_kegiatan,
                         'laporan_kegiatan_termin_1'     => $prop->laporan_kegiatan_termin_1,
-                        'testimonial'                   => $items->pengajuan_kegiatan->testimonial()->first()->testimonial ?? null,
+                        'testimonial'                   => $testimonial ? $testimonial->testimonial : null,
                         'longitude'                     => $items->pengajuan_kegiatan->longitude,
                         'latitude'                      => $items->pengajuan_kegiatan->latitude,
                         'capaian_output'                => $items->pengajuan_kegiatan->capaian_output,
@@ -523,7 +527,9 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
     public function getDataRiwayatPengajuan($user_akseslh_id)
     {
         $result =   $this->model->newQuery()
-            ->with(['log_tahapan_pengajuan', 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+            ->with(['log_tahapan_pengajuan', 'transaksi_penyaluran', 'rab_pengajuan_paket_kegiatans', 'paket_kegiatan.master_sub_tematik_kegiatan.sub_tematik_kegiatan' => function ($query) {
+                $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
+            }, 'paket_kegiatan.master_sub_tematik_kegiatan.tematik_kegiatan' => function ($query) {
                 $query->withTrashed(); // Mengambil data yang sudah dihapus soft delete
             }, 'paket_kegiatan.jenis_kegiatan' => function ($query) {
                 $query->withTrashed();
@@ -622,6 +628,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kabupaten_kegiatan'            => $data['kabupaten_kegiatan'] ?? null,
                 'kecamatan_kegiatan'            => $data['kecamatan_kegiatan'] ?? null,
                 'kelurahan_kegiatan'            => $data['kelurahan_kegiatan'] ?? null,
+                'longitude'                     => $data['longitude'] ?? null,
+                'latitude'                      => $data['latitude'] ?? null,
                 'alamat_kegiatan'               => $data['alamat_kegiatan'] ?? null,
                 'proposal_kegiatan'             => $data['proposal_kegiatan'] ?? null,
                 'tujuan_kegiatan'               => $data['tujuan_kegiatan'] ?? null,
@@ -705,6 +713,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
             $read->kabupaten_kegiatan        = $data['kabupaten_kegiatan'] ?? null;
             $read->kecamatan_kegiatan        = $data['kecamatan_kegiatan'] ?? null;
             $read->kelurahan_kegiatan        = $data['kelurahan_kegiatan'] ?? null;
+            $read->longitude                 = $data['longitude'] ?? null;
+            $read->latitude                  = $data['latitude'] ?? null;
             $read->alamat_kegiatan           = $data['alamat_kegiatan'] ?? null;
             $read->proposal_kegiatan         = $data['proposal_kegiatan'] ?? null;
             $read->tujuan_kegiatan           = $data['tujuan_kegiatan'] ?? null;
@@ -995,6 +1005,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
                 'kecamatan_kegiatan'        => $model->kecamatan_kegiatan,
                 'kelurahan_kegiatan'        => $model->kelurahan_kegiatan,
+                'latitude'                  => $model->latitude,
+                'longitude'                 => $model->longitude,
                 'alamat_kegiatan'           => $model->alamat_kegiatan,
                 'tanggal_kegiatan'          => $model->tanggal_mulai_kegiatan . ' - ' . $model->tanggal_akhir_kegiatan,
                 'waktu_kegiatan'            => $model->time_mulai_kegiatan . ' - ' . $model->time_akhir_kegiatan,
@@ -1029,6 +1041,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kabupaten_kegiatan'        => $model->kabupaten_kegiatan,
                 'kecamatan_kegiatan'        => $model->kecamatan_kegiatan,
                 'kelurahan_kegiatan'        => $model->kelurahan_kegiatan,
+                'latitude'                  => $model->latitude,
+                'longitude'                 => $model->longitude,
                 'alamat_kegiatan'           => $model->alamat_kegiatan,
                 'jumlah_peserta'            => $model->paket_kegiatan->jumlah_peserta,
                 'tanggal_kegiatan'          => $model->tanggal_mulai_kegiatan . ' - ' . $model->tanggal_akhir_kegiatan,
@@ -1610,6 +1624,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kabupaten_kegiatan'       => $data['kabupaten_kegiatan'] ?? null,
                 'kecamatan_kegiatan'       => $data['kecamatan_kegiatan'] ?? null,
                 'kelurahan_kegiatan'       => $data['kelurahan_kegiatan'] ?? null,
+                'longitude'                => $data['longitude'] ?? null,
+                'latitude'                 => $data['latitude'] ?? null,
                 'alamat_kegiatan'          => $data['alamat_kegiatan'] ?? null,
                 'proposal_kegiatan'        => $data['proposal_kegiatan'] ?? null,
                 'tujuan_kegiatan'          => $data['tujuan_kegiatan'] ?? null,
@@ -1692,6 +1708,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kecamatan_kegiatan'                => $read->kecamatan->name,
                 'kelurahan_kegiatan_id'             => $read->kelurahan->id,
                 'kelurahan_kegiatan'                => $read->kelurahan->name,
+                'longitude'                         => $read->longitude,
+                'latitude'                          => $read->latitude,
                 'alamat_kegiatan'                   => $read->alamat_kegiatan,
                 'proposal_kegiatan'                 => $read->proposal_kegiatan,
                 'tujuan_kegiatan'                   => $read->tujuan_kegiatan,
@@ -1759,6 +1777,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kabupaten_kegiatan'            => $data['kabupaten_kegiatan'] ?? null,
                 'kecamatan_kegiatan'            => $data['kecamatan_kegiatan'] ?? null,
                 'kelurahan_kegiatan'            => $data['kelurahan_kegiatan'] ?? null,
+                'longitude'                     => $data['longitude'] ?? null,
+                'latitude'                      => $data['latitude'] ?? null,
                 'alamat_kegiatan'               => $data['alamat_kegiatan'] ?? null,
                 'proposal_kegiatan'             => $data['proposal_kegiatan'] ?? null,
                 'tujuan_kegiatan'               => $data['tujuan_kegiatan'] ?? null,
@@ -1821,6 +1841,8 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'kecamatan_kegiatan'                => $newData->kecamatan->name,
                 'kelurahan_kegiatan_id'             => $newData->kelurahan->id,
                 'kelurahan_kegiatan'                => $newData->kelurahan->name,
+                'longitude'                         => $newData->longitude,
+                'latitude'                          => $newData->latitude,
                 'alamat_kegiatan'                   => $newData->alamat_kegiatan,
                 'proposal_kegiatan'                 => $newData->proposal_kegiatan,
                 'tujuan_kegiatan'                   => $newData->tujuan_kegiatan,
