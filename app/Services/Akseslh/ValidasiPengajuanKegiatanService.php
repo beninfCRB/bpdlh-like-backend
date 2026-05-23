@@ -163,10 +163,10 @@ class ValidasiPengajuanKegiatanService extends AppService implements AppServiceI
                             'testimonial'               => $items->testimonial()->first() ? $items->testimonial()->first()->testimonial : null,
                             'nama_verifikator'          => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                            })->first()->user_akseslh_admin->email,
+                            })->first()->user_akseslh_admin->email ?? '-',
                             'tanggal_verifikasi'        => $items->log_tahapan_pengajuan()->whereHas('tahapan_pengajuan_kegiatan', function ($q) {
                                 $q->where(['deskripsi_kegiatan' => 'Verifikasi']);
-                            })->first()->tanggal_selesai,
+                            })->first()->tanggal_selesai ?? null,
                             'longitude'  => $items->longitude,
                             'latitude'  => $items->latitude,
                             'alamat_kegiatan_realisasi' => $items->alamat_kegiatan_realisasi,
