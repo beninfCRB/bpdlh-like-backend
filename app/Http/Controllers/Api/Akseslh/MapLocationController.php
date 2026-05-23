@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Akseslh;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Models\Village;
+use App\Http\Controllers\Controller;
+use App\Models\City;
 use App\Models\District;
-use App\Models\City; // Sesuaikan nama model Kabupaten/Kota Anda
 use App\Models\Province;
+use App\Models\Village;
+use Illuminate\Http\Request;
 
 class MapLocationController extends Controller
 {
@@ -21,17 +21,22 @@ class MapLocationController extends Controller
         $lat = $request->lat;
         $lng = $request->lng;
 
-        $village = DB::table('villages')
+        $village = Village::query()
             ->select(
-                'id', 'code', 'district_code', 'name', 
-                DB::raw("(6371 * acos(cos(radians(?)) * cos(radians(CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)))) * cos(radians(CAST(JSON_EXTRACT(meta, '$.long') AS DECIMAL(10,7))) - radians(?)) + sin(radians(?)) * sin(radians(CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)))))) AS distance"),
-                DB::raw("CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)) AS meta_lat"),
-                DB::raw("CAST(JSON_EXTRACT(meta, '$.long') AS DECIMAL(10,7)) AS meta_long")
+                'id',
+                'code',
+                'district_code',
+                'name',
             )
+            ->selectRaw(
+                "(6371 * acos(cos(radians(?)) * cos(radians(CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)))) * cos(radians(CAST(JSON_EXTRACT(meta, '$.long') AS DECIMAL(10,7))) - radians(?)) + sin(radians(?)) * sin(radians(CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)))))) AS distance",
+                [$lat, $lng, $lat]
+            )
+            ->selectRaw("CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)) AS meta_lat")
+            ->selectRaw("CAST(JSON_EXTRACT(meta, '$.long') AS DECIMAL(10,7)) AS meta_long")
             ->whereRaw("JSON_EXTRACT(meta, '$.lat') IS NOT NULL")
-            ->having('distance', '<', 10) 
+            ->having('distance', '<', 10)
             ->orderBy('distance', 'asc')
-            ->limit(1)
             ->first();
 
         if (!$village) {
@@ -41,10 +46,10 @@ class MapLocationController extends Controller
         $districtCode = $village->district_code;
         $cityCode = substr($districtCode, 0, 4);
         $provinceCode = substr($districtCode, 0, 2);
-        
-        $district = DB::table('districts')->where('code', $districtCode)->first();
-        $city = DB::table('cities')->where('code', $cityCode)->first();
-        $province = DB::table('provinces')->where('code', $provinceCode)->first();
+
+        $district = District::query()->where('code', $districtCode)->first();
+        $city = City::query()->where('code', $cityCode)->first();
+        $province = Province::query()->where('code', $provinceCode)->first();
 
         return response()->json([
             'success' => true,
