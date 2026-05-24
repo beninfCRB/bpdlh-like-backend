@@ -21,23 +21,41 @@ class MapLocationController extends Controller
         $lat = $request->lat;
         $lng = $request->lng;
 
-        $village = Village::query()
-            ->select(
-                'id',
-                'code',
-                'district_code',
-                'name',
-            )
-            ->selectRaw(
-                "(6371 * acos(cos(radians(?)) * cos(radians(CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)))) * cos(radians(CAST(JSON_EXTRACT(meta, '$.long') AS DECIMAL(10,7))) - radians(?)) + sin(radians(?)) * sin(radians(CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)))))) AS distance",
-                [$lat, $lng, $lat]
-            )
-            ->selectRaw("CAST(JSON_EXTRACT(meta, '$.lat') AS DECIMAL(10,7)) AS meta_lat")
-            ->selectRaw("CAST(JSON_EXTRACT(meta, '$.long') AS DECIMAL(10,7)) AS meta_long")
-            ->whereRaw("JSON_EXTRACT(meta, '$.lat') IS NOT NULL")
-            ->having('distance', '<', 10)
-            ->orderBy('distance', 'asc')
-            ->first();
+        $latExpr = "CAST(latitude AS DECIMAL(10,7))";
+        $lngExpr = "CAST(longitude AS DECIMAL(10,7))";
+
+        $radiusCandidates = [10, 25, 50];
+        $village = null;
+        $usedRadius = null;
+
+        foreach ($radiusCandidates as $radius) {
+            $candidate = Village::query()
+                ->select(
+                    'id',
+                    'code',
+                    'district_code',
+                    'name',
+                )
+                ->selectRaw(
+                    "(6371 * acos(cos(radians(?)) * cos(radians({$latExpr})) * cos(radians({$lngExpr}) - radians(?)) + sin(radians(?)) * sin(radians({$latExpr})))) AS distance",
+                    [$lat, $lng, $lat]
+                )
+                ->selectRaw("{$latExpr} AS meta_lat")
+                ->selectRaw("{$lngExpr} AS meta_long")
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->whereRaw("latitude REGEXP '^-?[0-9]+(\\.[0-9]+)?$'")
+                ->whereRaw("longitude REGEXP '^-?[0-9]+(\\.[0-9]+)?$'")
+                ->having('distance', '<', $radius)
+                ->orderBy('distance', 'asc')
+                ->first();
+
+            if ($candidate) {
+                $village = $candidate;
+                $usedRadius = $radius;
+                break;
+            }
+        }
 
         if (!$village) {
             return response()->json(['message' => 'Wilayah tidak ditemukan di sekitar titik ini'], 404);
@@ -53,6 +71,7 @@ class MapLocationController extends Controller
 
         return response()->json([
             'success' => true,
+            'used_radius_km' => $usedRadius,
             'data' => [
                 'village' => [
                     'code' => $village->code,
