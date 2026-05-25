@@ -41,6 +41,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Jenis Kegiatan</th>
+                                        <th>Durasi Hari Kegiatan</th>
+                                        <th>Durasi Hari SPTJM</th>
+                                        <th>Durasi Hari Laporan Kegiatan</th>
                                         <th>Short ID</th>
                                         <th>Code ID</th>
                                         <th>Status</th>

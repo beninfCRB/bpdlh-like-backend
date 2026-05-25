@@ -47,8 +47,11 @@ class JenisKegiatanController extends ApiController
     {
         $input  =   $request->validate([
             'jenis_kegiatan'    => 'required',
-            'short_id'                      => 'required|numeric|min:0',
-            'code_id'                       => 'required|numeric|min:0',
+            'durasi_hari_kegiatan' => 'required|numeric|min:0',
+            'durasi_hari_sptjm' => 'required|numeric|min:0',
+            'durasi_hari_laporan_kegiatan' => 'required|numeric|min:0',
+            'short_id'          => 'required|numeric|min:0',
+            'code_id'           => 'required|numeric|min:0',
         ]);
 
         $result =   $this->jenisKegiatanService->create($input);
@@ -69,8 +72,11 @@ class JenisKegiatanController extends ApiController
     {
         $input  =   $request->validate([
             'jenis_kegiatan'    => 'required',
-            'short_id'                      => 'required|numeric|min:0',
-            'code_id'                       => 'required|numeric|min:0',
+            'durasi_hari_kegiatan' => 'required|numeric|min:0',
+            'durasi_hari_sptjm' => 'required|numeric|min:0',
+            'durasi_hari_laporan_kegiatan' => 'required|numeric|min:0',
+            'short_id'          => 'required|numeric|min:0',
+            'code_id'           => 'required|numeric|min:0',
         ]);
 
         $result =   $this->jenisKegiatanService->update($id, $input);

@@ -27,7 +27,7 @@ class AddIsAccurateColumnToDataPicTable extends Migration
      */
     public function down()
     {
-        Schema::table('data_pic', function (Blueprint $table) {
+        Schema::table('data_pic_kelompok_masyarakats', function (Blueprint $table) {
             //
             $table->dropColumn('is_accurate');
             $table->dropColumn('accurate_date');

@@ -26,6 +26,9 @@ var data_jenis_kegiatan = (function () {
             columns: [
                 { data: "DT_RowIndex" },
                 { data: "jenis_kegiatan" },
+                { data: "durasi_hari_kegiatan" },
+                { data: "durasi_hari_sptjm" },
+                { data: "durasi_hari_laporan_kegiatan" },
                 { data: "short_id" },
                 { data: "code_id" },
                 {},

@@ -1855,6 +1855,7 @@ class PengajuanKegiatanService extends AppService implements AppServiceInterface
                 'id_pengajuan'          => $newData->id,
                 'nomor_pengajuan'       => $data['nomor_pengajuan'],
                 'pengajuan_kegiatan'    => $review_pengajuan_kegiatan,
+                'caping_rab'            => $newData->paket_kegiatan->pagu_paket_kegiatan,
                 'komponen_rab'          => $rab->groupBy('jenis_komponen_rab'),
             ];
 

@@ -15,6 +15,9 @@ class JenisKegiatan extends AppModel
 
     protected $fillable = [
         'jenis_kegiatan',
+        'durasi_hari_kegiatan',
+        'durasi_hari_sptjm',
+        'durasi_hari_laporan_kegiatan',
         'short_id',
         'code_id',
         'flag',

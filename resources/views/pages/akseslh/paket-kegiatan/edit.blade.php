@@ -109,7 +109,8 @@
                                 @enderror
                             </div>
                             <div class="form-group @error('jumlah_peserta') has-error @enderror col-md-3">
-                                <label for="jumlah_peserta">Jumlah Peserta <span class="text-danger">*</span></label>
+                                <label for="jumlah_peserta">Jumlah Peserta/Luas Lahan <span
+                                        class="text-danger">*</span></label>
                                 <input type="number" min=0 class="form-control" id="jumlah_peserta" name="jumlah_peserta"
                                     value="{{ old('jumlah_peserta', $data->jumlah_peserta) }}">
                                 @error('jumlah_peserta')

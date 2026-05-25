@@ -63,6 +63,9 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
 
             $data = $this->model->newQuery()->create([
                 'jenis_kegiatan'       =>  $data['jenis_kegiatan'],
+                'durasi_hari_kegiatan' =>  $data['durasi_hari_kegiatan'],
+                'durasi_hari_sptjm' =>  $data['durasi_hari_sptjm'],
+                'durasi_hari_laporan_kegiatan' =>  $data['durasi_hari_laporan_kegiatan'],
                 'short_id'                      =>  $data['short_id'],
                 'code_id'                      =>  $data['code_id'],
                 'flag'                 => 1,
@@ -85,6 +88,9 @@ class JenisKegiatanService extends AppService implements AppServiceInterface
         try {
 
             $read->jenis_kegiatan    =   $data['jenis_kegiatan'];
+            $read->durasi_hari_kegiatan    =   $data['durasi_hari_kegiatan'];
+            $read->durasi_hari_sptjm    =   $data['durasi_hari_sptjm'];
+            $read->durasi_hari_laporan_kegiatan    =   $data['durasi_hari_laporan_kegiatan'];
             $read->short_id                     =   $data['short_id'];
             $read->code_id                     =   $data['code_id'];
             $read->save();
