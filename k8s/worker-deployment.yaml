@@ -12,6 +12,8 @@ spec:
       labels:
         app: bpdlh-like-backend-worker
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: worker
           image: ghcr.io/beninfcrb/bpdlh-like-backend:latest

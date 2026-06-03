@@ -12,6 +12,8 @@ spec:
       labels:
         app: bpdlh-like-backend
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: app
           image: ghcr.io/beninfcrb/bpdlh-like-backend:latest
