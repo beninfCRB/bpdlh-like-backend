@@ -17,7 +17,7 @@ spec:
       containers:
         - name: worker
           image: ghcr.io/beninfcrb/bpdlh-like-backend:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           command:
             [
               "php",
