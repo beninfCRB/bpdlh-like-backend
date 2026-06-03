@@ -8,11 +8,23 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    if: ${{ secrets.ARGOCD_SERVER != '' }}
 
     steps:
-      - name: Install ArgoCD CLI
+      - name: Check prerequisites
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
         run: |
+          if [ -z "$ARGOCD_SERVER" ]; then
+            echo "⚠️ ARGOCD_SERVER not configured, skipping CD sync"
+            exit 0
+          fi
+          echo "✅ ARGOCD_SERVER configured: $ARGOCD_SERVER"
+
+      - name: Install ArgoCD CLI
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+        run: |
+          if [ -z "$ARGOCD_SERVER" ]; then exit 0; fi
           curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           chmod +x argocd
           sudo mv argocd /usr/local/bin/argocd
@@ -24,10 +36,12 @@ jobs:
           ARGOCD_APP_NAME_MAIN: bpdlh-like-backend-main
           ARGOCD_APP_NAME_DEV: bpdlh-like-backend-dev
         run: |
+          if [ -z "$ARGOCD_SERVER" ]; then exit 0; fi
+
           if [ "$GITHUB_REF_NAME" = "main" ]; then
-            echo "ARGOCD_APP_NAME=$ARGOCD_APP_NAME_MAIN" >> "$GITHUB_ENV"
+            ARGOCD_APP_NAME="$ARGOCD_APP_NAME_MAIN"
           elif [ "$GITHUB_REF_NAME" = "dev" ]; then
-            echo "ARGOCD_APP_NAME=$ARGOCD_APP_NAME_DEV" >> "$GITHUB_ENV"
+            ARGOCD_APP_NAME="$ARGOCD_APP_NAME_DEV"
           else
             echo "Branch $GITHUB_REF_NAME is not mapped to ArgoCD app" >&2
             exit 1
