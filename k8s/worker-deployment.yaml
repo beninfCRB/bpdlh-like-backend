@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpdlh-like-backend-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bpdlh-like-backend-worker
+  template:
+    metadata:
+      labels:
+        app: bpdlh-like-backend-worker
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/beninfCRB/bpdlh-like-backend:latest
+          imagePullPolicy: Always
+          command:
+            [
+              "php",
+              "artisan",
+              "queue:work",
+              "--sleep=3",
+              "--tries=3",
+              "--timeout=120",
+            ]
+          env:
+            - name: APP_ENV
+              value: production
+            - name: APP_DEBUG
+              value: "false"
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bpdlh-app-env
+                  key: APP_KEY
+            - name: DB_CONNECTION
+              valueFrom:
+                secretKeyRef:
+                  name: bpdlh-app-env
+                  key: DB_CONNECTION
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: bpdlh-app-env
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: bpdlh-app-env
+                  key: DB_PORT
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: bpdlh-app-env
+                  key: DB_DATABASE
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: bpdlh-app-env
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bpdlh-app-env
+                  key: DB_PASSWORD
