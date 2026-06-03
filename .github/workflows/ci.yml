@@ -50,6 +50,9 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: secret
           DB_DATABASE_API: bpdlh_like
+          CACHE_DRIVER: array
+          SESSION_DRIVER: array
+          TELESCOPE_ENABLED: "false"
 
       - name: Run migrations
         run: php artisan migrate --force
