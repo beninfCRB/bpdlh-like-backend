@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: ghcr.io/beninfCRB/bpdlh-like-backend:latest
+          image: ghcr.io/beninfcrb/bpdlh-like-backend:latest
           imagePullPolicy: Always
           command:
             [
