@@ -1,0 +1,33 @@
+# Environment files - should NEVER be baked into image
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node modules (if any)
+node_modules
+
+# Dev tools
+.editorconfig
+.php-cs-fixer.php
+phpunit.xml
+phpunit.xml.dist
+
+# Tests
+tests
+
+# CI/CD
+.github
+
+# Logs
+storage/logs/*.log
+
+# Cache
+bootstrap/cache/*.php
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views

@@ -16,6 +16,13 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     public function register()
     {
+        // Force disable Telescope in non-local environments
+        // This prevents Telescope from running in production/staging/k8s
+        if (!$this->app->environment('local')) {
+            $this->app['config']->set('telescope.enabled', false);
+            return;
+        }
+
         // Telescope::night();
 
         $this->hideSensitiveRequestDetails();
