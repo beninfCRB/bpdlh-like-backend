@@ -31,6 +31,12 @@ RUN npm install
 # Copy application files
 COPY . .
 
+# Set permissions for the web directory
+RUN chown -R www-data:www-data /var/www/html
+
+# Compile frontend assets
+RUN npx mix --production
+
 # Complete composer install
 RUN composer dump-autoload --optimize \
     && php artisan package:discover --ansi || true
