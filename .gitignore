@@ -14,3 +14,4 @@ yarn-error.log
 composer.lock
 uat.bpdlh.id
 package-lock.json
+k8s/app-secret.yaml
