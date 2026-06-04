@@ -32,6 +32,14 @@ COPY . .
 RUN composer dump-autoload --optimize \
     && php artisan package:discover --ansi || true
 
+# Create required storage directories
+RUN mkdir -p storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/framework/testing \
+    storage/logs \
+    bootstrap/cache
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
