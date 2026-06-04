@@ -26,41 +26,15 @@ spec:
               value: production
             - name: APP_DEBUG
               value: "false"
-            - name: APP_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: bpdlh-app-env
-                  key: APP_KEY
-            - name: DB_CONNECTION
-              valueFrom:
-                secretKeyRef:
-                  name: bpdlh-app-env
-                  key: DB_CONNECTION
-            - name: DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: bpdlh-app-env
-                  key: DB_HOST
-            - name: DB_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: bpdlh-app-env
-                  key: DB_PORT
-            - name: DB_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: bpdlh-app-env
-                  key: DB_DATABASE
-            - name: DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: bpdlh-app-env
-                  key: DB_USERNAME
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: bpdlh-app-env
-                  key: DB_PASSWORD
+            - name: TELESCOPE_ENABLED
+              value: "false"
+            - name: CACHE_DRIVER
+              value: "file"
+            - name: SESSION_DRIVER
+              value: "file"
+          envFrom:
+            - secretRef:
+                name: bpdlh-app-env
           readinessProbe:
             tcpSocket:
               port: 8000
