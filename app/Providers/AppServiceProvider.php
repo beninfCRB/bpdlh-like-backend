@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
-        if (env('APP_ENV') == 'production') {
+        if (env('APP_ENV') == 'production' && env('FORCE_HTTPS', true)) {
             URL::forceScheme('https');
         }
     }

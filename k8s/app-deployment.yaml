@@ -32,6 +32,8 @@ spec:
               value: "file"
             - name: SESSION_DRIVER
               value: "file"
+            - name: FORCE_HTTPS
+              value: "false"
           envFrom:
             - secretRef:
                 name: bpdlh-app-env
