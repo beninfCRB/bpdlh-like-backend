@@ -13,6 +13,8 @@ RUN apk add --no-cache \
     unzip \
     git \
     curl \
+    nodejs \
+    npm \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql gd bcmath opcache pcntl zip
 
@@ -21,9 +23,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy composer files first for layer caching
-COPY composer.json composer.lock ./
+# Copy composer and package files first for layer caching
+COPY composer.json composer.lock package.json package-lock.json ./
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+RUN npm install
 
 # Copy application files
 COPY . .
