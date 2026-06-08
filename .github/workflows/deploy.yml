@@ -1,0 +1,48 @@
+name: Deploy Backend (bpdlh-like-backend)
+
+on:
+  push:
+    branches:
+      - prod
+      - dev
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Environment Variables
+        id: env-setup
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/prod" ]; then
+            echo "ENV_NAME=prod" >> $GITHUB_ENV
+            echo "COMPOSE_FILE=docker-compose.prod.yml" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=folu-backend-prod" >> $GITHUB_ENV
+          else
+            echo "ENV_NAME=dev" >> $GITHUB_ENV
+            echo "COMPOSE_FILE=docker-compose.dev.yml" >> $GITHUB_ENV
+            echo "CONTAINER_NAME=folu-backend-dev" >> $GITHUB_ENV
+          fi
+
+      - name: Sync Files to Environment Directory
+        run: |
+          sudo mkdir -p /opt/app/${{ env.ENV_NAME }}/bpdlh-like-backend
+          sudo rsync -av --delete --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='vendor' ./ /opt/app/${{ env.ENV_NAME }}/bpdlh-like-backend/
+          sudo chown -R $USER:$USER /opt/app/${{ env.ENV_NAME }}/bpdlh-like-backend
+
+      - name: Deploy Backend Container
+        run: |
+          cd /opt/app/infra-stack
+          docker compose -f ${{ env.COMPOSE_FILE }} up -d --build backend
+
+      - name: Run Database Migrations & Cache Optimization
+        run: |
+          docker exec ${{ env.CONTAINER_NAME }} php artisan migrate --force
+          docker exec ${{ env.CONTAINER_NAME }} php artisan config:cache
+          docker exec ${{ env.CONTAINER_NAME }} php artisan route:cache
+          docker exec ${{ env.CONTAINER_NAME }} php artisan view:cache
+          
+      - name: Clean up unused Docker resources
+        run: docker image prune -f
