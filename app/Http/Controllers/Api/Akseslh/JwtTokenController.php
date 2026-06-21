@@ -20,7 +20,7 @@ class JwtTokenController extends ApiController
             'sub' => $sub,
             'user' => $request->input('user', null),
         ];
-        $jwtSecret = env('JWT_SECRET');
+        $jwtSecret = config('app.jwt_secret');
         $token = JWT::encode($payload, $jwtSecret, 'HS256');
          return $this->sendSuccess(['token' => $token], 'Token generated successfully', 200);
     }
